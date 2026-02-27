@@ -6,14 +6,14 @@ import { Zap, ArrowRight, CheckCircle } from 'lucide-react';
 import { trackEvent } from '@/components/Analytics';
 
 const recentWins = [
-    { pick: 'Duke -3.5', result: 'WON', odds: '-110', sport: 'NCAAB' },
-    { pick: 'UNC ML', result: 'WON', odds: '+145', sport: 'NCAAB' },
-    { pick: 'Kentucky -7', result: 'WON', odds: '-105', sport: 'NCAAB' },
-    { pick: 'Gonzaga +2.5', result: 'WON', odds: '-110', sport: 'NCAAB' },
-    { pick: 'Kansas -4', result: 'WON', odds: '-115', sport: 'NCAAB' },
-    { pick: 'Auburn ML', result: 'WON', odds: '+130', sport: 'NCAAB' },
-    { pick: 'Purdue -5.5', result: 'WON', odds: '-110', sport: 'NCAAB' },
-    { pick: 'Houston +3', result: 'WON', odds: '-105', sport: 'NCAAB' },
+    { pick: 'Yankees -1.5', result: 'WON', odds: '-115', sport: 'MLB' },
+    { pick: 'Dodgers ML', result: 'WON', odds: '+130', sport: 'MLB' },
+    { pick: 'Braves -1.5', result: 'WON', odds: '-105', sport: 'MLB' },
+    { pick: 'Astros Over 8.5', result: 'WON', odds: '-110', sport: 'MLB' },
+    { pick: 'Mets ML', result: 'WON', odds: '+145', sport: 'MLB' },
+    { pick: 'Padres -1.5', result: 'WON', odds: '+110', sport: 'MLB' },
+    { pick: 'Phillies ML', result: 'WON', odds: '-120', sport: 'MLB' },
+    { pick: 'Cubs Under 7.5', result: 'WON', odds: '-105', sport: 'MLB' },
 ];
 
 function WinsTicker() {
@@ -125,7 +125,7 @@ export default function HeroSection() {
                     style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 900, lineHeight: 1.1, marginBottom: '18px', color: 'white' }}
                 >
                     Unlock Winning{' '}
-                    <span className="gradient-text">College Basketball</span> Picks
+                    <span className="gradient-text">Baseball</span> Picks
                 </motion.h1>
 
                 {/* Subheadline */}

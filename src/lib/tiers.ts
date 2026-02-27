@@ -19,7 +19,7 @@ export const tiers: Tier[] = [
     interval: 'month',
     description: 'Fresh analysis for top games. Includes Diamond Boys Discord chat.',
     features: [
-      'Daily college basketball picks',
+      'Daily MLB baseball picks',
       'Discord community access',
       'Game-day alerts',
       'Basic analytics',
@@ -70,11 +70,11 @@ export const tiers: Tier[] = [
     name: 'Season Pass',
     price: 299,
     interval: 'year',
-    description: 'Entire season + Final Four special. Lifetime Discord (while active).',
+    description: 'Entire MLB season + World Series special. Lifetime Discord (while active).',
     features: [
       'Everything in Monthly Elite',
       'Full season coverage',
-      'Final Four special picks',
+      'World Series special picks',
       'Season Pass Discord badge',
       'Early access to new features',
       'Private strategy sessions',

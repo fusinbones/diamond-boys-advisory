@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Zap, CheckCircle, ArrowRight, Loader2, Mail, Trophy, Users, Target, Bell, Gem, Star } from 'lucide-react';
 
 const perks = [
-    { icon: Target, title: 'Daily Expert Picks', desc: 'Data-driven college basketball picks with confidence ratings and detailed analysis.' },
+    { icon: Target, title: 'Daily Expert Picks', desc: 'Data-driven MLB picks with confidence ratings and detailed analysis.' },
     { icon: Users, title: 'Private Discord', desc: 'Exclusive community of sharp bettors — real-time alerts, discussions, and game breakdowns.' },
     { icon: Trophy, title: '65% Win Rate', desc: 'Fully documented, transparent record. No cherry-picking, no hiding losses.' },
     { icon: Bell, title: 'Instant Alerts', desc: 'Line movement notifications and last-minute picks delivered straight to your phone.' },

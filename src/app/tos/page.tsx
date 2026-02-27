@@ -29,7 +29,7 @@ export default function TOSPage() {
                             </p>
                             <h3 className="text-white font-semibold text-base pt-2">1. Service Description</h3>
                             <p>
-                                Diamond Boys Sports Advisory provides sports analysis, commentary, and picks related to college basketball
+                                Diamond Boys Sports Advisory provides sports analysis, commentary, and picks related to MLB baseball
                                 and other sporting events. The Service is provided for <strong>entertainment and informational purposes only</strong>.
                                 We are not a licensed sportsbook, gambling operator, or financial advisor. Our analysis does not constitute
                                 financial or wagering advice, and no guarantee of profit or specific outcomes is made or implied.

@@ -12,7 +12,7 @@ export default function Footer() {
                             DIAMOND BOYS
                         </span>
                         <p className="text-gray-500 text-xs sm:text-sm mt-2 sm:mt-3 leading-relaxed">
-                            Premium college basketball picks and elite Discord community access.
+                            Premium MLB picks and elite Discord community access.
                         </p>
                     </div>
 

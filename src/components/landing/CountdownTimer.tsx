@@ -64,10 +64,10 @@ export default function CountdownTimer() {
                         </span>
 
                         <h3 className="font-display" style={{ fontSize: 'clamp(18px, 2.5vw, 24px)', fontWeight: 700, color: 'white', marginBottom: '6px' }}>
-                            🏀 March Madness Special
+                            ⚾ MLB Season Picks
                         </h3>
                         <p style={{ color: '#d1d5db', fontSize: '15px', marginBottom: '20px', lineHeight: 1.5 }}>
-                            Lock in the <span style={{ color: '#fbbf24', fontWeight: 600 }}>Season Pass at $299</span> — every pick through the Final Four.
+                            Lock in the <span style={{ color: '#fbbf24', fontWeight: 600 }}>Season Pass</span> — every pick through the World Series.
                         </p>
 
                         <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px' }}>

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { BarChart3, MessageSquare, Target, Bell, Lock, Gem } from 'lucide-react';
 
 const features = [
-    { icon: Target, title: 'Expert Picks Daily', desc: 'Data-driven college basketball picks with detailed analysis and confidence ratings.', color: '#00e59b', bg: 'rgba(0,229,155,0.1)' },
+    { icon: Target, title: 'Expert Picks Daily', desc: 'Data-driven MLB picks with detailed analysis and confidence ratings.', color: '#00e59b', bg: 'rgba(0,229,155,0.1)' },
     { icon: MessageSquare, title: 'Private Discord', desc: 'Real-time alerts, live game-day discussions, and direct expert Q&A sessions.', color: '#5865F2', bg: 'rgba(88,101,242,0.1)' },
     { icon: BarChart3, title: 'Transparent Record', desc: 'Every pick tracked publicly — wins and losses. Full accountability, no cherry-picking.', color: '#fbbf24', bg: 'rgba(251,191,36,0.1)' },
     { icon: Bell, title: 'Real-Time Alerts', desc: 'Line movement alerts pushed via Discord notifications so you never miss value.', color: '#f97316', bg: 'rgba(249,115,22,0.1)' },
