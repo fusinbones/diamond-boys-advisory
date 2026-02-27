@@ -44,7 +44,8 @@ export async function POST(request: NextRequest) {
             }
 
             case 'invoice.payment_succeeded': {
-                const invoice = event.data.object as Stripe.Invoice;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const invoice = event.data.object as any;
                 const subscriptionId = typeof invoice.subscription === 'string'
                     ? invoice.subscription
                     : invoice.subscription?.id;
@@ -62,7 +63,8 @@ export async function POST(request: NextRequest) {
             }
 
             case 'invoice.payment_failed': {
-                const invoice = event.data.object as Stripe.Invoice;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const invoice = event.data.object as any;
                 const subscriptionId = typeof invoice.subscription === 'string'
                     ? invoice.subscription
                     : invoice.subscription?.id;
@@ -95,7 +97,8 @@ export async function POST(request: NextRequest) {
             }
 
             case 'charge.refunded': {
-                const charge = event.data.object as Stripe.Charge;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const charge = event.data.object as any;
                 const customerId = typeof charge.customer === 'string' ? charge.customer : charge.customer?.id;
 
                 if (customerId) {
