@@ -3,6 +3,7 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Analytics from '@/components/Analytics';
+import { AuthProvider } from '@/components/AuthProvider';
 
 export const metadata: Metadata = {
   title: 'Diamond Boys Sports Advisory | Elite College Basketball Picks & Discord Community',
@@ -40,13 +41,15 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className="min-h-screen flex flex-col">
-        <div className="bg-glow" />
-        <Analytics />
-        <Navbar />
-        <main className="flex-1 relative z-10" style={{ paddingTop: '96px' }}>
-          {children}
-        </main>
-        <Footer />
+        <AuthProvider>
+          <div className="bg-glow" />
+          <Analytics />
+          <Navbar />
+          <main className="flex-1 relative z-10" style={{ paddingTop: '96px' }}>
+            {children}
+          </main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

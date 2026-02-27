@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Zap, Home, CreditCard, LayoutDashboard, FileText, TrendingUp, Users, Trophy } from 'lucide-react';
+import { Menu, X, Zap, Home, CreditCard, LayoutDashboard, FileText, TrendingUp, Users, Trophy, LogOut, User } from 'lucide-react';
+import { useAuth } from '@/components/AuthProvider';
 
 const navLinks = [
     { href: '/', label: 'Home', icon: Home },
@@ -22,6 +23,7 @@ const quickStats = [
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const { user, signOut } = useAuth();
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -82,10 +84,26 @@ export default function Navbar() {
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#00e59b] transition-all group-hover:w-full" />
                             </Link>
                         ))}
-                        <Link href="/pricing" className="btn-glow text-xs sm:text-sm !py-2 !px-4 sm:!py-2.5 sm:!px-5">
-                            <Zap size={14} className="sm:w-4 sm:h-4" />
-                            Get Picks
-                        </Link>
+                        {user ? (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <Link href="/dashboard" className="text-sm text-gray-300 hover:text-white transition-colors flex items-center gap-2">
+                                    <User size={14} style={{ color: '#00e59b' }} />
+                                    <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</span>
+                                </Link>
+                                <button
+                                    onClick={signOut}
+                                    className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                                >
+                                    Sign Out
+                                </button>
+                            </div>
+                        ) : (
+                            <Link href="/pricing" className="btn-glow text-xs sm:text-sm !py-2 !px-4 sm:!py-2.5 sm:!px-5">
+                                <Zap size={14} className="sm:w-4 sm:h-4" />
+                                Get Picks
+                            </Link>
+                        )}
                     </div>
 
                     {/* Mobile Toggle */}
@@ -178,28 +196,63 @@ export default function Navbar() {
                                 transition={{ delay: 0.35, duration: 0.4 }}
                                 style={{ marginBottom: '28px' }}
                             >
-                                <Link
-                                    href="/pricing"
-                                    onClick={() => setIsOpen(false)}
-                                    className="btn-glow pulse-ring"
-                                    style={{
-                                        width: '100%',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        gap: '8px',
-                                        padding: '16px',
-                                        fontSize: '16px',
-                                        fontWeight: 700,
-                                        borderRadius: '14px',
-                                    }}
-                                >
-                                    <Zap size={18} />
-                                    Get Picks — From $39/mo
-                                </Link>
-                                <p style={{ textAlign: 'center', fontSize: '12px', color: '#9ca3af', marginTop: '8px' }}>
-                                    7-day free trial • Cancel anytime
-                                </p>
+                                {user ? (
+                                    <>
+                                        <div style={{ background: 'rgba(0,229,155,0.06)', border: '1px solid rgba(0,229,155,0.12)', borderRadius: '12px', padding: '14px 16px', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <User size={16} style={{ color: '#00e59b' }} />
+                                            <div>
+                                                <p style={{ color: '#e5e7eb', fontSize: '14px', fontWeight: 600, margin: 0 }}>{user.email}</p>
+                                                <p style={{ color: '#6b7280', fontSize: '11px', margin: 0 }}>Signed in</p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => { signOut(); setIsOpen(false); }}
+                                            style={{
+                                                width: '100%',
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                gap: '8px',
+                                                padding: '14px',
+                                                fontSize: '14px',
+                                                fontWeight: 600,
+                                                borderRadius: '12px',
+                                                background: 'rgba(239,68,68,0.08)',
+                                                border: '1px solid rgba(239,68,68,0.2)',
+                                                color: '#fca5a5',
+                                                cursor: 'pointer',
+                                            }}
+                                        >
+                                            <LogOut size={16} />
+                                            Sign Out
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Link
+                                            href="/pricing"
+                                            onClick={() => setIsOpen(false)}
+                                            className="btn-glow pulse-ring"
+                                            style={{
+                                                width: '100%',
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                gap: '8px',
+                                                padding: '16px',
+                                                fontSize: '16px',
+                                                fontWeight: 700,
+                                                borderRadius: '14px',
+                                            }}
+                                        >
+                                            <Zap size={18} />
+                                            Get Picks — From $39/mo
+                                        </Link>
+                                        <p style={{ textAlign: 'center', fontSize: '12px', color: '#9ca3af', marginTop: '8px' }}>
+                                            7-day free trial • Cancel anytime
+                                        </p>
+                                    </>
+                                )}
                             </motion.div>
 
                             {/* Quick stats — social proof */}
