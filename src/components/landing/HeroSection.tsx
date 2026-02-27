@@ -5,11 +5,72 @@ import Link from 'next/link';
 import { Zap, ArrowRight, CheckCircle } from 'lucide-react';
 import { trackEvent } from '@/components/Analytics';
 
+const recentWins = [
+    { pick: 'Duke -3.5', result: 'WON', odds: '-110', sport: 'NCAAB' },
+    { pick: 'UNC ML', result: 'WON', odds: '+145', sport: 'NCAAB' },
+    { pick: 'Kentucky -7', result: 'WON', odds: '-105', sport: 'NCAAB' },
+    { pick: 'Gonzaga +2.5', result: 'WON', odds: '-110', sport: 'NCAAB' },
+    { pick: 'Kansas -4', result: 'WON', odds: '-115', sport: 'NCAAB' },
+    { pick: 'Auburn ML', result: 'WON', odds: '+130', sport: 'NCAAB' },
+    { pick: 'Purdue -5.5', result: 'WON', odds: '-110', sport: 'NCAAB' },
+    { pick: 'Houston +3', result: 'WON', odds: '-105', sport: 'NCAAB' },
+];
+
+function WinsTicker() {
+    const doubled = [...recentWins, ...recentWins];
+    return (
+        <div style={{ width: '100%', overflow: 'hidden', marginBottom: '20px' }}>
+            <p style={{ textAlign: 'center', fontSize: '11px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 600, marginBottom: '10px' }}>
+                Recent Verified Picks
+            </p>
+            <div style={{ position: 'relative', overflow: 'hidden', maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)' }}>
+                <motion.div
+                    animate={{ x: ['0%', '-50%'] }}
+                    transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+                    style={{ display: 'flex', gap: '10px', width: 'max-content' }}
+                >
+                    {doubled.map((w, i) => (
+                        <div
+                            key={i}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                background: 'rgba(0,229,155,0.06)',
+                                border: '1px solid rgba(0,229,155,0.12)',
+                                borderRadius: '8px',
+                                padding: '6px 12px',
+                                whiteSpace: 'nowrap',
+                                flexShrink: 0,
+                            }}
+                        >
+                            <span style={{ fontSize: '12px', color: '#9ca3af', fontWeight: 500 }}>{w.sport}</span>
+                            <span style={{ fontSize: '14px', color: '#e5e7eb', fontWeight: 600 }}>{w.pick}</span>
+                            <span style={{ fontSize: '11px', color: '#6b7280' }}>({w.odds})</span>
+                            <span style={{
+                                fontSize: '11px',
+                                fontWeight: 700,
+                                color: '#065f46',
+                                background: 'rgba(0,229,155,0.2)',
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                letterSpacing: '0.05em',
+                            }}>
+                                ✓ {w.result}
+                            </span>
+                        </div>
+                    ))}
+                </motion.div>
+            </div>
+        </div>
+    );
+}
+
 export default function HeroSection() {
     return (
         <section
-            className="relative flex items-center justify-center overflow-hidden"
-            style={{ minHeight: 'calc(100vh - 96px)' }}
+            className="relative overflow-hidden"
+            style={{ paddingTop: '24px', paddingBottom: '40px' }}
         >
             {/* Subtle glow */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -29,21 +90,25 @@ export default function HeroSection() {
             <div
                 style={{
                     width: '100%',
-                    maxWidth: '680px',
+                    maxWidth: '720px',
                     margin: '0 auto',
-                    padding: '40px 24px',
+                    padding: '0 24px',
                     display: 'flex',
                     flexDirection: 'column' as const,
                     alignItems: 'center',
                     textAlign: 'center' as const,
+                    position: 'relative' as const,
                 }}
             >
+                {/* Live wins ticker — fills dead space, instant social proof */}
+                <WinsTicker />
+
                 {/* Social proof badge */}
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    style={{ marginBottom: '24px' }}
+                    style={{ marginBottom: '20px' }}
                 >
                     <span className="badge-emerald" style={{ padding: '7px 18px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                         <span className="live-dot" />
@@ -57,7 +122,7 @@ export default function HeroSection() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
                     className="font-display"
-                    style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 900, lineHeight: 1.1, marginBottom: '20px', color: 'white' }}
+                    style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 900, lineHeight: 1.1, marginBottom: '18px', color: 'white' }}
                 >
                     Unlock Winning{' '}
                     <span className="gradient-text">College Basketball</span> Picks
@@ -68,7 +133,7 @@ export default function HeroSection() {
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.15, duration: 0.6 }}
-                    style={{ color: '#d1d5db', fontSize: 'clamp(15px, 2vw, 18px)', lineHeight: 1.7, marginBottom: '24px', maxWidth: '520px' }}
+                    style={{ color: '#d1d5db', fontSize: 'clamp(15px, 2vw, 18px)', lineHeight: 1.7, marginBottom: '22px', maxWidth: '520px' }}
                 >
                     Daily expert analysis, proven picks with a{' '}
                     <span style={{ color: '#00e59b', fontWeight: 600 }}>65% documented win rate</span>,
@@ -80,7 +145,7 @@ export default function HeroSection() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    style={{ display: 'flex', flexWrap: 'wrap' as const, justifyContent: 'center', gap: '16px', marginBottom: '28px' }}
+                    style={{ display: 'flex', flexWrap: 'wrap' as const, justifyContent: 'center', gap: '16px', marginBottom: '26px' }}
                 >
                     {['Daily picks that beat the line', 'Private Discord community', 'Fully transparent record'].map((prop, i) => (
                         <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#e5e7eb', fontSize: '14px' }}>
@@ -122,7 +187,7 @@ export default function HeroSection() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.6 }}
-                    style={{ fontSize: '13px', color: '#9ca3af', marginTop: '16px' }}
+                    style={{ fontSize: '13px', color: '#9ca3af', marginTop: '14px' }}
                 >
                     ⚡ 7-day free trial on Daily Picks • Cancel anytime • Secure Stripe payments
                 </motion.p>
