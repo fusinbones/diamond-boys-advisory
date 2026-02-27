@@ -23,10 +23,10 @@ export default function HomePage() {
             <span className="gradient-text">Diamond Boys</span>?
           </h2>
           <p className="text-gray-400 text-sm sm:text-lg mb-6 sm:mb-8 max-w-xl mx-auto leading-relaxed">
-            Get instant access to expert college basketball picks and our exclusive Discord community.
+            Sign up for early access — be the first to get our expert picks and join the Diamond Boys Discord.
           </p>
           <a href="/pricing" className="btn-glow btn-glow-lg pulse-ring w-full sm:w-auto">
-            💎 Get Started Now
+            💎 Join Early Access — Free
           </a>
           <p className="text-[10px] sm:text-xs text-gray-600 mt-4 sm:mt-6">
             For entertainment purposes only. Must be 21+.

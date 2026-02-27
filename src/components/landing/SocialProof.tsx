@@ -77,7 +77,7 @@ export default function SocialProof() {
                         </div>
 
                         <Link href="/pricing" className="btn-outline" style={{ width: '100%', justifyContent: 'center', fontSize: '14px' }}>
-                            Unlock Discord Access
+                            Join Early Access
                             <ArrowRight size={14} />
                         </Link>
                     </motion.div>
@@ -86,7 +86,7 @@ export default function SocialProof() {
                 {/* Trust indicators */}
                 <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '20px' }}>
                     {[
-                        { icon: Shield, text: 'Secure Payments via Stripe' },
+                        { icon: Shield, text: 'Launching Soon — Early Access Open' },
                         { icon: Users, text: '1,200+ Verified Members' },
                     ].map((item, i) => (
                         <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#9ca3af', fontSize: '14px' }}>

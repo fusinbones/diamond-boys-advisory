@@ -166,18 +166,18 @@ export default function HeroSection() {
                         href="/pricing"
                         className="btn-glow btn-glow-lg pulse-ring"
                         style={{ flex: '1 1 200px', maxWidth: '280px', textAlign: 'center' as const, justifyContent: 'center' }}
-                        onClick={() => trackEvent('cta_click', { location: 'hero', label: 'get_started' })}
+                        onClick={() => trackEvent('cta_click', { location: 'hero', label: 'early_access' })}
                     >
                         <Zap size={16} />
-                        Get Started — From $39/mo
+                        Get Early Access — Free
                     </Link>
                     <Link
                         href="/pricing"
                         className="btn-outline"
                         style={{ flex: '1 1 160px', maxWidth: '220px', textAlign: 'center' as const, justifyContent: 'center' }}
-                        onClick={() => trackEvent('cta_click', { location: 'hero', label: 'view_plans' })}
+                        onClick={() => trackEvent('cta_click', { location: 'hero', label: 'whats_coming' })}
                     >
-                        View All Plans
+                        See What&apos;s Coming
                         <ArrowRight size={14} />
                     </Link>
                 </motion.div>
@@ -189,7 +189,7 @@ export default function HeroSection() {
                     transition={{ delay: 0.6 }}
                     style={{ fontSize: '13px', color: '#9ca3af', marginTop: '14px' }}
                 >
-                    ⚡ 7-day free trial on Daily Picks • Cancel anytime • Secure Stripe payments
+                    ⚡ Launching soon • No credit card required • Be the first to know
                 </motion.p>
             </div>
         </section>

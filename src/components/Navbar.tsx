@@ -101,7 +101,7 @@ export default function Navbar() {
                         ) : (
                             <Link href="/pricing" className="btn-glow text-xs sm:text-sm !py-2 !px-4 sm:!py-2.5 sm:!px-5">
                                 <Zap size={14} className="sm:w-4 sm:h-4" />
-                                Get Picks
+                                Early Access
                             </Link>
                         )}
                     </div>
@@ -246,10 +246,10 @@ export default function Navbar() {
                                             }}
                                         >
                                             <Zap size={18} />
-                                            Get Picks — From $39/mo
+                                            Join Early Access — Free
                                         </Link>
                                         <p style={{ textAlign: 'center', fontSize: '12px', color: '#9ca3af', marginTop: '8px' }}>
-                                            7-day free trial • Cancel anytime
+                                            No credit card required
                                         </p>
                                     </>
                                 )}

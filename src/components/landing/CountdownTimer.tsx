@@ -90,7 +90,7 @@ export default function CountdownTimer() {
                             Grab the Season Pass
                         </Link>
                         <p style={{ fontSize: '12px', color: '#9ca3af', marginTop: '10px' }}>
-                            Includes full season coverage + Final Four specials
+                            Sign up now — be first in line when we launch
                         </p>
                     </div>
                 </motion.div>
