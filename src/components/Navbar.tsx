@@ -48,7 +48,7 @@ export default function Navbar() {
                             <span className="text-white font-display font-bold text-sm sm:text-lg tracking-wide">
                                 DIAMOND BOYS
                             </span>
-                            <span className="block text-[8px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.2em] text-[#00e59b]/70 uppercase -mt-0.5 sm:-mt-1">
+                            <span className="block text-[8px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.2em] text-[#00e59b] uppercase -mt-0.5 sm:-mt-1">
                                 Sports Advisory
                             </span>
                         </div>
@@ -60,7 +60,7 @@ export default function Navbar() {
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className="text-sm font-medium text-gray-400 hover:text-white transition-colors relative group"
+                                className="text-sm font-medium text-gray-300 hover:text-white transition-colors relative group"
                             >
                                 {link.label}
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#00e59b] transition-all group-hover:w-full" />

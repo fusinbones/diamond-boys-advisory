@@ -20,7 +20,7 @@ function WinsTicker() {
     const doubled = [...recentWins, ...recentWins];
     return (
         <div style={{ width: '100%', overflow: 'hidden', marginBottom: '20px' }}>
-            <p style={{ textAlign: 'center', fontSize: '11px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 600, marginBottom: '10px' }}>
+            <p style={{ textAlign: 'center', fontSize: '11px', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 600, marginBottom: '10px' }}>
                 Recent Verified Picks
             </p>
             <div style={{ position: 'relative', overflow: 'hidden', maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)' }}>
@@ -46,11 +46,11 @@ function WinsTicker() {
                         >
                             <span style={{ fontSize: '12px', color: '#9ca3af', fontWeight: 500 }}>{w.sport}</span>
                             <span style={{ fontSize: '14px', color: '#e5e7eb', fontWeight: 600 }}>{w.pick}</span>
-                            <span style={{ fontSize: '11px', color: '#6b7280' }}>({w.odds})</span>
+                            <span style={{ fontSize: '11px', color: '#9ca3af' }}>({w.odds})</span>
                             <span style={{
                                 fontSize: '11px',
                                 fontWeight: 700,
-                                color: '#065f46',
+                                color: '#00e59b',
                                 background: 'rgba(0,229,155,0.2)',
                                 padding: '2px 8px',
                                 borderRadius: '4px',
