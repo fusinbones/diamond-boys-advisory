@@ -58,15 +58,15 @@ export default function CountdownTimer() {
                 >
                     <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(0,229,155,0.3), rgba(0,212,170,0.1), rgba(0,229,155,0.3))', borderRadius: '14px' }} />
                     <div style={{ position: 'relative', margin: '1px', background: '#0a1020', borderRadius: '13px', padding: '28px 20px', textAlign: 'center' }}>
-                        <span className="badge-gold" style={{ padding: '4px 12px', fontSize: '10px', display: 'inline-flex', alignItems: 'center', gap: '5px', marginBottom: '12px' }}>
-                            <Clock size={10} />
+                        <span className="badge-gold" style={{ padding: '5px 14px', fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '5px', marginBottom: '12px' }}>
+                            <Clock size={12} />
                             Limited Time Offer
                         </span>
 
-                        <h3 className="font-display" style={{ fontSize: 'clamp(17px, 2.5vw, 22px)', fontWeight: 700, color: 'white', marginBottom: '6px' }}>
+                        <h3 className="font-display" style={{ fontSize: 'clamp(18px, 2.5vw, 24px)', fontWeight: 700, color: 'white', marginBottom: '6px' }}>
                             🏀 March Madness Special
                         </h3>
-                        <p style={{ color: '#9ca3af', fontSize: '13px', marginBottom: '20px', lineHeight: 1.5 }}>
+                        <p style={{ color: '#d1d5db', fontSize: '15px', marginBottom: '20px', lineHeight: 1.5 }}>
                             Lock in the <span style={{ color: '#fbbf24', fontWeight: 600 }}>Season Pass at $299</span> — every pick through the Final Four.
                         </p>
 
@@ -74,22 +74,22 @@ export default function CountdownTimer() {
                             {timeBlocks.map((block) => (
                                 <div key={block.label} style={{ textAlign: 'center' }}>
                                     <div className="glass-card" style={{ width: '52px', height: '52px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '4px', borderColor: 'rgba(0,229,155,0.15)' }}>
-                                        <span className="font-display" style={{ fontSize: '20px', fontWeight: 900, color: 'white', fontVariantNumeric: 'tabular-nums' }}>
+                                        <span className="font-display" style={{ fontSize: '22px', fontWeight: 900, color: 'white', fontVariantNumeric: 'tabular-nums' }}>
                                             {String(block.value).padStart(2, '0')}
                                         </span>
                                     </div>
-                                    <span style={{ fontSize: '9px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 500 }}>
+                                    <span style={{ fontSize: '11px', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 500 }}>
                                         {block.label}
                                     </span>
                                 </div>
                             ))}
                         </div>
 
-                        <Link href="/pricing" className="btn-glow" style={{ width: '100%', maxWidth: '240px', display: 'inline-flex', justifyContent: 'center', fontSize: '13px' }}>
+                        <Link href="/pricing" className="btn-glow" style={{ width: '100%', maxWidth: '240px', display: 'inline-flex', justifyContent: 'center', fontSize: '14px' }}>
                             <Zap size={14} />
                             Grab the Season Pass
                         </Link>
-                        <p style={{ fontSize: '10px', color: '#374151', marginTop: '10px' }}>
+                        <p style={{ fontSize: '12px', color: '#9ca3af', marginTop: '10px' }}>
                             Includes full season coverage + Final Four specials
                         </p>
                     </div>

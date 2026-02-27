@@ -43,10 +43,10 @@ export default function TestimonialsSection() {
                     viewport={{ once: true }}
                     style={{ textAlign: 'center', marginBottom: '24px' }}
                 >
-                    <h2 className="font-display" style={{ fontSize: 'clamp(20px, 3vw, 30px)', fontWeight: 700, color: 'white', marginBottom: '8px' }}>
+                    <h2 className="font-display" style={{ fontSize: 'clamp(22px, 3vw, 34px)', fontWeight: 700, color: 'white', marginBottom: '8px' }}>
                         Hear From <span className="gradient-text">Diamond Boys</span>
                     </h2>
-                    <p style={{ color: '#6b7280', fontSize: '13px' }}>
+                    <p style={{ color: '#d1d5db', fontSize: '15px' }}>
                         Real feedback from verified subscribers.
                     </p>
                 </motion.div>
@@ -65,29 +65,29 @@ export default function TestimonialsSection() {
                             {/* Stars */}
                             <div style={{ display: 'flex', gap: '2px', marginBottom: '10px' }}>
                                 {Array.from({ length: t.rating }).map((_, j) => (
-                                    <Star key={j} size={13} style={{ color: '#fbbf24', fill: '#fbbf24' }} />
+                                    <Star key={j} size={14} style={{ color: '#fbbf24', fill: '#fbbf24' }} />
                                 ))}
                             </div>
 
                             {/* Quote */}
-                            <p style={{ color: '#d1d5db', fontSize: '13px', lineHeight: 1.6, marginBottom: '14px', flex: 1 }}>
+                            <p style={{ color: '#e5e7eb', fontSize: '15px', lineHeight: 1.6, marginBottom: '14px', flex: 1 }}>
                                 &ldquo;{t.text}&rdquo;
                             </p>
 
                             {/* Author */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
                                 <span style={{ fontSize: '20px' }}>{t.avatar}</span>
                                 <div style={{ textAlign: 'left' }}>
-                                    <p style={{ color: 'white', fontSize: '13px', fontWeight: 600, margin: 0 }}>{t.name}</p>
-                                    <p style={{ color: '#00e59b', fontSize: '10px', margin: 0, fontWeight: 500 }}>{t.tier}</p>
+                                    <p style={{ color: 'white', fontSize: '14px', fontWeight: 600, margin: 0 }}>{t.name}</p>
+                                    <p style={{ color: '#00e59b', fontSize: '12px', margin: 0, fontWeight: 500 }}>{t.tier}</p>
                                 </div>
                             </div>
-                            <p style={{ color: '#374151', fontSize: '10px', margin: 0 }}>{t.since}</p>
+                            <p style={{ color: '#6b7280', fontSize: '11px', margin: 0 }}>{t.since}</p>
                         </motion.div>
                     ))}
                 </div>
 
-                <p style={{ textAlign: 'center', fontSize: '10px', color: '#374151', marginTop: '14px' }}>
+                <p style={{ textAlign: 'center', fontSize: '12px', color: '#6b7280', marginTop: '14px' }}>
                     * Individual results vary. Testimonials reflect personal experiences and are not guarantees.
                 </p>
             </div>

@@ -28,7 +28,7 @@ function AnimatedCounter({ target, suffix = '', prefix = '' }: { target: number;
     }, [isInView, target]);
 
     return (
-        <span ref={ref} className="font-display" style={{ fontWeight: 900, fontSize: 'clamp(22px, 3vw, 32px)', color: 'white', fontVariantNumeric: 'tabular-nums' }}>
+        <span ref={ref} className="font-display" style={{ fontWeight: 900, fontSize: 'clamp(24px, 3vw, 34px)', color: 'white', fontVariantNumeric: 'tabular-nums' }}>
             {prefix}{count.toLocaleString()}{suffix}
         </span>
     );
@@ -51,10 +51,10 @@ export default function StatsBar() {
                     viewport={{ once: true }}
                     style={{ textAlign: 'center', marginBottom: '28px' }}
                 >
-                    <h2 className="font-display" style={{ fontSize: 'clamp(20px, 3vw, 30px)', fontWeight: 700, color: 'white', marginBottom: '8px' }}>
+                    <h2 className="font-display" style={{ fontSize: 'clamp(22px, 3vw, 34px)', fontWeight: 700, color: 'white', marginBottom: '8px' }}>
                         Real Results. <span className="gradient-text">Real Transparency.</span>
                     </h2>
-                    <p style={{ color: '#6b7280', fontSize: '13px', maxWidth: '380px', margin: '0 auto' }}>
+                    <p style={{ color: '#d1d5db', fontSize: '15px', maxWidth: '420px', margin: '0 auto' }}>
                         Every pick tracked and verified. No fluff — just documented performance.
                     </p>
                 </motion.div>
@@ -74,13 +74,13 @@ export default function StatsBar() {
                                 <stat.icon size={16} style={{ color: stat.color }} />
                             </div>
                             <AnimatedCounter target={stat.value} suffix={stat.suffix} prefix={stat.prefix || ''} />
-                            <p style={{ color: '#9ca3af', fontSize: '12px', fontWeight: 600, margin: 0 }}>{stat.label}</p>
-                            <p style={{ color: '#4b5563', fontSize: '10px', margin: 0 }}>{stat.detail}</p>
+                            <p style={{ color: '#e5e7eb', fontSize: '14px', fontWeight: 600, margin: 0 }}>{stat.label}</p>
+                            <p style={{ color: '#9ca3af', fontSize: '12px', margin: 0 }}>{stat.detail}</p>
                         </motion.div>
                     ))}
                 </div>
 
-                <p style={{ textAlign: 'center', fontSize: '10px', color: '#374151', marginTop: '14px' }}>
+                <p style={{ textAlign: 'center', fontSize: '12px', color: '#6b7280', marginTop: '14px' }}>
                     * Statistics reflect current season. Past results ≠ future outcomes.
                 </p>
             </div>

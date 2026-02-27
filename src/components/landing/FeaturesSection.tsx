@@ -22,10 +22,10 @@ export default function FeaturesSection() {
                     viewport={{ once: true }}
                     style={{ textAlign: 'center', marginBottom: '28px' }}
                 >
-                    <h2 className="font-display" style={{ fontSize: 'clamp(20px, 3vw, 30px)', fontWeight: 700, color: 'white', marginBottom: '8px' }}>
+                    <h2 className="font-display" style={{ fontSize: 'clamp(22px, 3vw, 34px)', fontWeight: 700, color: 'white', marginBottom: '8px' }}>
                         Why <span className="gradient-text">Diamond Boys</span>?
                     </h2>
-                    <p style={{ color: '#6b7280', fontSize: '13px', maxWidth: '400px', margin: '0 auto' }}>
+                    <p style={{ color: '#d1d5db', fontSize: '15px', maxWidth: '440px', margin: '0 auto' }}>
                         Deep analytics, expert insight, and community — all in one subscription.
                     </p>
                 </motion.div>
@@ -44,8 +44,8 @@ export default function FeaturesSection() {
                             <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: f.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
                                 <f.icon size={18} style={{ color: f.color }} />
                             </div>
-                            <h3 style={{ color: 'white', fontWeight: 600, fontSize: '14px', marginBottom: '6px' }}>{f.title}</h3>
-                            <p style={{ color: '#6b7280', fontSize: '12px', lineHeight: 1.5, margin: 0 }}>{f.desc}</p>
+                            <h3 style={{ color: 'white', fontWeight: 600, fontSize: '16px', marginBottom: '6px' }}>{f.title}</h3>
+                            <p style={{ color: '#c9cdd3', fontSize: '14px', lineHeight: 1.5, margin: 0 }}>{f.desc}</p>
                         </motion.div>
                     ))}
                 </div>

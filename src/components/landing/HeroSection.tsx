@@ -29,9 +29,9 @@ export default function HeroSection() {
             <div
                 style={{
                     width: '100%',
-                    maxWidth: '640px',
+                    maxWidth: '680px',
                     margin: '0 auto',
-                    padding: '40px 20px',
+                    padding: '40px 24px',
                     display: 'flex',
                     flexDirection: 'column' as const,
                     alignItems: 'center',
@@ -45,7 +45,7 @@ export default function HeroSection() {
                     transition={{ delay: 0.2 }}
                     style={{ marginBottom: '24px' }}
                 >
-                    <span className="badge-emerald" style={{ padding: '6px 16px', fontSize: '11px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                    <span className="badge-emerald" style={{ padding: '7px 18px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                         <span className="live-dot" />
                         Live Now — 1,200+ Active Members
                     </span>
@@ -57,7 +57,7 @@ export default function HeroSection() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
                     className="font-display"
-                    style={{ fontSize: 'clamp(28px, 5vw, 48px)', fontWeight: 900, lineHeight: 1.1, marginBottom: '20px', color: 'white' }}
+                    style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 900, lineHeight: 1.1, marginBottom: '20px', color: 'white' }}
                 >
                     Unlock Winning{' '}
                     <span className="gradient-text">College Basketball</span> Picks
@@ -68,7 +68,7 @@ export default function HeroSection() {
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.15, duration: 0.6 }}
-                    style={{ color: '#9ca3af', fontSize: 'clamp(14px, 2vw, 16px)', lineHeight: 1.7, marginBottom: '24px', maxWidth: '480px' }}
+                    style={{ color: '#d1d5db', fontSize: 'clamp(15px, 2vw, 18px)', lineHeight: 1.7, marginBottom: '24px', maxWidth: '520px' }}
                 >
                     Daily expert analysis, proven picks with a{' '}
                     <span style={{ color: '#00e59b', fontWeight: 600 }}>65% documented win rate</span>,
@@ -80,11 +80,11 @@ export default function HeroSection() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    style={{ display: 'flex', flexWrap: 'wrap' as const, justifyContent: 'center', gap: '14px', marginBottom: '28px' }}
+                    style={{ display: 'flex', flexWrap: 'wrap' as const, justifyContent: 'center', gap: '16px', marginBottom: '28px' }}
                 >
                     {['Daily picks that beat the line', 'Private Discord community', 'Fully transparent record'].map((prop, i) => (
-                        <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#d1d5db', fontSize: '12px' }}>
-                            <CheckCircle size={13} style={{ color: '#00e59b', flexShrink: 0 }} />
+                        <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#e5e7eb', fontSize: '14px' }}>
+                            <CheckCircle size={15} style={{ color: '#00e59b', flexShrink: 0 }} />
                             {prop}
                         </span>
                     ))}
@@ -122,7 +122,7 @@ export default function HeroSection() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.6 }}
-                    style={{ fontSize: '11px', color: '#4b5563', marginTop: '16px' }}
+                    style={{ fontSize: '13px', color: '#9ca3af', marginTop: '16px' }}
                 >
                     ⚡ 7-day free trial on Daily Picks • Cancel anytime • Secure Stripe payments
                 </motion.p>

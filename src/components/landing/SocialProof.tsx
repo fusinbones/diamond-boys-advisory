@@ -20,13 +20,13 @@ export default function SocialProof() {
                         <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(0,229,155,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
                             <Users size={18} style={{ color: '#00e59b' }} />
                         </div>
-                        <h3 style={{ color: 'white', fontWeight: 600, fontSize: '15px', marginBottom: '4px' }}>Join 1,200+ Members</h3>
-                        <p style={{ color: '#6b7280', fontSize: '12px', marginBottom: '16px' }}>Growing daily — limited Elite tier spots remaining</p>
+                        <h3 style={{ color: 'white', fontWeight: 600, fontSize: '17px', marginBottom: '4px' }}>Join 1,200+ Members</h3>
+                        <p style={{ color: '#c9cdd3', fontSize: '14px', marginBottom: '16px' }}>Growing daily — limited Elite tier spots remaining</p>
 
                         {/* Progress bar */}
                         <div style={{ width: '100%', maxWidth: '260px', marginBottom: '14px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '5px' }}>
-                                <span style={{ color: '#6b7280' }}>Community capacity</span>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '5px' }}>
+                                <span style={{ color: '#9ca3af' }}>Community capacity</span>
                                 <span style={{ color: '#00e59b', fontWeight: 600 }}>82% Full</span>
                             </div>
                             <div style={{ width: '100%', height: '6px', background: '#1a2744', borderRadius: '3px', overflow: 'hidden' }}>
@@ -41,8 +41,8 @@ export default function SocialProof() {
                         </div>
 
                         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'center' }}>
-                            <span className="badge badge-danger" style={{ fontSize: '10px' }}>🔥 50 Elite spots left</span>
-                            <span className="badge badge-gold" style={{ fontSize: '10px' }}>⭐ 4.9/5 rating</span>
+                            <span className="badge badge-danger" style={{ fontSize: '12px' }}>🔥 50 Elite spots left</span>
+                            <span className="badge badge-gold" style={{ fontSize: '12px' }}>⭐ 4.9/5 rating</span>
                         </div>
                     </motion.div>
 
@@ -59,26 +59,26 @@ export default function SocialProof() {
                             <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(88,101,242,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px' }}>
                                 <MessageCircle size={18} style={{ color: '#5865F2' }} />
                             </div>
-                            <h3 style={{ color: 'white', fontWeight: 600, fontSize: '15px', marginBottom: '4px' }}>Exclusive Discord</h3>
-                            <p style={{ color: '#6b7280', fontSize: '12px' }}>Real-time picks, alerts & expert chat</p>
+                            <h3 style={{ color: 'white', fontWeight: 600, fontSize: '17px', marginBottom: '4px' }}>Exclusive Discord</h3>
+                            <p style={{ color: '#c9cdd3', fontSize: '14px' }}>Real-time picks, alerts & expert chat</p>
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '14px', flex: 1 }}>
                             {[
                                 { user: 'DiamondBot', msg: '🏀 NEW PICK: Duke -3.5 | HIGH', color: '#00e59b' },
                                 { user: 'Coach_DB', msg: 'Line moving fast — lock it in', color: '#fbbf24' },
-                                { user: 'Mike_R', msg: '💰 Already locked. LFG!', color: '#d1d5db' },
+                                { user: 'Mike_R', msg: '💰 Already locked. LFG!', color: '#e5e7eb' },
                             ].map((m, i) => (
                                 <div key={i} style={{ background: 'rgba(26,39,68,0.5)', borderRadius: '8px', padding: '8px 12px' }}>
-                                    <span style={{ fontSize: '10px', fontWeight: 700, color: m.color }}>{m.user}</span>
-                                    <p style={{ color: '#9ca3af', fontSize: '12px', margin: '2px 0 0' }}>{m.msg}</p>
+                                    <span style={{ fontSize: '12px', fontWeight: 700, color: m.color }}>{m.user}</span>
+                                    <p style={{ color: '#c9cdd3', fontSize: '14px', margin: '2px 0 0' }}>{m.msg}</p>
                                 </div>
                             ))}
                         </div>
 
-                        <Link href="/pricing" className="btn-outline" style={{ width: '100%', justifyContent: 'center', fontSize: '12px' }}>
+                        <Link href="/pricing" className="btn-outline" style={{ width: '100%', justifyContent: 'center', fontSize: '14px' }}>
                             Unlock Discord Access
-                            <ArrowRight size={13} />
+                            <ArrowRight size={14} />
                         </Link>
                     </motion.div>
                 </div>
@@ -89,8 +89,8 @@ export default function SocialProof() {
                         { icon: Shield, text: 'Secure Payments via Stripe' },
                         { icon: Users, text: '1,200+ Verified Members' },
                     ].map((item, i) => (
-                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#4b5563', fontSize: '12px' }}>
-                            <item.icon size={13} style={{ color: 'rgba(0,229,155,0.5)' }} />
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#9ca3af', fontSize: '14px' }}>
+                            <item.icon size={14} style={{ color: 'rgba(0,229,155,0.5)' }} />
                             <span>{item.text}</span>
                         </div>
                     ))}
