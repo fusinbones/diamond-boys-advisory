@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CreditCard, Calendar, AlertTriangle, CheckCircle, RefreshCw, Shield, Gem } from 'lucide-react';
+import { CreditCard, Calendar, AlertTriangle, CheckCircle, RefreshCw, Shield, Gem, ExternalLink, MessageCircle, ArrowRight, Mail } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -23,39 +23,83 @@ export default function DashboardPage() {
 
     if (!loggedIn) {
         return (
-            <div style={{ paddingTop: '40px', paddingBottom: '60px' }}>
-                <div className="container-db" style={{ maxWidth: '28rem' }}>
-                    <div className="text-center mb-6 sm:mb-8">
-                        <Image src="/logo.png" alt="Diamond Boys" width={48} height={48} className="sm:w-[60px] sm:h-[60px] mx-auto mb-3 sm:mb-4" />
-                        <h1 className="font-display text-xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">Member Dashboard</h1>
-                        <p className="text-gray-500 text-xs sm:text-sm">Enter your subscription email to view your status.</p>
-                    </div>
+            <div style={{ paddingTop: '40px', paddingBottom: '60px', minHeight: 'calc(100vh - 96px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div className="container-db" style={{ maxWidth: '420px' }}>
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        {/* Header */}
+                        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                            <Image src="/logo.png" alt="Diamond Boys" width={56} height={56} style={{ margin: '0 auto 16px', borderRadius: '12px' }} />
+                            <h1 className="font-display" style={{ fontSize: '28px', fontWeight: 800, color: 'white', marginBottom: '8px' }}>
+                                Member Dashboard
+                            </h1>
+                            <p style={{ color: '#d1d5db', fontSize: '15px', lineHeight: 1.5 }}>
+                                Enter your subscription email to manage your account and Discord access.
+                            </p>
+                        </div>
 
-                    <div className="glass-card p-5 sm:p-6">
-                        <form
-                            onSubmit={(e) => {
-                                e.preventDefault();
-                                if (email.trim()) setLoggedIn(true);
-                            }}
-                            className="space-y-3 sm:space-y-4"
-                        >
-                            <div>
-                                <label htmlFor="dash-email" className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">Email Address</label>
-                                <input
-                                    id="dash-email"
-                                    type="email"
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full bg-[#1a2744]/50 border border-white/10 rounded-lg sm:rounded-xl py-2.5 sm:py-3 px-3 sm:px-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#00e59b]/50 transition text-xs sm:text-sm"
-                                    placeholder="your@email.com"
-                                />
-                            </div>
-                            <button type="submit" className="btn-glow w-full !py-2.5 sm:!py-3 text-sm">
-                                View Subscription
-                            </button>
-                        </form>
-                    </div>
+                        {/* Login card */}
+                        <div className="glass-card" style={{ padding: '28px 24px', marginBottom: '20px' }}>
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    if (email.trim()) setLoggedIn(true);
+                                }}
+                            >
+                                <label htmlFor="dash-email" style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#e5e7eb', marginBottom: '8px' }}>
+                                    Email Address
+                                </label>
+                                <div style={{ position: 'relative', marginBottom: '16px' }}>
+                                    <Mail size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#6b7280' }} />
+                                    <input
+                                        id="dash-email"
+                                        type="email"
+                                        required
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            background: 'rgba(26,39,68,0.5)',
+                                            border: '1px solid rgba(255,255,255,0.1)',
+                                            borderRadius: '12px',
+                                            padding: '14px 14px 14px 42px',
+                                            color: 'white',
+                                            fontSize: '15px',
+                                            outline: 'none',
+                                        }}
+                                        placeholder="your@email.com"
+                                    />
+                                </div>
+                                <button type="submit" className="btn-glow" style={{ width: '100%', padding: '14px', fontSize: '15px', fontWeight: 600, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                    View My Subscription
+                                    <ArrowRight size={16} />
+                                </button>
+                            </form>
+                        </div>
+
+                        {/* Quick info */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            {[
+                                { icon: Shield, text: 'Secure — powered by Stripe billing' },
+                                { icon: MessageCircle, text: 'Manage your Discord access instantly' },
+                                { icon: Gem, text: 'Upgrade or downgrade your tier anytime' },
+                            ].map((item, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: 0.3 + i * 0.08 }}
+                                    style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#9ca3af', fontSize: '13px' }}
+                                >
+                                    <item.icon size={15} style={{ color: '#00e59b', flexShrink: 0 }} />
+                                    <span>{item.text}</span>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </motion.div>
                 </div>
             </div>
         );
@@ -63,75 +107,79 @@ export default function DashboardPage() {
 
     return (
         <div style={{ paddingTop: '40px', paddingBottom: '60px' }}>
-            <div className="container-db" style={{ maxWidth: '48rem' }}>
-                <div className="flex items-center justify-between mb-6 sm:mb-8">
-                    <div className="min-w-0">
-                        <h1 className="font-display text-xl sm:text-3xl font-bold text-white mb-0.5 sm:mb-1">Dashboard</h1>
-                        <p className="text-gray-500 text-xs sm:text-sm truncate">{email}</p>
+            <div className="container-db" style={{ maxWidth: '640px' }}>
+                {/* Header */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
+                    <div>
+                        <h1 className="font-display" style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: 800, color: 'white', marginBottom: '4px' }}>
+                            Dashboard
+                        </h1>
+                        <p style={{ color: '#9ca3af', fontSize: '14px' }}>{email}</p>
                     </div>
                     <button
                         onClick={() => setLoggedIn(false)}
-                        className="text-gray-600 hover:text-gray-400 text-xs sm:text-sm transition flex-shrink-0 ml-4"
+                        style={{ color: '#9ca3af', fontSize: '13px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', padding: '6px 14px', cursor: 'pointer' }}
                     >
                         Sign out
                     </button>
                 </div>
 
-                <div className="grid gap-4 sm:gap-5">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                     {/* Status Card */}
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="glass-card p-4 sm:p-6"
+                        className="glass-card"
+                        style={{ padding: '24px' }}
                     >
-                        <div className="flex items-center justify-between mb-4 sm:mb-6">
-                            <h2 className="text-white font-semibold text-sm sm:text-lg">Subscription Status</h2>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                            <h2 style={{ color: 'white', fontWeight: 600, fontSize: '17px' }}>Subscription Status</h2>
                             {sub.active ? (
-                                <span className="badge badge-success text-[9px] sm:text-xs">
-                                    <CheckCircle size={10} className="sm:w-3 sm:h-3" />
+                                <span className="badge badge-success" style={{ fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                    <CheckCircle size={12} />
                                     Active
                                 </span>
                             ) : (
-                                <span className="badge badge-danger text-[9px] sm:text-xs">
-                                    <AlertTriangle size={10} className="sm:w-3 sm:h-3" />
+                                <span className="badge badge-danger" style={{ fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                    <AlertTriangle size={12} />
                                     Inactive
                                 </span>
                             )}
                         </div>
 
-                        <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                            <div className="bg-[#1a2744]/30 rounded-lg sm:rounded-xl p-3 sm:p-4">
-                                <div className="flex items-center gap-1.5 sm:gap-2 text-gray-500 text-[10px] sm:text-xs mb-1.5 sm:mb-2">
-                                    <Gem size={12} className="sm:w-3.5 sm:h-3.5" />
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                            <div style={{ background: 'rgba(26,39,68,0.3)', borderRadius: '12px', padding: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#9ca3af', fontSize: '12px', marginBottom: '8px' }}>
+                                    <Gem size={13} />
                                     Current Tier
                                 </div>
-                                <p className="text-white font-display font-bold text-sm sm:text-xl">{sub.tier}</p>
-                                <p className="text-gray-500 text-[10px] sm:text-sm">${sub.price}/{sub.interval}</p>
+                                <p className="font-display" style={{ color: 'white', fontWeight: 800, fontSize: '18px', marginBottom: '2px' }}>{sub.tier}</p>
+                                <p style={{ color: '#9ca3af', fontSize: '13px' }}>${sub.price}/{sub.interval}</p>
                             </div>
-                            <div className="bg-[#1a2744]/30 rounded-lg sm:rounded-xl p-3 sm:p-4">
-                                <div className="flex items-center gap-1.5 sm:gap-2 text-gray-500 text-[10px] sm:text-xs mb-1.5 sm:mb-2">
-                                    <Calendar size={12} className="sm:w-3.5 sm:h-3.5" />
+                            <div style={{ background: 'rgba(26,39,68,0.3)', borderRadius: '12px', padding: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#9ca3af', fontSize: '12px', marginBottom: '8px' }}>
+                                    <Calendar size={13} />
                                     Next Renewal
                                 </div>
-                                <p className="text-white font-display font-bold text-sm sm:text-xl">
+                                <p className="font-display" style={{ color: 'white', fontWeight: 800, fontSize: '18px', marginBottom: '2px' }}>
                                     {new Date(sub.renewalDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                 </p>
-                                <p className="text-gray-500 text-[10px] sm:text-sm">Auto-renew on</p>
+                                <p style={{ color: '#9ca3af', fontSize: '13px' }}>Auto-renew on</p>
                             </div>
                         </div>
 
                         {!sub.active && (
-                            <div className="mt-4 sm:mt-6 bg-red-500/5 border border-red-500/15 rounded-lg sm:rounded-xl p-3 sm:p-4">
-                                <div className="flex items-start gap-2 sm:gap-3">
-                                    <AlertTriangle size={16} className="sm:w-[18px] sm:h-[18px] text-red-400 mt-0.5 flex-shrink-0" />
+                            <div style={{ marginTop: '16px', background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.15)', borderRadius: '12px', padding: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                                    <AlertTriangle size={18} style={{ color: '#f87171', flexShrink: 0, marginTop: '2px' }} />
                                     <div>
-                                        <p className="text-red-300 font-semibold text-xs sm:text-sm">Subscription Inactive</p>
-                                        <p className="text-gray-500 text-[10px] sm:text-xs mt-1">
+                                        <p style={{ color: '#fca5a5', fontWeight: 600, fontSize: '14px', marginBottom: '4px' }}>Subscription Inactive</p>
+                                        <p style={{ color: '#9ca3af', fontSize: '13px', marginBottom: '12px' }}>
                                             Your Discord access has been revoked. Renew to regain access.
                                         </p>
-                                        <Link href="/pricing" className="btn-glow text-xs !py-1.5 sm:!py-2 !px-3 sm:!px-4 mt-2 sm:mt-3 inline-flex">
-                                            <RefreshCw size={12} className="sm:w-3.5 sm:h-3.5" />
-                                            Renew
+                                        <Link href="/pricing" className="btn-glow" style={{ fontSize: '13px', padding: '8px 16px', display: 'inline-flex', gap: '6px' }}>
+                                            <RefreshCw size={13} />
+                                            Renew Now
                                         </Link>
                                     </div>
                                 </div>
@@ -139,22 +187,23 @@ export default function DashboardPage() {
                         )}
                     </motion.div>
 
-                    {/* Discord Info */}
+                    {/* Discord Access */}
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="glass-card p-4 sm:p-6"
+                        className="glass-card"
+                        style={{ padding: '24px' }}
                     >
-                        <h2 className="text-white font-semibold text-sm sm:text-lg mb-3 sm:mb-4">Discord Access</h2>
-                        <div className="flex items-center justify-between bg-[#1a2744]/30 rounded-lg sm:rounded-xl p-3 sm:p-4">
+                        <h2 style={{ color: 'white', fontWeight: 600, fontSize: '17px', marginBottom: '14px' }}>Discord Access</h2>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(26,39,68,0.3)', borderRadius: '12px', padding: '16px' }}>
                             <div>
-                                <p className="text-gray-500 text-[10px] sm:text-xs mb-0.5 sm:mb-1">Connected as</p>
-                                <p className="text-white font-medium text-sm sm:text-base">@{sub.discordUsername}</p>
+                                <p style={{ color: '#9ca3af', fontSize: '12px', marginBottom: '4px' }}>Connected as</p>
+                                <p style={{ color: 'white', fontWeight: 600, fontSize: '16px' }}>@{sub.discordUsername}</p>
                             </div>
                             {sub.active && (
-                                <span className="badge badge-success text-[9px] sm:text-[10px]">
-                                    <CheckCircle size={9} className="sm:w-2.5 sm:h-2.5" />
+                                <span className="badge badge-success" style={{ fontSize: '11px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                    <CheckCircle size={11} />
                                     Connected
                                 </span>
                             )}
@@ -163,36 +212,54 @@ export default function DashboardPage() {
 
                     {/* Quick Actions */}
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="glass-card p-4 sm:p-6"
+                        className="glass-card"
+                        style={{ padding: '24px' }}
                     >
-                        <h2 className="text-white font-semibold text-sm sm:text-lg mb-3 sm:mb-4">Quick Actions</h2>
-                        <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                        <h2 style={{ color: 'white', fontWeight: 600, fontSize: '17px', marginBottom: '14px' }}>Quick Actions</h2>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                             <a
                                 href="https://discord.gg/your-server"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="btn-outline text-xs sm:text-sm !py-2.5 sm:!py-3 w-full"
+                                className="btn-outline"
+                                style={{ width: '100%', padding: '12px', fontSize: '14px', justifyContent: 'center', gap: '8px' }}
                             >
+                                <ExternalLink size={14} />
                                 Open Discord
                             </a>
                             <a
                                 href="https://billing.stripe.com/p/login/test"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10 rounded-lg sm:rounded-xl py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm font-medium text-center transition flex items-center justify-center gap-1.5 sm:gap-2"
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '8px',
+                                    background: 'rgba(255,255,255,0.05)',
+                                    border: '1px solid rgba(255,255,255,0.1)',
+                                    borderRadius: '12px',
+                                    padding: '12px',
+                                    color: '#d1d5db',
+                                    fontSize: '14px',
+                                    fontWeight: 500,
+                                    cursor: 'pointer',
+                                    textDecoration: 'none',
+                                    transition: 'background 0.15s',
+                                }}
                             >
-                                <CreditCard size={12} className="sm:w-3.5 sm:h-3.5" />
-                                Billing
+                                <CreditCard size={14} />
+                                Manage Billing
                             </a>
                         </div>
                     </motion.div>
 
                     {/* Security note */}
-                    <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-gray-600 justify-center">
-                        <Shield size={10} className="sm:w-3 sm:h-3" />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', color: '#6b7280', fontSize: '12px' }}>
+                        <Shield size={12} />
                         <span>All billing managed securely through Stripe</span>
                     </div>
                 </div>
