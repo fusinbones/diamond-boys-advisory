@@ -1,0 +1,137 @@
+'use client';
+
+import { useState, useEffect, Suspense } from 'react';
+import { motion } from 'framer-motion';
+import dynamic from 'next/dynamic';
+import { CheckCircle, MessageCircle, ArrowRight, Shield } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
+
+const ReactConfetti = dynamic(() => import('react-confetti'), { ssr: false });
+
+function SuccessContent() {
+    const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+    const [showConfetti, setShowConfetti] = useState(true);
+
+    useEffect(() => {
+        setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+        const timer = setTimeout(() => setShowConfetti(false), 6000);
+        return () => clearTimeout(timer);
+    }, []);
+
+    return (
+        <div className="text-center overflow-hidden" style={{ paddingTop: '40px', paddingBottom: '60px' }}>
+            {showConfetti && (
+                <ReactConfetti
+                    width={windowSize.width}
+                    height={windowSize.height}
+                    recycle={false}
+                    numberOfPieces={150}
+                    colors={['#00e59b', '#00d4aa', '#fbbf24', '#34d399', '#a78bfa', '#ffffff']}
+                />
+            )}
+
+            <div className="container-db" style={{ maxWidth: '32rem' }}>
+                {/* Success icon */}
+                <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
+                    className="mb-5 sm:mb-8"
+                >
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#00e59b]/15 flex items-center justify-center mx-auto mb-3 sm:mb-4 border border-[#00e59b]/30">
+                        <CheckCircle size={28} className="sm:w-10 sm:h-10 text-[#00e59b]" />
+                    </div>
+                    <Image
+                        src="/logo.png"
+                        alt="Diamond Boys"
+                        width={48}
+                        height={48}
+                        className="sm:w-[60px] sm:h-[60px] mx-auto rounded-xl shadow-xl"
+                    />
+                </motion.div>
+
+                {/* Welcome message */}
+                <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                >
+                    <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 sm:mb-3">
+                        Welcome to <span className="gradient-text">Diamond Boys!</span>
+                    </h1>
+                    <p className="text-gray-400 text-xs sm:text-base mb-6 sm:mb-8 max-w-md mx-auto leading-relaxed">
+                        Your subscription is active! 🎉 Check your Discord DMs — our bot will send a welcome
+                        message with instructions to access exclusive channels.
+                    </p>
+                </motion.div>
+
+                {/* Steps */}
+                <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.6 }}
+                    className="glass-card p-4 sm:p-6 mb-5 sm:mb-6 text-left"
+                >
+                    <div className="space-y-3 sm:space-y-4">
+                        {[
+                            'Check your Discord DMs for the welcome message',
+                            'Join the #picks channel for daily analysis',
+                            'Introduce yourself in #general — the crew is waiting!',
+                        ].map((step, i) => (
+                            <div key={i} className="flex items-start gap-2.5 sm:gap-3">
+                                <span className="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#00e59b]/15 flex items-center justify-center text-[10px] sm:text-xs text-[#00e59b] font-bold">
+                                    {i + 1}
+                                </span>
+                                <p className="text-gray-300 text-xs sm:text-sm pt-0.5 sm:pt-1">{step}</p>
+                            </div>
+                        ))}
+                    </div>
+                </motion.div>
+
+                {/* CTAs */}
+                <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.8 }}
+                    className="flex flex-col gap-2.5 sm:gap-3"
+                >
+                    <a
+                        href="https://discord.gg/your-server"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-glow w-full !py-3 text-sm sm:text-base"
+                    >
+                        <MessageCircle size={16} className="sm:w-[18px] sm:h-[18px]" />
+                        Open Discord
+                    </a>
+                    <Link href="/dashboard" className="btn-outline w-full text-xs sm:text-sm">
+                        View Dashboard
+                        <ArrowRight size={14} className="sm:w-4 sm:h-4" />
+                    </Link>
+                </motion.div>
+
+                <p className="text-[10px] sm:text-xs text-gray-600 mt-4 sm:mt-6">
+                    Need help? Contact support@diamondboysadvisory.com
+                </p>
+
+                <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-gray-600 mt-3">
+                    <Shield size={10} className="sm:w-3 sm:h-3" />
+                    <span>Secured by Stripe</span>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default function SuccessPage() {
+    return (
+        <Suspense fallback={
+            <div className="py-20 text-center">
+                <div className="w-8 h-8 border-2 border-[#00e59b]/30 border-t-[#00e59b] rounded-full animate-spin mx-auto" />
+            </div>
+        }>
+            <SuccessContent />
+        </Suspense>
+    );
+}
