@@ -76,8 +76,8 @@ export async function GET(
             return true;
         });
 
-        // Map to streak data for display — last 30 games with full details
-        const streakData = uniqueFinished.slice(0, 30).map(g => {
+        // Map ALL finished games for frontend filtering by year
+        const streakData = uniqueFinished.map(g => {
             const isHome = g.teams.home.id === teamId;
             const teamScore = isHome ? g.scores.home.total : g.scores.away.total;
             const oppScore = isHome ? g.scores.away.total : g.scores.home.total;
