@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
     try {
-        const { email } = await request.json();
+        const { email, tier } = await request.json();
 
         if (!email || !email.includes('@')) {
             return NextResponse.json({ error: 'Valid email is required' }, { status: 400 });
@@ -17,6 +17,12 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
         }
 
+        // Build tags: always include base tags, add tier-specific tag if provided
+        const tags = ['early-access', 'website-signup'];
+        if (tier) {
+            tags.push(`interest-${tier}`); // e.g. interest-daily, interest-season
+        }
+
         const response = await fetch(
             `https://${SERVER_PREFIX}.api.mailchimp.com/3.0/lists/${AUDIENCE_ID}/members`,
             {
@@ -28,7 +34,8 @@ export async function POST(request: NextRequest) {
                 body: JSON.stringify({
                     email_address: email,
                     status: 'subscribed',
-                    tags: ['early-access', 'website-signup'],
+                    tags,
+                    merge_fields: tier ? { TIER: tier } : {},
                 }),
             }
         );
