@@ -276,7 +276,9 @@ function StreaksTab({ homeData, awayData, game }: { homeData: TeamData | null; a
         const { streakInfo, streakData } = data;
         const hasData = streakData.length > 0;
         const fallbackSeason = (data as TeamData & { fallbackSeason?: number }).fallbackSeason;
-        const seasons = data.seasonsIncluded || [];
+        const seasons = data.seasonBreakdown
+            ? Object.keys(data.seasonBreakdown).map(Number).sort((a, b) => b - a)
+            : (data.seasonsIncluded || []);
 
         return (
             <div className="admin-card" style={{ marginBottom: '16px' }}>
