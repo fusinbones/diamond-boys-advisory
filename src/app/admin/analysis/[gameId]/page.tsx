@@ -48,6 +48,7 @@ interface TeamData {
     streakInfo: StreakInfo;
     totalGames: number;
     seasonsIncluded?: number[];
+    seasonBreakdown?: Record<number, { games: number; wins: number; losses: number; altPct: number }>;
 }
 
 interface PitcherData {
@@ -468,6 +469,44 @@ function StreaksTab({ homeData, awayData, game }: { homeData: TeamData | null; a
                                 </tbody>
                             </table>
                         </div>
+
+                        {/* ── PER-SEASON BREAKDOWN ── */}
+                        {data.seasonBreakdown && Object.keys(data.seasonBreakdown).length > 0 && (
+                            <div style={{ marginTop: '16px' }}>
+                                <div style={{ color: '#6b7280', fontSize: '11px', fontWeight: 600, marginBottom: '6px', textTransform: 'uppercase' }}>
+                                    📅 Historical Alt% by Season ({streakInfo.totalGamesAvailable} total games)
+                                </div>
+                                <table className="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Season</th>
+                                            <th>Games</th>
+                                            <th>Record</th>
+                                            <th>Alt %</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {Object.entries(data.seasonBreakdown)
+                                            .sort(([a], [b]) => Number(b) - Number(a))
+                                            .map(([yr, s]) => (
+                                                <tr key={yr}>
+                                                    <td style={{ fontWeight: 700 }}>{yr}</td>
+                                                    <td>{s.games}</td>
+                                                    <td>{s.wins}W - {s.losses}L</td>
+                                                    <td>
+                                                        <span style={{
+                                                            fontWeight: 800,
+                                                            color: s.altPct >= 55 ? '#fbbf24' : s.altPct >= 48 ? '#00e59b' : '#e5e7eb',
+                                                        }}>
+                                                            {s.altPct}%
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
                     </>
                 )}
             </div>
