@@ -107,7 +107,7 @@ Provide a concise, structured analysis in this exact format:
 Be direct and confident. No hedging. Diamond Boys gives SHARP picks, not wishy-washy takes.`;
 
     const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
     });
 
@@ -143,7 +143,7 @@ ${pick.awayAlternating ? 'Away team currently in alternation pattern.' : ''}
 Write the reason in 1-2 SHORT sentences. Be confident and analytical. Reference the alternation pattern if relevant. No fluff.`;
 
     const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
     });
 
@@ -157,7 +157,7 @@ Write the reason in 1-2 SHORT sentences. Be confident and analytical. Reference 
 export async function generateContent(prompt: string): Promise<string> {
     const ai = getClient();
     const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
     });
     return response.text || '';
@@ -182,7 +182,7 @@ export async function chatWithGemini(
     fullPrompt += `\nUser: ${userMessage}\n\nRespond as Diamond:`;
 
     const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-2.5-flash',
         contents: fullPrompt,
     });
 
