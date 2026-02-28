@@ -4,67 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Zap, ArrowRight, CheckCircle } from 'lucide-react';
 import { trackEvent } from '@/components/Analytics';
-
-const recentWins = [
-    { pick: 'Yankees -1.5', result: 'WON', odds: '-115', sport: 'MLB' },
-    { pick: 'Dodgers ML', result: 'WON', odds: '+130', sport: 'MLB' },
-    { pick: 'Braves -1.5', result: 'WON', odds: '-105', sport: 'MLB' },
-    { pick: 'Astros Over 8.5', result: 'WON', odds: '-110', sport: 'MLB' },
-    { pick: 'Mets ML', result: 'WON', odds: '+145', sport: 'MLB' },
-    { pick: 'Padres -1.5', result: 'WON', odds: '+110', sport: 'MLB' },
-    { pick: 'Phillies ML', result: 'WON', odds: '-120', sport: 'MLB' },
-    { pick: 'Cubs Under 7.5', result: 'WON', odds: '-105', sport: 'MLB' },
-];
-
-function WinsTicker() {
-    const doubled = [...recentWins, ...recentWins];
-    return (
-        <div style={{ width: '100%', overflow: 'hidden', marginBottom: '20px' }}>
-            <p style={{ textAlign: 'center', fontSize: '11px', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 600, marginBottom: '10px' }}>
-                Recent Verified Picks
-            </p>
-            <div style={{ position: 'relative', overflow: 'hidden', maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)' }}>
-                <motion.div
-                    animate={{ x: ['0%', '-50%'] }}
-                    transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-                    style={{ display: 'flex', gap: '10px', width: 'max-content' }}
-                >
-                    {doubled.map((w, i) => (
-                        <div
-                            key={i}
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                background: 'rgba(0,229,155,0.06)',
-                                border: '1px solid rgba(0,229,155,0.12)',
-                                borderRadius: '8px',
-                                padding: '6px 12px',
-                                whiteSpace: 'nowrap',
-                                flexShrink: 0,
-                            }}
-                        >
-                            <span style={{ fontSize: '12px', color: '#9ca3af', fontWeight: 500 }}>{w.sport}</span>
-                            <span style={{ fontSize: '14px', color: '#e5e7eb', fontWeight: 600 }}>{w.pick}</span>
-                            <span style={{ fontSize: '11px', color: '#9ca3af' }}>({w.odds})</span>
-                            <span style={{
-                                fontSize: '11px',
-                                fontWeight: 700,
-                                color: '#00e59b',
-                                background: 'rgba(0,229,155,0.2)',
-                                padding: '2px 8px',
-                                borderRadius: '4px',
-                                letterSpacing: '0.05em',
-                            }}>
-                                ✓ {w.result}
-                            </span>
-                        </div>
-                    ))}
-                </motion.div>
-            </div>
-        </div>
-    );
-}
+import LiveGameTicker from './LiveGameTicker';
 
 export default function HeroSection() {
     return (
@@ -72,8 +12,19 @@ export default function HeroSection() {
             className="relative overflow-hidden"
             style={{ paddingTop: '24px', paddingBottom: '40px' }}
         >
-            {/* Subtle glow */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {/* Background hero image with overlay */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+                <div
+                    style={{
+                        position: 'absolute',
+                        inset: 0,
+                        backgroundImage: 'url(/baseball-hero.png)',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center 40%',
+                        opacity: 0.06,
+                        filter: 'blur(1px)',
+                    }}
+                />
                 <div
                     className="absolute rounded-full"
                     style={{
@@ -98,10 +49,11 @@ export default function HeroSection() {
                     alignItems: 'center',
                     textAlign: 'center' as const,
                     position: 'relative' as const,
+                    zIndex: 1,
                 }}
             >
-                {/* Live wins ticker — fills dead space, instant social proof */}
-                <WinsTicker />
+                {/* Live games ticker — real MLB data */}
+                <LiveGameTicker />
 
                 {/* Social proof badge */}
                 <motion.div

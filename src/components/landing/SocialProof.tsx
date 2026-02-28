@@ -65,7 +65,7 @@ export default function SocialProof() {
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '14px', flex: 1 }}>
                             {[
-                                { user: 'DiamondBot', msg: '🏀 NEW PICK: Duke -3.5 | HIGH', color: '#00e59b' },
+                                { user: 'DiamondBot', msg: '⚾ NEW PICK: Yankees -1.5 | HIGH', color: '#00e59b' },
                                 { user: 'Coach_DB', msg: 'Line moving fast — lock it in', color: '#fbbf24' },
                                 { user: 'Mike_R', msg: '💰 Already locked. LFG!', color: '#e5e7eb' },
                             ].map((m, i) => (

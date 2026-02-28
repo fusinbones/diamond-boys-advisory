@@ -1,0 +1,352 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useAdminAuth } from '@/lib/adminAuth';
+import {
+    ClipboardList,
+    Plus,
+    Save,
+    Trash2,
+    Edit3,
+    Check,
+    X,
+    Loader2,
+    AlertCircle,
+} from 'lucide-react';
+import type { Pick, Game } from '@/lib/api-sports-types';
+
+export default function PicksPage() {
+    const { user } = useAdminAuth();
+    const searchParams = useSearchParams();
+    const [picks, setPicks] = useState<Pick[]>([]);
+    const [todaysGames, setTodaysGames] = useState<Game[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState('');
+    const [showForm, setShowForm] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
+
+    // Pre-fill from Quick Pick URL params
+    const urlAway = searchParams.get('away') || '';
+    const urlHome = searchParams.get('home') || '';
+    const urlDate = searchParams.get('date') || '';
+
+    // Form state
+    const [form, setForm] = useState({
+        home_team: '',
+        away_team: '',
+        pick_type: 'ML',
+        pick_team: '',
+        pick_value: '',
+        confidence: 75,
+        reason: '',
+        notes: '',
+        game_date: new Date().toISOString().split('T')[0],
+    });
+
+    // Auto-open form if Quick Pick params are present
+    useEffect(() => {
+        if (urlAway || urlHome) {
+            setForm(prev => ({
+                ...prev,
+                away_team: urlAway || prev.away_team,
+                home_team: urlHome || prev.home_team,
+                game_date: urlDate || prev.game_date,
+            }));
+            setShowForm(true);
+        }
+    }, [urlAway, urlHome, urlDate]);
+
+    useEffect(() => {
+        fetchPicks();
+        fetchTodaysGames();
+    }, []);
+
+    const fetchPicks = async () => {
+        setLoading(true);
+        try {
+            const today = new Date().toISOString().split('T')[0];
+            const res = await fetch(`/api/admin/picks?from=${today}&limit=50`);
+            const data = await res.json();
+            setPicks(data.picks || []);
+        } catch {
+            setError('Failed to load picks');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchTodaysGames = async () => {
+        try {
+            const res = await fetch('/api/admin/games');
+            const data = await res.json();
+            setTodaysGames(data.games || []);
+        } catch {
+            // Non-critical — just means no game selector
+        }
+    };
+
+    const selectGame = (game: Game) => {
+        setForm(prev => ({
+            ...prev,
+            away_team: game.teams.away.name,
+            home_team: game.teams.home.name,
+            game_date: game.date?.split('T')[0] || prev.game_date,
+        }));
+    };
+
+    const savePick = async () => {
+        setSaving(true);
+        try {
+            const body = {
+                ...form,
+                created_by: user?.email || 'unknown',
+                game_id: null,
+                result: 'pending',
+            };
+
+            const res = await fetch('/api/admin/picks', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+
+            setPicks([data.pick, ...picks]);
+            setShowForm(false);
+            resetForm();
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to save');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const deletePick = async (id: string) => {
+        try {
+            await fetch(`/api/admin/picks/${id}`, { method: 'DELETE' });
+            setPicks(picks.filter(p => p.id !== id));
+        } catch {
+            setError('Failed to delete');
+        }
+    };
+
+    const updateResult = async (id: string, result: string) => {
+        try {
+            const res = await fetch(`/api/admin/picks/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ result }),
+            });
+            const data = await res.json();
+            setPicks(picks.map(p => p.id === id ? data.pick : p));
+            setEditingId(null);
+        } catch {
+            setError('Failed to update');
+        }
+    };
+
+    const resetForm = () => {
+        setForm({
+            home_team: '', away_team: '', pick_type: 'ML', pick_team: '', pick_value: '',
+            confidence: 75, reason: '', notes: '', game_date: new Date().toISOString().split('T')[0],
+        });
+    };
+
+    return (
+        <div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                <div>
+                    <h1 style={{ color: 'white', fontSize: '24px', fontWeight: 800, marginBottom: '4px' }}>
+                        📋 Pick Entry
+                    </h1>
+                    <p style={{ color: '#6b7280', fontSize: '13px' }}>Enter and manage today&apos;s picks</p>
+                </div>
+                <button onClick={() => setShowForm(!showForm)} className="admin-btn admin-btn-primary">
+                    <Plus size={16} /> New Pick
+                </button>
+            </div>
+
+            {error && (
+                <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '8px', padding: '10px 14px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <AlertCircle size={14} style={{ color: '#f87171' }} />
+                    <span style={{ color: '#fca5a5', fontSize: '13px' }}>{error}</span>
+                    <button onClick={() => setError('')} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer' }}><X size={14} /></button>
+                </div>
+            )}
+
+            {/* New Pick Form */}
+            {showForm && (
+                <div className="admin-card" style={{ marginBottom: '20px' }}>
+                    <div className="admin-card-title" style={{ marginBottom: '16px' }}>
+                        <ClipboardList size={16} style={{ color: '#00e59b' }} />
+                        New Pick
+                    </div>
+
+                    {/* Quick Game Selector */}
+                    {todaysGames.length > 0 && !form.away_team && (
+                        <div style={{ marginBottom: '16px' }}>
+                            <label className="admin-label">Quick Select — Today&apos;s Games</label>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '8px', maxHeight: '200px', overflowY: 'auto', padding: '2px' }}>
+                                {todaysGames.filter(g => g.status.short === 'NS').map(game => (
+                                    <button
+                                        key={game.id}
+                                        onClick={() => selectGame(game)}
+                                        className="admin-game-select-card"
+                                    >
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img src={game.teams.away.logo} alt="" />
+                                        <span style={{ color: '#d1d5db', fontSize: '12px', fontWeight: 600 }}>{game.teams.away.name}</span>
+                                        <span style={{ color: '#4b5563', fontSize: '11px' }}>@</span>
+                                        <span style={{ color: '#d1d5db', fontSize: '12px', fontWeight: 600 }}>{game.teams.home.name}</span>
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img src={game.teams.home.logo} alt="" />
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Show selected game */}
+                    {form.away_team && form.home_team && (
+                        <div style={{ background: 'rgba(0,229,155,0.06)', border: '1px solid rgba(0,229,155,0.15)', borderRadius: '8px', padding: '10px 14px', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <span style={{ color: '#00e59b', fontSize: '13px', fontWeight: 600 }}>
+                                {form.away_team} @ {form.home_team}
+                            </span>
+                            <button onClick={() => setForm({ ...form, away_team: '', home_team: '' })} style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', fontSize: '11px' }}>
+                                Change
+                            </button>
+                        </div>
+                    )}
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                        {!form.away_team && (
+                            <>
+                                <div>
+                                    <label className="admin-label">Away Team</label>
+                                    <input value={form.away_team} onChange={e => setForm({ ...form, away_team: e.target.value })} className="admin-input" placeholder="e.g. NY Yankees" />
+                                </div>
+                                <div>
+                                    <label className="admin-label">Home Team</label>
+                                    <input value={form.home_team} onChange={e => setForm({ ...form, home_team: e.target.value })} className="admin-input" placeholder="e.g. Boston Red Sox" />
+                                </div>
+                            </>
+                        )}
+                        <div>
+                            <label className="admin-label">Pick Type</label>
+                            <select value={form.pick_type} onChange={e => setForm({ ...form, pick_type: e.target.value })} className="admin-select">
+                                <option value="ML">Moneyline</option>
+                                <option value="O/U">Over/Under</option>
+                                <option value="Run Line">Run Line</option>
+                                <option value="Prop">Prop</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="admin-label">Pick (Team / Side)</label>
+                            <input value={form.pick_team} onChange={e => setForm({ ...form, pick_team: e.target.value })} className="admin-input" placeholder="e.g. Yankees ML or Over 8.5" />
+                        </div>
+                        <div>
+                            <label className="admin-label">Confidence ({form.confidence}%)</label>
+                            <input type="range" min={10} max={100} step={5} value={form.confidence} onChange={e => setForm({ ...form, confidence: Number(e.target.value) })} style={{ width: '100%', accentColor: '#00e59b' }} />
+                        </div>
+                        <div>
+                            <label className="admin-label">Game Date</label>
+                            <input type="date" value={form.game_date} onChange={e => setForm({ ...form, game_date: e.target.value })} className="admin-input" />
+                        </div>
+                    </div>
+
+                    <div style={{ marginTop: '14px' }}>
+                        <label className="admin-label">Reason</label>
+                        <textarea value={form.reason} onChange={e => setForm({ ...form, reason: e.target.value })} className="admin-textarea" placeholder="e.g. Alt streak + ace on the mound" />
+                    </div>
+
+                    <div style={{ marginTop: '14px' }}>
+                        <label className="admin-label">Notes (optional)</label>
+                        <textarea value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} className="admin-textarea" placeholder="Additional context..." style={{ minHeight: '60px' }} />
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+                        <button onClick={savePick} disabled={saving || !form.pick_team || !form.home_team || !form.away_team} className="admin-btn admin-btn-primary" style={{ opacity: (!form.pick_team || !form.home_team || !form.away_team) ? 0.5 : 1 }}>
+                            {saving ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <Save size={14} />}
+                            {saving ? 'Saving...' : 'Save Pick'}
+                        </button>
+                        <button onClick={() => { setShowForm(false); resetForm(); }} className="admin-btn admin-btn-secondary">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Picks List */}
+            {loading ? (
+                <div className="admin-loader"><div className="admin-spinner" /> Loading picks...</div>
+            ) : picks.length === 0 ? (
+                <div className="admin-empty">
+                    <ClipboardList size={24} style={{ marginBottom: '8px', opacity: 0.3 }} />
+                    <p>No picks entered for today yet.</p>
+                </div>
+            ) : (
+                <table className="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Game</th>
+                            <th>Pick</th>
+                            <th>Type</th>
+                            <th>Conf.</th>
+                            <th>Reason</th>
+                            <th>Result</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {picks.map((pick) => (
+                            <tr key={pick.id}>
+                                <td>
+                                    <div style={{ fontWeight: 600, fontSize: '13px' }}>{pick.away_team} @ {pick.home_team}</div>
+                                    <div style={{ color: '#6b7280', fontSize: '11px' }}>{pick.game_date}</div>
+                                </td>
+                                <td style={{ fontWeight: 700, color: 'white' }}>{pick.pick_team}</td>
+                                <td>{pick.pick_type}</td>
+                                <td>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <div className="admin-confidence-bar">
+                                            <div className="admin-confidence-fill" style={{
+                                                width: `${pick.confidence}%`,
+                                                background: pick.confidence >= 80 ? '#00e59b' : pick.confidence >= 60 ? '#fbbf24' : '#f87171',
+                                            }} />
+                                        </div>
+                                        <span style={{ fontSize: '11px', color: '#9ca3af' }}>{pick.confidence}%</span>
+                                    </div>
+                                </td>
+                                <td style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    {pick.reason}
+                                </td>
+                                <td>
+                                    {editingId === pick.id ? (
+                                        <div style={{ display: 'flex', gap: '4px' }}>
+                                            {['hit', 'miss', 'push'].map(r => (
+                                                <button key={r} onClick={() => updateResult(pick.id!, r)} className={`admin-badge-${r === 'hit' ? 'hit' : r === 'miss' ? 'miss' : 'push'}`} style={{ cursor: 'pointer', border: 'none', fontSize: '10px' }}>
+                                                    {r}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <span className={`admin-badge-${pick.result}`}>{pick.result}</span>
+                                    )}
+                                </td>
+                                <td>
+                                    <div style={{ display: 'flex', gap: '4px' }}>
+                                        <button onClick={() => setEditingId(editingId === pick.id ? null : pick.id!)} className="admin-btn admin-btn-secondary" style={{ padding: '4px 6px' }}>
+                                            {editingId === pick.id ? <X size={12} /> : <Edit3 size={12} />}
+                                        </button>
+                                        <button onClick={() => deletePick(pick.id!)} className="admin-btn admin-btn-danger" style={{ padding: '4px 6px' }}>
+                                            <Trash2 size={12} />
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
+        </div>
+    );
+}
