@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Events, Message, GuildMember } from 'discord.js';
+import { Client, GatewayIntentBits, Events, Message, GuildMember, TextChannel } from 'discord.js';
 import { GoogleGenAI } from '@google/genai';
 import { SYSTEM_PROMPT, BOT_CHANNELS_ALLOWLIST, WELCOME_MESSAGE } from './system-prompt';
 
@@ -160,14 +160,16 @@ client.on(Events.MessageCreate, async (message: Message) => {
 
     // Show typing indicator
     try {
-        await message.channel.sendTyping();
+        if ('sendTyping' in message.channel) {
+            await (message.channel as TextChannel).sendTyping();
+        }
     } catch { /* ignore */ }
 
     // Get Gemini response
     const reply = await askGemini(
         message.channelId,
         content,
-        message.author.displayName || message.author.username
+        message.member?.displayName || message.author.username
     );
 
     // Discord has a 2000 char limit
