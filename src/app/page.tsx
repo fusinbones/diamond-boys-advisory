@@ -4,11 +4,13 @@ import CountdownTimer from '@/components/landing/CountdownTimer';
 import FeaturesSection from '@/components/landing/FeaturesSection';
 import SocialProof from '@/components/landing/SocialProof';
 import TestimonialsSection from '@/components/landing/TestimonialsSection';
+import MagicTicker from '@/components/MagicTicker';
 
 export default function HomePage() {
   return (
     <>
       <HeroSection />
+      <MagicTicker />
       <StatsBar />
       <CountdownTimer />
       <FeaturesSection />

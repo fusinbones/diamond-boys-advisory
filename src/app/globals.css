@@ -407,3 +407,25 @@ body {
   border-radius: 50%;
   animation: live-pulse 2s ease-in-out infinite;
 }
+
+/* ——— Spin (loading spinners) ——— */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ——— Pulse (LIVE indicators) ——— */
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: scale(1.2);
+  }
+}
