@@ -309,7 +309,7 @@ export default function PicksPage() {
 
                     {/* Row 1: Pick Details */}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-                        {!form.away_team && (
+                        {!(form.away_team && form.home_team) && (
                             <>
                                 <div>
                                     <label className="admin-label">Away Team</label>
