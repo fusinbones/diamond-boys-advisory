@@ -1,0 +1,20 @@
+{
+    "name": "diamond-boys-bot",
+    "version": "1.0.0",
+    "description": "Diamond Boys Advisory Discord Bot — Gemini AI powered",
+    "main": "dist/diamond-bot.js",
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/diamond-bot.js",
+        "dev": "npx ts-node diamond-bot.ts"
+    },
+    "dependencies": {
+        "@google/genai": "^1.41.0",
+        "discord.js": "^14.18.0"
+    },
+    "devDependencies": {
+        "@types/node": "^22.0.0",
+        "typescript": "^5.5.0",
+        "ts-node": "^10.9.0"
+    }
+}

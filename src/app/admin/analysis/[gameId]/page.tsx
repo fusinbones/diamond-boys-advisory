@@ -10,6 +10,8 @@ import {
     AlertCircle,
     Target,
     Users,
+    Brain,
+    Sparkles,
 } from 'lucide-react';
 import Link from 'next/link';
 import type { Game, TeamStats } from '@/lib/api-sports-types';
@@ -188,6 +190,7 @@ export default function GameAnalysisPage({ params }: { params: Promise<{ gameId:
         { id: 'pitching', label: 'Pitching', icon: Target },
         { id: 'stats', label: 'Team Stats', icon: BarChart3 },
         { id: 'odds', label: 'Odds', icon: DollarSign },
+        { id: 'ai', label: 'AI Analysis', icon: Brain },
     ];
 
     return (
@@ -261,6 +264,7 @@ export default function GameAnalysisPage({ params }: { params: Promise<{ gameId:
             {activeTab === 'pitching' && <PitchingTab homeP={homeP} awayP={awayP} game={game} />}
             {activeTab === 'stats' && <StatsTab homeData={homeData} awayData={awayData} game={game} />}
             {activeTab === 'odds' && <OddsTab oddsData={oddsData} />}
+            {activeTab === 'ai' && <AITab game={game} homeData={homeData} awayData={awayData} homeP={homeP} awayP={awayP} oddsData={oddsData} />}
         </div>
     );
 }
@@ -791,3 +795,162 @@ function OddsTab({ oddsData }: { oddsData: OddsData | null }) {
         </div>
     );
 }
+
+// ═══════════════════════════════════════════
+// TAB: AI Analysis (Gemini)
+// ═══════════════════════════════════════════
+
+function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
+    game: Game;
+    homeData: TeamData | null;
+    awayData: TeamData | null;
+    homeP: PitcherData | null;
+    awayP: PitcherData | null;
+    oddsData: OddsData | null;
+}) {
+    const [analysis, setAnalysis] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    const runAnalysis = async () => {
+        setLoading(true);
+        setError('');
+        try {
+            // Build context from all available data
+            const body: Record<string, unknown> = {
+                awayTeam: game.teams.away.name,
+                homeTeam: game.teams.home.name,
+                gameDate: game.date?.split('T')[0] || '',
+            };
+
+            if (homeData?.streakInfo) {
+                body.homeStats = {
+                    altPct: homeData.streakInfo.altPercentage,
+                    longestAltRun: homeData.streakInfo.longestAltRun,
+                    currentAltStreak: homeData.streakInfo.currentAltStreak,
+                    isCurrentlyAlternating: homeData.streakInfo.isCurrentlyAlternating,
+                    predictedNext: homeData.streakInfo.predictedNext,
+                    overallAltPct: homeData.streakInfo.overallAltPct,
+                    currentStreak: `${homeData.streakInfo.currentStreak}${homeData.streakInfo.currentResult}`,
+                    recentSequence: homeData.streakInfo.recentSequence,
+                };
+            }
+
+            if (awayData?.streakInfo) {
+                body.awayStats = {
+                    altPct: awayData.streakInfo.altPercentage,
+                    longestAltRun: awayData.streakInfo.longestAltRun,
+                    currentAltStreak: awayData.streakInfo.currentAltStreak,
+                    isCurrentlyAlternating: awayData.streakInfo.isCurrentlyAlternating,
+                    predictedNext: awayData.streakInfo.predictedNext,
+                    overallAltPct: awayData.streakInfo.overallAltPct,
+                    currentStreak: `${awayData.streakInfo.currentStreak}${awayData.streakInfo.currentResult}`,
+                    recentSequence: awayData.streakInfo.recentSequence,
+                };
+            }
+
+            if (homeP || awayP) {
+                body.pitchers = {
+                    home: homeP?.info ? { name: homeP.info.fullName || 'TBD' } : undefined,
+                    away: awayP?.info ? { name: awayP.info.fullName || 'TBD' } : undefined,
+                };
+            }
+
+            const res = await fetch('/api/admin/ai/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+            setAnalysis(data.analysis);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Analysis failed');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Auto-run on mount
+    useEffect(() => {
+        if (!analysis && !loading) runAnalysis();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    return (
+        <div className="admin-card">
+            <div className="admin-card-header">
+                <div className="admin-card-title">
+                    <Sparkles size={16} style={{ color: '#a78bfa' }} />
+                    Gemini AI Analysis
+                </div>
+                <button
+                    onClick={runAnalysis}
+                    disabled={loading}
+                    className="admin-btn admin-btn-secondary"
+                    style={{ fontSize: '11px', padding: '4px 10px' }}
+                >
+                    {loading ? <Loader2 size={12} style={{ animation: 'spin 1s linear infinite' }} /> : <Sparkles size={12} />}
+                    {loading ? 'Analyzing...' : 'Re-analyze'}
+                </button>
+            </div>
+
+            {loading && (
+                <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+                    <div style={{ fontSize: '32px', marginBottom: '12px', animation: 'pulse 2s infinite' }}>🤖</div>
+                    <div style={{ color: '#a78bfa', fontSize: '14px', fontWeight: 600 }}>Analyzing matchup with Gemini AI...</div>
+                    <div style={{ color: '#4b5563', fontSize: '11px', marginTop: '4px' }}>
+                        Processing odds, alternation patterns, and team stats
+                    </div>
+                </div>
+            )}
+
+            {error && (
+                <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '8px', padding: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <AlertCircle size={14} style={{ color: '#f87171' }} />
+                    <span style={{ color: '#fca5a5', fontSize: '13px' }}>{error}</span>
+                </div>
+            )}
+
+            {analysis && !loading && (
+                <div style={{
+                    background: 'rgba(167,139,250,0.04)',
+                    border: '1px solid rgba(167,139,250,0.12)',
+                    borderRadius: '10px',
+                    padding: '18px',
+                    fontSize: '13px',
+                    lineHeight: '1.7',
+                    color: '#d1d5db',
+                    whiteSpace: 'pre-wrap',
+                }}>
+                    {analysis.split('\n').map((line, i) => {
+                        // Bold headers
+                        if (line.startsWith('**') && line.includes('**:')) {
+                            const [label, ...rest] = line.split(':');
+                            return (
+                                <div key={i} style={{ marginBottom: '4px', marginTop: i > 0 ? '12px' : '0' }}>
+                                    <span style={{ color: '#a78bfa', fontWeight: 800, fontSize: '12px', textTransform: 'uppercase' }}>
+                                        {label.replace(/\*\*/g, '')}
+                                    </span>
+                                    <span style={{ color: '#e5e7eb' }}>:{rest.join(':')}</span>
+                                </div>
+                            );
+                        }
+                        // Numbered items
+                        if (/^\d+\./.test(line.trim())) {
+                            return (
+                                <div key={i} style={{ paddingLeft: '12px', color: '#d1d5db', marginBottom: '2px' }}>
+                                    {line}
+                                </div>
+                            );
+                        }
+                        // Empty lines
+                        if (!line.trim()) return <div key={i} style={{ height: '8px' }} />;
+                        return <div key={i}>{line}</div>;
+                    })}
+                </div>
+            )}
+        </div>
+    );
+}
+

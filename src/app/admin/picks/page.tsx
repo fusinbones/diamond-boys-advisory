@@ -15,6 +15,7 @@ import {
     AlertCircle,
     Send,
     Clock,
+    Sparkles,
 } from 'lucide-react';
 import type { Pick, Game } from '@/lib/api-sports-types';
 
@@ -32,6 +33,7 @@ export default function PicksPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [posting, setPosting] = useState<string | null>(null);
+    const [generating, setGenerating] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [showForm, setShowForm] = useState(false);
@@ -372,7 +374,38 @@ export default function PicksPage() {
 
                     {/* Row 3: Reason + Notes */}
                     <div style={{ marginTop: '14px' }}>
-                        <label className="admin-label">Reason</label>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <label className="admin-label">Reason</label>
+                            {form.pick_team && form.home_team && form.away_team && (
+                                <button
+                                    onClick={async () => {
+                                        setGenerating(true);
+                                        try {
+                                            const res = await fetch('/api/admin/ai/reason', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({
+                                                    awayTeam: form.away_team,
+                                                    homeTeam: form.home_team,
+                                                    pickTeam: form.pick_team,
+                                                    pickType: form.pick_type,
+                                                    gameDate: form.game_date,
+                                                }),
+                                            });
+                                            const data = await res.json();
+                                            if (data.reason) setForm(prev => ({ ...prev, reason: data.reason }));
+                                        } catch { /* ignore */ }
+                                        setGenerating(false);
+                                    }}
+                                    disabled={generating}
+                                    className="admin-btn admin-btn-secondary"
+                                    style={{ padding: '2px 8px', fontSize: '10px', gap: '3px', marginBottom: '4px' }}
+                                >
+                                    {generating ? <Loader2 size={10} style={{ animation: 'spin 1s linear infinite' }} /> : <Sparkles size={10} />}
+                                    {generating ? 'Generating...' : '✨ Auto-Analyze'}
+                                </button>
+                            )}
+                        </div>
                         <textarea value={form.reason} onChange={e => setForm({ ...form, reason: e.target.value })} className="admin-textarea" placeholder="e.g. Alt streak + ace on the mound" />
                     </div>
                     <div style={{ marginTop: '14px' }}>
