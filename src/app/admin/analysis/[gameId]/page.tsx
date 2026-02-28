@@ -23,6 +23,7 @@ interface StreakGame {
     teamScore: number;
     oppScore: number;
     result: string;
+    season: number;
 }
 
 interface StreakInfo {
@@ -31,6 +32,14 @@ interface StreakInfo {
     currentStreak: number;
     currentResult: string;
     gamesAnalyzed: number;
+    totalGamesAvailable: number;
+    alternationWindow: number;
+    longestAltRun: number;
+    currentAltStreak: number;
+    predictedNext: string;
+    isCurrentlyAlternating: boolean;
+    overallAltPct: number;
+    recentSequence: string;
 }
 
 interface TeamData {
@@ -38,6 +47,7 @@ interface TeamData {
     streakData: StreakGame[];
     streakInfo: StreakInfo;
     totalGames: number;
+    seasonsIncluded?: number[];
 }
 
 interface PitcherData {
@@ -255,7 +265,7 @@ export default function GameAnalysisPage({ params }: { params: Promise<{ gameId:
 }
 
 // ═══════════════════════════════════════════
-// TAB: Streaks & Patterns
+// TAB: Alternation Patterns (W-L-W-L System)
 // ═══════════════════════════════════════════
 
 function StreaksTab({ homeData, awayData, game }: { homeData: TeamData | null; awayData: TeamData | null; game: Game }) {
@@ -265,93 +275,196 @@ function StreaksTab({ homeData, awayData, game }: { homeData: TeamData | null; a
         const { streakInfo, streakData } = data;
         const hasData = streakData.length > 0;
         const fallbackSeason = (data as TeamData & { fallbackSeason?: number }).fallbackSeason;
+        const seasons = data.seasonsIncluded || [];
 
         return (
             <div className="admin-card" style={{ marginBottom: '16px' }}>
                 <div className="admin-card-header">
                     <div className="admin-card-title">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={team.logo} alt="" width={20} height={20} style={{ borderRadius: '4px' }} />
+                        <img src={team.logo} alt="" width={24} height={24} style={{ borderRadius: '4px' }} />
                         {team.name} — {label}
                     </div>
-                    {fallbackSeason && (
-                        <span className="admin-league-badge mlb" style={{ fontSize: '9px' }}>
-                            {fallbackSeason} Season
-                        </span>
-                    )}
+                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                        {seasons.map(yr => (
+                            <span key={yr} className="admin-league-badge mlb" style={{ fontSize: '9px' }}>
+                                {yr}
+                            </span>
+                        ))}
+                        {fallbackSeason && (
+                            <span className="admin-league-badge spring" style={{ fontSize: '9px' }}>
+                                Fallback: {fallbackSeason}
+                            </span>
+                        )}
+                    </div>
                 </div>
 
                 {!hasData ? (
                     <div style={{ textAlign: 'center', padding: '20px 0' }}>
                         <div style={{ fontSize: '24px', marginBottom: '8px' }}>📊</div>
                         <p style={{ color: '#6b7280', fontSize: '13px' }}>No completed games yet this season.</p>
-                        <p style={{ color: '#4b5563', fontSize: '11px', marginTop: '4px' }}>Streak data will populate as games finish.</p>
+                        <p style={{ color: '#4b5563', fontSize: '11px', marginTop: '4px' }}>Pattern data will populate as games finish.</p>
                     </div>
                 ) : (
                     <>
-                        {/* Streak sequence */}
-                        <div style={{ marginBottom: '16px' }}>
-                            <div style={{ color: '#6b7280', fontSize: '11px', fontWeight: 600, marginBottom: '6px', textTransform: 'uppercase' }}>
-                                Last {streakInfo.gamesAnalyzed} Games (L → R = oldest → newest)
+                        {/* ── ALTERNATION PATTERN (13-game window) ── */}
+                        <div style={{ marginBottom: '18px' }}>
+                            <div style={{ color: '#6b7280', fontSize: '11px', fontWeight: 600, marginBottom: '8px', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                🔄 Alternation Pattern — Last {streakInfo.gamesAnalyzed} Games
+                                <span style={{ fontSize: '9px', color: '#4b5563' }}>(oldest → newest)</span>
                             </div>
-                            <div className="admin-streak">
-                                {streakInfo.sequence.split('').map((r, i) => (
-                                    <div key={i} className={`admin-streak-dot ${r === 'W' ? 'win' : 'loss'}`}>{r}</div>
-                                ))}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '2px', flexWrap: 'wrap' }}>
+                                {streakInfo.recentSequence.split('').map((r, i, arr) => {
+                                    const isAlt = i > 0 && r !== arr[i - 1];
+                                    return (
+                                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+                                            {i > 0 && (
+                                                <div style={{
+                                                    width: '10px',
+                                                    textAlign: 'center',
+                                                    fontSize: '8px',
+                                                    color: isAlt ? '#00e59b' : '#ef4444',
+                                                    fontWeight: 800,
+                                                }}>
+                                                    {isAlt ? '↕' : '='}
+                                                </div>
+                                            )}
+                                            <div style={{
+                                                width: '32px',
+                                                height: '32px',
+                                                borderRadius: '6px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                fontSize: '13px',
+                                                fontWeight: 800,
+                                                background: r === 'W' ? 'rgba(0,229,155,0.15)' : 'rgba(239,68,68,0.15)',
+                                                color: r === 'W' ? '#00e59b' : '#f87171',
+                                                border: `1px solid ${r === 'W' ? 'rgba(0,229,155,0.3)' : 'rgba(239,68,68,0.3)'}`,
+                                            }}>
+                                                {r}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            <div style={{ fontSize: '9px', color: '#4b5563', marginTop: '4px' }}>
+                                <span style={{ color: '#00e59b' }}>↕ = alternated</span>{' · '}
+                                <span style={{ color: '#ef4444' }}>= = repeated</span>
                             </div>
                         </div>
 
-                        {/* Streak stats */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
-                            <div className="admin-stat-card" style={{ padding: '12px' }}>
-                                <div style={{ color: '#6b7280', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase' }}>Current Streak</div>
-                                <div style={{ color: streakInfo.currentResult === 'W' ? '#00e59b' : '#f87171', fontSize: '22px', fontWeight: 800 }}>
-                                    {streakInfo.currentStreak}{streakInfo.currentResult}
+                        {/* ── PREDICTION CARD ── */}
+                        {streakInfo.isCurrentlyAlternating && (
+                            <div style={{
+                                background: 'rgba(251,191,36,0.06)',
+                                border: '1px solid rgba(251,191,36,0.2)',
+                                borderRadius: '10px',
+                                padding: '14px 16px',
+                                marginBottom: '16px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px',
+                            }}>
+                                <div style={{ fontSize: '28px' }}>🎯</div>
+                                <div>
+                                    <div style={{ color: '#fbbf24', fontSize: '13px', fontWeight: 700, marginBottom: '2px' }}>
+                                        Alternation Active — {streakInfo.currentAltStreak} game streak
+                                    </div>
+                                    <div style={{ color: '#d1d5db', fontSize: '12px' }}>
+                                        Pattern suggests next: <span style={{
+                                            fontWeight: 800,
+                                            color: streakInfo.predictedNext === 'W' ? '#00e59b' : '#f87171',
+                                        }}>{streakInfo.predictedNext === 'W' ? 'WIN' : 'LOSS'}</span>
+                                        {' '}(last result was {streakInfo.currentResult === 'W' ? 'a Win' : 'a Loss'})
+                                    </div>
                                 </div>
                             </div>
-                            <div className="admin-stat-card" style={{ padding: '12px' }}>
-                                <div style={{ color: '#6b7280', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase' }}>Alt %</div>
-                                <div style={{ color: streakInfo.altPercentage > 60 ? '#fbbf24' : '#e5e7eb', fontSize: '22px', fontWeight: 800 }}>
+                        )}
+
+                        {/* ── PATTERN STATS ── */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '8px', marginBottom: '16px' }}>
+                            <div className="admin-stat-card" style={{ padding: '12px', textAlign: 'center' }}>
+                                <div style={{ color: '#6b7280', fontSize: '9px', fontWeight: 600, textTransform: 'uppercase', marginBottom: '4px' }}>13-Game Alt%</div>
+                                <div style={{ color: streakInfo.altPercentage >= 60 ? '#fbbf24' : streakInfo.altPercentage >= 50 ? '#00e59b' : '#e5e7eb', fontSize: '24px', fontWeight: 800 }}>
                                     {streakInfo.altPercentage}%
                                 </div>
                             </div>
-                            <div className="admin-stat-card" style={{ padding: '12px' }}>
-                                <div style={{ color: '#6b7280', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase' }}>Games</div>
-                                <div style={{ color: '#e5e7eb', fontSize: '22px', fontWeight: 800 }}>
-                                    {streakInfo.gamesAnalyzed}
+                            <div className="admin-stat-card" style={{ padding: '12px', textAlign: 'center' }}>
+                                <div style={{ color: '#6b7280', fontSize: '9px', fontWeight: 600, textTransform: 'uppercase', marginBottom: '4px' }}>Longest Alt Run</div>
+                                <div style={{ color: '#a78bfa', fontSize: '24px', fontWeight: 800 }}>
+                                    {streakInfo.longestAltRun}
+                                </div>
+                            </div>
+                            <div className="admin-stat-card" style={{ padding: '12px', textAlign: 'center' }}>
+                                <div style={{ color: '#6b7280', fontSize: '9px', fontWeight: 600, textTransform: 'uppercase', marginBottom: '4px' }}>Current Alt</div>
+                                <div style={{ color: streakInfo.currentAltStreak >= 3 ? '#fbbf24' : '#e5e7eb', fontSize: '24px', fontWeight: 800 }}>
+                                    {streakInfo.currentAltStreak}
+                                </div>
+                            </div>
+                            <div className="admin-stat-card" style={{ padding: '12px', textAlign: 'center' }}>
+                                <div style={{ color: '#6b7280', fontSize: '9px', fontWeight: 600, textTransform: 'uppercase', marginBottom: '4px' }}>Streak</div>
+                                <div style={{ color: streakInfo.currentResult === 'W' ? '#00e59b' : '#f87171', fontSize: '24px', fontWeight: 800 }}>
+                                    {streakInfo.currentStreak}{streakInfo.currentResult}
+                                </div>
+                            </div>
+                            <div className="admin-stat-card" style={{ padding: '12px', textAlign: 'center' }}>
+                                <div style={{ color: '#6b7280', fontSize: '9px', fontWeight: 600, textTransform: 'uppercase', marginBottom: '4px' }}>Overall Alt%</div>
+                                <div style={{ color: '#e5e7eb', fontSize: '24px', fontWeight: 800 }}>
+                                    {streakInfo.overallAltPct}%
                                 </div>
                             </div>
                         </div>
 
-                        {/* Recent games list */}
-                        <div style={{ marginTop: '14px' }}>
-                            <div style={{ color: '#6b7280', fontSize: '11px', fontWeight: 600, marginBottom: '6px', textTransform: 'uppercase' }}>Recent Games</div>
+                        {/* ── GAME LOG (up to 13) ── */}
+                        <div>
+                            <div style={{ color: '#6b7280', fontSize: '11px', fontWeight: 600, marginBottom: '6px', textTransform: 'uppercase' }}>
+                                Game Log — Last {Math.min(streakData.length, 13)} Games
+                            </div>
                             <table className="admin-table">
                                 <thead>
                                     <tr>
+                                        <th>#</th>
                                         <th>Date</th>
                                         <th>Opponent</th>
                                         <th>H/A</th>
                                         <th>Score</th>
                                         <th>Result</th>
+                                        <th>Alt?</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {streakData.slice(0, 10).map((g) => (
-                                        <tr key={g.gameId}>
-                                            <td>{new Date(g.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</td>
-                                            <td style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                <img src={g.opponentLogo} alt="" width={16} height={16} style={{ borderRadius: '2px' }} />
-                                                {g.opponent}
-                                            </td>
-                                            <td>{g.isHome ? 'H' : 'A'}</td>
-                                            <td>{g.teamScore} - {g.oppScore}</td>
-                                            <td>
-                                                <span className={g.result === 'W' ? 'admin-badge-hit' : 'admin-badge-miss'}>{g.result}</span>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    {streakData.slice(0, 13).map((g, idx) => {
+                                        const prevGame = idx < streakData.length - 1 ? streakData[idx + 1] : null;
+                                        const isAlt = prevGame ? g.result !== prevGame.result : false;
+                                        return (
+                                            <tr key={g.gameId}>
+                                                <td style={{ color: '#4b5563', fontSize: '11px' }}>{idx + 1}</td>
+                                                <td>{new Date(g.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })}</td>
+                                                <td style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                    <img src={g.opponentLogo} alt="" width={16} height={16} style={{ borderRadius: '2px' }} />
+                                                    {g.opponent}
+                                                </td>
+                                                <td>{g.isHome ? 'H' : 'A'}</td>
+                                                <td>{g.teamScore} - {g.oppScore}</td>
+                                                <td>
+                                                    <span className={g.result === 'W' ? 'admin-badge-hit' : 'admin-badge-miss'}>{g.result}</span>
+                                                </td>
+                                                <td>
+                                                    {prevGame && (
+                                                        <span style={{
+                                                            fontSize: '11px',
+                                                            fontWeight: 700,
+                                                            color: isAlt ? '#00e59b' : '#ef4444',
+                                                        }}>
+                                                            {isAlt ? '↕ Yes' : '= No'}
+                                                        </span>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </div>

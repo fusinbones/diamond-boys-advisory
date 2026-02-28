@@ -15,46 +15,67 @@ export async function GET(
         // Determine gameType from league
         const gameType = league === 71 ? 'S' : 'R';
 
-        // Try current season first
-        let [stats, games] = await Promise.all([
-            getMLBTeamStats(teamId, season, gameType).catch(() => null),
-            getMLBTeamGames(teamId, season, gameType === 'S' ? 'S' : 'R,S').catch(() => []),
-        ]);
+        // ═══ Fetch multi-season data for alternation analysis ═══
+        // Always get current season + previous season(s) for deep history
+        const currentYear = new Date().getFullYear();
+        const seasonsToFetch = [currentYear]; // Always current year
+        if (currentYear - 1 >= 2024) seasonsToFetch.push(currentYear - 1); // 2025
+        if (currentYear - 2 >= 2024) seasonsToFetch.push(currentYear - 2); // 2024
 
-        // If no games found for this season, try previous season with regular season
+        // Fetch stats for current context
+        let stats = await getMLBTeamStats(teamId, season, gameType).catch(() => null);
+
+        // Fetch games across all seasons (regular + spring training)
+        const allGamesPromises = seasonsToFetch.map(async (yr) => {
+            const types = yr === currentYear ? (gameType === 'S' ? 'S' : 'R,S') : 'R';
+            return getMLBTeamGames(teamId, yr, types).catch(() => []);
+        });
+
+        const allSeasonGames = await Promise.all(allGamesPromises);
+        let allGames = allSeasonGames.flat();
+
+        // If no stats for current season, fallback to previous
         let fallbackSeason: number | null = null;
-        if (games.length === 0 || games.filter(g => g.status.short === 'FT').length === 0) {
-            const prevSeason = season - 1;
-            const [fbStats, fbGames] = await Promise.all([
-                getMLBTeamStats(teamId, prevSeason, 'R').catch(() => null),
-                getMLBTeamGames(teamId, prevSeason, 'R').catch(() => []),
-            ]);
-            if (fbGames.length > 0) {
-                stats = fbStats;
-                games = fbGames;
-                fallbackSeason = prevSeason;
-            }
-        }
-
-        // Also try Spring Training if regular season returned no games
-        if (games.length === 0 || games.filter(g => g.status.short === 'FT').length === 0) {
-            if (gameType !== 'S') {
-                const stGames = await getMLBTeamGames(teamId, season, 'S').catch(() => []);
-                if (stGames.length > 0) {
-                    games = stGames;
-                    const stStats = await getMLBTeamStats(teamId, season, 'S').catch(() => null);
-                    if (stStats) stats = stStats;
-                    fallbackSeason = null;
+        if (!stats) {
+            for (const yr of seasonsToFetch.slice(1)) {
+                const fbStats = await getMLBTeamStats(teamId, yr, 'R').catch(() => null);
+                if (fbStats) {
+                    stats = fbStats;
+                    fallbackSeason = yr;
+                    break;
                 }
             }
         }
 
-        // Derive streak data from games
-        const finishedGames = games
+        // If no games at all for current season, try spring training
+        const currentSeasonGames = allGames.filter(g => {
+            const gYear = new Date(g.date).getFullYear();
+            return gYear === currentYear;
+        });
+        if (currentSeasonGames.filter(g => g.status.short === 'FT').length === 0 && gameType !== 'S') {
+            const stGames = await getMLBTeamGames(teamId, currentYear, 'S').catch(() => []);
+            if (stGames.length > 0) {
+                allGames = [...stGames, ...allGames];
+                const stStats = await getMLBTeamStats(teamId, currentYear, 'S').catch(() => null);
+                if (stStats) stats = stStats;
+            }
+        }
+
+        // ═══ Derive streak data from ALL finished games ═══
+        const finishedGames = allGames
             .filter(g => g.status.short === 'FT')
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-        const streakData = finishedGames.slice(0, 20).map(g => {
+        // Remove duplicates (same game could appear in multiple fetches)
+        const seen = new Set<number>();
+        const uniqueFinished = finishedGames.filter(g => {
+            if (seen.has(g.id)) return false;
+            seen.add(g.id);
+            return true;
+        });
+
+        // Map to streak data — enough for 13-game alternation analysis + context
+        const streakData = uniqueFinished.slice(0, 30).map(g => {
             const isHome = g.teams.home.id === teamId;
             const teamScore = isHome ? g.scores.home.total : g.scores.away.total;
             const oppScore = isHome ? g.scores.away.total : g.scores.home.total;
@@ -67,24 +88,65 @@ export async function GET(
                 teamScore: teamScore ?? 0,
                 oppScore: oppScore ?? 0,
                 result: (teamScore ?? 0) > (oppScore ?? 0) ? 'W' : 'L',
+                season: new Date(g.date).getFullYear(),
             };
         });
 
-        // Calculate alt streak info
-        const resultSequence = streakData.map(g => g.result).reverse();
-        let altCount = 0;
-        for (let i = 1; i < resultSequence.length; i++) {
-            if (resultSequence[i] !== resultSequence[i - 1]) altCount++;
-        }
-        const altPercentage = resultSequence.length > 1 ? Math.round((altCount / (resultSequence.length - 1)) * 100) : 0;
+        // ═══ Alternation Pattern Analysis (up to 13 games) ═══
+        const ALTERNATION_WINDOW = 13;
+        const resultSequence = streakData.map(g => g.result).reverse(); // oldest → newest
+        const recentResults = resultSequence.slice(-ALTERNATION_WINDOW); // last 13
 
-        // Current streak
+        // Count alternations in the window
+        let altCount = 0;
+        for (let i = 1; i < recentResults.length; i++) {
+            if (recentResults[i] !== recentResults[i - 1]) altCount++;
+        }
+        const altPercentage = recentResults.length > 1 ? Math.round((altCount / (recentResults.length - 1)) * 100) : 0;
+
+        // Find longest alternating streak within the window
+        let longestAltRun = 0;
+        let currentAltRun = 0;
+        for (let i = 1; i < recentResults.length; i++) {
+            if (recentResults[i] !== recentResults[i - 1]) {
+                currentAltRun++;
+                longestAltRun = Math.max(longestAltRun, currentAltRun);
+            } else {
+                currentAltRun = 0;
+            }
+        }
+
+        // Current alternating streak (from most recent game backwards)
+        let currentAltStreak = 0;
+        const reversed = [...recentResults].reverse(); // newest first
+        for (let i = 1; i < reversed.length; i++) {
+            if (reversed[i] !== reversed[i - 1]) {
+                currentAltStreak++;
+            } else {
+                break;
+            }
+        }
+
+        // Current same-result streak  
         let currentStreak = streakData.length > 0 ? 1 : 0;
         const currentResult = streakData[0]?.result || '';
         for (let i = 1; i < streakData.length; i++) {
             if (streakData[i].result === currentResult) currentStreak++;
             else break;
         }
+
+        // Predict next result based on alternation pattern
+        const lastResult = recentResults[recentResults.length - 1] || '';
+        const predictedNext = lastResult === 'W' ? 'L' : 'W';
+        const isCurrentlyAlternating = currentAltStreak >= 2;
+
+        // All-time alternation from all available data 
+        const allResults = streakData.map(g => g.result).reverse();
+        let allAltCount = 0;
+        for (let i = 1; i < allResults.length; i++) {
+            if (allResults[i] !== allResults[i - 1]) allAltCount++;
+        }
+        const overallAltPct = allResults.length > 1 ? Math.round((allAltCount / (allResults.length - 1)) * 100) : 0;
 
         return NextResponse.json({
             stats,
@@ -94,10 +156,20 @@ export async function GET(
                 altPercentage,
                 currentStreak,
                 currentResult,
-                gamesAnalyzed: streakData.length,
+                gamesAnalyzed: recentResults.length,
+                totalGamesAvailable: streakData.length,
+                // New alternation-specific fields
+                alternationWindow: ALTERNATION_WINDOW,
+                longestAltRun,
+                currentAltStreak,
+                predictedNext,
+                isCurrentlyAlternating,
+                overallAltPct,
+                recentSequence: recentResults.join(''),
             },
-            totalGames: finishedGames.length,
+            totalGames: uniqueFinished.length,
             fallbackSeason,
+            seasonsIncluded: [...new Set(streakData.map(g => g.season))],
         });
     } catch (error) {
         console.error('Admin team stats API error:', error);
