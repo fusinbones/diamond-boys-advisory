@@ -215,7 +215,7 @@ export default function GameAnalysisPage({ params }: { params: Promise<{ gameId:
 
             {/* Game Header */}
             <div className="admin-card" style={{ marginBottom: '20px', padding: '24px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px' }}>
+                <div className="admin-game-header-flex">
                     <div style={{ textAlign: 'center' }}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={game.teams.away.logo} alt="" width={48} height={48} style={{ borderRadius: '8px', marginBottom: '6px' }} />
