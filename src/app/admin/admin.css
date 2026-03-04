@@ -343,6 +343,26 @@
     }
 }
 
+/* ── Pattern Row (W/L sequence) ──────── */
+
+.admin-pattern-row {
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .admin-pattern-row {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 6px;
+        scrollbar-width: none;
+    }
+
+    .admin-pattern-row::-webkit-scrollbar {
+        display: none;
+    }
+}
+
 /* ── Mobile Responsive ─────────────────── */
 
 @media (max-width: 768px) {

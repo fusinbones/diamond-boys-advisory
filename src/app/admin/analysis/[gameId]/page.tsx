@@ -389,7 +389,7 @@ function TeamAlternation({ data, team, label }: { data: TeamData | null; team: {
 
                     {/* ── PATTERN VISUALIZATION ── */}
                     <div style={{ marginBottom: '14px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '2px', flexWrap: 'wrap' }}>
+                        <div className="admin-pattern-row" style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
                             {displaySequence.map((r, i, arr) => {
                                 const isAlt = i > 0 && r !== arr[i - 1];
                                 return (
