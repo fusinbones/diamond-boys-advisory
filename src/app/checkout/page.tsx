@@ -83,7 +83,7 @@ function CheckoutForm() {
                                     <span className="text-white font-display font-bold text-xl sm:text-2xl">
                                         ${selectedTier.price}
                                         <span className="text-gray-500 text-xs sm:text-sm font-normal">
-                                            /{selectedTier.interval === 'year' ? 'year' : 'mo'}
+                                            {selectedTier.intervalLabel}
                                         </span>
                                     </span>
                                 </div>

@@ -6,18 +6,12 @@ import { tiers } from '@/lib/tiers';
 import { trackEvent } from '@/components/Analytics';
 
 const tierIcons: Record<string, React.ReactNode> = {
-    daily: <Zap size={18} />,
     weekly: <Star size={18} />,
     monthly: <Crown size={18} />,
     season: <Gem size={18} />,
 };
 
 const tierColors: Record<string, { border: string; badge: string; glow: string }> = {
-    daily: {
-        border: 'border-gray-700/50',
-        badge: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
-        glow: '',
-    },
     weekly: {
         border: 'border-[#00e59b]/20',
         badge: 'bg-[#00e59b]/10 text-[#00e59b] border-[#00e59b]/20',
@@ -42,9 +36,9 @@ export default function PricingCards() {
     };
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {tiers.map((tier, i) => {
-                const colors = tierColors[tier.id] || tierColors.daily;
+                const colors = tierColors[tier.id] || tierColors.weekly;
 
                 return (
                     <motion.div
@@ -80,7 +74,7 @@ export default function PricingCards() {
                             {/* Price */}
                             <div className="mb-3 sm:mb-4">
                                 <span className="text-3xl sm:text-4xl font-display font-black text-white">${tier.price}</span>
-                                <span className="text-gray-500 text-xs sm:text-sm ml-1">/{tier.interval === 'year' ? 'year' : 'mo'}</span>
+                                <span className="text-gray-500 text-xs sm:text-sm ml-1">{tier.intervalLabel}</span>
                             </div>
 
                             {/* Description */}
@@ -109,7 +103,7 @@ export default function PricingCards() {
 
                             {tier.trialDays && (
                                 <p className="text-[9px] sm:text-[10px] text-gray-600 text-center mt-1.5 sm:mt-2">
-                                    Card required. Billed ${tier.price}/mo after trial.
+                                    Card required. Billed ${tier.price}{tier.intervalLabel} after trial.
                                 </p>
                             )}
                         </div>

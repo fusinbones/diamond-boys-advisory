@@ -9,14 +9,12 @@ import Link from 'next/link';
 import { tiers, Tier } from '@/lib/tiers';
 
 const tierIcons: Record<string, React.ReactNode> = {
-    daily: <Zap size={20} />,
     weekly: <Star size={20} />,
     monthly: <Crown size={20} />,
     season: <Gem size={20} />,
 };
 
 const tierAccents: Record<string, { color: string; bg: string; border: string }> = {
-    daily: { color: '#9ca3af', bg: 'rgba(156,163,175,0.08)', border: 'rgba(156,163,175,0.15)' },
     weekly: { color: '#00e59b', bg: 'rgba(0,229,155,0.08)', border: 'rgba(0,229,155,0.15)' },
     monthly: { color: '#fbbf24', bg: 'rgba(251,191,36,0.08)', border: 'rgba(251,191,36,0.2)' },
     season: { color: '#a78bfa', bg: 'rgba(167,139,250,0.08)', border: 'rgba(167,139,250,0.15)' },
@@ -117,7 +115,7 @@ export default function PricingPage() {
 // ── Per-Tier Card with Email Signup ─────────────
 
 function TierCard({ tier }: { tier: Tier }) {
-    const accent = tierAccents[tier.id] || tierAccents.daily;
+    const accent = tierAccents[tier.id] || tierAccents.weekly;
 
     return (
         <div
@@ -176,7 +174,7 @@ function TierCard({ tier }: { tier: Tier }) {
                 {/* Price */}
                 <div style={{ marginBottom: '10px' }}>
                     <span style={{ fontSize: '36px', fontWeight: 900, color: 'white', fontFamily: 'var(--font-display)' }}>${tier.price}</span>
-                    <span style={{ color: '#6b7280', fontSize: '13px', marginLeft: '4px' }}>/{tier.interval === 'year' ? 'year' : 'mo'}</span>
+                    <span style={{ color: '#6b7280', fontSize: '13px', marginLeft: '4px' }}>{tier.intervalLabel}</span>
                 </div>
 
                 {/* Description */}

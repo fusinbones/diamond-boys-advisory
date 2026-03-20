@@ -179,20 +179,10 @@ function formatPick(pick: FreebiePickResult, index: number): string {
 
 export async function GET() {
     try {
-        // Fetch odds for MLB (primary sport), fallback to NBA if no MLB games
+        // Fetch odds for MLB only
         let mlbOdds = await getSportOdds('baseball_mlb', 'h2h');
-        let sportLabel = 'MLB';
-        let sportEmoji = '⚾';
-
-        // If MLB is sparse (spring training, off-season), also try NBA
-        if (mlbOdds.length < 2) {
-            try {
-                const nbaOdds = await getSportOdds('basketball_nba', 'h2h');
-                if (nbaOdds.length > mlbOdds.length) {
-                    mlbOdds = [...mlbOdds, ...nbaOdds];
-                }
-            } catch { /* NBA fetch failed, continue with MLB only */ }
-        }
+        const sportLabel = 'MLB';
+        const sportEmoji = '⚾';
 
         // Analyze each event
         const allPicks: FreebiePickResult[] = [];
