@@ -205,7 +205,7 @@ function mapMLBGameToGame(g: any): Game {
     return {
         id: g.gamePk,
         date: (g.officialDate || gameDate.toISOString().split('T')[0]),
-        time: gameDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+        time: gameDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
         timestamp: Math.floor(gameDate.getTime() / 1000),
         timezone: 'UTC',
         week: null,

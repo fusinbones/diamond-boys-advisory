@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
-    Zap, Star, Crown, Gem, Check, Mail, Loader2, CheckCircle,
+    Zap, Star, Crown, Gem, Check,
     Trophy, Users, Target, Bell,
 } from 'lucide-react';
+import Link from 'next/link';
 import { tiers, Tier } from '@/lib/tiers';
 
 const tierIcons: Record<string, React.ReactNode> = {
@@ -117,35 +117,7 @@ export default function PricingPage() {
 // ── Per-Tier Card with Email Signup ─────────────
 
 function TierCard({ tier }: { tier: Tier }) {
-    const [email, setEmail] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [error, setError] = useState('');
     const accent = tierAccents[tier.id] || tierAccents.daily;
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-        setError('');
-
-        try {
-            const res = await fetch('/api/subscribe', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, tier: tier.id }),
-            });
-            const data = await res.json();
-            if (data.success) {
-                setSuccess(true);
-            } else {
-                setError(data.error || 'Something went wrong');
-            }
-        } catch {
-            setError('Network error — please try again');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     return (
         <div
@@ -220,81 +192,28 @@ function TierCard({ tier }: { tier: Tier }) {
                     ))}
                 </ul>
 
-                {/* Email Signup or Success */}
-                <AnimatePresence mode="wait">
-                    {success ? (
-                        <motion.div
-                            key="success"
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            style={{
-                                textAlign: 'center',
-                                padding: '12px',
-                                background: 'rgba(0,229,155,0.08)',
-                                borderRadius: '10px',
-                                border: '1px solid rgba(0,229,155,0.2)',
-                            }}
-                        >
-                            <CheckCircle size={20} style={{ color: '#00e59b', margin: '0 auto 6px' }} />
-                            <p style={{ color: '#00e59b', fontSize: '13px', fontWeight: 600 }}>You&apos;re on the list! 💎</p>
-                            <p style={{ color: '#6b7280', fontSize: '11px', marginTop: '4px' }}>We&apos;ll notify you when {tier.name} launches.</p>
-                        </motion.div>
-                    ) : (
-                        <motion.form key="form" onSubmit={handleSubmit}>
-                            <div style={{ display: 'flex', gap: '6px' }}>
-                                <div style={{ position: 'relative', flex: 1 }}>
-                                    <Mail size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#4b5563' }} />
-                                    <input
-                                        type="email"
-                                        required
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="your@email.com"
-                                        style={{
-                                            width: '100%',
-                                            background: 'rgba(15,23,42,0.5)',
-                                            border: '1px solid rgba(255,255,255,0.08)',
-                                            borderRadius: '8px',
-                                            padding: '10px 10px 10px 32px',
-                                            color: 'white',
-                                            fontSize: '13px',
-                                            outline: 'none',
-                                            boxSizing: 'border-box',
-                                        }}
-                                    />
-                                </div>
-                                <button
-                                    type="submit"
-                                    disabled={loading}
-                                    style={{
-                                        background: tier.popular ? 'linear-gradient(135deg, #00e59b, #00d4aa)' : 'rgba(255,255,255,0.06)',
-                                        border: tier.popular ? 'none' : '1px solid rgba(255,255,255,0.1)',
-                                        color: tier.popular ? '#000' : '#e5e7eb',
-                                        padding: '10px 14px',
-                                        borderRadius: '8px',
-                                        fontSize: '12px',
-                                        fontWeight: 700,
-                                        cursor: loading ? 'not-allowed' : 'pointer',
-                                        opacity: loading ? 0.7 : 1,
-                                        whiteSpace: 'nowrap',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '4px',
-                                    }}
-                                >
-                                    {loading ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <Zap size={14} />}
-                                    {loading ? '...' : 'Join'}
-                                </button>
-                            </div>
-                            {error && (
-                                <p style={{ color: '#fca5a5', fontSize: '11px', marginTop: '6px', textAlign: 'center' }}>⚠ {error}</p>
-                            )}
-                            <p style={{ textAlign: 'center', fontSize: '10px', color: '#4b5563', marginTop: '6px' }}>
-                                🔒 No spam. Get notified when this tier launches.
-                            </p>
-                        </motion.form>
-                    )}
-                </AnimatePresence>
+                {/* Subscribe CTA */}
+                <Link
+                    href={`/checkout?tier=${tier.id}`}
+                    className={tier.popular ? 'btn-glow' : 'btn-outline'}
+                    style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        padding: '12px',
+                        fontSize: '14px',
+                        fontWeight: 700,
+                        borderRadius: '12px',
+                    }}
+                >
+                    <Zap size={14} />
+                    {tier.trialDays ? `Start ${tier.trialDays}-Day Free Trial` : 'Subscribe Now'}
+                </Link>
+                <p style={{ textAlign: 'center', fontSize: '10px', color: '#4b5563', marginTop: '6px' }}>
+                    🔒 Secure payment via Stripe. Cancel anytime.
+                </p>
             </div>
         </div>
     );

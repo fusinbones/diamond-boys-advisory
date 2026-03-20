@@ -9,7 +9,17 @@ export interface Tier {
   badge?: string;
   priceId: string;
   trialDays?: number;
+  discordRoleId: string;
+  discordChannelId: string;
 }
+
+/** Tier access level — higher number = more access */
+export const TIER_LEVELS: Record<string, number> = {
+  daily: 1,
+  weekly: 2,
+  monthly: 3,
+  season: 4,
+};
 
 export const tiers: Tier[] = [
   {
@@ -29,6 +39,8 @@ export const tiers: Tier[] = [
     badge: 'Starter',
     priceId: process.env.STRIPE_PRICE_DAILY || 'price_daily_placeholder',
     trialDays: 7,
+    discordRoleId: process.env.DISCORD_ROLE_DAILY || '1479150042890768584',
+    discordChannelId: process.env.DISCORD_CHANNEL_DAILY || '',
   },
   {
     id: 'weekly',
@@ -46,6 +58,8 @@ export const tiers: Tier[] = [
     popular: false,
     badge: 'Pro',
     priceId: process.env.STRIPE_PRICE_WEEKLY || 'price_weekly_placeholder',
+    discordRoleId: process.env.DISCORD_ROLE_WEEKLY || '1479150213288693812',
+    discordChannelId: process.env.DISCORD_CHANNEL_WEEKLY || '',
   },
   {
     id: 'monthly',
@@ -64,6 +78,8 @@ export const tiers: Tier[] = [
     popular: true,
     badge: 'Most Popular',
     priceId: process.env.STRIPE_PRICE_MONTHLY || 'price_monthly_placeholder',
+    discordRoleId: process.env.DISCORD_ROLE_MONTHLY || '1479150271522148524',
+    discordChannelId: process.env.DISCORD_CHANNEL_MONTHLY || '',
   },
   {
     id: 'season',
@@ -83,5 +99,7 @@ export const tiers: Tier[] = [
     popular: false,
     badge: 'Best Value',
     priceId: process.env.STRIPE_PRICE_SEASON || 'price_season_placeholder',
+    discordRoleId: process.env.DISCORD_ROLE_SEASON || '1479150351406858240',
+    discordChannelId: process.env.DISCORD_CHANNEL_SEASON || '',
   },
 ];

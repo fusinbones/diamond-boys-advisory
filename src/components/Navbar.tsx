@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Zap, Home, CreditCard, LayoutDashboard, FileText, TrendingUp, Users, Trophy, LogOut, User } from 'lucide-react';
+import { Menu, X, Zap, Home, CreditCard, LayoutDashboard, FileText, TrendingUp, Users, Trophy, LogOut, User, MessageCircle, Shield } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
+import { isAdminEmail } from '@/lib/adminAuth';
 
 const navLinks = [
     { href: '/', label: 'Home', icon: Home },
     { href: '/pricing', label: 'Pricing', icon: CreditCard },
+    { href: '/community', label: 'The Lounge', icon: MessageCircle },
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/tos', label: 'Terms', icon: FileText },
 ];
@@ -90,6 +92,11 @@ export default function Navbar() {
                                     <User size={14} style={{ color: '#00e59b' }} />
                                     <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</span>
                                 </Link>
+                                {user.email && isAdminEmail(user.email) && (
+                                    <Link href="/admin" className="text-xs text-gray-400 hover:text-amber-400 transition-colors flex items-center gap-1">
+                                        <Shield size={12} /> Admin
+                                    </Link>
+                                )}
                                 <button
                                     onClick={signOut}
                                     className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
@@ -205,6 +212,31 @@ export default function Navbar() {
                                                 <p style={{ color: '#6b7280', fontSize: '11px', margin: 0 }}>Signed in</p>
                                             </div>
                                         </div>
+                                        {user.email && isAdminEmail(user.email) && (
+                                            <Link
+                                                href="/admin"
+                                                onClick={() => setIsOpen(false)}
+                                                style={{
+                                                    width: '100%',
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    gap: '8px',
+                                                    padding: '14px',
+                                                    fontSize: '14px',
+                                                    fontWeight: 600,
+                                                    borderRadius: '12px',
+                                                    background: 'rgba(251,191,36,0.08)',
+                                                    border: '1px solid rgba(251,191,36,0.2)',
+                                                    color: '#fbbf24',
+                                                    textDecoration: 'none',
+                                                    marginBottom: '8px',
+                                                }}
+                                            >
+                                                <Shield size={16} />
+                                                Admin Panel
+                                            </Link>
+                                        )}
                                         <button
                                             onClick={() => { signOut(); setIsOpen(false); }}
                                             style={{

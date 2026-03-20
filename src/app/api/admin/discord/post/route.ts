@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { tiers, TIER_LEVELS } from '@/lib/tiers';
 
 const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
 const DISCORD_API = 'https://discord.com/api/v10';
@@ -88,6 +89,17 @@ function buildPickEmbed(pick: {
     };
 }
 
+/**
+ * Get all channel IDs that should receive a pick based on its minimum tier.
+ * A 'daily' pick goes to ALL channels. A 'monthly' pick goes to monthly + season only.
+ */
+function getTargetChannels(minTier: string): string[] {
+    const minLevel = TIER_LEVELS[minTier] || 1;
+    return tiers
+        .filter(t => (TIER_LEVELS[t.id] || 0) >= minLevel && t.discordChannelId)
+        .map(t => t.discordChannelId);
+}
+
 export async function POST(request: NextRequest) {
     if (!DISCORD_BOT_TOKEN) {
         return NextResponse.json({ error: 'Discord not configured' }, { status: 500 });
@@ -111,45 +123,66 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Pick not found' }, { status: 404 });
         }
 
-        const channelId = pick.discord_channel_id || process.env.DISCORD_DEFAULT_CHANNEL_ID;
-        if (!channelId) {
-            return NextResponse.json({ error: 'No channel specified' }, { status: 400 });
-        }
-
         // Build the embed
         const embed = buildPickEmbed(pick);
 
-        // Post to Discord
-        const res = await fetch(`${DISCORD_API}/channels/${channelId}/messages`, {
-            method: 'POST',
-            headers: {
-                Authorization: `Bot ${DISCORD_BOT_TOKEN}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(embed),
-        });
+        // Determine target channels — fan out based on min_tier
+        const minTier = pick.min_tier || 'daily';
+        const targetChannels = getTargetChannels(minTier);
 
-        if (!res.ok) {
-            const errorText = await res.text();
-            console.error('Discord post error:', errorText);
-            return NextResponse.json({ error: `Discord error: ${res.status}` }, { status: res.status });
+        // Fallback: use pick-specific channel or default
+        if (targetChannels.length === 0) {
+            const fallback = pick.discord_channel_id || process.env.DISCORD_DEFAULT_CHANNEL_ID;
+            if (fallback) targetChannels.push(fallback);
         }
 
-        const message = await res.json();
+        if (targetChannels.length === 0) {
+            return NextResponse.json({ error: 'No target channels configured' }, { status: 400 });
+        }
+
+        // Post to all target channels
+        const results: { channelId: string; messageId: string }[] = [];
+        const errors: string[] = [];
+
+        for (const channelId of targetChannels) {
+            try {
+                const res = await fetch(`${DISCORD_API}/channels/${channelId}/messages`, {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bot ${DISCORD_BOT_TOKEN}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(embed),
+                });
+
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    console.error(`Discord post error for channel ${channelId}:`, errorText);
+                    errors.push(`Channel ${channelId}: ${res.status}`);
+                } else {
+                    const message = await res.json();
+                    results.push({ channelId, messageId: message.id });
+                }
+            } catch (err) {
+                console.error(`Failed to post to channel ${channelId}:`, err);
+                errors.push(`Channel ${channelId}: network error`);
+            }
+        }
 
         // Update pick record with posted status
         await supabase
             .from('picks')
             .update({
                 discord_posted: true,
-                discord_message_id: message.id,
+                discord_message_id: results[0]?.messageId || null,
             })
             .eq('id', pickId);
 
         return NextResponse.json({
             success: true,
-            messageId: message.id,
-            channelId,
+            posted: results.length,
+            channels: results,
+            errors: errors.length > 0 ? errors : undefined,
         });
     } catch (error) {
         console.error('Discord post API error:', error);

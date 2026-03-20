@@ -117,26 +117,39 @@ export async function logToModChannel(message: string): Promise<void> {
 }
 
 /**
- * Handle successful payment: add role + welcome DM
+ * Handle successful payment: assign tier role + welcome DM
  */
-export async function handlePaymentSuccess(discordUsername: string, tierName: string): Promise<void> {
+export async function handlePaymentSuccess(discordUsername: string, tierName: string, tierId?: string): Promise<void> {
     const userId = await findMemberByUsername(discordUsername);
     if (!userId) {
         await logToModChannel(`⚠️ Could not find Discord user: ${discordUsername} for tier: ${tierName}`);
         return;
     }
 
-    // Role IDs should be configured per tier in env vars
-    // For MVP, we just log the action
-    await logToModChannel(`✅ Payment success: ${discordUsername} → ${tierName}`);
+    // Dynamically import tiers to get role IDs (avoid circular deps)
+    const { tiers } = await import('./tiers');
+    const tier = tiers.find(t => t.id === tierId || t.name === tierName);
+
+    if (tier?.discordRoleId) {
+        try {
+            await addRole(userId, tier.discordRoleId);
+            await logToModChannel(`✅ Payment success: ${discordUsername} → ${tierName} | Role assigned: ${tier.discordRoleId}`);
+        } catch (error) {
+            console.error(`Failed to assign role for ${discordUsername}:`, error);
+            await logToModChannel(`⚠️ Payment success but FAILED to assign role for: ${discordUsername} → ${tierName}`);
+        }
+    } else {
+        await logToModChannel(`✅ Payment success: ${discordUsername} → ${tierName} (no role ID configured)`);
+    }
+
     await sendDM(
         userId,
-        `💎 **Welcome to Diamond Boys!** 💎\n\nYour **${tierName}** subscription is active! Access granted.\n\n🏀 #picks channel unlocked — daily picks drop there\n💬 #general channel unlocked — chat with the crew\n\nLet's get those W's! 🔥`
+        `💎 **Welcome to Diamond Boys!** 💎\n\nYour **${tierName}** subscription is active! Access granted.\n\n⚾ Your tier channels are now unlocked — daily picks drop there\n💬 #general channel unlocked — chat with the crew\n\nLet's get those W's! 🔥`
     );
 }
 
 /**
- * Handle payment failure: remove roles + kick
+ * Handle payment failure: remove ALL tier roles (keeps them in server but blocks paid channels)
  */
 export async function handlePaymentFailure(discordUsername: string): Promise<void> {
     const userId = await findMemberByUsername(discordUsername);
@@ -145,10 +158,23 @@ export async function handlePaymentFailure(discordUsername: string): Promise<voi
         return;
     }
 
-    await logToModChannel(`🚫 Payment failed / subscription cancelled: ${discordUsername} — KICKED`);
+    // Strip all tier roles — Discord permissions will block them from paid channels automatically
+    const { tiers } = await import('./tiers');
+    let rolesRemoved = 0;
+    for (const tier of tiers) {
+        if (tier.discordRoleId) {
+            try {
+                await removeRole(userId, tier.discordRoleId);
+                rolesRemoved++;
+            } catch {
+                // Role may not be assigned — ignore
+            }
+        }
+    }
+
+    await logToModChannel(`🚫 Subscription lapsed: ${discordUsername} — removed ${rolesRemoved} tier role(s). User stays in server.`);
     await sendDM(
         userId,
-        `⚠️ **Diamond Boys — Access Revoked**\n\nYour subscription has lapsed. Per our zero-tolerance policy, your access has been permanently removed.\n\nTo rejoin, purchase a new subscription at our website.`
+        `⚠️ **Diamond Boys — Access Paused**\n\nYour subscription has lapsed, so your picks channels have been locked.\n\nYou're still in the server — resubscribe anytime at **diamondboysadvisory.com/pricing** to unlock your channels again! 💎`
     );
-    await kickMember(userId, 'Subscription lapsed — permanent ban per policy.');
 }

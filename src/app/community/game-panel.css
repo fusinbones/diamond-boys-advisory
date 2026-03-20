@@ -1,0 +1,528 @@
+/* ══════════════════════════════════════════
+   Game Analysis Panel — Premium Slide-Out
+   Shows everything a bettor needs when they
+   click a game in the community ticker.
+   ══════════════════════════════════════════ */
+
+.game-panel-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 900;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.game-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(520px, 92vw);
+    background: linear-gradient(180deg, #0d1220 0%, #0a0f1a 100%);
+    border-left: 1px solid rgba(255,255,255,0.06);
+    z-index: 901;
+    overflow-y: auto;
+    animation: slideInRight 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.game-panel-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(13,18,32,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.game-panel-close {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #9ca3af;
+    transition: all 0.15s;
+}
+
+.game-panel-close:hover {
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+
+/* ── Matchup Header ── */
+.gp-matchup {
+    padding: 24px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.gp-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 90px;
+}
+
+.gp-team-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    object-fit: contain;
+    background: rgba(255,255,255,0.03);
+    padding: 4px;
+}
+
+.gp-team-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #f3f4f6;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.gp-team-record {
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.gp-vs {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.gp-vs-badge {
+    font-size: 12px;
+    font-weight: 800;
+    color: #6b7280;
+    text-transform: uppercase;
+}
+
+.gp-vs-time {
+    font-size: 11px;
+    color: #fbbf24;
+    font-weight: 700;
+    background: rgba(251,191,36,0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* ── Section Cards ── */
+.gp-section {
+    margin: 0 16px 12px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.gp-section-title {
+    padding: 12px 16px;
+    font-size: 11px;
+    font-weight: 800;
+    color: #00e59b;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ── Odds Table ── */
+.gp-odds-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.gp-odds-table th {
+    padding: 8px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.gp-odds-table th:first-child {
+    text-align: left;
+    padding-left: 16px;
+}
+
+.gp-odds-table td {
+    padding: 8px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #d1d5db;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.02);
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
+}
+
+.gp-odds-table td:first-child {
+    text-align: left;
+    padding-left: 16px;
+    font-family: inherit;
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.gp-odds-table tr:last-child td {
+    border-bottom: none;
+}
+
+.gp-odds-best {
+    color: #00e59b !important;
+    font-weight: 800 !important;
+}
+
+/* ── Consensus Bar ── */
+.gp-consensus {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.gp-consensus-bar-bg {
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+    display: flex;
+}
+
+.gp-consensus-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+}
+
+.gp-consensus-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* ── Pitcher Card ── */
+.gp-pitcher {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.gp-pitcher:last-child {
+    border-bottom: none;
+}
+
+.gp-pitcher-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.gp-pitcher-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #f3f4f6;
+}
+
+.gp-pitcher-hand {
+    font-size: 10px;
+    font-weight: 700;
+    color: #6b7280;
+    background: rgba(255,255,255,0.05);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.gp-pitcher-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.gp-stat-box {
+    text-align: center;
+    padding: 8px 4px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 8px;
+}
+
+.gp-stat-value {
+    font-size: 16px;
+    font-weight: 800;
+    color: white;
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
+}
+
+.gp-stat-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+}
+
+.gp-pitcher-log {
+    font-size: 11px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.gp-pitcher-log th {
+    color: #4b5563;
+    font-weight: 700;
+    font-size: 9px;
+    text-transform: uppercase;
+    padding: 4px 6px;
+    text-align: center;
+}
+
+.gp-pitcher-log th:first-child { text-align: left; }
+
+.gp-pitcher-log td {
+    color: #9ca3af;
+    padding: 4px 6px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+}
+
+.gp-pitcher-log td:first-child {
+    text-align: left;
+    font-family: inherit;
+}
+
+/* ── Team Stats Split ── */
+.gp-team-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 14px 16px;
+}
+
+.gp-team-stat-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.gp-team-stat-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: #9ca3af;
+    margin-bottom: 8px;
+}
+
+.gp-team-stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 0;
+    font-size: 12px;
+}
+
+.gp-team-stat-row span:first-child {
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.gp-team-stat-row span:last-child {
+    color: #e5e7eb;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── H2H History ── */
+.gp-h2h {
+    padding: 10px 16px;
+}
+
+.gp-h2h-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 12px;
+}
+
+.gp-h2h-row:last-child {
+    border-bottom: none;
+}
+
+.gp-h2h-date {
+    color: #4b5563;
+    font-weight: 600;
+    min-width: 70px;
+}
+
+.gp-h2h-score {
+    color: #d1d5db;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.gp-h2h-winner {
+    color: #00e59b;
+    font-weight: 700;
+    font-size: 11px;
+    text-align: right;
+    min-width: 80px;
+}
+
+/* ── Diamond Edge ── */
+.gp-edge {
+    margin: 0 16px 20px;
+    background: linear-gradient(135deg, rgba(0,229,155,0.06), rgba(99,102,241,0.04));
+    border: 1px solid rgba(0,229,155,0.15);
+    border-radius: 12px;
+    padding: 18px 16px;
+}
+
+.gp-edge-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #00e59b;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+}
+
+.gp-edge-team {
+    font-size: 18px;
+    font-weight: 900;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.gp-edge-confidence {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.gp-edge-bar-bg {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.gp-edge-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #00e59b, #6366f1);
+    transition: width 0.8s ease;
+}
+
+.gp-edge-pct {
+    font-size: 14px;
+    font-weight: 800;
+    color: #00e59b;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.gp-edge-factors {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.gp-edge-factors li {
+    font-size: 12px;
+    color: #9ca3af;
+    padding: 3px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.gp-edge-factors li::before {
+    content: '✦';
+    color: #00e59b;
+    font-size: 8px;
+}
+
+/* ── Loading State ── */
+.gp-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    gap: 12px;
+    color: #6b7280;
+}
+
+.gp-spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgba(0,229,155,0.2);
+    border-top-color: #00e59b;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* ── Mobile responsive ── */
+@media (max-width: 640px) {
+    .game-panel {
+        width: 100vw;
+    }
+    
+    .gp-matchup {
+        padding: 16px;
+        gap: 14px;
+    }
+
+    .gp-team-logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    .gp-pitcher-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .gp-team-stats {
+        grid-template-columns: 1fr;
+    }
+}

@@ -47,7 +47,23 @@ export async function POST(request: NextRequest) {
             .single();
 
         if (error) throw error;
-        return NextResponse.json({ pick: data });
+
+        // Auto-announce to Discord if pick was saved successfully
+        let discordResult = null;
+        try {
+            const baseUrl = request.nextUrl.origin;
+            const discordRes = await fetch(`${baseUrl}/api/admin/discord/post`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pickId: data.id }),
+            });
+            discordResult = await discordRes.json();
+        } catch (discordErr) {
+            console.error('Auto-announce to Discord failed (pick still saved):', discordErr);
+            discordResult = { error: 'Discord announcement failed — pick was still saved' };
+        }
+
+        return NextResponse.json({ pick: data, discord: discordResult });
     } catch (error) {
         console.error('Picks POST error:', error);
         return NextResponse.json({ error: 'Failed to save pick' }, { status: 500 });

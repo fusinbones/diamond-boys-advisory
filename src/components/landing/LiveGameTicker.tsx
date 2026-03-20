@@ -112,7 +112,7 @@ function TickerCard({ game }: { game: TickerGame }) {
                     alt={game.away.name}
                     style={{ width: '20px', height: '20px', borderRadius: '3px', objectFit: 'contain' }}
                 />
-                <span style={{ fontSize: '13px', fontWeight: 600, color: '#d1d5db' }}>
+                <span style={{ fontSize: '13px', fontWeight: 700, color: '#f3f4f6' }}>
                     {shortName(game.away.name)}
                 </span>
                 {hasScore && (
@@ -123,7 +123,7 @@ function TickerCard({ game }: { game: TickerGame }) {
             </div>
 
             {/* Divider */}
-            <span style={{ color: '#374151', fontSize: '10px', fontWeight: 800 }}>@</span>
+            <span style={{ color: '#6b7280', fontSize: '10px', fontWeight: 800 }}>@</span>
 
             {/* Home team */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -132,7 +132,7 @@ function TickerCard({ game }: { game: TickerGame }) {
                         {game.home.score ?? 0}
                     </span>
                 )}
-                <span style={{ fontSize: '13px', fontWeight: 600, color: '#d1d5db' }}>
+                <span style={{ fontSize: '13px', fontWeight: 700, color: '#f3f4f6' }}>
                     {shortName(game.home.name)}
                 </span>
                 {/* eslint-disable-next-line @next/next/no-img-element */}

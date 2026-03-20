@@ -33,9 +33,10 @@ export async function POST(request: NextRequest) {
                 const session = event.data.object as Stripe.Checkout.Session;
                 const discordUsername = session.metadata?.discord_username;
                 const tierName = session.metadata?.tier_name || 'Unknown Tier';
+                const tierId = session.metadata?.tier_id;
 
                 if (discordUsername) {
-                    await handlePaymentSuccess(discordUsername, tierName);
+                    await handlePaymentSuccess(discordUsername, tierName, tierId);
                     await logToModChannel(
                         `💳 New subscription: **${discordUsername}** → ${tierName} | Email: ${session.customer_email || 'N/A'}`
                     );
