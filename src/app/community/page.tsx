@@ -1375,9 +1375,10 @@ export default function CommunityPage() {
 
     // ── Delete message ──
     const deleteMessage = async (msgId: string) => {
+        // Optimistic: remove from UI immediately
+        setMessages(prev => prev.filter(m => m.id !== msgId));
         const { error: err } = await supabase.from('community_messages').delete().eq('id', msgId);
         if (err) console.error('Delete failed:', err);
-        // Realtime will remove it from UI
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
