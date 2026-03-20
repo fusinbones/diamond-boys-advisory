@@ -184,7 +184,7 @@ export default function HeroSection() {
                         Join Diamond Boys — Get Picks Now
                     </Link>
                     <Link
-                        href="/community"
+                        href="/dashboard?signup=free"
                         className="btn-outline"
                         style={{ flex: '1 1 160px', maxWidth: '260px', textAlign: 'center' as const, justifyContent: 'center' }}
                         onClick={() => trackEvent('cta_click', { location: 'hero', label: 'free_account' })}

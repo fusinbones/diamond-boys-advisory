@@ -1,0 +1,4 @@
+Price ID,Product ID,Product Name,Product Statement Descriptor,Product Tax Code,Description,Created (UTC),Amount,Currency,Interval,Interval Count,Usage Type,Aggregate Usage,Billing Scheme,Trial Period Days,Tax Behavior
+price_1TCzlhD7hIjQfa8acSjB0uLd,prod_UBMUYrpA0oGOOU,Season Pass,,txcd_10701410,,2026-03-20 09:55,199.00,usd,month,6,licensed,,per_unit,,unspecified
+price_1TCzjeD7hIjQfa8afKXO8dKr,prod_UBMSFLqnCUg4tX,Monthly Package,,txcd_10701410,,2026-03-20 09:52,79.99,usd,month,1,licensed,,per_unit,,unspecified
+price_1TCziLD7hIjQfa8aLS02RSpN,prod_UBMRqQo6pmVQCj,Weekly Package,,txcd_10701410,,2026-03-20 09:51,29.99,usd,week,1,licensed,,per_unit,,unspecified

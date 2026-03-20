@@ -1,21 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CreditCard, Calendar, AlertTriangle, CheckCircle, RefreshCw, Shield, Gem, ExternalLink, MessageCircle, ArrowRight, Mail, Lock, UserPlus, LogIn, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
+import { useSearchParams, useRouter } from 'next/navigation';
 
-export default function DashboardPage() {
+function DashboardContent() {
     const { user, loading: authLoading, signOut } = useAuth();
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const isFreeSignup = searchParams.get('signup') === 'free';
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isSignUp, setIsSignUp] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
+
+    // Auto-select signup tab when coming from free CTA
+    useEffect(() => {
+        if (isFreeSignup) setIsSignUp(true);
+    }, [isFreeSignup]);
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -29,7 +38,7 @@ export default function DashboardPage() {
                     email,
                     password,
                     options: {
-                        emailRedirectTo: `${window.location.origin}/dashboard`,
+                        emailRedirectTo: `${window.location.origin}/community`,
                     },
                 });
                 if (error) throw error;
@@ -74,12 +83,14 @@ export default function DashboardPage() {
                         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
                             <Image src="/logo.png" alt="Diamond Boys" width={56} height={56} style={{ margin: '0 auto 16px', borderRadius: '12px' }} />
                             <h1 className="font-display" style={{ fontSize: '28px', fontWeight: 800, color: 'white', marginBottom: '8px' }}>
-                                {isSignUp ? 'Create Account' : 'Member Dashboard'}
+                                {isSignUp && isFreeSignup ? 'Join the Diamond Lounge — Free' : isSignUp ? 'Create Account' : 'Member Dashboard'}
                             </h1>
                             <p style={{ color: '#d1d5db', fontSize: '15px', lineHeight: 1.5 }}>
-                                {isSignUp
-                                    ? 'Sign up to track your subscription and access Discord.'
-                                    : 'Sign in to manage your account and Discord access.'
+                                {isSignUp && isFreeSignup
+                                    ? 'Get instant access to game analysis, community chat, and freebie picks. No credit card needed.'
+                                    : isSignUp
+                                        ? 'Sign up to track your subscription and access Discord.'
+                                        : 'Sign in to manage your account and Discord access.'
                                 }
                             </p>
                         </div>
@@ -398,5 +409,13 @@ export default function DashboardPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function DashboardPage() {
+    return (
+        <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Loader2 size={28} style={{ color: '#00e59b', animation: 'spin 1s linear infinite' }} /></div>}>
+            <DashboardContent />
+        </Suspense>
     );
 }

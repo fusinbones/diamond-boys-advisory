@@ -1521,7 +1521,7 @@ export default function CommunityPage() {
                         Your exclusive community for MLB picks, expert analysis, and real-time chat with Diamond Boys.
                     </p>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
-                        <Link href="/dashboard" className="btn-glow"
+                        <Link href="/dashboard?signup=free" className="btn-glow"
                             style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '12px 24px', fontSize: '14px', fontWeight: 700, borderRadius: '10px' }}>
                             <Sparkles size={14} />
                             Create Free Account
