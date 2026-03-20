@@ -132,7 +132,7 @@ export default function Navbar() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.25 }}
-                        className="md:hidden fixed inset-0 z-50"
+                        className="md:hidden fixed inset-0 z-[55]"
                         style={{
                             background: 'linear-gradient(180deg, #040810 0%, #0a1628 40%, #061218 100%)',
                             paddingTop: '56px',
@@ -262,7 +262,7 @@ export default function Navbar() {
                                 ) : (
                                     <>
                                         <Link
-                                            href="/pricing"
+                                            href="/dashboard?signup=free"
                                             onClick={() => setIsOpen(false)}
                                             className="btn-glow pulse-ring"
                                             style={{
@@ -278,11 +278,31 @@ export default function Navbar() {
                                             }}
                                         >
                                             <Zap size={18} />
-                                            Join Early Access — Free
+                                            Create Free Account
                                         </Link>
                                         <p style={{ textAlign: 'center', fontSize: '12px', color: '#9ca3af', marginTop: '8px' }}>
                                             No credit card required
                                         </p>
+                                        <Link
+                                            href="/pricing"
+                                            onClick={() => setIsOpen(false)}
+                                            style={{
+                                                width: '100%',
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                gap: '6px',
+                                                padding: '12px',
+                                                fontSize: '13px',
+                                                fontWeight: 600,
+                                                borderRadius: '12px',
+                                                color: '#fbbf24',
+                                                textDecoration: 'none',
+                                                marginTop: '4px',
+                                            }}
+                                        >
+                                            See Premium Plans →
+                                        </Link>
                                     </>
                                 )}
                             </motion.div>

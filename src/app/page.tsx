@@ -4,6 +4,7 @@ import CountdownTimer from '@/components/landing/CountdownTimer';
 import FeaturesSection from '@/components/landing/FeaturesSection';
 import SocialProof from '@/components/landing/SocialProof';
 import TestimonialsSection from '@/components/landing/TestimonialsSection';
+import FreeSignupSection from '@/components/landing/FreeSignupSection';
 import MagicTicker from '@/components/MagicTicker';
 
 export default function HomePage() {
@@ -14,6 +15,7 @@ export default function HomePage() {
       <StatsBar />
       <CountdownTimer />
       <FeaturesSection />
+      <FreeSignupSection />
       <SocialProof />
       <TestimonialsSection />
 
@@ -25,11 +27,16 @@ export default function HomePage() {
             <span className="gradient-text">Diamond Boys</span>?
           </h2>
           <p className="text-gray-400 text-sm sm:text-lg mb-6 sm:mb-8 max-w-xl mx-auto leading-relaxed">
-            Sign up for early access — be the first to get our expert picks and join the Diamond Boys Discord.
+            Start with a free account — get game analysis, community chat, and freebie picks instantly. Upgrade anytime for full premium access.
           </p>
-          <a href="/pricing" className="btn-glow btn-glow-lg pulse-ring w-full sm:w-auto">
-            💎 Join Early Access — Free
-          </a>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center' }}>
+            <a href="/dashboard?signup=free" className="btn-glow btn-glow-lg pulse-ring" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              ✨ Create Free Account
+            </a>
+            <a href="/pricing" className="btn-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              See Premium Plans →
+            </a>
+          </div>
           <p className="text-[10px] sm:text-xs text-gray-600 mt-4 sm:mt-6">
             For entertainment purposes only. Must be 21+.
             Please wager responsibly. <a href="/tos" className="text-[#00e59b] hover:underline">Terms apply</a>.

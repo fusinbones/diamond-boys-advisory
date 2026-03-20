@@ -26,7 +26,7 @@ export const tiers: Tier[] = [
   {
     id: 'weekly',
     name: 'Weekly',
-    price: 29,
+    price: 29.99,
     interval: 'week',
     intervalLabel: '/week',
     description: 'All picks & analysis, billed weekly. Cancel anytime.',
@@ -48,7 +48,7 @@ export const tiers: Tier[] = [
   {
     id: 'monthly',
     name: 'Monthly',
-    price: 79,
+    price: 79.99,
     interval: 'month',
     intervalLabel: '/month',
     description: 'Full access, billed monthly. Our most popular plan.',
