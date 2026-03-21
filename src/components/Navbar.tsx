@@ -156,6 +156,30 @@ export default function Navbar() {
                         />
 
                         <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', height: 'calc(100% - 56px)', position: 'relative' }}>
+                            {/* Logo + Brand */}
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3 }}
+                                style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+                            >
+                                <Image
+                                    src="/logo.png"
+                                    alt="Diamond Boys"
+                                    width={40}
+                                    height={40}
+                                    style={{ borderRadius: '10px' }}
+                                />
+                                <div>
+                                    <span style={{ color: 'white', fontWeight: 800, fontSize: '16px', letterSpacing: '0.02em', fontFamily: 'var(--font-display)' }}>
+                                        DIAMOND BOYS
+                                    </span>
+                                    <span style={{ display: 'block', fontSize: '9px', letterSpacing: '0.15em', color: '#00e59b', textTransform: 'uppercase' as const, marginTop: '-2px' }}>
+                                        Sports Advisory
+                                    </span>
+                                </div>
+                            </motion.div>
+
                             {/* Nav Links — staggered entrance */}
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '24px' }}>
                                 {navLinks.map((link, i) => (
