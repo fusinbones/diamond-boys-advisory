@@ -132,10 +132,13 @@ export default function Navbar() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.25 }}
-                        className="md:hidden fixed inset-0 z-[55]"
+                        className="md:hidden fixed inset-0 z-[100]"
                         style={{
-                            background: 'linear-gradient(180deg, #040810 0%, #0a1628 40%, #061218 100%)',
+                            background: '#040810',
                             paddingTop: '56px',
+                            overflowY: 'auto',
+                            minHeight: '100vh',
+                            minHeight: '100dvh',
                         }}
                     >
                         {/* Background glow */}
