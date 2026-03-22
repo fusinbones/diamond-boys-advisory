@@ -137,11 +137,16 @@ function analyzeAlternation(results: Array<{ result: 'W' | 'L' }>): {
 
 export async function GET() {
     try {
-        const today = new Date().toISOString().split('T')[0];
+        // Use Eastern time to match MLB game dates (not UTC which shifts by a day)
+        const formatET = (d: Date) => {
+            const parts = d.toLocaleDateString('en-CA', { timeZone: 'America/New_York' }).split('/');
+            return parts.join('-'); // en-CA gives YYYY-MM-DD
+        };
+        const today = formatET(new Date());
         // Look back 21 days for regular season games
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - 21);
-        const start = startDate.toISOString().split('T')[0];
+        const start = formatET(startDate);
 
         // Fetch only REGULAR SEASON games (gameType=R) — excludes spring training (S), exhibitions (E), etc.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
