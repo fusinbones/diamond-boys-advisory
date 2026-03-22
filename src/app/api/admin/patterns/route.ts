@@ -148,10 +148,10 @@ export async function GET() {
         startDate.setDate(startDate.getDate() - 21);
         const start = formatET(startDate);
 
-        // Fetch only REGULAR SEASON games (gameType=R) — excludes spring training (S), exhibitions (E), etc.
+        // Fetch games (spring training + regular season)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const scheduleRes = await fetch(
-            `${MLB_API}/schedule?sportId=1&gameType=R&startDate=${start}&endDate=${today}&hydrate=linescore,team`,
+            `${MLB_API}/schedule?sportId=1&startDate=${start}&endDate=${today}&hydrate=linescore,team`,
             { next: { revalidate: 1800 } }
         );
         if (!scheduleRes.ok) throw new Error(`MLB API error: ${scheduleRes.status}`);
@@ -165,8 +165,6 @@ export async function GET() {
             for (const game of date.games || []) {
                 const status = game.status?.abstractGameState;
                 if (status !== 'Final') continue;
-                // Double-check: only regular season
-                if (game.gameType && game.gameType !== 'R') continue;
 
                 const homeId = game.teams?.home?.team?.id;
                 const awayId = game.teams?.away?.team?.id;
