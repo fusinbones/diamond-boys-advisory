@@ -22,6 +22,7 @@ interface TeamPattern {
     altStreak: number;
     isAlternating: boolean;
     nextPrediction: 'W' | 'L' | null;
+    predictionType: 'continue' | 'break' | null;
     altScore: number;
 }
 
@@ -258,30 +259,41 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
                     </div>
 
                     {/* Streak badge */}
-                    {team.altStreak >= 3 && (
+                    {team.altStreak >= 4 && (
                         <div style={{
                             display: 'flex', alignItems: 'center', gap: '4px',
-                            background: 'rgba(167,139,250,0.1)', padding: '4px 8px',
-                            borderRadius: '6px', border: '1px solid rgba(167,139,250,0.2)',
+                            background: team.predictionType === 'break' ? 'rgba(251,146,60,0.1)' : 'rgba(167,139,250,0.1)',
+                            padding: '4px 8px',
+                            borderRadius: '6px',
+                            border: `1px solid ${team.predictionType === 'break' ? 'rgba(251,146,60,0.2)' : 'rgba(167,139,250,0.2)'}`,
                         }}>
-                            <Zap size={10} style={{ color: '#a78bfa' }} />
-                            <span style={{ color: '#a78bfa', fontSize: '11px', fontWeight: 700 }}>
+                            <Zap size={10} style={{ color: team.predictionType === 'break' ? '#fb923c' : '#a78bfa' }} />
+                            <span style={{ color: team.predictionType === 'break' ? '#fb923c' : '#a78bfa', fontSize: '11px', fontWeight: 700 }}>
                                 {team.altStreak}
                             </span>
                         </div>
                     )}
 
-                    {/* Prediction */}
+                    {/* Prediction — HOLD (pattern continues) or BREAK (pattern due to snap) */}
                     {team.nextPrediction && (
-                        <div style={{
-                            width: '28px', height: '28px', borderRadius: '8px',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: '10px', fontWeight: 800,
-                            background: team.nextPrediction === 'W' ? 'rgba(0,229,155,0.15)' : 'rgba(239,68,68,0.15)',
-                            color: team.nextPrediction === 'W' ? '#00e59b' : '#ef4444',
-                            border: `2px dashed ${team.nextPrediction === 'W' ? 'rgba(0,229,155,0.3)' : 'rgba(239,68,68,0.3)'}`,
-                        }}>
-                            {team.nextPrediction}?
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                            <div style={{
+                                width: '28px', height: '28px', borderRadius: '8px',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: '10px', fontWeight: 800,
+                                background: team.nextPrediction === 'W' ? 'rgba(0,229,155,0.15)' : 'rgba(239,68,68,0.15)',
+                                color: team.nextPrediction === 'W' ? '#00e59b' : '#ef4444',
+                                border: `2px dashed ${team.nextPrediction === 'W' ? 'rgba(0,229,155,0.3)' : 'rgba(239,68,68,0.3)'}`,
+                            }}>
+                                {team.nextPrediction}?
+                            </div>
+                            <span style={{
+                                fontSize: '7px', fontWeight: 800, textTransform: 'uppercase',
+                                letterSpacing: '0.05em',
+                                color: team.predictionType === 'break' ? '#fb923c' : '#a78bfa',
+                            }}>
+                                {team.predictionType === 'break' ? '⚡BREAK' : 'HOLD'}
+                            </span>
                         </div>
                     )}
 

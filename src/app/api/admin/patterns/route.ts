@@ -9,11 +9,12 @@ interface TeamPattern {
     logo: string;
     division: string;
     recentResults: Array<{ date: string; result: 'W' | 'L'; opponent: string; score: string }>;
-    pattern: string; // e.g. "W-L-W-L-W"
-    altStreak: number; // current alternating streak length
-    isAlternating: boolean; // true if last 3+ games alternate
-    nextPrediction: 'W' | 'L' | null; // if alternating, what's predicted next
-    altScore: number; // 0-100 strength of alternation pattern
+    pattern: string;
+    altStreak: number;
+    isAlternating: boolean;
+    nextPrediction: 'W' | 'L' | null;
+    predictionType: 'continue' | 'break' | null; // continue = pattern holds, break = pattern due to snap
+    altScore: number;
 }
 
 // All 30 MLB teams
@@ -56,33 +57,73 @@ const MLB_TEAMS: Array<{ id: number; name: string; division: string }> = [
     { id: 115, name: 'Rockies', division: 'NL West' },
 ];
 
-function analyzeAlternation(results: Array<{ result: 'W' | 'L' }>): { altStreak: number; isAlternating: boolean; nextPrediction: 'W' | 'L' | null; altScore: number } {
-    if (results.length < 2) return { altStreak: 0, isAlternating: false, nextPrediction: null, altScore: 0 };
+/**
+ * Alternation Analysis Algorithm
+ *
+ * Strategy:
+ * - 4-5 game alternating streak → pattern HOLDS → predict opposite of last result
+ * - 6+ game alternating streak  → pattern BREAKS → predict same as last result
+ *
+ * The theory: alternating patterns rarely sustain past 6 games.
+ * By the 7th game, the pattern is overdue to snap.
+ */
+function analyzeAlternation(results: Array<{ result: 'W' | 'L' }>): {
+    altStreak: number;
+    isAlternating: boolean;
+    nextPrediction: 'W' | 'L' | null;
+    predictionType: 'continue' | 'break' | null;
+    altScore: number;
+} {
+    if (results.length < 2) return { altStreak: 0, isAlternating: false, nextPrediction: null, predictionType: null, altScore: 0 };
 
-    // Count alternating streak from most recent
+    // CRITICAL: If the last 2 games have the same result, alternation is BROKEN.
+    const last = results[0].result;
+    const secondLast = results[1].result;
+    const currentlyAlternating = last !== secondLast;
+
+    // Count alternating streak from most recent game backwards
     let altStreak = 1;
-    for (let i = 1; i < results.length; i++) {
-        if (results[i].result !== results[i - 1].result) {
-            altStreak++;
+    if (currentlyAlternating) {
+        for (let i = 1; i < results.length; i++) {
+            if (results[i].result !== results[i - 1].result) {
+                altStreak++;
+            } else {
+                break;
+            }
+        }
+    } else {
+        altStreak = 0;
+    }
+
+    // Require 4+ alternating games to flag as meaningful
+    const isAlternating = currentlyAlternating && altStreak >= 4;
+
+    // Prediction logic:
+    // - 4-5 games: pattern likely CONTINUES → predict opposite of last
+    // - 6+ games: pattern likely BREAKS → predict SAME as last (the snap)
+    let nextPrediction: 'W' | 'L' | null = null;
+    let predictionType: 'continue' | 'break' | null = null;
+
+    if (isAlternating) {
+        if (altStreak >= 6) {
+            // Pattern is overdue to break by game 7
+            nextPrediction = last; // same as last = break the alternation
+            predictionType = 'break';
         } else {
-            break;
+            // Pattern holding strong (4-5 games) → predict continuation
+            nextPrediction = last === 'W' ? 'L' : 'W';
+            predictionType = 'continue';
         }
     }
 
-    const isAlternating = altStreak >= 3;
-
-    // Predict next: if alternating, next should be opposite of last
-    const lastResult = results[0].result;
-    const nextPrediction = isAlternating ? (lastResult === 'W' ? 'L' : 'W') : null;
-
-    // Alt score: how much of the last 10 games alternated
+    // Alt score: what % of transitions alternate (informational)
     let alternations = 0;
     for (let i = 1; i < results.length; i++) {
         if (results[i].result !== results[i - 1].result) alternations++;
     }
     const altScore = results.length > 1 ? Math.round((alternations / (results.length - 1)) * 100) : 0;
 
-    return { altStreak, isAlternating, nextPrediction, altScore };
+    return { altStreak, isAlternating, nextPrediction, predictionType, altScore };
 }
 
 export async function GET() {
@@ -146,7 +187,7 @@ export async function GET() {
                 .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                 .slice(0, 10);
 
-            const { altStreak, isAlternating, nextPrediction, altScore } = analyzeAlternation(games);
+            const { altStreak, isAlternating, nextPrediction, predictionType, altScore } = analyzeAlternation(games);
 
             return {
                 teamId: team.id,
@@ -158,6 +199,7 @@ export async function GET() {
                 altStreak,
                 isAlternating,
                 nextPrediction,
+                predictionType,
                 altScore,
             };
         });
