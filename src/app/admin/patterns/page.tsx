@@ -22,6 +22,7 @@ interface TeamPattern {
     pattern: string;
     altStreak: number;
     isAlternating: boolean;
+    isDeveloping: boolean;
     nextPrediction: 'W' | 'L' | null;
     predictionType: 'continue' | 'break' | null;
     altScore: number;
@@ -33,7 +34,7 @@ export default function PatternsPage() {
     const [todayTeamIds, setTodayTeamIds] = useState<number[]>([]);
     const [loading, setLoading] = useState(true);
     const [lastUpdated, setLastUpdated] = useState('');
-    const [filter, setFilter] = useState<'all' | 'alternating' | 'today'>('all');
+    const [filter, setFilter] = useState<'all' | 'alternating' | 'developing' | 'today'>('all');
     const [sortBy, setSortBy] = useState<'altScore' | 'streak' | 'division'>('altScore');
 
     const fetchPatterns = async () => {
@@ -55,6 +56,7 @@ export default function PatternsPage() {
 
     let displayed = [...patterns];
     if (filter === 'alternating') displayed = displayed.filter(t => t.isAlternating);
+    if (filter === 'developing') displayed = displayed.filter(t => t.isDeveloping || t.isAlternating);
     if (filter === 'today') displayed = displayed.filter(t => todayTeamIds.includes(t.teamId));
 
     if (sortBy === 'streak') {
@@ -64,7 +66,8 @@ export default function PatternsPage() {
     }
 
     const altCount = patterns.filter(t => t.isAlternating).length;
-    const todayAltCount = patterns.filter(t => t.isAlternating && todayTeamIds.includes(t.teamId)).length;
+    const devCount = patterns.filter(t => t.isDeveloping).length;
+    const todayAltCount = patterns.filter(t => (t.isAlternating || t.isDeveloping) && todayTeamIds.includes(t.teamId)).length;
 
     return (
         <div>
@@ -90,15 +93,15 @@ export default function PatternsPage() {
             <div className="patterns-summary">
                 <div className="patterns-summary-card" style={{ background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.15)' }}>
                     <div className="value" style={{ color: '#a78bfa' }}>{altCount}</div>
-                    <div className="label">Alternating</div>
+                    <div className="label">🔥 True Pattern</div>
+                </div>
+                <div className="patterns-summary-card" style={{ background: 'rgba(251,191,36,0.06)', border: '1px solid rgba(251,191,36,0.15)' }}>
+                    <div className="value" style={{ color: '#fbbf24' }}>{devCount}</div>
+                    <div className="label">👀 Developing</div>
                 </div>
                 <div className="patterns-summary-card" style={{ background: 'rgba(0,229,155,0.06)', border: '1px solid rgba(0,229,155,0.15)' }}>
                     <div className="value" style={{ color: '#00e59b' }}>{todayAltCount}</div>
-                    <div className="label">Playing Today</div>
-                </div>
-                <div className="patterns-summary-card" style={{ background: 'rgba(251,191,36,0.06)', border: '1px solid rgba(251,191,36,0.15)' }}>
-                    <div className="value" style={{ color: '#fbbf24' }}>{patterns.length}</div>
-                    <div className="label">Total Teams</div>
+                    <div className="label">⚾ Today</div>
                 </div>
             </div>
 
@@ -106,7 +109,8 @@ export default function PatternsPage() {
             <div className="patterns-controls">
                 {[
                     { key: 'all' as const, label: 'All Teams' },
-                    { key: 'alternating' as const, label: `🔥 Alternating (${altCount})` },
+                    { key: 'alternating' as const, label: `🔥 True Pattern (${altCount})` },
+                    { key: 'developing' as const, label: `👀 Developing (${devCount})` },
                     { key: 'today' as const, label: `⚾ Playing Today` },
                 ].map(f => (
                     <button
@@ -169,16 +173,18 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
     const [expanded, setExpanded] = useState(false);
 
     const isBreak = team.predictionType === 'break';
-    const accentColor = isBreak ? '#fb923c' : '#a78bfa';
+    // Color tiers: TRUE pattern = orange, DEVELOPING = amber, none = default
+    const accentColor = team.isAlternating ? '#fb923c' : team.isDeveloping ? '#fbbf24' : '#a78bfa';
+    const isHighlighted = team.isAlternating || team.isDeveloping;
 
     return (
         <div
             className="pattern-row"
             style={{
-                background: team.isAlternating
+                background: isHighlighted
                     ? `linear-gradient(135deg, ${accentColor}08 0%, ${accentColor}04 100%)`
                     : 'rgba(255,255,255,0.02)',
-                border: `1px solid ${team.isAlternating ? `${accentColor}25` : 'rgba(255,255,255,0.06)'}`,
+                border: `1px solid ${isHighlighted ? `${accentColor}25` : 'rgba(255,255,255,0.06)'}`,
             }}
         >
             <button className="pattern-row-btn" onClick={() => setExpanded(!expanded)}>
@@ -201,7 +207,7 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
                         const results = team.recentResults.slice(0, 10);
                         const reversed = [...results].reverse(); // oldest first
                         const streakStart = reversed.length - team.altStreak; // index where streak begins
-                        const hasStreak = team.altStreak >= 6;
+                        const hasStreak = team.altStreak >= 4;
 
                         return (
                             <>
@@ -286,7 +292,7 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
                     </div>
 
                     {/* Streak badge */}
-                    {team.altStreak >= 6 && (
+                    {team.altStreak >= 4 && (
                         <div className="pattern-streak-badge" style={{
                             background: `${accentColor}18`,
                             border: `1px solid ${accentColor}30`,

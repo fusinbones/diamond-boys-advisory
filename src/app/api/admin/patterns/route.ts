@@ -13,7 +13,8 @@ interface TeamPattern {
     altStreak: number;
     isAlternating: boolean;
     nextPrediction: 'W' | 'L' | null;
-    predictionType: 'continue' | 'break' | null; // continue = pattern holds, break = pattern due to snap
+    predictionType: 'continue' | 'break' | null;
+    isDeveloping: boolean;
     altScore: number;
 }
 
@@ -60,29 +61,38 @@ const MLB_TEAMS: Array<{ id: number; name: string; division: string }> = [
 /**
  * Diamond Boys Alternation Break Algorithm
  *
- * TRUE alternating pattern = strictly LWLWLW or WLWLWL for 6+ games.
- * By game 7, the pattern BREAKS — the last result doubles.
+ * HISTORICAL DATA (last MLB season):
+ * ┌──────────┬────────┬───────────────┬─────────────┐
+ * │ Break At │ Count  │ Cumulative    │ Break Prob  │
+ * ├──────────┼────────┼───────────────┼─────────────┤
+ * │ Game 7   │ 56     │ 56/91 = 62%   │ 62%         │
+ * │ Game 8   │ 24     │ 24/35 = 69%   │ 69%         │
+ * │ Game 9   │ 8      │ 8/11  = 73%   │ 73%         │
+ * │ Game 10  │ 3      │ 3/3   = 100%  │ 100%        │
+ * └──────────┴────────┴───────────────┴─────────────┘
+ *
+ * TRUE pattern = 6+ strict alternating games (LWLWLW or WLWLWL)
+ * DEVELOPING  = 4-5 games (forming, not yet actionable)
  *
  * Examples:
- *   LWLWLW → game 7 = (W) → LWLWLW(W)
- *   WLWLWL → game 7 = (L) → WLWLWL(L)
- *
- * Anything less than 6 strict games is NOT a true pattern.
+ *   LWLWLW → next = (W) = LWLWLW(W)  [62% break probability]
+ *   WLWLWL → next = (L) = WLWLWL(L)  [62% break probability]
  */
 function analyzeAlternation(results: Array<{ result: 'W' | 'L' }>): {
     altStreak: number;
-    isAlternating: boolean;
+    isAlternating: boolean;       // true = 6+ strict games (TRUE pattern)
+    isDeveloping: boolean;        // true = 4-5 games (pattern forming)
     nextPrediction: 'W' | 'L' | null;
     predictionType: 'continue' | 'break' | null;
-    altScore: number;
+    altScore: number;             // break probability based on real data
 } {
-    if (results.length < 2) return { altStreak: 0, isAlternating: false, nextPrediction: null, predictionType: null, altScore: 0 };
+    if (results.length < 2) return { altStreak: 0, isAlternating: false, isDeveloping: false, nextPrediction: null, predictionType: null, altScore: 0 };
 
     const last = results[0].result;
     const secondLast = results[1].result;
     const currentlyAlternating = last !== secondLast;
 
-    // Count the CURRENT live alternating streak from most recent backwards
+    // Count the CURRENT live alternating streak
     let altStreak = 0;
     if (currentlyAlternating) {
         altStreak = 1;
@@ -95,17 +105,25 @@ function analyzeAlternation(results: Array<{ result: 'W' | 'L' }>): {
         }
     }
 
-    // TRUE alternating = 6+ strict games. Anything less is NOT a pattern.
-    const isAlternating = altStreak >= 6;
+    // Classification
+    const isAlternating = altStreak >= 6;  // TRUE pattern — actionable
+    const isDeveloping = altStreak >= 4 && altStreak < 6;  // Forming — watch list
 
-    // Break probability: only kicks in at 6+
+    // Break probability — extrapolated from real historical data
+    // Total patterns reaching 6+ games last season: 91
+    // Game 7 breaks: 56/91 = 61.5% → 62%
+    // Game 8 breaks: 24/35 remaining = 68.6% → 69%
+    // Game 9 breaks: 8/11 remaining = 72.7% → 73%
+    // Game 10 breaks: 3/3 remaining = 100%
     let altScore = 0;
-    if (altStreak >= 8) altScore = 99;
-    else if (altStreak === 7) altScore = 95;
-    else if (altStreak === 6) altScore = 85;
+    if (altStreak >= 9) altScore = 100;       // historically always broke by game 10
+    else if (altStreak === 8) altScore = 73;  // 8/11 broke on game 9
+    else if (altStreak === 7) altScore = 69;  // 24/35 broke on game 8
+    else if (altStreak === 6) altScore = 62;  // 56/91 broke on game 7
+    else if (altStreak === 5) altScore = 15;  // developing — not yet reliable
+    else if (altStreak === 4) altScore = 8;   // early signal
 
-    // Prediction: always BREAK — the last result doubles
-    // LWLWLW → (W), WLWLWL → (L)
+    // Prediction: only for TRUE patterns (6+), always BREAK
     let nextPrediction: 'W' | 'L' | null = null;
     let predictionType: 'continue' | 'break' | null = null;
 
@@ -114,7 +132,7 @@ function analyzeAlternation(results: Array<{ result: 'W' | 'L' }>): {
         predictionType = 'break';
     }
 
-    return { altStreak, isAlternating, nextPrediction, predictionType, altScore };
+    return { altStreak, isAlternating, isDeveloping, nextPrediction, predictionType, altScore };
 }
 
 export async function GET() {
@@ -178,7 +196,7 @@ export async function GET() {
                 .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                 .slice(0, 10);
 
-            const { altStreak, isAlternating, nextPrediction, predictionType, altScore } = analyzeAlternation(games);
+            const { altStreak, isAlternating, isDeveloping, nextPrediction, predictionType, altScore } = analyzeAlternation(games);
 
             return {
                 teamId: team.id,
@@ -191,6 +209,7 @@ export async function GET() {
                 isAlternating,
                 nextPrediction,
                 predictionType,
+                isDeveloping,
                 altScore,
             };
         });
