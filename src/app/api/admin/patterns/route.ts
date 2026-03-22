@@ -60,28 +60,24 @@ const MLB_TEAMS: Array<{ id: number; name: string; division: string }> = [
 /**
  * Diamond Boys Alternation Break Algorithm
  *
- * Core thesis: Alternating W/L patterns rarely sustain past 6 games.
- * By game 7, the break probability is very high.
+ * TRUE alternating pattern = strictly LWLWLW or WLWLWL for 6+ games.
+ * By game 7, the pattern BREAKS — the last result doubles.
  *
- * Streak zones:
- *   1-3 games: Not a pattern yet (noise)
- *   4-5 games: Pattern forming — predict continuation (HOLD)
- *   6   games: Break zone — high probability the pattern snaps (BREAK DUE)
- *   7+  games: Extreme break zone — pattern is overdue to snap (BREAK NOW)
+ * Examples:
+ *   LWLWLW → game 7 = (W) → LWLWLW(W)
+ *   WLWLWL → game 7 = (L) → WLWLWL(L)
  *
- * Only teams in a CURRENT, LIVE alternating streak are flagged.
- * Historical alternation % is irrelevant — only the live streak matters.
+ * Anything less than 6 strict games is NOT a true pattern.
  */
 function analyzeAlternation(results: Array<{ result: 'W' | 'L' }>): {
     altStreak: number;
     isAlternating: boolean;
     nextPrediction: 'W' | 'L' | null;
     predictionType: 'continue' | 'break' | null;
-    altScore: number; // NOW = break probability (0-100) based on streak position
+    altScore: number;
 } {
     if (results.length < 2) return { altStreak: 0, isAlternating: false, nextPrediction: null, predictionType: null, altScore: 0 };
 
-    // If the last 2 games have the same result → alternation is BROKEN, streak = 0
     const last = results[0].result;
     const secondLast = results[1].result;
     const currentlyAlternating = last !== secondLast;
@@ -99,33 +95,23 @@ function analyzeAlternation(results: Array<{ result: 'W' | 'L' }>): {
         }
     }
 
-    // Only flag as "alternating" if streak is 4+ games (real pattern, not noise)
-    const isAlternating = altStreak >= 4;
+    // TRUE alternating = 6+ strict games. Anything less is NOT a pattern.
+    const isAlternating = altStreak >= 6;
 
-    // Break probability based on CURRENT streak position
-    // This is the ONLY score that matters — historical alternation is irrelevant
+    // Break probability: only kicks in at 6+
     let altScore = 0;
-    if (altStreak >= 7) altScore = 95;       // extreme — pattern HAS to break
-    else if (altStreak === 6) altScore = 80;  // high — break is imminent
-    else if (altStreak === 5) altScore = 60;  // forming — likely to continue but watch
-    else if (altStreak === 4) altScore = 40;  // early signal — pattern holding
+    if (altStreak >= 8) altScore = 99;
+    else if (altStreak === 7) altScore = 95;
+    else if (altStreak === 6) altScore = 85;
 
-    // Prediction logic:
-    // - 4-5 games: pattern HOLDS → predict opposite of last (continuation)
-    // - 6+ games: pattern BREAKS → predict same as last (the snap)
+    // Prediction: always BREAK — the last result doubles
+    // LWLWLW → (W), WLWLWL → (L)
     let nextPrediction: 'W' | 'L' | null = null;
     let predictionType: 'continue' | 'break' | null = null;
 
     if (isAlternating) {
-        if (altStreak >= 6) {
-            // BREAK ZONE: pattern is overdue to snap
-            nextPrediction = last; // same as last = the alternation breaks
-            predictionType = 'break';
-        } else {
-            // HOLD ZONE: pattern forming, predict it continues
-            nextPrediction = last === 'W' ? 'L' : 'W';
-            predictionType = 'continue';
-        }
+        nextPrediction = last; // same as last = the double/break
+        predictionType = 'break';
     }
 
     return { altStreak, isAlternating, nextPrediction, predictionType, altScore };

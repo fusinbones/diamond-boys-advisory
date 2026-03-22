@@ -201,7 +201,7 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
                         const results = team.recentResults.slice(0, 10);
                         const reversed = [...results].reverse(); // oldest first
                         const streakStart = reversed.length - team.altStreak; // index where streak begins
-                        const hasStreak = team.altStreak >= 4;
+                        const hasStreak = team.altStreak >= 6;
 
                         return (
                             <>
@@ -286,7 +286,7 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
                     </div>
 
                     {/* Streak badge */}
-                    {team.altStreak >= 4 && (
+                    {team.altStreak >= 6 && (
                         <div className="pattern-streak-badge" style={{
                             background: `${accentColor}18`,
                             border: `1px solid ${accentColor}30`,
