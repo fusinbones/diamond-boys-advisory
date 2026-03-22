@@ -3,6 +3,7 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Analytics from '@/components/Analytics';
+import IOSInstallPrompt from '@/components/IOSInstallPrompt';
 import { AuthProvider } from '@/components/AuthProvider';
 
 export const metadata: Metadata = {
@@ -58,6 +59,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <IOSInstallPrompt />
         </AuthProvider>
       </body>
     </html>
