@@ -58,32 +58,38 @@ const MLB_TEAMS: Array<{ id: number; name: string; division: string }> = [
 ];
 
 /**
- * Alternation Analysis Algorithm
+ * Diamond Boys Alternation Break Algorithm
  *
- * Strategy:
- * - 4-5 game alternating streak → pattern HOLDS → predict opposite of last result
- * - 6+ game alternating streak  → pattern BREAKS → predict same as last result
+ * Core thesis: Alternating W/L patterns rarely sustain past 6 games.
+ * By game 7, the break probability is very high.
  *
- * The theory: alternating patterns rarely sustain past 6 games.
- * By the 7th game, the pattern is overdue to snap.
+ * Streak zones:
+ *   1-3 games: Not a pattern yet (noise)
+ *   4-5 games: Pattern forming — predict continuation (HOLD)
+ *   6   games: Break zone — high probability the pattern snaps (BREAK DUE)
+ *   7+  games: Extreme break zone — pattern is overdue to snap (BREAK NOW)
+ *
+ * Only teams in a CURRENT, LIVE alternating streak are flagged.
+ * Historical alternation % is irrelevant — only the live streak matters.
  */
 function analyzeAlternation(results: Array<{ result: 'W' | 'L' }>): {
     altStreak: number;
     isAlternating: boolean;
     nextPrediction: 'W' | 'L' | null;
     predictionType: 'continue' | 'break' | null;
-    altScore: number;
+    altScore: number; // NOW = break probability (0-100) based on streak position
 } {
     if (results.length < 2) return { altStreak: 0, isAlternating: false, nextPrediction: null, predictionType: null, altScore: 0 };
 
-    // CRITICAL: If the last 2 games have the same result, alternation is BROKEN.
+    // If the last 2 games have the same result → alternation is BROKEN, streak = 0
     const last = results[0].result;
     const secondLast = results[1].result;
     const currentlyAlternating = last !== secondLast;
 
-    // Count alternating streak from most recent game backwards
-    let altStreak = 1;
+    // Count the CURRENT live alternating streak from most recent backwards
+    let altStreak = 0;
     if (currentlyAlternating) {
+        altStreak = 1;
         for (let i = 1; i < results.length; i++) {
             if (results[i].result !== results[i - 1].result) {
                 altStreak++;
@@ -91,37 +97,36 @@ function analyzeAlternation(results: Array<{ result: 'W' | 'L' }>): {
                 break;
             }
         }
-    } else {
-        altStreak = 0;
     }
 
-    // Require 4+ alternating games to flag as meaningful
-    const isAlternating = currentlyAlternating && altStreak >= 4;
+    // Only flag as "alternating" if streak is 4+ games (real pattern, not noise)
+    const isAlternating = altStreak >= 4;
+
+    // Break probability based on CURRENT streak position
+    // This is the ONLY score that matters — historical alternation is irrelevant
+    let altScore = 0;
+    if (altStreak >= 7) altScore = 95;       // extreme — pattern HAS to break
+    else if (altStreak === 6) altScore = 80;  // high — break is imminent
+    else if (altStreak === 5) altScore = 60;  // forming — likely to continue but watch
+    else if (altStreak === 4) altScore = 40;  // early signal — pattern holding
 
     // Prediction logic:
-    // - 4-5 games: pattern likely CONTINUES → predict opposite of last
-    // - 6+ games: pattern likely BREAKS → predict SAME as last (the snap)
+    // - 4-5 games: pattern HOLDS → predict opposite of last (continuation)
+    // - 6+ games: pattern BREAKS → predict same as last (the snap)
     let nextPrediction: 'W' | 'L' | null = null;
     let predictionType: 'continue' | 'break' | null = null;
 
     if (isAlternating) {
         if (altStreak >= 6) {
-            // Pattern is overdue to break by game 7
-            nextPrediction = last; // same as last = break the alternation
+            // BREAK ZONE: pattern is overdue to snap
+            nextPrediction = last; // same as last = the alternation breaks
             predictionType = 'break';
         } else {
-            // Pattern holding strong (4-5 games) → predict continuation
+            // HOLD ZONE: pattern forming, predict it continues
             nextPrediction = last === 'W' ? 'L' : 'W';
             predictionType = 'continue';
         }
     }
-
-    // Alt score: what % of transitions alternate (informational)
-    let alternations = 0;
-    for (let i = 1; i < results.length; i++) {
-        if (results[i].result !== results[i - 1].result) alternations++;
-    }
-    const altScore = results.length > 1 ? Math.round((alternations / (results.length - 1)) * 100) : 0;
 
     return { altStreak, isAlternating, nextPrediction, predictionType, altScore };
 }

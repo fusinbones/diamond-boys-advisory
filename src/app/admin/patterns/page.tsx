@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useAdminAuth } from '@/lib/adminAuth';
-import { Loader2, RefreshCw, Zap, TrendingUp, ChevronRight, ArrowUpDown } from 'lucide-react';
+import { RefreshCw, Zap, TrendingUp, ChevronRight, ArrowUpDown } from 'lucide-react';
 import Link from 'next/link';
+import './patterns.css';
 
 interface GameResult {
     date: string;
@@ -52,7 +53,6 @@ export default function PatternsPage() {
 
     useEffect(() => { fetchPatterns(); }, []);
 
-    // Apply filters & sorting
     let displayed = [...patterns];
     if (filter === 'alternating') displayed = displayed.filter(t => t.isAlternating);
     if (filter === 'today') displayed = displayed.filter(t => todayTeamIds.includes(t.teamId));
@@ -62,7 +62,6 @@ export default function PatternsPage() {
     } else if (sortBy === 'division') {
         displayed.sort((a, b) => a.division.localeCompare(b.division));
     }
-    // default is already sorted by altScore from API
 
     const altCount = patterns.filter(t => t.isAlternating).length;
     const todayAltCount = patterns.filter(t => t.isAlternating && todayTeamIds.includes(t.teamId)).length;
@@ -70,13 +69,13 @@ export default function PatternsPage() {
     return (
         <div>
             {/* Header */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+            <div className="patterns-header">
                 <div>
-                    <h1 style={{ color: 'white', fontSize: '24px', fontWeight: 800, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h1 className="patterns-title">
                         <ArrowUpDown size={20} style={{ color: '#a78bfa' }} />
                         Alternating Pattern Master
                     </h1>
-                    <p style={{ color: '#6b7280', fontSize: '13px' }}>
+                    <p className="patterns-subtitle">
                         W/L alternation analysis for all 30 MLB teams
                         {lastUpdated && <span> · Updated {lastUpdated}</span>}
                     </p>
@@ -88,32 +87,23 @@ export default function PatternsPage() {
             </div>
 
             {/* Summary Cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '10px', marginBottom: '16px' }}>
-                <div style={{
-                    background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.15)',
-                    borderRadius: '10px', padding: '14px', textAlign: 'center',
-                }}>
-                    <div style={{ color: '#a78bfa', fontSize: '28px', fontWeight: 800 }}>{altCount}</div>
-                    <div style={{ color: '#6b7280', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Alternating Teams</div>
+            <div className="patterns-summary">
+                <div className="patterns-summary-card" style={{ background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.15)' }}>
+                    <div className="value" style={{ color: '#a78bfa' }}>{altCount}</div>
+                    <div className="label">Alternating</div>
                 </div>
-                <div style={{
-                    background: 'rgba(0,229,155,0.06)', border: '1px solid rgba(0,229,155,0.15)',
-                    borderRadius: '10px', padding: '14px', textAlign: 'center',
-                }}>
-                    <div style={{ color: '#00e59b', fontSize: '28px', fontWeight: 800 }}>{todayAltCount}</div>
-                    <div style={{ color: '#6b7280', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Playing Today</div>
+                <div className="patterns-summary-card" style={{ background: 'rgba(0,229,155,0.06)', border: '1px solid rgba(0,229,155,0.15)' }}>
+                    <div className="value" style={{ color: '#00e59b' }}>{todayAltCount}</div>
+                    <div className="label">Playing Today</div>
                 </div>
-                <div style={{
-                    background: 'rgba(251,191,36,0.06)', border: '1px solid rgba(251,191,36,0.15)',
-                    borderRadius: '10px', padding: '14px', textAlign: 'center',
-                }}>
-                    <div style={{ color: '#fbbf24', fontSize: '28px', fontWeight: 800 }}>{patterns.length}</div>
-                    <div style={{ color: '#6b7280', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Teams</div>
+                <div className="patterns-summary-card" style={{ background: 'rgba(251,191,36,0.06)', border: '1px solid rgba(251,191,36,0.15)' }}>
+                    <div className="value" style={{ color: '#fbbf24' }}>{patterns.length}</div>
+                    <div className="label">Total Teams</div>
                 </div>
             </div>
 
             {/* Filters & Sort */}
-            <div style={{ display: 'flex', gap: '6px', marginBottom: '16px', flexWrap: 'wrap' }}>
+            <div className="patterns-controls">
                 {[
                     { key: 'all' as const, label: 'All Teams' },
                     { key: 'alternating' as const, label: `🔥 Alternating (${altCount})` },
@@ -122,30 +112,28 @@ export default function PatternsPage() {
                     <button
                         key={f.key}
                         onClick={() => setFilter(f.key)}
+                        className="patterns-filter-btn"
                         style={{
-                            padding: '6px 14px', borderRadius: '8px', border: 'none',
                             background: filter === f.key ? 'rgba(167,139,250,0.15)' : 'rgba(255,255,255,0.04)',
                             color: filter === f.key ? '#a78bfa' : '#6b7280',
-                            fontSize: '12px', fontWeight: 600, cursor: 'pointer',
                         }}
                     >
                         {f.label}
                     </button>
                 ))}
-                <div style={{ marginLeft: 'auto', display: 'flex', gap: '4px' }}>
+                <div className="patterns-sort-group">
                     {[
-                        { key: 'altScore' as const, label: 'Alt %' },
+                        { key: 'altScore' as const, label: 'Break %' },
                         { key: 'streak' as const, label: 'Streak' },
                         { key: 'division' as const, label: 'Division' },
                     ].map(s => (
                         <button
                             key={s.key}
                             onClick={() => setSortBy(s.key)}
+                            className="patterns-sort-btn"
                             style={{
-                                padding: '4px 10px', borderRadius: '6px', border: 'none',
                                 background: sortBy === s.key ? 'rgba(255,255,255,0.08)' : 'transparent',
                                 color: sortBy === s.key ? 'white' : '#4b5563',
-                                fontSize: '11px', fontWeight: 600, cursor: 'pointer',
                             }}
                         >
                             {s.label}
@@ -163,7 +151,7 @@ export default function PatternsPage() {
                     <p>No teams match this filter.</p>
                 </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <div className="patterns-list">
                     {displayed.map(team => (
                         <TeamRow
                             key={team.teamId}
@@ -180,58 +168,41 @@ export default function PatternsPage() {
 function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: boolean }) {
     const [expanded, setExpanded] = useState(false);
 
+    const isBreak = team.predictionType === 'break';
+    const accentColor = isBreak ? '#fb923c' : '#a78bfa';
+
     return (
         <div
+            className="pattern-row"
             style={{
                 background: team.isAlternating
-                    ? 'linear-gradient(135deg, rgba(167,139,250,0.04) 0%, rgba(167,139,250,0.02) 100%)'
+                    ? `linear-gradient(135deg, ${accentColor}08 0%, ${accentColor}04 100%)`
                     : 'rgba(255,255,255,0.02)',
-                border: `1px solid ${team.isAlternating ? 'rgba(167,139,250,0.15)' : 'rgba(255,255,255,0.06)'}`,
-                borderRadius: '10px',
-                overflow: 'hidden',
-                transition: 'border-color 0.2s',
+                border: `1px solid ${team.isAlternating ? `${accentColor}25` : 'rgba(255,255,255,0.06)'}`,
             }}
         >
-            {/* Main Row */}
-            <button
-                onClick={() => setExpanded(!expanded)}
-                style={{
-                    display: 'flex', alignItems: 'center', gap: '10px',
-                    width: '100%', padding: '12px 14px',
-                    background: 'none', border: 'none', cursor: 'pointer',
-                    textAlign: 'left',
-                }}
-            >
+            <button className="pattern-row-btn" onClick={() => setExpanded(!expanded)}>
                 {/* Team logo + name */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: '140px' }}>
+                <div className="pattern-team-info">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={team.logo} alt={team.teamName} style={{ width: '28px', height: '28px' }} />
+                    <img src={team.logo} alt={team.teamName} className="pattern-team-logo" />
                     <div>
-                        <div style={{ color: 'white', fontSize: '13px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <div className="pattern-team-name">
                             {team.teamName}
-                            {isPlayingToday && (
-                                <span style={{
-                                    fontSize: '9px', background: 'rgba(0,229,155,0.15)', color: '#00e59b',
-                                    padding: '1px 6px', borderRadius: '4px', fontWeight: 700,
-                                }}>
-                                    TODAY
-                                </span>
-                            )}
+                            {isPlayingToday && <span className="pattern-today-badge">TODAY</span>}
                         </div>
-                        <div style={{ color: '#4b5563', fontSize: '10px' }}>{team.division}</div>
+                        <div className="pattern-team-division">{team.division}</div>
                     </div>
                 </div>
 
                 {/* Pattern dots */}
-                <div style={{ display: 'flex', gap: '3px', flex: 1, justifyContent: 'center', overflow: 'hidden' }}>
+                <div className="pattern-dots">
                     {team.recentResults.slice(0, 10).map((g, i) => (
                         <div
                             key={i}
+                            className="pattern-dot"
                             title={`${g.result} ${g.score} ${g.opponent} (${g.date})`}
                             style={{
-                                width: '24px', height: '24px', borderRadius: '6px',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: '10px', fontWeight: 800,
                                 background: g.result === 'W' ? 'rgba(0,229,155,0.15)' : 'rgba(239,68,68,0.15)',
                                 color: g.result === 'W' ? '#00e59b' : '#ef4444',
                                 border: `1px solid ${g.result === 'W' ? 'rgba(0,229,155,0.25)' : 'rgba(239,68,68,0.25)'}`,
@@ -245,54 +216,41 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
                     )}
                 </div>
 
-                {/* Alt Score + Streak */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: '120px', justifyContent: 'flex-end' }}>
+                {/* Metrics */}
+                <div className="pattern-metrics">
                     {/* Alt Score */}
-                    <div style={{ textAlign: 'center' }}>
-                        <div style={{
-                            fontSize: '14px', fontWeight: 800,
+                    <div className="pattern-alt-score">
+                        <div className="value" style={{
                             color: team.altScore >= 70 ? '#a78bfa' : team.altScore >= 50 ? '#fbbf24' : '#4b5563',
                         }}>
                             {team.altScore}%
                         </div>
-                        <div style={{ fontSize: '8px', color: '#4b5563', textTransform: 'uppercase' }}>Alt</div>
+                        <div className="label">Break</div>
                     </div>
 
                     {/* Streak badge */}
                     {team.altStreak >= 4 && (
-                        <div style={{
-                            display: 'flex', alignItems: 'center', gap: '4px',
-                            background: team.predictionType === 'break' ? 'rgba(251,146,60,0.1)' : 'rgba(167,139,250,0.1)',
-                            padding: '4px 8px',
-                            borderRadius: '6px',
-                            border: `1px solid ${team.predictionType === 'break' ? 'rgba(251,146,60,0.2)' : 'rgba(167,139,250,0.2)'}`,
+                        <div className="pattern-streak-badge" style={{
+                            background: `${accentColor}18`,
+                            border: `1px solid ${accentColor}30`,
                         }}>
-                            <Zap size={10} style={{ color: team.predictionType === 'break' ? '#fb923c' : '#a78bfa' }} />
-                            <span style={{ color: team.predictionType === 'break' ? '#fb923c' : '#a78bfa', fontSize: '11px', fontWeight: 700 }}>
-                                {team.altStreak}
-                            </span>
+                            <Zap size={10} style={{ color: accentColor }} />
+                            <span style={{ color: accentColor }}>{team.altStreak}</span>
                         </div>
                     )}
 
-                    {/* Prediction — HOLD (pattern continues) or BREAK (pattern due to snap) */}
+                    {/* Prediction */}
                     {team.nextPrediction && (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
-                            <div style={{
-                                width: '28px', height: '28px', borderRadius: '8px',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: '10px', fontWeight: 800,
+                        <div className="pattern-prediction">
+                            <div className="pattern-prediction-box" style={{
                                 background: team.nextPrediction === 'W' ? 'rgba(0,229,155,0.15)' : 'rgba(239,68,68,0.15)',
                                 color: team.nextPrediction === 'W' ? '#00e59b' : '#ef4444',
                                 border: `2px dashed ${team.nextPrediction === 'W' ? 'rgba(0,229,155,0.3)' : 'rgba(239,68,68,0.3)'}`,
                             }}>
                                 {team.nextPrediction}?
                             </div>
-                            <span style={{
-                                fontSize: '7px', fontWeight: 800, textTransform: 'uppercase',
-                                letterSpacing: '0.05em',
-                                color: team.predictionType === 'break' ? '#fb923c' : '#a78bfa',
-                            }}>
-                                {team.predictionType === 'break' ? '⚡BREAK' : 'HOLD'}
+                            <span className="pattern-prediction-label" style={{ color: accentColor }}>
+                                {isBreak ? '⚡BREAK' : 'HOLD'}
                             </span>
                         </div>
                     )}
@@ -303,6 +261,7 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
                             color: '#4b5563',
                             transform: expanded ? 'rotate(90deg)' : 'none',
                             transition: 'transform 0.2s',
+                            flexShrink: 0,
                         }}
                     />
                 </div>
@@ -310,50 +269,41 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
 
             {/* Expanded Detail */}
             {expanded && (
-                <div style={{
-                    padding: '0 14px 14px',
-                    borderTop: '1px solid rgba(255,255,255,0.04)',
-                }}>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', paddingTop: '10px' }}>
+                <div className="pattern-expanded">
+                    <div className="pattern-games-grid">
                         {team.recentResults.map((g, i) => (
                             <div
                                 key={i}
-                                style={{
-                                    background: 'rgba(255,255,255,0.03)',
-                                    border: `1px solid ${g.result === 'W' ? 'rgba(0,229,155,0.12)' : 'rgba(239,68,68,0.12)'}`,
-                                    borderRadius: '8px', padding: '8px 10px',
-                                    minWidth: '120px',
-                                }}
+                                className="pattern-game-card"
+                                style={{ border: `1px solid ${g.result === 'W' ? 'rgba(0,229,155,0.12)' : 'rgba(239,68,68,0.12)'}` }}
                             >
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                                    <span style={{
-                                        fontSize: '11px', fontWeight: 700,
+                                <div className="pattern-game-header">
+                                    <span className="pattern-game-result" style={{
                                         color: g.result === 'W' ? '#00e59b' : '#ef4444',
                                     }}>
                                         {g.result === 'W' ? '✅ WIN' : '❌ LOSS'}
                                     </span>
-                                    <span style={{ color: '#4b5563', fontSize: '10px' }}>
+                                    <span className="pattern-game-date">
                                         {new Date(g.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                     </span>
                                 </div>
-                                <div style={{ color: '#9ca3af', fontSize: '11px' }}>{g.opponent}</div>
-                                <div style={{ color: 'white', fontSize: '13px', fontWeight: 700 }}>{g.score}</div>
+                                <div className="pattern-game-opponent">{g.opponent}</div>
+                                <div className="pattern-game-score">{g.score}</div>
                             </div>
                         ))}
                     </div>
 
-                    {/* Quick Pick Link */}
                     {isPlayingToday && team.isAlternating && (
                         <div style={{ marginTop: '10px' }}>
                             <Link
-                                href={`/admin/analysis`}
+                                href="/admin/analysis"
                                 style={{
                                     display: 'inline-flex', alignItems: 'center', gap: '6px',
                                     padding: '8px 14px',
-                                    background: 'linear-gradient(135deg, rgba(167,139,250,0.1), rgba(167,139,250,0.05))',
-                                    border: '1px solid rgba(167,139,250,0.2)',
+                                    background: `linear-gradient(135deg, ${accentColor}18, ${accentColor}0a)`,
+                                    border: `1px solid ${accentColor}30`,
                                     borderRadius: '8px', textDecoration: 'none',
-                                    color: '#a78bfa', fontSize: '12px', fontWeight: 600,
+                                    color: accentColor, fontSize: '12px', fontWeight: 600,
                                 }}
                             >
                                 <TrendingUp size={13} />
