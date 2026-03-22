@@ -137,7 +137,6 @@ export default function Navbar() {
                             background: '#040810',
                             paddingTop: '56px',
                             overflowY: 'auto',
-                            minHeight: '100vh',
                             minHeight: '100dvh',
                         }}
                     >

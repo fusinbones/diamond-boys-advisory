@@ -1,0 +1,26 @@
+{
+  "name": "Diamond Boys Sports Advisory",
+  "short_name": "Diamond Boys",
+  "description": "Elite MLB baseball picks, live odds, and expert analysis from Diamond Boys Sports Advisory.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#040810",
+  "theme_color": "#00e59b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["sports", "entertainment"],
+  "lang": "en"
+}
