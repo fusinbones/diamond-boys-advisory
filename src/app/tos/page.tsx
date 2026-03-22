@@ -56,7 +56,7 @@ export default function TOSPage() {
                             <h3 className="text-white font-semibold text-base pt-2">5. Chargebacks & Disputes</h3>
                             <p>
                                 Filing a chargeback or payment dispute will result in <strong>immediate and permanent revocation</strong> of
-                                all access, including Discord server membership. We encourage you to contact us directly at
+                                all access, including community membership. We encourage you to contact us directly at
                                 support@diamondboysadvisory.com to resolve any billing concerns before initiating a dispute with your card issuer.
                             </p>
                             <h3 className="text-white font-semibold text-base pt-2">6. Intellectual Property</h3>
@@ -75,7 +75,7 @@ export default function TOSPage() {
                             <h3 className="text-white font-semibold text-base pt-2">8. Modifications</h3>
                             <p>
                                 We reserve the right to modify these Terms at any time. Continued use of the Service after changes
-                                constitutes acceptance of the revised Terms. Material changes will be communicated via email or Discord.
+                                constitutes acceptance of the revised Terms. Material changes will be communicated via email or the platform.
                             </p>
                         </div>
                     </section>
@@ -96,11 +96,11 @@ export default function TOSPage() {
                         </div>
                         <div className="text-gray-400 text-sm leading-relaxed space-y-4">
                             <p>
-                                Your active subscription grants you access to the Diamond Boys Discord server and associated content.
+                                Your active subscription grants you access to The Diamond Lounge community and associated content.
                                 This access is <strong>conditional upon maintaining an active, paid subscription</strong>.
                             </p>
                             <h3 className="text-white font-semibold text-base pt-2">Automatic Access Revocation</h3>
-                            <p>The following events will trigger <strong>immediate and permanent</strong> removal from the Discord server:</p>
+                            <p>The following events will trigger <strong>immediate and permanent</strong> removal from the community:</p>
                             <ul className="list-disc list-inside space-y-1.5 ml-2">
                                 <li>Failed payment / declined card</li>
                                 <li>Subscription cancellation (effective at period end)</li>
@@ -133,20 +133,20 @@ export default function TOSPage() {
                         <div className="text-gray-400 text-sm leading-relaxed space-y-4">
                             <h3 className="text-white font-semibold text-base">Information We Collect</h3>
                             <ul className="list-disc list-inside space-y-1.5 ml-2">
-                                <li><strong>Account Information:</strong> Name, email address, and Discord username (provided at checkout)</li>
+                                <li><strong>Account Information:</strong> Name and email address (provided at checkout)</li>
                                 <li><strong>Payment Information:</strong> Processed and stored exclusively by Stripe. We do not store credit card numbers, CVVs, or full card details on our servers.</li>
                                 <li><strong>Usage Data:</strong> Page views and interaction data via Google Analytics (anonymized)</li>
                             </ul>
                             <h3 className="text-white font-semibold text-base pt-2">How We Use Your Information</h3>
                             <ul className="list-disc list-inside space-y-1.5 ml-2">
-                                <li>To provide and manage your subscription and Discord access</li>
+                                <li>To provide and manage your subscription and community access</li>
                                 <li>To communicate service updates, picks delivery, and account-related notifications</li>
                                 <li>To improve our service through anonymized analytics</li>
                             </ul>
                             <h3 className="text-white font-semibold text-base pt-2">Data Sharing</h3>
                             <p>
                                 <strong>We do not sell, rent, or share your personal information</strong> with third parties for marketing
-                                purposes. Data is shared only with essential service providers (Stripe for payments, Discord for community access,
+                                purposes. Data is shared only with essential service providers (Stripe for payments,
                                 Google Analytics for anonymized usage metrics).
                             </p>
                             <h3 className="text-white font-semibold text-base pt-2">Data Retention & Deletion</h3>

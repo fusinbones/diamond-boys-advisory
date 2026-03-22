@@ -22,7 +22,7 @@ const tierAccents: Record<string, { color: string; bg: string; border: string }>
 
 const perks = [
     { icon: Target, title: 'Expert Picks Daily', desc: 'Data-driven MLB picks with confidence ratings.' },
-    { icon: Users, title: 'Private Discord', desc: 'Real-time alerts, discussions, and game breakdowns.' },
+    { icon: Users, title: 'The Diamond Lounge', desc: 'Real-time alerts, discussions, and game breakdowns.' },
     { icon: Trophy, title: '65% Win Rate', desc: 'Fully documented, transparent record.' },
     { icon: Bell, title: 'Instant Alerts', desc: 'Line movement notifications straight to your phone.' },
 ];

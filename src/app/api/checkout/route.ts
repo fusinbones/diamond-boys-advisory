@@ -5,12 +5,12 @@ import { tiers } from '@/lib/tiers';
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { tierId, name, email, discordUsername } = body;
+        const { tierId, name, email } = body;
 
         // Validate inputs
-        if (!tierId || !name || !email || !discordUsername) {
+        if (!tierId || !name || !email) {
             return NextResponse.json(
-                { error: 'All fields are required (name, email, Discord username).' },
+                { error: 'All fields are required (name, email).' },
                 { status: 400 }
             );
         }
@@ -33,14 +33,12 @@ export async function POST(request: NextRequest) {
                 },
             ],
             metadata: {
-                discord_username: discordUsername.replace(/^@/, ''),
                 customer_name: name,
                 tier_id: tierId,
                 tier_name: tier.name,
             },
             subscription_data: {
                 metadata: {
-                    discord_username: discordUsername.replace(/^@/, ''),
                     tier_id: tierId,
                     tier_name: tier.name,
                 },

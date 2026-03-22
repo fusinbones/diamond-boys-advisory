@@ -3,7 +3,7 @@
 import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { tiers } from '@/lib/tiers';
-import { CreditCard, User, Mail, AtSign, Shield, ArrowLeft } from 'lucide-react';
+import { CreditCard, User, Mail, Shield, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -14,7 +14,6 @@ function CheckoutForm() {
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [discord, setDiscord] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -22,8 +21,8 @@ function CheckoutForm() {
         e.preventDefault();
         setError('');
 
-        if (!discord.trim()) {
-            setError('Discord username is required for server access.');
+        if (!name.trim() || !email.trim()) {
+            setError('Name and email are required.');
             return;
         }
 
@@ -37,7 +36,6 @@ function CheckoutForm() {
                     tierId: selectedTier.id,
                     name,
                     email,
-                    discordUsername: discord.replace(/^@/, ''),
                 }),
             });
 
@@ -141,27 +139,6 @@ function CheckoutForm() {
                                     </div>
                                 </div>
 
-                                {/* Discord Username */}
-                                <div>
-                                    <label htmlFor="discord" className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
-                                        Discord Username <span className="text-[#00e59b]">*</span>
-                                    </label>
-                                    <div className="relative">
-                                        <AtSign size={14} className="sm:w-4 sm:h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" />
-                                        <input
-                                            id="discord"
-                                            type="text"
-                                            required
-                                            value={discord}
-                                            onChange={(e) => setDiscord(e.target.value)}
-                                            className="w-full bg-[#1a2744]/50 border border-white/10 rounded-lg sm:rounded-xl py-2.5 sm:py-3 pl-9 sm:pl-10 pr-3 sm:pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#00e59b]/50 focus:ring-1 focus:ring-[#00e59b]/20 transition text-xs sm:text-sm"
-                                            placeholder="your_discord_username"
-                                        />
-                                    </div>
-                                    <p className="text-[10px] sm:text-xs text-gray-600 mt-1 sm:mt-1.5">
-                                        Required for Discord access. Must match your Discord username exactly.
-                                    </p>
-                                </div>
 
                                 {/* Payment note */}
                                 <div className="glass-card p-3 sm:p-4 bg-[#0d1525]/50 border-[#00e59b]/10">
@@ -205,7 +182,7 @@ function CheckoutForm() {
                                     <Link href="/tos" className="text-[#00e59b] hover:underline">Terms</Link>,{' '}
                                     <Link href="/tos#privacy" className="text-[#00e59b] hover:underline">Privacy</Link>, and{' '}
                                     <Link href="/tos#ban-policy" className="text-[#00e59b] hover:underline">Access Policy</Link>.
-                                    Non-refundable. Non-payment = immediate Discord removal.
+                                    Non-refundable. Non-payment = immediate access removal.
                                     Entertainment only. 21+. Not financial advice.
                                 </p>
                             </form>

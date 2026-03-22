@@ -46,7 +46,7 @@ export default function SocialProof() {
                         </div>
                     </motion.div>
 
-                    {/* Discord preview card */}
+                    {/* Community chat preview card */}
                     <motion.div
                         initial={{ opacity: 0, y: 12 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -59,7 +59,7 @@ export default function SocialProof() {
                             <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(88,101,242,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px' }}>
                                 <MessageCircle size={18} style={{ color: '#5865F2' }} />
                             </div>
-                            <h3 style={{ color: 'white', fontWeight: 600, fontSize: '17px', marginBottom: '4px' }}>Exclusive Discord</h3>
+                            <h3 style={{ color: 'white', fontWeight: 600, fontSize: '17px', marginBottom: '4px' }}>The Diamond Lounge</h3>
                             <p style={{ color: '#c9cdd3', fontSize: '14px' }}>Real-time picks, alerts & expert chat</p>
                         </div>
 
@@ -76,8 +76,8 @@ export default function SocialProof() {
                             ))}
                         </div>
 
-                        <Link href="/pricing" className="btn-outline" style={{ width: '100%', justifyContent: 'center', fontSize: '14px' }}>
-                            Join Early Access
+                        <Link href="/dashboard?signup=free" className="btn-outline" style={{ width: '100%', justifyContent: 'center', fontSize: '14px' }}>
+                            Join The Lounge Free
                             <ArrowRight size={14} />
                         </Link>
                     </motion.div>

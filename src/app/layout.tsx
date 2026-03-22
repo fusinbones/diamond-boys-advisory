@@ -7,14 +7,14 @@ import IOSInstallPrompt from '@/components/IOSInstallPrompt';
 import { AuthProvider } from '@/components/AuthProvider';
 
 export const metadata: Metadata = {
-  title: 'Diamond Boys Sports Advisory | Elite MLB Baseball Picks & Discord Community',
+  title: 'Diamond Boys Sports Advisory | Elite MLB Baseball Picks & Community',
   description:
-    'Unlock winning MLB baseball picks from Diamond Boys Sports Advisory. Join our exclusive Discord community with daily expert analysis, proven picks, and a 65% win rate. Sign up for early access now.',
+    'Unlock winning MLB baseball picks from Diamond Boys Sports Advisory. Join our exclusive Diamond Lounge community with daily expert analysis, proven picks, and a 65% win rate. Sign up for early access now.',
   keywords: [
     'MLB picks',
     'sports advisory',
     'Diamond Boys',
-    'Discord betting community',
+    'sports betting community',
     'sports picks subscription',
     'MLB picks',
     'baseball analysis',
@@ -22,14 +22,14 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: 'Diamond Boys Sports Advisory | Winning MLB Baseball Picks',
-    description: 'Join 1,200+ members getting daily winning MLB picks and exclusive Discord access.',
+    description: 'Join 1,200+ members getting daily winning MLB picks and exclusive community access.',
     type: 'website',
     images: ['/logo.png'],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Diamond Boys Sports Advisory',
-    description: 'Premium MLB baseball picks + elite Discord community.',
+    description: 'Premium MLB baseball picks + elite Diamond Lounge community.',
   },
   robots: 'index, follow',
 };

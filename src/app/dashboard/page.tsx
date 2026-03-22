@@ -89,8 +89,8 @@ function DashboardContent() {
                                 {isSignUp && isFreeSignup
                                     ? 'Get instant access to game analysis, community chat, and freebie picks. No credit card needed.'
                                     : isSignUp
-                                        ? 'Sign up to track your subscription and access Discord.'
-                                        : 'Sign in to manage your account and Discord access.'
+                                        ? 'Sign up to join The Diamond Lounge and track your picks.'
+                                        : 'Sign in to manage your account and community access.'
                                 }
                             </p>
                         </div>
@@ -260,7 +260,7 @@ function DashboardContent() {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                             {[
                                 { icon: Shield, text: 'Secure — powered by Supabase & Stripe' },
-                                { icon: MessageCircle, text: 'Manage your Discord access instantly' },
+                                { icon: MessageCircle, text: 'Access The Diamond Lounge community' },
                                 { icon: Gem, text: 'Upgrade or downgrade your tier anytime' },
                             ].map((item, i) => (
                                 <motion.div
@@ -314,7 +314,7 @@ function DashboardContent() {
                         </div>
                         <h2 style={{ color: 'white', fontWeight: 700, fontSize: '18px', marginBottom: '6px' }}>Welcome, Diamond Boy!</h2>
                         <p style={{ color: '#9ca3af', fontSize: '14px', marginBottom: '16px' }}>
-                            Your account is active. Choose a subscription to unlock picks and Discord access.
+                            Your account is active. Choose a subscription to unlock picks and Lounge access.
                         </p>
                         <Link href="/pricing" className="btn-glow" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '12px 24px', fontSize: '14px' }}>
                             <Gem size={15} />
@@ -376,29 +376,14 @@ function DashboardContent() {
                                 <CreditCard size={14} />
                                 Subscribe
                             </Link>
-                            <a
-                                href="https://discord.gg/your-server"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '8px',
-                                    background: 'rgba(255,255,255,0.05)',
-                                    border: '1px solid rgba(255,255,255,0.1)',
-                                    borderRadius: '12px',
-                                    padding: '12px',
-                                    color: '#d1d5db',
-                                    fontSize: '14px',
-                                    fontWeight: 500,
-                                    cursor: 'pointer',
-                                    textDecoration: 'none',
-                                }}
+                            <Link
+                                href="/community"
+                                className="btn-glow"
+                                style={{ width: '100%', padding: '12px', fontSize: '14px', justifyContent: 'center', gap: '8px' }}
                             >
-                                <ExternalLink size={14} />
-                                Discord
-                            </a>
+                                <MessageCircle size={14} />
+                                The Diamond Lounge
+                            </Link>
                         </div>
                     </motion.div>
 

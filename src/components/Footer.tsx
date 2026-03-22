@@ -12,7 +12,7 @@ export default function Footer() {
                             DIAMOND BOYS
                         </span>
                         <p className="text-gray-500 text-xs sm:text-sm mt-2 sm:mt-3 leading-relaxed">
-                            Premium MLB picks and elite Discord community access.
+                            Premium MLB picks and elite Diamond Lounge community.
                         </p>
                     </div>
 
@@ -65,12 +65,13 @@ export default function Footer() {
                                 support@diamondboysadvisory.com
                             </a>
                             <a
-                                href="#"
+                                href="/community"
                                 className="flex items-center gap-2 text-gray-500 hover:text-[#00e59b] transition text-xs sm:text-sm"
                             >
                                 <ExternalLink size={12} className="sm:w-3.5 sm:h-3.5 flex-shrink-0" />
-                                Discord Server
+                                The Diamond Lounge
                             </a>
+
                         </div>
                     </div>
                 </div>
@@ -90,7 +91,7 @@ export default function Footer() {
                                     Please wager responsibly. If you or someone you know has a gambling problem, call <strong>1-800-GAMBLER</strong>.
                                 </p>
                                 <p>
-                                    Subscriptions are non-refundable. Non-payment results in immediate Discord access revocation per our{' '}
+                                    Subscriptions are non-refundable. Non-payment results in immediate community access revocation per our{' '}
                                     <Link href="/tos#ban-policy" className="text-[#00e59b] hover:underline">Access Policy</Link>.
                                 </p>
                             </div>

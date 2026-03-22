@@ -8,7 +8,7 @@ const testimonials = [
         name: 'Mike R.',
         handle: '@mikeR_bets',
         avatar: '🏀',
-        text: "Joined Diamond Boys 3 months ago and I'm up over 40 units. The daily picks are sharp and the Discord community is a goldmine.",
+        text: "Joined Diamond Boys 3 months ago and I'm up over 40 units. The daily picks are sharp and the Diamond Lounge community is a goldmine.",
         rating: 5,
         tier: 'Monthly Elite',
         since: 'Member since Nov 2025',

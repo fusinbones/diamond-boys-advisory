@@ -5,9 +5,9 @@ import { BarChart3, MessageSquare, Target, Bell, Lock, Gem } from 'lucide-react'
 
 const features = [
     { icon: Target, title: 'Expert Picks Daily', desc: 'Data-driven MLB picks with detailed analysis and confidence ratings.', color: '#00e59b', bg: 'rgba(0,229,155,0.1)' },
-    { icon: MessageSquare, title: 'Private Discord', desc: 'Real-time alerts, live game-day discussions, and direct expert Q&A sessions.', color: '#5865F2', bg: 'rgba(88,101,242,0.1)' },
+    { icon: MessageSquare, title: 'The Diamond Lounge', desc: 'Real-time alerts, live game-day discussions, and direct expert Q&A in our community chat.', color: '#00e59b', bg: 'rgba(0,229,155,0.1)' },
     { icon: BarChart3, title: 'Transparent Record', desc: 'Every pick tracked publicly — wins and losses. Full accountability, no cherry-picking.', color: '#fbbf24', bg: 'rgba(251,191,36,0.1)' },
-    { icon: Bell, title: 'Real-Time Alerts', desc: 'Line movement alerts pushed via Discord notifications so you never miss value.', color: '#f97316', bg: 'rgba(249,115,22,0.1)' },
+    { icon: Bell, title: 'Real-Time Alerts', desc: 'Line movement alerts pushed straight to the app so you never miss value.', color: '#f97316', bg: 'rgba(249,115,22,0.1)' },
     { icon: Lock, title: 'Secure & Private', desc: 'All payments processed via Stripe. PCI-DSS compliant. Your data stays safe.', color: '#34d399', bg: 'rgba(52,211,153,0.1)' },
     { icon: Gem, title: 'VIP Tiers', desc: 'Upgrade for expanded picks, exclusive parlay plays, and priority VIP channels.', color: '#a78bfa', bg: 'rgba(167,139,250,0.1)' },
 ];

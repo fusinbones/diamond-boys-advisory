@@ -61,8 +61,8 @@ function SuccessContent() {
                         Welcome to <span className="gradient-text">Diamond Boys!</span>
                     </h1>
                     <p className="text-gray-400 text-xs sm:text-base mb-6 sm:mb-8 max-w-md mx-auto leading-relaxed">
-                        Your subscription is active! 🎉 Check your Discord DMs — our bot will send a welcome
-                        message with instructions to access exclusive channels.
+                        Your subscription is active! 🎉 Head to The Diamond Lounge to see today&apos;s picks,
+                        join the community chat, and start winning.
                     </p>
                 </motion.div>
 
@@ -75,9 +75,9 @@ function SuccessContent() {
                 >
                     <div className="space-y-3 sm:space-y-4">
                         {[
-                            'Check your Discord DMs for the welcome message',
-                            'Join the #picks channel for daily analysis',
-                            'Introduce yourself in #general — the crew is waiting!',
+                            'Head to The Diamond Lounge to see today\'s picks',
+                            'Check the #picks channel for daily expert analysis',
+                            'Say hello in the chat — the crew is waiting!',
                         ].map((step, i) => (
                             <div key={i} className="flex items-start gap-2.5 sm:gap-3">
                                 <span className="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#00e59b]/15 flex items-center justify-center text-[10px] sm:text-xs text-[#00e59b] font-bold">
@@ -96,15 +96,13 @@ function SuccessContent() {
                     transition={{ delay: 0.8 }}
                     className="flex flex-col gap-2.5 sm:gap-3"
                 >
-                    <a
-                        href="https://discord.gg/your-server"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                    <Link
+                        href="/community"
                         className="btn-glow w-full !py-3 text-sm sm:text-base"
                     >
                         <MessageCircle size={16} className="sm:w-[18px] sm:h-[18px]" />
-                        Open Discord
-                    </a>
+                        Enter The Diamond Lounge
+                    </Link>
                     <Link href="/dashboard" className="btn-outline w-full text-xs sm:text-sm">
                         View Dashboard
                         <ArrowRight size={14} className="sm:w-4 sm:h-4" />
