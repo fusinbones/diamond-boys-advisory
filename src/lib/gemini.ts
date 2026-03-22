@@ -3,7 +3,7 @@ import { GoogleGenAI } from '@google/genai';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 function getClient() {
-    if (!GEMINI_API_KEY) throw new Error('GEMINI_API_KEY not configured');
+    if (!GEMINI_API_KEY) throw new Error('Algorithm API key not configured');
     return new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 }
 

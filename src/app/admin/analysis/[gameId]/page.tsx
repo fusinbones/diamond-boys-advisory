@@ -797,7 +797,7 @@ function OddsTab({ oddsData }: { oddsData: OddsData | null }) {
 }
 
 // ═══════════════════════════════════════════
-// TAB: AI Analysis (Gemini)
+// TAB: AI Analysis (DB Algorithm)
 // ═══════════════════════════════════════════
 
 function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
@@ -882,7 +882,7 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
             <div className="admin-card-header">
                 <div className="admin-card-title">
                     <Sparkles size={16} style={{ color: '#a78bfa' }} />
-                    Gemini AI Analysis
+                    💎 Diamond Boys Algorithm
                 </div>
                 <button
                     onClick={runAnalysis}
@@ -898,7 +898,7 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
             {loading && (
                 <div style={{ textAlign: 'center', padding: '40px 20px' }}>
                     <div style={{ fontSize: '32px', marginBottom: '12px', animation: 'pulse 2s infinite' }}>🤖</div>
-                    <div style={{ color: '#a78bfa', fontSize: '14px', fontWeight: 600 }}>Analyzing matchup with Gemini AI...</div>
+                    <div style={{ color: '#a78bfa', fontSize: '14px', fontWeight: 600 }}>Running Diamond Boys Algorithm...</div>
                     <div style={{ color: '#4b5563', fontSize: '11px', marginTop: '4px' }}>
                         Processing odds, alternation patterns, and team stats
                     </div>
