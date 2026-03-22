@@ -13,26 +13,20 @@ import {
     X,
     Loader2,
     AlertCircle,
-    Send,
-    Clock,
     Sparkles,
 } from 'lucide-react';
 import type { Pick, Game } from '@/lib/api-sports-types';
 
-interface DiscordChannel {
-    id: string;
-    name: string;
-}
+
 
 export default function PicksPage() {
     const { user } = useAdminAuth();
     const searchParams = useSearchParams();
     const [picks, setPicks] = useState<Pick[]>([]);
     const [todaysGames, setTodaysGames] = useState<Game[]>([]);
-    const [channels, setChannels] = useState<DiscordChannel[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [posting, setPosting] = useState<string | null>(null);
+
     const [generating, setGenerating] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -55,11 +49,8 @@ export default function PicksPage() {
         reason: '',
         notes: '',
         game_date: new Date().toISOString().split('T')[0],
-        // Discord fields
+        // Discord fields removed
         unit_size: 1,
-        discord_channel_id: '',
-        post_mode: 'now' as 'now' | 'schedule' | 'none',
-        discord_post_at: '',
     });
 
     // Auto-open form if Quick Pick params are present
@@ -78,7 +69,6 @@ export default function PicksPage() {
     useEffect(() => {
         fetchPicks();
         fetchTodaysGames();
-        fetchChannels();
     }, []);
 
     const fetchPicks = async () => {
@@ -105,19 +95,7 @@ export default function PicksPage() {
         }
     };
 
-    const fetchChannels = async () => {
-        try {
-            const res = await fetch('/api/admin/discord/channels');
-            const data = await res.json();
-            setChannels(data.channels || []);
-            // Default to first channel
-            if (data.channels?.length > 0 && !form.discord_channel_id) {
-                setForm(prev => ({ ...prev, discord_channel_id: data.channels[0].id }));
-            }
-        } catch {
-            // Discord not configured — that's ok
-        }
-    };
+
 
     const selectGame = (game: Game) => {
         setForm(prev => ({
@@ -143,9 +121,6 @@ export default function PicksPage() {
                 notes: form.notes,
                 game_date: form.game_date,
                 unit_size: form.unit_size,
-                discord_channel_id: form.discord_channel_id || null,
-                discord_post_at: form.post_mode === 'schedule' ? form.discord_post_at : null,
-                discord_posted: false,
                 created_by: user?.email || 'unknown',
                 game_id: null,
                 result: 'pending',
@@ -163,11 +138,6 @@ export default function PicksPage() {
             setPicks([savedPick, ...picks]);
             setShowForm(false);
             resetForm();
-
-            // If "Post Now" mode, immediately post to Discord
-            if (form.post_mode === 'now' && form.discord_channel_id && savedPick.id) {
-                await postToDiscord(savedPick.id);
-            }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to save');
         } finally {
@@ -175,30 +145,7 @@ export default function PicksPage() {
         }
     };
 
-    const postToDiscord = async (pickId: string) => {
-        setPosting(pickId);
-        setError('');
-        try {
-            const res = await fetch('/api/admin/discord/post', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pickId }),
-            });
-            const data = await res.json();
-            if (data.error) throw new Error(data.error);
 
-            // Update local state
-            setPicks(prev =>
-                prev.map(p => p.id === pickId ? { ...p, discord_posted: true, discord_message_id: data.messageId } : p)
-            );
-            setSuccess('Pick posted to Discord! ✅');
-            setTimeout(() => setSuccess(''), 3000);
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to post to Discord');
-        } finally {
-            setPosting(null);
-        }
-    };
 
     const deletePick = async (id: string) => {
         try {
@@ -230,7 +177,7 @@ export default function PicksPage() {
         setForm({
             home_team: '', away_team: '', pick_type: 'ML', pick_team: '', pick_value: '',
             confidence: 75, reason: '', notes: '', game_date: new Date().toISOString().split('T')[0],
-            unit_size: 1, discord_channel_id: channels[0]?.id || '', post_mode: 'now', discord_post_at: '',
+            unit_size: 1,
         });
     };
 
@@ -241,7 +188,7 @@ export default function PicksPage() {
                     <h1 style={{ color: 'white', fontSize: '24px', fontWeight: 800, marginBottom: '4px' }}>
                         📋 Pick Entry
                     </h1>
-                    <p style={{ color: '#6b7280', fontSize: '13px' }}>Enter picks and publish to Discord</p>
+                    <p style={{ color: '#6b7280', fontSize: '13px' }}>Enter picks and publish to The Lounge</p>
                 </div>
                 <button onClick={() => setShowForm(!showForm)} className="admin-btn admin-btn-primary">
                     <Plus size={16} /> New Pick
@@ -413,81 +360,7 @@ export default function PicksPage() {
                         <textarea value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} className="admin-textarea" placeholder="Additional context..." style={{ minHeight: '50px' }} />
                     </div>
 
-                    {/* ═══ DISCORD SECTION ═══ */}
-                    <div style={{ marginTop: '16px', padding: '14px', background: 'rgba(88,101,242,0.06)', border: '1px solid rgba(88,101,242,0.15)', borderRadius: '10px' }}>
-                        <div style={{ color: '#7289da', fontSize: '12px', fontWeight: 700, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <Send size={14} />
-                            Discord Posting
-                        </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                            {/* Channel Picker */}
-                            <div>
-                                <label className="admin-label">Channel</label>
-                                {channels.length > 0 ? (
-                                    <select
-                                        value={form.discord_channel_id}
-                                        onChange={e => setForm({ ...form, discord_channel_id: e.target.value })}
-                                        className="admin-select"
-                                    >
-                                        {channels.map(ch => (
-                                            <option key={ch.id} value={ch.id}>#{ch.name}</option>
-                                        ))}
-                                    </select>
-                                ) : (
-                                    <div style={{ color: '#4b5563', fontSize: '11px', padding: '8px' }}>
-                                        No channels found — check Discord bot config
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Post Mode */}
-                            <div>
-                                <label className="admin-label">When to Post</label>
-                                <div style={{ display: 'flex', gap: '4px' }}>
-                                    {[
-                                        { value: 'now', label: '📤 Now', desc: 'Post on save' },
-                                        { value: 'schedule', label: '⏰ Schedule', desc: 'Set time' },
-                                        { value: 'none', label: '❌ Skip', desc: 'Don\'t post' },
-                                    ].map(opt => (
-                                        <button
-                                            key={opt.value}
-                                            onClick={() => setForm({ ...form, post_mode: opt.value as 'now' | 'schedule' | 'none' })}
-                                            style={{
-                                                flex: 1,
-                                                padding: '6px 4px',
-                                                borderRadius: '6px',
-                                                border: `1px solid ${form.post_mode === opt.value ? 'rgba(114,137,218,0.4)' : 'rgba(255,255,255,0.08)'}`,
-                                                background: form.post_mode === opt.value ? 'rgba(114,137,218,0.12)' : 'rgba(255,255,255,0.03)',
-                                                color: form.post_mode === opt.value ? '#7289da' : '#6b7280',
-                                                fontSize: '11px',
-                                                fontWeight: 700,
-                                                cursor: 'pointer',
-                                                textAlign: 'center',
-                                            }}
-                                            title={opt.desc}
-                                        >
-                                            {opt.label}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Schedule Time (only if schedule mode) */}
-                        {form.post_mode === 'schedule' && (
-                            <div style={{ marginTop: '12px' }}>
-                                <label className="admin-label">Post Time</label>
-                                <input
-                                    type="datetime-local"
-                                    value={form.discord_post_at}
-                                    onChange={e => setForm({ ...form, discord_post_at: e.target.value })}
-                                    className="admin-input"
-                                    style={{ maxWidth: '280px' }}
-                                />
-                            </div>
-                        )}
-                    </div>
 
                     {/* Save Buttons */}
                     <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
@@ -498,7 +371,7 @@ export default function PicksPage() {
                             style={{ opacity: (!form.pick_team || !form.home_team || !form.away_team) ? 0.5 : 1 }}
                         >
                             {saving ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <Save size={14} />}
-                            {saving ? 'Saving...' : form.post_mode === 'now' ? 'Save & Post to Discord' : 'Save Pick'}
+                            {saving ? 'Saving...' : 'Save Pick'}
                         </button>
                         <button onClick={() => { setShowForm(false); resetForm(); }} className="admin-btn admin-btn-secondary">
                             Cancel
@@ -523,7 +396,7 @@ export default function PicksPage() {
                             <th>Pick</th>
                             <th>Units</th>
                             <th>Conf.</th>
-                            <th>Discord</th>
+
                             <th>Result</th>
                             <th>Actions</th>
                         </tr>
@@ -553,29 +426,7 @@ export default function PicksPage() {
                                         <span style={{ fontSize: '10px', color: '#9ca3af' }}>{pick.confidence}%</span>
                                     </div>
                                 </td>
-                                <td>
-                                    {pick.discord_posted ? (
-                                        <span style={{ color: '#00e59b', fontSize: '11px', fontWeight: 600 }}>✅ Posted</span>
-                                    ) : pick.discord_post_at ? (
-                                        <span style={{ color: '#fbbf24', fontSize: '11px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '3px' }}>
-                                            <Clock size={10} /> Scheduled
-                                        </span>
-                                    ) : (
-                                        <button
-                                            onClick={() => postToDiscord(pick.id!)}
-                                            disabled={posting === pick.id}
-                                            className="admin-btn admin-btn-secondary"
-                                            style={{ padding: '3px 8px', fontSize: '10px', gap: '3px' }}
-                                        >
-                                            {posting === pick.id ? (
-                                                <Loader2 size={10} style={{ animation: 'spin 1s linear infinite' }} />
-                                            ) : (
-                                                <Send size={10} />
-                                            )}
-                                            Post
-                                        </button>
-                                    )}
-                                </td>
+
                                 <td>
                                     {editingId === pick.id ? (
                                         <div style={{ display: 'flex', gap: '4px' }}>

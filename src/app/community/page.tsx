@@ -9,6 +9,8 @@ import Image from 'next/image';
 import './community.css';
 import './game-panel.css';
 import './team-search.css';
+import StreakCounter from '@/components/StreakCounter';
+import PremiumRevealFeed from '@/components/PremiumRevealFeed';
 
 /* ═══════════════════════════════════════════════════════
    Types
@@ -1671,6 +1673,12 @@ export default function CommunityPage() {
                             </div>
                         ))
                     )}
+
+                    {/* ═══ Conversion Widgets ═══ */}
+                    <div style={{ padding: '8px 10px' }}>
+                        <StreakCounter isPaid={(TIER_HIERARCHY[userTier] ?? 0) >= 1} />
+                        <PremiumRevealFeed isPaid={(TIER_HIERARCHY[userTier] ?? 0) >= 1} />
+                    </div>
 
                     {/* Admin settings button */}
                     {isAdmin && (

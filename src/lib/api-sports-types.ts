@@ -213,10 +213,5 @@ export interface Pick {
     notes: string;
     result: 'pending' | 'hit' | 'miss' | 'push';
     game_date: string;
-    // Discord posting
-    discord_channel_id?: string;
-    discord_post_at?: string;       // ISO timestamp for scheduled posting
-    discord_posted?: boolean;
-    discord_message_id?: string;
     unit_size?: number;             // 1-5
 }
