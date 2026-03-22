@@ -1852,7 +1852,10 @@ export default function CommunityPage() {
                 </div>
             </div>
 
-            <button className="lounge-mobile-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}><Menu size={20} /></button>
+            <button className="lounge-mobile-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
+                <Menu size={18} />
+                <span>Chat Rooms</span>
+            </button>
 
             {/* Admin Panel Modal */}
             {showAdminPanel && (

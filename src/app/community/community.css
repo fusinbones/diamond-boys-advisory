@@ -578,21 +578,29 @@
     bottom: 16px;
     left: 16px;
     z-index: 100;
-    width: 44px;
     height: 44px;
-    border-radius: 50%;
+    padding: 0 16px 0 12px;
+    border-radius: 22px;
     background: linear-gradient(135deg, #00e59b, #00c98a);
     border: none;
     color: #080c15;
-    font-size: 18px;
+    font-size: 13px;
+    font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0,229,155,0.3);
+    box-shadow: 0 4px 20px rgba(0,229,155,0.35);
     align-items: center;
     justify-content: center;
-    transition: transform 0.15s;
+    gap: 6px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    animation: chatTogglePulse 2s ease-in-out 3;
 }
 
 .lounge-mobile-toggle:active { transform: scale(0.93); }
+
+@keyframes chatTogglePulse {
+    0%, 100% { box-shadow: 0 4px 20px rgba(0,229,155,0.35); }
+    50% { box-shadow: 0 4px 30px rgba(0,229,155,0.6), 0 0 0 6px rgba(0,229,155,0.15); }
+}
 
 /* ── Mobile ─────────────────────────────────────────── */
 @media (max-width: 768px) {

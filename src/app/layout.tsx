@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Analytics from '@/components/Analytics';
 import IOSInstallPrompt from '@/components/IOSInstallPrompt';
+import PickAlertBanner from '@/components/PickAlertBanner';
 import { AuthProvider } from '@/components/AuthProvider';
 
 export const metadata: Metadata = {
@@ -60,6 +61,7 @@ export default function RootLayout({
           </main>
           <Footer />
           <IOSInstallPrompt />
+          <PickAlertBanner />
         </AuthProvider>
       </body>
     </html>
