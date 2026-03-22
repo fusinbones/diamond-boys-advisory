@@ -138,15 +138,15 @@ function analyzeAlternation(results: Array<{ result: 'W' | 'L' }>): {
 export async function GET() {
     try {
         const today = new Date().toISOString().split('T')[0];
-        // Get games from last 14 days
+        // Look back 21 days for regular season games
         const startDate = new Date();
-        startDate.setDate(startDate.getDate() - 14);
+        startDate.setDate(startDate.getDate() - 21);
         const start = startDate.toISOString().split('T')[0];
 
-        // Fetch schedule with scores for all teams
+        // Fetch only REGULAR SEASON games (gameType=R) — excludes spring training (S), exhibitions (E), etc.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const scheduleRes = await fetch(
-            `${MLB_API}/schedule?sportId=1&startDate=${start}&endDate=${today}&hydrate=linescore,team`,
+            `${MLB_API}/schedule?sportId=1&gameType=R&startDate=${start}&endDate=${today}&hydrate=linescore,team`,
             { next: { revalidate: 1800 } }
         );
         if (!scheduleRes.ok) throw new Error(`MLB API error: ${scheduleRes.status}`);
@@ -160,6 +160,8 @@ export async function GET() {
             for (const game of date.games || []) {
                 const status = game.status?.abstractGameState;
                 if (status !== 'Final') continue;
+                // Double-check: only regular season
+                if (game.gameType && game.gameType !== 'R') continue;
 
                 const homeId = game.teams?.home?.team?.id;
                 const awayId = game.teams?.away?.team?.id;
