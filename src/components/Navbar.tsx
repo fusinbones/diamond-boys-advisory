@@ -56,7 +56,7 @@ export default function Navbar() {
             <div className="container-db">
                 <div className="flex items-center justify-between h-14 sm:h-20">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0 relative z-[60]">
+                    <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0 relative z-[101]">
                         <Image
                             src="/logo.png"
                             alt="Diamond Boys Sports Advisory"
@@ -64,7 +64,7 @@ export default function Navbar() {
                             height={36}
                             className="sm:w-11 sm:h-11 rounded-lg group-hover:scale-105 transition-transform"
                         />
-                        <div className="hidden xs:block sm:block">
+                        <div>
                             <span className="text-white font-display font-bold text-sm sm:text-lg tracking-wide">
                                 DIAMOND BOYS
                             </span>
