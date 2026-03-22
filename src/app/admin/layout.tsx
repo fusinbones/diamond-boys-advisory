@@ -17,12 +17,14 @@ import {
     Mail,
     ArrowRight,
     ShieldCheck,
+    ArrowUpDown,
 } from 'lucide-react';
 import './admin.css';
 
 const navItems = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/admin/analysis', label: 'Analysis Hub', icon: Search },
+    { href: '/admin/patterns', label: 'Patterns', icon: ArrowUpDown },
     { href: '/admin/picks', label: 'Pick Entry', icon: ClipboardList },
     { href: '/admin/logs', label: 'Pick Logs', icon: History },
 ];
