@@ -159,6 +159,7 @@
     justify-content: center;
     overflow: hidden;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 .pattern-dot {
@@ -171,7 +172,132 @@
     font-size: 10px;
     font-weight: 800;
     flex-shrink: 0;
+    transition: all 0.3s ease;
+    position: relative;
 }
+
+/* ═══ STREAK HIGHLIGHTING ═══ */
+
+/* Non-streak dots — dimmed */
+.pattern-dot.dimmed {
+    opacity: 0.3;
+    transform: scale(0.85);
+}
+
+/* Streak dots — GLOWING */
+.pattern-dot.streak {
+    transform: scale(1.1);
+    z-index: 1;
+}
+
+.pattern-dot.streak.win {
+    box-shadow:
+        0 0 6px rgba(0, 229, 155, 0.4),
+        0 0 16px rgba(0, 229, 155, 0.15),
+        inset 0 0 4px rgba(0, 229, 155, 0.1);
+    animation: streakPulse 2s ease-in-out infinite;
+}
+
+.pattern-dot.streak.loss {
+    box-shadow:
+        0 0 6px rgba(239, 68, 68, 0.4),
+        0 0 16px rgba(239, 68, 68, 0.15),
+        inset 0 0 4px rgba(239, 68, 68, 0.1);
+    animation: streakPulse 2s ease-in-out infinite;
+}
+
+/* Connector between streak dots */
+.pattern-streak-connector {
+    width: 6px;
+    height: 2px;
+    border-radius: 1px;
+    flex-shrink: 0;
+    opacity: 0.6;
+}
+
+/* Separator between streak and non-streak */
+.pattern-streak-divider {
+    width: 2px;
+    height: 18px;
+    border-radius: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+    margin: 0 2px;
+}
+
+/* ═══ BREAK POINT INDICATOR ═══ */
+
+.pattern-break-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 900;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+    animation: breakPulse 1.5s ease-in-out infinite;
+}
+
+.pattern-break-dot.break-mode {
+    animation: breakGlow 1.2s ease-in-out infinite;
+}
+
+/* "NEXT" label above the break dot */
+.pattern-break-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.pattern-break-label {
+    font-size: 7px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+}
+
+/* Arrow pointing to the break dot */
+.pattern-break-arrow {
+    font-size: 10px;
+    flex-shrink: 0;
+    animation: arrowPulse 1.5s ease-in-out infinite;
+}
+
+/* ═══ ANIMATIONS ═══ */
+
+@keyframes streakPulse {
+    0%, 100% { transform: scale(1.1); }
+    50% { transform: scale(1.15); }
+}
+
+@keyframes breakPulse {
+    0%, 100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.12); opacity: 1; }
+}
+
+@keyframes breakGlow {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 8px rgba(251, 146, 60, 0.3), 0 0 20px rgba(251, 146, 60, 0.1);
+    }
+    50% {
+        transform: scale(1.15);
+        box-shadow: 0 0 14px rgba(251, 146, 60, 0.5), 0 0 30px rgba(251, 146, 60, 0.2);
+    }
+}
+
+@keyframes arrowPulse {
+    0%, 100% { opacity: 0.5; transform: translateX(0); }
+    50% { opacity: 1; transform: translateX(2px); }
+}
+
 
 /* Right side (score, streak, prediction) */
 .pattern-metrics {

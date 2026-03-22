@@ -195,22 +195,79 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
                     </div>
                 </div>
 
-                {/* Pattern dots */}
+                {/* Pattern dots — oldest→newest (left→right), streak highlighted */}
                 <div className="pattern-dots">
-                    {team.recentResults.slice(0, 10).map((g, i) => (
-                        <div
-                            key={i}
-                            className="pattern-dot"
-                            title={`${g.result} ${g.score} ${g.opponent} (${g.date})`}
-                            style={{
-                                background: g.result === 'W' ? 'rgba(0,229,155,0.15)' : 'rgba(239,68,68,0.15)',
-                                color: g.result === 'W' ? '#00e59b' : '#ef4444',
-                                border: `1px solid ${g.result === 'W' ? 'rgba(0,229,155,0.25)' : 'rgba(239,68,68,0.25)'}`,
-                            }}
-                        >
-                            {g.result}
-                        </div>
-                    ))}
+                    {(() => {
+                        const results = team.recentResults.slice(0, 10);
+                        const reversed = [...results].reverse(); // oldest first
+                        const streakStart = reversed.length - team.altStreak; // index where streak begins
+                        const hasStreak = team.altStreak >= 4;
+
+                        return (
+                            <>
+                                {reversed.map((g, i) => {
+                                    const inStreak = hasStreak && i >= streakStart;
+                                    const isStreakStart = hasStreak && i === streakStart;
+                                    const dotClass = [
+                                        'pattern-dot',
+                                        hasStreak && !inStreak ? 'dimmed' : '',
+                                        inStreak ? 'streak' : '',
+                                        inStreak ? (g.result === 'W' ? 'win' : 'loss') : '',
+                                    ].filter(Boolean).join(' ');
+
+                                    return (
+                                        <span key={i} style={{ display: 'contents' }}>
+                                            {/* Divider before streak starts */}
+                                            {isStreakStart && i > 0 && (
+                                                <div className="pattern-streak-divider" />
+                                            )}
+                                            {/* Connector between streak dots */}
+                                            {inStreak && !isStreakStart && (
+                                                <div
+                                                    className="pattern-streak-connector"
+                                                    style={{ background: g.result === 'W' ? 'rgba(0,229,155,0.4)' : 'rgba(239,68,68,0.4)' }}
+                                                />
+                                            )}
+                                            <div
+                                                className={dotClass}
+                                                title={`${g.result} ${g.score} ${g.opponent} (${g.date})`}
+                                                style={{
+                                                    background: g.result === 'W' ? 'rgba(0,229,155,0.15)' : 'rgba(239,68,68,0.15)',
+                                                    color: g.result === 'W' ? '#00e59b' : '#ef4444',
+                                                    border: `1px solid ${g.result === 'W' ? 'rgba(0,229,155,0.25)' : 'rgba(239,68,68,0.25)'}`,
+                                                }}
+                                            >
+                                                {g.result}
+                                            </div>
+                                        </span>
+                                    );
+                                })}
+                                {/* Break point indicator */}
+                                {hasStreak && team.nextPrediction && (
+                                    <>
+                                        <span className="pattern-break-arrow" style={{ color: isBreak ? '#fb923c' : '#a78bfa' }}>→</span>
+                                        <div className="pattern-break-wrapper">
+                                            <span className="pattern-break-label" style={{ color: isBreak ? '#fb923c' : '#a78bfa' }}>
+                                                {isBreak ? '⚡BREAK' : 'NEXT'}
+                                            </span>
+                                            <div
+                                                className={`pattern-break-dot ${isBreak ? 'break-mode' : ''}`}
+                                                style={{
+                                                    background: team.nextPrediction === 'W'
+                                                        ? (isBreak ? 'rgba(0,229,155,0.25)' : 'rgba(0,229,155,0.15)')
+                                                        : (isBreak ? 'rgba(239,68,68,0.25)' : 'rgba(239,68,68,0.15)'),
+                                                    color: team.nextPrediction === 'W' ? '#00e59b' : '#ef4444',
+                                                    border: `2px dashed ${team.nextPrediction === 'W' ? 'rgba(0,229,155,0.4)' : 'rgba(239,68,68,0.4)'}`,
+                                                }}
+                                            >
+                                                {team.nextPrediction}?
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+                            </>
+                        );
+                    })()}
                     {team.recentResults.length === 0 && (
                         <span style={{ color: '#374151', fontSize: '11px' }}>No recent games</span>
                     )}
