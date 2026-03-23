@@ -334,7 +334,7 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
             {expanded && (
                 <div className="pattern-expanded">
                     <div className="pattern-games-grid">
-                        {team.recentResults.map((g, i) => (
+                        {[...team.recentResults].reverse().map((g, i) => (
                             <div
                                 key={i}
                                 className="pattern-game-card"
@@ -347,7 +347,7 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
                                         {g.result === 'W' ? '✅ WIN' : '❌ LOSS'}
                                     </span>
                                     <span className="pattern-game-date">
-                                        {new Date(g.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                        {new Date(g.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                     </span>
                                 </div>
                                 <div className="pattern-game-opponent">{g.opponent}</div>
