@@ -83,7 +83,7 @@ export default function Footer() {
                             <Shield size={14} className="sm:w-[18px] sm:h-[18px] text-[#00e59b] mt-0.5 flex-shrink-0" />
                             <div className="text-[10px] sm:text-xs text-gray-500 leading-relaxed space-y-1">
                                 <p>
-                                    <strong className="text-gray-400">Disclaimer:</strong> TriplePlayz Sports Advisory provides sports analysis
+                                    <strong className="text-gray-400">Disclaimer:</strong> TriplePlayz - Sports Advisory provides sports analysis
                                     for <strong>entertainment purposes only</strong>. Not a licensed sportsbook, financial advisor, or gambling operator.
                                 </p>
                                 <p>
@@ -99,7 +99,7 @@ export default function Footer() {
                     </div>
 
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4 text-[10px] sm:text-xs text-gray-600">
-                        <p>© {new Date().getFullYear()} TriplePlayz Sports Advisory. All rights reserved.</p>
+                        <p>© {new Date().getFullYear()} TriplePlayz - Sports Advisory. All rights reserved.</p>
                         <p>Not affiliated with the NCAA, NBA, or any sports league.</p>
                     </div>
                 </div>

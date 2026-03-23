@@ -8,9 +8,9 @@ import PickAlertBanner from '@/components/PickAlertBanner';
 import { AuthProvider } from '@/components/AuthProvider';
 
 export const metadata: Metadata = {
-  title: 'TriplePlayz Sports Advisory | Elite MLB Baseball Picks & Community',
+  title: 'TriplePlayz - Sports Advisory | Elite MLB Baseball Picks & Community',
   description:
-    'Unlock winning MLB baseball picks from TriplePlayz Sports Advisory. Join our exclusive TriplePlayz Lounge community with daily expert analysis, proven picks, and a 65% win rate. Sign up for early access now.',
+    'Unlock winning MLB baseball picks from TriplePlayz - Sports Advisory. Join our exclusive TriplePlayz Lounge community with daily expert analysis, proven picks, and a 65% win rate. Sign up for early access now.',
   keywords: [
     'MLB picks',
     'sports advisory',
@@ -22,14 +22,14 @@ export const metadata: Metadata = {
     'sports betting picks',
   ],
   openGraph: {
-    title: 'TriplePlayz Sports Advisory | Winning MLB Baseball Picks',
+    title: 'TriplePlayz - Sports Advisory | Winning MLB Baseball Picks',
     description: 'Join 1,200+ members getting daily winning MLB picks and exclusive community access.',
     type: 'website',
     images: ['/logo.png'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'TriplePlayz Sports Advisory',
+    title: 'TriplePlayz - Sports Advisory',
     description: 'Premium MLB baseball picks + elite TriplePlayz Lounge community.',
   },
   robots: 'index, follow',

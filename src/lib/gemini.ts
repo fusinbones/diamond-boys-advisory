@@ -51,7 +51,7 @@ interface GameContext {
 export async function analyzeGame(context: GameContext): Promise<string> {
     const ai = getClient();
 
-    const prompt = `You are an elite MLB sports analyst for TriplePlayz Advisory, a premium sports picks service. Analyze this game and provide actionable insights.
+    const prompt = `You are an elite MLB sports analyst for TriplePlayz - Sports Advisory, a premium sports picks service. Analyze this game and provide actionable insights.
 
 ## Game Data
 - **Matchup**: ${context.awayTeam} @ ${context.homeTeam}
@@ -131,7 +131,7 @@ export async function generatePickReason(pick: {
 }): Promise<string> {
     const ai = getClient();
 
-    const prompt = `You are the lead analyst for TriplePlayz Advisory. Write a concise, sharp 1-2 sentence reason for this pick.
+    const prompt = `You are the lead analyst for TriplePlayz - Sports Advisory. Write a concise, sharp 1-2 sentence reason for this pick.
 
 Pick: ${pick.pickTeam} ${pick.pickType}
 Game: ${pick.awayTeam} @ ${pick.homeTeam} (${pick.gameDate})

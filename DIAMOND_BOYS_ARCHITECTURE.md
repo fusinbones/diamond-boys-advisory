@@ -1,4 +1,4 @@
-# TriplePlayz Advisory — Complete Platform Architecture
+# TriplePlayz - Sports Advisory — Complete Platform Architecture
 
 > **Version**: March 2026 | **Stack**: Next.js 15 + TypeScript + Supabase + Stripe + Gemini AI
 > **Domain**: [diamondboysadvisory.com](https://www.diamondboysadvisory.com)
@@ -28,7 +28,7 @@
 
 ## Platform Overview
 
-TriplePlayz Advisory is a **premium MLB sports picks and analysis platform**. Members subscribe to receive:
+TriplePlayz - Sports Advisory is a **premium MLB sports picks and analysis platform**. Members subscribe to receive:
 - Daily AI-powered game analysis
 - Expert picks with the proprietary W/L Alternation Break algorithm
 - Access to the TriplePlayz Lounge community
@@ -337,7 +337,7 @@ Out of **91 total patterns** that reached 6+ games of strict alternation last se
 | `IOSInstallPrompt.tsx` | iOS PWA install guide (9,336 bytes) |
 
 ### SEO Configuration (`layout.tsx`)
-- **Title**: "TriplePlayz Sports Advisory | Elite MLB Baseball Picks & Community"
+- **Title**: "TriplePlayz - Sports Advisory | Elite MLB Baseball Picks & Community"
 - **Description**: Winning MLB picks, 65% win rate, TriplePlayz Lounge community
 - **Keywords**: MLB picks, sports advisory, baseball analysis, sports betting
 - **OpenGraph + Twitter cards** configured

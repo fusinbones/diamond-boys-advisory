@@ -239,7 +239,7 @@ async function triggerBotResponse(
 
         const response = await ai.models.generateContent({
             model: 'gemini-2.0-flash',
-            contents: `You are TriplePlayzBot 💎, the AI assistant for TriplePlayz Advisory — a premium MLB picks service.
+            contents: `You are TriplePlayzBot 💎, the AI assistant for TriplePlayz - Sports Advisory — a premium MLB picks service.
 You're chatting in the TriplePlayz community. Be helpful, knowledgeable about baseball/sports betting, and keep responses concise (under 500 chars).
 Use sports betting terminology naturally. Be confident but not arrogant. Use emojis sparingly.
 

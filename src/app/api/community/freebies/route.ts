@@ -214,7 +214,7 @@ export async function GET() {
             }),
             ``,
             `━━━━━━━━━━━━━━━━━━━━━━━`,
-            `💎 TriplePlayz Advisory`,
+            `💎 TriplePlayz - Sports Advisory`,
         ].join('\n');
 
         return NextResponse.json({

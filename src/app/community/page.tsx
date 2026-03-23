@@ -1013,7 +1013,7 @@ function PickComposer({
             ``,
             analysis ? `📊 *${analysis}*` : '',
             divider,
-            `💎 TriplePlayz Advisory`,
+            `💎 TriplePlayz - Sports Advisory`,
         ].filter(Boolean).join('\n');
     };
 
@@ -1645,7 +1645,7 @@ export default function CommunityPage() {
                 <aside className={`lounge-sidebar ${sidebarOpen ? 'open' : ''}`}>
                     <div className="lounge-sidebar-header">
                         <h2>💎 TriplePlayz Lounge</h2>
-                        <p>TriplePlayz Advisory</p>
+                        <p>TriplePlayz - Sports Advisory</p>
                         <div className="lounge-online-badge"><span className="lounge-online-dot" /> Online</div>
                     </div>
 

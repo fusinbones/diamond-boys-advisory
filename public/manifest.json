@@ -1,7 +1,7 @@
 {
-  "name": "TriplePlayz Sports Advisory",
+  "name": "TriplePlayz - Sports Advisory",
   "short_name": "TriplePlayz",
-  "description": "Elite MLB baseball picks, live odds, and expert analysis from TriplePlayz Sports Advisory.",
+  "description": "Elite MLB baseball picks, live odds, and expert analysis from TriplePlayz - Sports Advisory.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#040810",

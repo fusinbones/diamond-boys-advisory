@@ -1,7 +1,7 @@
 {
     "name": "tripleplayz-bot",
     "version": "1.0.0",
-    "description": "TriplePlayz Advisory Discord Bot — Gemini AI powered",
+    "description": "TriplePlayz - Sports Advisory Discord Bot — Gemini AI powered",
     "main": "dist/tripleplayz-bot.js",
     "scripts": {
         "build": "tsc",

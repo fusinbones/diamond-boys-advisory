@@ -59,7 +59,7 @@ export default function Navbar() {
                     <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0 relative z-[101]">
                         <Image
                             src="/logo.png"
-                            alt="TriplePlayz Sports Advisory"
+                            alt="TriplePlayz - Sports Advisory"
                             width={36}
                             height={36}
                             className="sm:w-11 sm:h-11 rounded-lg group-hover:scale-105 transition-transform"
