@@ -44,7 +44,7 @@ function SuccessContent() {
                     </div>
                     <Image
                         src="/logo.png"
-                        alt="Diamond Boys"
+                        alt="TriplePlayz"
                         width={48}
                         height={48}
                         className="sm:w-[60px] sm:h-[60px] mx-auto rounded-xl shadow-xl"
@@ -58,10 +58,10 @@ function SuccessContent() {
                     transition={{ delay: 0.4 }}
                 >
                     <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 sm:mb-3">
-                        Welcome to <span className="gradient-text">Diamond Boys!</span>
+                        Welcome to <span className="gradient-text">TriplePlayz!</span>
                     </h1>
                     <p className="text-gray-400 text-xs sm:text-base mb-6 sm:mb-8 max-w-md mx-auto leading-relaxed">
-                        Your subscription is active! 🎉 Head to The Diamond Lounge to see today&apos;s picks,
+                        Your subscription is active! 🎉 Head to The TriplePlayz Lounge to see today&apos;s picks,
                         join the community chat, and start winning.
                     </p>
                 </motion.div>
@@ -75,7 +75,7 @@ function SuccessContent() {
                 >
                     <div className="space-y-3 sm:space-y-4">
                         {[
-                            'Head to The Diamond Lounge to see today\'s picks',
+                            'Head to The TriplePlayz Lounge to see today\'s picks',
                             'Check the #picks channel for daily expert analysis',
                             'Say hello in the chat — the crew is waiting!',
                         ].map((step, i) => (
@@ -101,7 +101,7 @@ function SuccessContent() {
                         className="btn-glow w-full !py-3 text-sm sm:text-base"
                     >
                         <MessageCircle size={16} className="sm:w-[18px] sm:h-[18px]" />
-                        Enter The Diamond Lounge
+                        Enter The TriplePlayz Lounge
                     </Link>
                     <Link href="/dashboard" className="btn-outline w-full text-xs sm:text-sm">
                         View Dashboard
@@ -110,7 +110,7 @@ function SuccessContent() {
                 </motion.div>
 
                 <p className="text-[10px] sm:text-xs text-gray-600 mt-4 sm:mt-6">
-                    Need help? Contact support@diamondboysadvisory.com
+                    Need help? Contact support@tripleplayz.com
                 </p>
 
                 <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-gray-600 mt-3">

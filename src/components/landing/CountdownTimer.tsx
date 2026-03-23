@@ -91,7 +91,7 @@ export default function CountdownTimer() {
                             fontSize: 'clamp(20px, 3vw, 28px)', fontWeight: 800,
                             color: 'white', marginBottom: '6px',
                         }}>
-                            🎯 Diamond Pick Incoming
+                            🎯 TriplePlayz Pick Incoming
                         </h3>
                         <p style={{ color: '#9ca3af', fontSize: '14px', marginBottom: '22px', lineHeight: 1.5 }}>
                             Premium members get notified <span style={{ color: '#00e59b', fontWeight: 600 }}>30 minutes before</span> every pick drop

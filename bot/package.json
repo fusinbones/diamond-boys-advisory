@@ -1,12 +1,12 @@
 {
-    "name": "diamond-boys-bot",
+    "name": "tripleplayz-bot",
     "version": "1.0.0",
-    "description": "Diamond Boys Advisory Discord Bot — Gemini AI powered",
-    "main": "dist/diamond-bot.js",
+    "description": "TriplePlayz Advisory Discord Bot — Gemini AI powered",
+    "main": "dist/tripleplayz-bot.js",
     "scripts": {
         "build": "tsc",
-        "start": "node dist/diamond-bot.js",
-        "dev": "npx ts-node diamond-bot.ts"
+        "start": "node dist/tripleplayz-bot.js",
+        "dev": "npx ts-node tripleplayz-bot.ts"
     },
     "dependencies": {
         "@google/genai": "^1.41.0",

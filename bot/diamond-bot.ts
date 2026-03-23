@@ -48,7 +48,7 @@ async function askGemini(channelId: string, userMessage: string, authorName: str
     // Build conversation context
     let contextBlock = memory.map(m => {
         if (m.role === 'user') return `${m.author || 'Member'}: ${m.content}`;
-        return `Diamond: ${m.content}`;
+        return `TriplePlayz: ${m.content}`;
     }).join('\n');
 
     const prompt = `${SYSTEM_PROMPT}
@@ -59,7 +59,7 @@ ${contextBlock || '(New conversation)'}
 ## CURRENT MESSAGE
 ${authorName}: ${userMessage}
 
-Respond as Diamond. Keep it natural, concise, and baseball-focused.`;
+Respond as TriplePlayz. Keep it natural, concise, and baseball-focused.`;
 
     try {
         const response = await ai.models.generateContent({
@@ -98,7 +98,7 @@ const client = new Client({
 // ═══════════════════════════════════════════
 
 client.once(Events.ClientReady, (readyClient) => {
-    console.log(`\n💎 Diamond Boys Bot is LIVE!`);
+    console.log(`\n💎 TriplePlayz Bot is LIVE!`);
     console.log(`   Logged in as: ${readyClient.user.tag}`);
     console.log(`   Guilds: ${readyClient.guilds.cache.size}`);
     console.log(`   Channel filter: ${BOT_CHANNELS_ALLOWLIST.length > 0 ? BOT_CHANNELS_ALLOWLIST.join(', ') : 'ALL channels'}`);
@@ -148,9 +148,9 @@ client.on(Events.MessageCreate, async (message: Message) => {
     const isReplyToBot = message.reference?.messageId &&
         (await message.channel.messages.fetch(message.reference.messageId).catch(() => null))?.author?.id === client.user?.id;
 
-    const isDiamondTrigger = content.toLowerCase().startsWith('diamond') || content.startsWith('💎');
+    const isTriplePlayzTrigger = content.toLowerCase().startsWith('tripleplayz') || content.startsWith('💎');
 
-    if (!botMentioned && !isDiamondTrigger && !isReplyToBot) return;
+    if (!botMentioned && !isTriplePlayzTrigger && !isReplyToBot) return;
 
     // Don't respond to empty mentions
     if (!content) {
@@ -188,18 +188,18 @@ client.on(Events.MessageCreate, async (message: Message) => {
 // Start
 // ═══════════════════════════════════════════
 
-console.log('🚀 Starting Diamond Boys Bot...');
+console.log('🚀 Starting TriplePlayz Bot...');
 client.login(DISCORD_BOT_TOKEN);
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-    console.log('\n💎 Diamond Boys Bot shutting down...');
+    console.log('\n💎 TriplePlayz Bot shutting down...');
     client.destroy();
     process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-    console.log('\n💎 Diamond Boys Bot shutting down...');
+    console.log('\n💎 TriplePlayz Bot shutting down...');
     client.destroy();
     process.exit(0);
 });

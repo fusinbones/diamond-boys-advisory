@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { Shield, AlertTriangle, Scale, Lock, Ban, Mail } from 'lucide-react';
 
 export const metadata: Metadata = {
-    title: 'Terms of Service & Policies | Diamond Boys Sports Advisory',
-    description: 'Diamond Boys Sports Advisory terms of service, privacy policy, ban policy, and gambling disclaimer.',
+    title: 'Terms of Service & Policies | TriplePlayz Sports Advisory',
+    description: 'TriplePlayz Sports Advisory terms of service, privacy policy, ban policy, and gambling disclaimer.',
 };
 
 export default function TOSPage() {
@@ -24,12 +24,12 @@ export default function TOSPage() {
                         </div>
                         <div className="text-gray-400 text-sm leading-relaxed space-y-4">
                             <p>
-                                By accessing or using Diamond Boys Sports Advisory (&quot;the Service&quot;), you agree to be bound by these
+                                By accessing or using TriplePlayz Sports Advisory (&quot;the Service&quot;), you agree to be bound by these
                                 Terms of Service (&quot;Terms&quot;). If you do not agree, do not use the Service.
                             </p>
                             <h3 className="text-white font-semibold text-base pt-2">1. Service Description</h3>
                             <p>
-                                Diamond Boys Sports Advisory provides sports analysis, commentary, and picks related to MLB baseball
+                                TriplePlayz Sports Advisory provides sports analysis, commentary, and picks related to MLB baseball
                                 and other sporting events. The Service is provided for <strong>entertainment and informational purposes only</strong>.
                                 We are not a licensed sportsbook, gambling operator, or financial advisor. Our analysis does not constitute
                                 financial or wagering advice, and no guarantee of profit or specific outcomes is made or implied.
@@ -38,7 +38,7 @@ export default function TOSPage() {
                             <p>
                                 You must be at least <strong>21 years of age</strong> and located in a jurisdiction where accessing sports
                                 analysis content is legal. By subscribing, you represent and warrant that you meet these requirements.
-                                Diamond Boys Sports Advisory does not facilitate, process, or accept wagers of any kind.
+                                TriplePlayz Sports Advisory does not facilitate, process, or accept wagers of any kind.
                             </p>
                             <h3 className="text-white font-semibold text-base pt-2">3. Subscriptions & Billing</h3>
                             <p>
@@ -57,17 +57,17 @@ export default function TOSPage() {
                             <p>
                                 Filing a chargeback or payment dispute will result in <strong>immediate and permanent revocation</strong> of
                                 all access, including community membership. We encourage you to contact us directly at
-                                support@diamondboysadvisory.com to resolve any billing concerns before initiating a dispute with your card issuer.
+                                support@tripleplayz.com to resolve any billing concerns before initiating a dispute with your card issuer.
                             </p>
                             <h3 className="text-white font-semibold text-base pt-2">6. Intellectual Property</h3>
                             <p>
-                                All content produced by Diamond Boys Sports Advisory — including picks, analysis, reports, and commentary —
+                                All content produced by TriplePlayz Sports Advisory — including picks, analysis, reports, and commentary —
                                 is proprietary and protected by copyright. Redistribution, resale, or public sharing of our content is
                                 strictly prohibited and will result in immediate termination of your subscription.
                             </p>
                             <h3 className="text-white font-semibold text-base pt-2">7. Limitation of Liability</h3>
                             <p>
-                                Diamond Boys Sports Advisory, its owners, employees, and affiliates shall not be held liable for any
+                                TriplePlayz Sports Advisory, its owners, employees, and affiliates shall not be held liable for any
                                 losses — financial or otherwise — incurred as a result of using the Service or acting on any information
                                 provided. You acknowledge that sports wagering carries inherent risk and that past performance is not
                                 indicative of future results. The Service is provided &quot;as is&quot; without warranties of any kind.
@@ -96,7 +96,7 @@ export default function TOSPage() {
                         </div>
                         <div className="text-gray-400 text-sm leading-relaxed space-y-4">
                             <p>
-                                Your active subscription grants you access to The Diamond Lounge community and associated content.
+                                Your active subscription grants you access to The TriplePlayz Lounge community and associated content.
                                 This access is <strong>conditional upon maintaining an active, paid subscription</strong>.
                             </p>
                             <h3 className="text-white font-semibold text-base pt-2">Automatic Access Revocation</h3>
@@ -152,13 +152,13 @@ export default function TOSPage() {
                             <h3 className="text-white font-semibold text-base pt-2">Data Retention & Deletion</h3>
                             <p>
                                 We retain your data only as long as necessary to provide the Service and fulfill legal obligations.
-                                You may request deletion of your personal data by contacting support@diamondboysadvisory.com.
+                                You may request deletion of your personal data by contacting support@tripleplayz.com.
                                 Payment records maintained by Stripe are subject to Stripe&apos;s retention policies.
                             </p>
                             <h3 className="text-white font-semibold text-base pt-2">GDPR/CCPA Rights</h3>
                             <p>
                                 If you are an EU/EEA resident or California resident, you have the right to access, correct, delete,
-                                or port your personal data. Contact us at support@diamondboysadvisory.com to exercise these rights.
+                                or port your personal data. Contact us at support@tripleplayz.com to exercise these rights.
                             </p>
                         </div>
                     </section>
@@ -176,7 +176,7 @@ export default function TOSPage() {
                                 </p>
                             </div>
                             <p>
-                                Diamond Boys Sports Advisory provides sports analysis and commentary for <strong>entertainment
+                                TriplePlayz Sports Advisory provides sports analysis and commentary for <strong>entertainment
                                     purposes only</strong>. We do not operate as a sportsbook, gambling operator, or financial institution.
                                 We do not accept, process, or facilitate wagers.
                             </p>
@@ -191,7 +191,7 @@ export default function TOSPage() {
                             </p>
                             <p>
                                 <strong>Legal Compliance:</strong> You are solely responsible for ensuring that your use of this service
-                                complies with all applicable local, state, and federal laws in your jurisdiction. Diamond Boys Sports
+                                complies with all applicable local, state, and federal laws in your jurisdiction. TriplePlayz Sports
                                 Advisory makes no representation regarding the legality of sports wagering in your location.
                             </p>
                             <p>
@@ -204,7 +204,7 @@ export default function TOSPage() {
                                 <li>💬 <strong>Crisis Text Line:</strong> Text &quot;GAMBLER&quot; to 233789</li>
                             </ul>
                             <p>
-                                <strong>Not Affiliated:</strong> Diamond Boys Sports Advisory is not affiliated with, endorsed by, or
+                                <strong>Not Affiliated:</strong> TriplePlayz Sports Advisory is not affiliated with, endorsed by, or
                                 sponsored by the NCAA, NBA, NFL, MLB, or any collegiate or professional sports organization, team,
                                 or league.
                             </p>
@@ -222,7 +222,7 @@ export default function TOSPage() {
                                 For billing questions, technical support, or general inquiries (non-ban related), contact us at:
                             </p>
                             <div className="glass-card p-4 bg-[#0d1525]/50">
-                                <p className="text-white font-medium">📧 support@diamondboysadvisory.com</p>
+                                <p className="text-white font-medium">📧 support@tripleplayz.com</p>
                                 <p className="text-gray-500 text-xs mt-1">We typically respond within 24 hours.</p>
                             </div>
                             <p className="text-xs text-gray-600">

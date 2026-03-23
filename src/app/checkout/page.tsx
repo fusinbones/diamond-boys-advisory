@@ -68,7 +68,7 @@ function CheckoutForm() {
                             <h3 className="text-white font-semibold text-sm sm:text-lg mb-3 sm:mb-4">Order Summary</h3>
 
                             <div className="flex items-center gap-3 mb-4 sm:mb-6">
-                                <Image src="/logo.png" alt="Diamond Boys" width={36} height={36} className="sm:w-10 sm:h-10 rounded-lg flex-shrink-0" />
+                                <Image src="/logo.png" alt="TriplePlayz" width={36} height={36} className="sm:w-10 sm:h-10 rounded-lg flex-shrink-0" />
                                 <div className="min-w-0">
                                     <p className="text-white font-semibold text-sm sm:text-base">{selectedTier.name}</p>
                                     <p className="text-gray-500 text-xs sm:text-sm truncate">{selectedTier.description}</p>

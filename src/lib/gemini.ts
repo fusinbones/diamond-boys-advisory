@@ -51,7 +51,7 @@ interface GameContext {
 export async function analyzeGame(context: GameContext): Promise<string> {
     const ai = getClient();
 
-    const prompt = `You are an elite MLB sports analyst for Diamond Boys Advisory, a premium sports picks service. Analyze this game and provide actionable insights.
+    const prompt = `You are an elite MLB sports analyst for TriplePlayz Advisory, a premium sports picks service. Analyze this game and provide actionable insights.
 
 ## Game Data
 - **Matchup**: ${context.awayTeam} @ ${context.homeTeam}
@@ -104,7 +104,7 @@ Provide a concise, structured analysis in this exact format:
 
 **BOTTOM LINE**: [1-2 sentences of the final recommendation in confident, direct language]
 
-Be direct and confident. No hedging. Diamond Boys gives SHARP picks, not wishy-washy takes.`;
+Be direct and confident. No hedging. TriplePlayz gives SHARP picks, not wishy-washy takes.`;
 
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
@@ -131,7 +131,7 @@ export async function generatePickReason(pick: {
 }): Promise<string> {
     const ai = getClient();
 
-    const prompt = `You are the lead analyst for Diamond Boys Advisory. Write a concise, sharp 1-2 sentence reason for this pick.
+    const prompt = `You are the lead analyst for TriplePlayz Advisory. Write a concise, sharp 1-2 sentence reason for this pick.
 
 Pick: ${pick.pickTeam} ${pick.pickType}
 Game: ${pick.awayTeam} @ ${pick.homeTeam} (${pick.gameDate})
@@ -177,9 +177,9 @@ export async function chatWithGemini(
     // Build a single prompt with system context + conversation history
     let fullPrompt = systemPrompt + '\n\n## CONVERSATION HISTORY\n';
     for (const msg of conversationHistory) {
-        fullPrompt += msg.role === 'user' ? `User: ${msg.text}\n` : `Diamond: ${msg.text}\n`;
+        fullPrompt += msg.role === 'user' ? `User: ${msg.text}\n` : `TriplePlayz: ${msg.text}\n`;
     }
-    fullPrompt += `\nUser: ${userMessage}\n\nRespond as Diamond:`;
+    fullPrompt += `\nUser: ${userMessage}\n\nRespond as TriplePlayz:`;
 
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',

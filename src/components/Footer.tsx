@@ -9,10 +9,10 @@ export default function Footer() {
                     {/* Brand */}
                     <div className="col-span-2 md:col-span-1">
                         <span className="text-white font-display font-bold text-base sm:text-xl tracking-wide">
-                            DIAMOND BOYS
+                            TRIPLEPLAYZ
                         </span>
                         <p className="text-gray-500 text-xs sm:text-sm mt-2 sm:mt-3 leading-relaxed">
-                            Premium MLB picks and elite Diamond Lounge community.
+                            Premium MLB picks and elite TriplePlayz Lounge community.
                         </p>
                     </div>
 
@@ -58,18 +58,18 @@ export default function Footer() {
                         <h4 className="text-white font-semibold text-xs sm:text-sm uppercase tracking-wider mb-3 sm:mb-4">Contact</h4>
                         <div className="space-y-2 sm:space-y-3">
                             <a
-                                href="mailto:support@diamondboysadvisory.com"
+                                href="mailto:support@tripleplayz.com"
                                 className="flex items-center gap-2 text-gray-500 hover:text-[#00e59b] transition text-xs sm:text-sm break-all"
                             >
                                 <Mail size={12} className="sm:w-3.5 sm:h-3.5 flex-shrink-0" />
-                                support@diamondboysadvisory.com
+                                support@tripleplayz.com
                             </a>
                             <a
                                 href="/community"
                                 className="flex items-center gap-2 text-gray-500 hover:text-[#00e59b] transition text-xs sm:text-sm"
                             >
                                 <ExternalLink size={12} className="sm:w-3.5 sm:h-3.5 flex-shrink-0" />
-                                The Diamond Lounge
+                                The TriplePlayz Lounge
                             </a>
 
                         </div>
@@ -83,7 +83,7 @@ export default function Footer() {
                             <Shield size={14} className="sm:w-[18px] sm:h-[18px] text-[#00e59b] mt-0.5 flex-shrink-0" />
                             <div className="text-[10px] sm:text-xs text-gray-500 leading-relaxed space-y-1">
                                 <p>
-                                    <strong className="text-gray-400">Disclaimer:</strong> Diamond Boys Sports Advisory provides sports analysis
+                                    <strong className="text-gray-400">Disclaimer:</strong> TriplePlayz Sports Advisory provides sports analysis
                                     for <strong>entertainment purposes only</strong>. Not a licensed sportsbook, financial advisor, or gambling operator.
                                 </p>
                                 <p>
@@ -99,7 +99,7 @@ export default function Footer() {
                     </div>
 
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4 text-[10px] sm:text-xs text-gray-600">
-                        <p>© {new Date().getFullYear()} Diamond Boys Sports Advisory. All rights reserved.</p>
+                        <p>© {new Date().getFullYear()} TriplePlayz Sports Advisory. All rights reserved.</p>
                         <p>Not affiliated with the NCAA, NBA, or any sports league.</p>
                     </div>
                 </div>

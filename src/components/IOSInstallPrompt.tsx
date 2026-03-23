@@ -90,10 +90,10 @@ export default function IOSInstallPrompt() {
 
                         {/* Header */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                            <Image src="/logo.png" alt="Diamond Boys" width={36} height={36} style={{ borderRadius: '10px' }} />
+                            <Image src="/logo.png" alt="TriplePlayz" width={36} height={36} style={{ borderRadius: '10px' }} />
                             <div>
                                 <p style={{ color: 'white', fontSize: '15px', fontWeight: 700, margin: 0 }}>
-                                    Add Diamond Boys to Home Screen
+                                    Add TriplePlayz to Home Screen
                                 </p>
                                 <p style={{ color: '#9ca3af', fontSize: '12px', margin: 0 }}>
                                     Get the app experience — instant access, anytime

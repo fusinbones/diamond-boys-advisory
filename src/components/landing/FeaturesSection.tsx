@@ -5,7 +5,7 @@ import { BarChart3, MessageSquare, Target, Bell, Lock, Gem } from 'lucide-react'
 
 const features = [
     { icon: Target, title: 'Expert Picks Daily', desc: 'Data-driven MLB picks with detailed analysis and confidence ratings.', color: '#00e59b', bg: 'rgba(0,229,155,0.1)' },
-    { icon: MessageSquare, title: 'The Diamond Lounge', desc: 'Real-time alerts, live game-day discussions, and direct expert Q&A in our community chat.', color: '#00e59b', bg: 'rgba(0,229,155,0.1)' },
+    { icon: MessageSquare, title: 'The TriplePlayz Lounge', desc: 'Real-time alerts, live game-day discussions, and direct expert Q&A in our community chat.', color: '#00e59b', bg: 'rgba(0,229,155,0.1)' },
     { icon: BarChart3, title: 'Transparent Record', desc: 'Every pick tracked publicly — wins and losses. Full accountability, no cherry-picking.', color: '#fbbf24', bg: 'rgba(251,191,36,0.1)' },
     { icon: Bell, title: 'Real-Time Alerts', desc: 'Line movement alerts pushed straight to the app so you never miss value.', color: '#f97316', bg: 'rgba(249,115,22,0.1)' },
     { icon: Lock, title: 'Secure & Private', desc: 'All payments processed via Stripe. PCI-DSS compliant. Your data stays safe.', color: '#34d399', bg: 'rgba(52,211,153,0.1)' },
@@ -23,7 +23,7 @@ export default function FeaturesSection() {
                     style={{ textAlign: 'center', marginBottom: '28px' }}
                 >
                     <h2 className="font-display" style={{ fontSize: 'clamp(22px, 3vw, 34px)', fontWeight: 700, color: 'white', marginBottom: '8px' }}>
-                        Why <span className="gradient-text">Diamond Boys</span>?
+                        Why <span className="gradient-text">TriplePlayz</span>?
                     </h2>
                     <p style={{ color: '#d1d5db', fontSize: '15px', maxWidth: '440px', margin: '0 auto' }}>
                         Deep analytics, expert insight, and community — all in one subscription.

@@ -81,15 +81,15 @@ function DashboardContent() {
                     >
                         {/* Header */}
                         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-                            <Image src="/logo.png" alt="Diamond Boys" width={56} height={56} style={{ margin: '0 auto 16px', borderRadius: '12px' }} />
+                            <Image src="/logo.png" alt="TriplePlayz" width={56} height={56} style={{ margin: '0 auto 16px', borderRadius: '12px' }} />
                             <h1 className="font-display" style={{ fontSize: '28px', fontWeight: 800, color: 'white', marginBottom: '8px' }}>
-                                {isSignUp && isFreeSignup ? 'Join the Diamond Lounge — Free' : isSignUp ? 'Create Account' : 'Member Dashboard'}
+                                {isSignUp && isFreeSignup ? 'Join the TriplePlayz Lounge — Free' : isSignUp ? 'Create Account' : 'Member Dashboard'}
                             </h1>
                             <p style={{ color: '#d1d5db', fontSize: '15px', lineHeight: 1.5 }}>
                                 {isSignUp && isFreeSignup
                                     ? 'Get instant access to game analysis, community chat, and freebie picks. No credit card needed.'
                                     : isSignUp
-                                        ? 'Sign up to join The Diamond Lounge and track your picks.'
+                                        ? 'Sign up to join The TriplePlayz Lounge and track your picks.'
                                         : 'Sign in to manage your account and community access.'
                                 }
                             </p>
@@ -260,7 +260,7 @@ function DashboardContent() {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                             {[
                                 { icon: Shield, text: 'Secure — powered by Supabase & Stripe' },
-                                { icon: MessageCircle, text: 'Access The Diamond Lounge community' },
+                                { icon: MessageCircle, text: 'Access The TriplePlayz Lounge community' },
                                 { icon: Gem, text: 'Upgrade or downgrade your tier anytime' },
                             ].map((item, i) => (
                                 <motion.div
@@ -312,7 +312,7 @@ function DashboardContent() {
                         <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(0,229,155,0.1)', border: '2px solid rgba(0,229,155,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
                             <span style={{ fontSize: '20px' }}>💎</span>
                         </div>
-                        <h2 style={{ color: 'white', fontWeight: 700, fontSize: '18px', marginBottom: '6px' }}>Welcome, Diamond Boy!</h2>
+                        <h2 style={{ color: 'white', fontWeight: 700, fontSize: '18px', marginBottom: '6px' }}>Welcome, TriplePlayz Member!</h2>
                         <p style={{ color: '#9ca3af', fontSize: '14px', marginBottom: '16px' }}>
                             Your account is active. Choose a subscription to unlock picks and Lounge access.
                         </p>
@@ -382,7 +382,7 @@ function DashboardContent() {
                                 style={{ width: '100%', padding: '12px', fontSize: '14px', justifyContent: 'center', gap: '8px' }}
                             >
                                 <MessageCircle size={14} />
-                                The Diamond Lounge
+                                The TriplePlayz Lounge
                             </Link>
                         </div>
                     </motion.div>

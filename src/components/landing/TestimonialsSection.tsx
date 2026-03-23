@@ -8,7 +8,7 @@ const testimonials = [
         name: 'Mike R.',
         handle: '@mikeR_bets',
         avatar: '🏀',
-        text: "Joined Diamond Boys 3 months ago and I'm up over 40 units. The daily picks are sharp and the Diamond Lounge community is a goldmine.",
+        text: "Joined TriplePlayz 3 months ago and I'm up over 40 units. The daily picks are sharp and the TriplePlayz Lounge community is a goldmine.",
         rating: 5,
         tier: 'Monthly Elite',
         since: 'Member since Nov 2025',
@@ -44,7 +44,7 @@ export default function TestimonialsSection() {
                     style={{ textAlign: 'center', marginBottom: '24px' }}
                 >
                     <h2 className="font-display" style={{ fontSize: 'clamp(22px, 3vw, 34px)', fontWeight: 700, color: 'white', marginBottom: '8px' }}>
-                        Hear From <span className="gradient-text">Diamond Boys</span>
+                        Hear From <span className="gradient-text">TriplePlayz</span>
                     </h2>
                     <p style={{ color: '#d1d5db', fontSize: '15px' }}>
                         Real feedback from verified subscribers.

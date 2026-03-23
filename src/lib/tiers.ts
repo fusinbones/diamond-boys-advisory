@@ -30,7 +30,7 @@ export const tiers: Tier[] = [
     description: 'All picks & analysis, billed weekly. Cancel anytime.',
     features: [
       'All daily MLB game analysis',
-      'Diamond Lounge community access',
+      'TriplePlayz Lounge community access',
       'Game-day alerts & notifications',
       'Real-time odds & line movement',
       'Weekly deep-dive reports',
@@ -51,7 +51,7 @@ export const tiers: Tier[] = [
     features: [
       'Everything in Weekly',
       'Priority pick alerts',
-      'VIP Diamond Lounge channels',
+      'VIP TriplePlayz Lounge channels',
       'Direct expert chat access',
       'Exclusive parlay picks',
       'Monthly performance reports',
@@ -72,7 +72,7 @@ export const tiers: Tier[] = [
       'Everything in Monthly',
       'Full MLB season coverage',
       'World Series special picks',
-      'Season Pass Diamond badge',
+      'Season Pass TriplePlayz badge',
       'Early access to new sports (NFL)',
       'Private strategy sessions',
       'Best value — save 55%+',

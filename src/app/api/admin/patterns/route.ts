@@ -59,7 +59,7 @@ const MLB_TEAMS: Array<{ id: number; name: string; division: string }> = [
 ];
 
 /**
- * Diamond Boys Alternation Break Algorithm
+ * TriplePlayz Alternation Break Algorithm
  *
  * HISTORICAL DATA (last MLB season):
  * ┌──────────┬────────┬───────────────┬─────────────┐

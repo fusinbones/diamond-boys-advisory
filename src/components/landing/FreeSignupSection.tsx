@@ -6,7 +6,7 @@ import { Sparkles, BarChart3, MessageCircle, Zap, ChevronRight, Gift, Lock, Star
 
 const freePerks = [
     { icon: BarChart3, title: '5 Free Game Analyses / Week', desc: 'Tap any game on the ticker for full odds breakdown, matchup stats, and picks preview.' },
-    { icon: MessageCircle, title: 'Community Chat Access', desc: 'Join the Diamond Lounge free lobby — connect with fellow sports fans in real time.' },
+    { icon: MessageCircle, title: 'Community Chat Access', desc: 'Join the TriplePlayz Lounge free lobby — connect with fellow sports fans in real time.' },
     { icon: Gift, title: 'Freebie Picks', desc: 'Get curated free picks every day, powered by our data-driven algorithm across multiple sportsbooks.' },
     { icon: Star, title: 'Live MLB Odds Ticker', desc: 'Real-time odds from 5+ sportsbooks, line movement alerts, and game schedules at your fingertips.' },
 ];
@@ -52,7 +52,7 @@ export default function FreeSignupSection() {
                         color: '#d1d5db', fontSize: 'clamp(14px, 2vw, 17px)',
                         lineHeight: 1.65, maxWidth: '560px', margin: '0 auto',
                     }}>
-                        Create a free Diamond Boys account and get instant access to game analysis,
+                        Create a free TriplePlayz account and get instant access to game analysis,
                         community chat, and daily free picks. Upgrade only when you&apos;re ready.
                     </p>
                 </motion.div>

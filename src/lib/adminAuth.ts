@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 // Admin emails whitelist — add team emails here
 const ADMIN_EMAILS = [
-    'diamondboysadvisory@gmail.com',
+    'support@tripleplayz.com',
 ];
 
 export function useAdminAuth() {

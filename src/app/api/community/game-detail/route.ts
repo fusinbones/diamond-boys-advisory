@@ -10,7 +10,7 @@ import { getSportOdds } from '@/lib/odds-api';
  * - Team season stats (home/away splits)
  * - H2H history (last 5 meetings)
  * - Betting consensus (% of books favoring each side)
- * - Diamond Edge analysis
+ * - TriplePlayz Edge analysis
  */
 
 interface PitcherDetail {
@@ -171,7 +171,7 @@ export async function GET(req: NextRequest) {
             winner: (g.scores.home.total ?? 0) > (g.scores.away.total ?? 0) ? g.teams.home.name : g.teams.away.name,
         }));
 
-        // Diamond Edge — our algorithm's analysis
+        // TriplePlayz Edge — our algorithm's analysis
         const bestHomeML = bookOdds.reduce((best, bo) => bo.homeML !== null && bo.homeML > (best ?? -9999) ? bo.homeML : best, null as number | null);
         const bestAwayML = bookOdds.reduce((best, bo) => bo.awayML !== null && bo.awayML > (best ?? -9999) ? bo.awayML : best, null as number | null);
 

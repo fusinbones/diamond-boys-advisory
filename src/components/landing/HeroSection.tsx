@@ -181,7 +181,7 @@ export default function HeroSection() {
                         onClick={() => trackEvent('cta_click', { location: 'hero', label: 'join_now' })}
                     >
                         <Zap size={16} />
-                        Join Diamond Boys — Get Picks Now
+                        Join TriplePlayz — Get Picks Now
                     </Link>
                     <Link
                         href="/dashboard?signup=free"

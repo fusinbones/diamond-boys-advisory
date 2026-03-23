@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSportOdds, type OddsEvent, US_SPORTS } from '@/lib/odds-api';
 
 /*
- * Diamond Boys — Freebie Pick Algorithm
+ * TriplePlayz — Freebie Pick Algorithm
  *
  * This is a TRANSPARENT, data-driven algorithm that identifies value plays
  * based on consensus odds across multiple sportsbooks. It is NOT a magic
@@ -152,7 +152,7 @@ function analyzeEvent(event: OddsEvent): FreebiePickResult | null {
 }
 
 /**
- * Format a pick as the Diamond Boys branded text
+ * Format a pick as the TriplePlayz branded text
  */
 function formatPick(pick: FreebiePickResult, index: number): string {
     const unitMap = { low: 1, medium: 2, high: 3 };
@@ -173,7 +173,7 @@ function formatPick(pick: FreebiePickResult, index: number): string {
         ``,
         `📊 *${pick.reasoning}*`,
         divider,
-        `💎 Diamond Boys Algorithm • For entertainment only`,
+        `💎 TriplePlayz Algorithm • For entertainment only`,
     ].join('\n');
 }
 
@@ -214,7 +214,7 @@ export async function GET() {
             }),
             ``,
             `━━━━━━━━━━━━━━━━━━━━━━━`,
-            `💎 Diamond Boys Advisory`,
+            `💎 TriplePlayz Advisory`,
         ].join('\n');
 
         return NextResponse.json({

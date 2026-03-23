@@ -59,13 +59,13 @@ export default function SocialProof() {
                             <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(88,101,242,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px' }}>
                                 <MessageCircle size={18} style={{ color: '#5865F2' }} />
                             </div>
-                            <h3 style={{ color: 'white', fontWeight: 600, fontSize: '17px', marginBottom: '4px' }}>The Diamond Lounge</h3>
+                            <h3 style={{ color: 'white', fontWeight: 600, fontSize: '17px', marginBottom: '4px' }}>The TriplePlayz Lounge</h3>
                             <p style={{ color: '#c9cdd3', fontSize: '14px' }}>Real-time picks, alerts & expert chat</p>
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '14px', flex: 1 }}>
                             {[
-                                { user: 'DiamondBot', msg: '⚾ NEW PICK: Yankees -1.5 | HIGH', color: '#00e59b' },
+                                { user: 'TriplePlayzBot', msg: '⚾ NEW PICK: Yankees -1.5 | HIGH', color: '#00e59b' },
                                 { user: 'Coach_DB', msg: 'Line moving fast — lock it in', color: '#fbbf24' },
                                 { user: 'Mike_R', msg: '💰 Already locked. LFG!', color: '#e5e7eb' },
                             ].map((m, i) => (

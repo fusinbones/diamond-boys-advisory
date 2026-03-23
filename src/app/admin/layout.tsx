@@ -75,9 +75,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <aside className="admin-sidebar">
                 <div className="admin-sidebar-header">
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <Image src="/logo.png" alt="Diamond Boys" width={32} height={32} style={{ borderRadius: '6px' }} />
+                        <Image src="/logo.png" alt="TriplePlayz" width={32} height={32} style={{ borderRadius: '6px' }} />
                         <div>
-                            <div style={{ color: 'white', fontWeight: 700, fontSize: '14px' }}>Diamond Boys</div>
+                            <div style={{ color: 'white', fontWeight: 700, fontSize: '14px' }}>TriplePlayz</div>
                             <div className="admin-sidebar-badge">🔒 Admin Panel</div>
                         </div>
                     </div>
@@ -145,7 +145,7 @@ function AdminLoginForm() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 96px)' }}>
             <div style={{ maxWidth: '380px', width: '100%', padding: '0 20px' }}>
                 <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-                    <Image src="/logo.png" alt="Diamond Boys" width={48} height={48} style={{ borderRadius: '10px', margin: '0 auto 12px' }} />
+                    <Image src="/logo.png" alt="TriplePlayz" width={48} height={48} style={{ borderRadius: '10px', margin: '0 auto 12px' }} />
                     <h1 style={{ color: 'white', fontSize: '22px', fontWeight: 800, marginBottom: '4px' }}>Admin Panel</h1>
                     <p style={{ color: '#6b7280', fontSize: '13px' }}>Sign in with your team account</p>
                 </div>
@@ -162,7 +162,7 @@ function AdminLoginForm() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="admin-input"
                                 style={{ paddingLeft: '36px' }}
-                                placeholder="admin@diamondboys.com"
+                                placeholder="admin@tripleplayz.com"
                             />
                         </div>
 

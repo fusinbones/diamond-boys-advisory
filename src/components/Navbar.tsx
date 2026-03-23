@@ -59,14 +59,14 @@ export default function Navbar() {
                     <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0 relative z-[101]">
                         <Image
                             src="/logo.png"
-                            alt="Diamond Boys Sports Advisory"
+                            alt="TriplePlayz Sports Advisory"
                             width={36}
                             height={36}
                             className="sm:w-11 sm:h-11 rounded-lg group-hover:scale-105 transition-transform"
                         />
                         <div>
                             <span className="text-white font-display font-bold text-sm sm:text-lg tracking-wide">
-                                DIAMOND BOYS
+                                TRIPLEPLAYZ
                             </span>
                             <span className="block text-[8px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.2em] text-[#00e59b] uppercase -mt-0.5 sm:-mt-1">
                                 Sports Advisory
@@ -164,14 +164,14 @@ export default function Navbar() {
                             >
                                 <Image
                                     src="/logo.png"
-                                    alt="Diamond Boys"
+                                    alt="TriplePlayz"
                                     width={40}
                                     height={40}
                                     style={{ borderRadius: '10px' }}
                                 />
                                 <div>
                                     <span style={{ color: 'white', fontWeight: 800, fontSize: '16px', letterSpacing: '0.02em', fontFamily: 'var(--font-display)' }}>
-                                        DIAMOND BOYS
+                                        TRIPLEPLAYZ
                                     </span>
                                     <span style={{ display: 'block', fontSize: '9px', letterSpacing: '0.15em', color: '#00e59b', textTransform: 'uppercase' as const, marginTop: '-2px' }}>
                                         Sports Advisory

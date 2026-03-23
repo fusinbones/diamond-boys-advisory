@@ -304,10 +304,10 @@ function GameAnalysisPanel({ game, onClose }: { game: TickerGame; onClose: () =>
                             </div>
                         </div>
 
-                        {/* ── Diamond Edge ── */}
+                        {/* ── TriplePlayz Edge ── */}
                         {detail.edge.team && (
                             <div className="gp-edge">
-                                <div className="gp-edge-title">💎 Diamond Edge</div>
+                                <div className="gp-edge-title">💎 TriplePlayz Edge</div>
                                 <div className="gp-edge-team">{detail.edge.team}</div>
                                 <div className="gp-edge-confidence">
                                     <div className="gp-edge-bar-bg">
@@ -999,7 +999,7 @@ function PickComposer({
         const gameStr = awayTeam && homeTeam ? `${awayTeam} vs ${homeTeam}` : customTeam || 'TBD';
         const pickStr = pickDetail || `${awayTeam || 'TBD'} ${pickType}`;
 
-        const hypePrefix = hypeLevel === 'nuclear' ? '🚨🚨🚨 **NUCLEAR PICK** 🚨🚨🚨' : hypeLevel === 'hot' ? '🔥🔥 **HOT PICK** 🔥🔥' : '🔥 **DIAMOND PICK** 🔥';
+        const hypePrefix = hypeLevel === 'nuclear' ? '🚨🚨🚨 **NUCLEAR PICK** 🚨🚨🚨' : hypeLevel === 'hot' ? '🔥🔥 **HOT PICK** 🔥🔥' : '🔥 **TRIPLEPLAYZ PICK** 🔥';
 
         return [
             hypePrefix,
@@ -1013,7 +1013,7 @@ function PickComposer({
             ``,
             analysis ? `📊 *${analysis}*` : '',
             divider,
-            `💎 Diamond Boys Advisory`,
+            `💎 TriplePlayz Advisory`,
         ].filter(Boolean).join('\n');
     };
 
@@ -1365,7 +1365,7 @@ export default function CommunityPage() {
                 .insert({
                     channel_id: activeChannel.id, user_id: user.id,
                     content: newMessage.trim().slice(0, 2000),
-                    display_name: profile.display_name || user.email?.split('@')[0] || 'Diamond Boy',
+                    display_name: profile.display_name || user.email?.split('@')[0] || 'TriplePlayz Member',
                     avatar_color: profile.avatar_color || '#00e59b', is_bot: false,
                 });
             if (insertErr) { setError(insertErr.message || 'Failed to send'); return; }
@@ -1410,7 +1410,7 @@ export default function CommunityPage() {
             .from('community_messages')
             .insert({
                 channel_id: channelId, user_id: user.id,
-                content, display_name: profile.display_name || 'Diamond Boys',
+                content, display_name: profile.display_name || 'TriplePlayz',
                 avatar_color: '#fbbf24', is_bot: false,
             });
         if (err) throw err;
@@ -1466,7 +1466,7 @@ export default function CommunityPage() {
                     await supabase.from('community_messages').insert({
                         channel_id: picksCh.id, user_id: user.id,
                         content: formatted,
-                        display_name: '💎 Diamond Algorithm',
+                        display_name: '💎 TriplePlayz Algorithm',
                         avatar_color: '#00e59b', is_bot: true,
                     });
                 }
@@ -1489,7 +1489,7 @@ export default function CommunityPage() {
                 await supabase.from('community_messages').insert({
                     channel_id: annCh.id, user_id: user.id,
                     content: data.announcement,
-                    display_name: '💎 Diamond Boys',
+                    display_name: '💎 TriplePlayz',
                     avatar_color: '#fbbf24', is_bot: true,
                 });
                 alert(`Schedule posted to #${annCh.name}!`);
@@ -1517,10 +1517,10 @@ export default function CommunityPage() {
             <div className="lounge-paywall">
                 <div className="lounge-paywall-card">
                     <div className="lounge-paywall-icon">💎</div>
-                    <Image src="/logo.png" alt="Diamond Boys" width={56} height={56} style={{ margin: '0 auto 16px', borderRadius: '12px' }} />
-                    <h1 className="font-display" style={{ fontSize: '26px', fontWeight: 900, color: 'white', marginBottom: '8px' }}>The Diamond Lounge</h1>
+                    <Image src="/logo.png" alt="TriplePlayz" width={56} height={56} style={{ margin: '0 auto 16px', borderRadius: '12px' }} />
+                    <h1 className="font-display" style={{ fontSize: '26px', fontWeight: 900, color: 'white', marginBottom: '8px' }}>The TriplePlayz Lounge</h1>
                     <p style={{ color: '#9ca3af', fontSize: '14px', lineHeight: 1.6, marginBottom: '20px' }}>
-                        Your exclusive community for MLB picks, expert analysis, and real-time chat with Diamond Boys.
+                        Your exclusive community for MLB picks, expert analysis, and real-time chat with TriplePlayz.
                     </p>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
                         <Link href="/dashboard?signup=free" className="btn-glow"
@@ -1644,8 +1644,8 @@ export default function CommunityPage() {
                 {/* ═══ Sidebar ═══ */}
                 <aside className={`lounge-sidebar ${sidebarOpen ? 'open' : ''}`}>
                     <div className="lounge-sidebar-header">
-                        <h2>💎 Diamond Lounge</h2>
-                        <p>Diamond Boys Advisory</p>
+                        <h2>💎 TriplePlayz Lounge</h2>
+                        <p>TriplePlayz Advisory</p>
                         <div className="lounge-online-badge"><span className="lounge-online-dot" /> Online</div>
                     </div>
 

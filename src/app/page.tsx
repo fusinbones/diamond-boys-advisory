@@ -24,7 +24,7 @@ export default function HomePage() {
         <div className="container-db text-center" style={{ maxWidth: '48rem' }}>
           <h2 className="font-display text-xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-3 sm:mb-4">
             Ready to Join the{' '}
-            <span className="gradient-text">Diamond Boys</span>?
+            <span className="gradient-text">TriplePlayz</span>?
           </h2>
           <p className="text-gray-400 text-sm sm:text-lg mb-6 sm:mb-8 max-w-xl mx-auto leading-relaxed">
             Start with a free account — get game analysis, community chat, and freebie picks instantly. Upgrade anytime for full premium access.

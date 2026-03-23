@@ -8,13 +8,13 @@ import PickAlertBanner from '@/components/PickAlertBanner';
 import { AuthProvider } from '@/components/AuthProvider';
 
 export const metadata: Metadata = {
-  title: 'Diamond Boys Sports Advisory | Elite MLB Baseball Picks & Community',
+  title: 'TriplePlayz Sports Advisory | Elite MLB Baseball Picks & Community',
   description:
-    'Unlock winning MLB baseball picks from Diamond Boys Sports Advisory. Join our exclusive Diamond Lounge community with daily expert analysis, proven picks, and a 65% win rate. Sign up for early access now.',
+    'Unlock winning MLB baseball picks from TriplePlayz Sports Advisory. Join our exclusive TriplePlayz Lounge community with daily expert analysis, proven picks, and a 65% win rate. Sign up for early access now.',
   keywords: [
     'MLB picks',
     'sports advisory',
-    'Diamond Boys',
+    'TriplePlayz',
     'sports betting community',
     'sports picks subscription',
     'MLB picks',
@@ -22,15 +22,15 @@ export const metadata: Metadata = {
     'sports betting picks',
   ],
   openGraph: {
-    title: 'Diamond Boys Sports Advisory | Winning MLB Baseball Picks',
+    title: 'TriplePlayz Sports Advisory | Winning MLB Baseball Picks',
     description: 'Join 1,200+ members getting daily winning MLB picks and exclusive community access.',
     type: 'website',
     images: ['/logo.png'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Diamond Boys Sports Advisory',
-    description: 'Premium MLB baseball picks + elite Diamond Lounge community.',
+    title: 'TriplePlayz Sports Advisory',
+    description: 'Premium MLB baseball picks + elite TriplePlayz Lounge community.',
   },
   robots: 'index, follow',
 };
@@ -47,7 +47,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/logo.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="Diamond Boys" />
+        <meta name="apple-mobile-web-app-title" content="TriplePlayz" />
         <meta name="theme-color" content="#040810" />
         <meta name="mobile-web-app-capable" content="yes" />
       </head>

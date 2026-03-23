@@ -1,4 +1,4 @@
-// Discord integration removed — Diamond Boys now uses internal community (The Diamond Lounge)
+// Discord integration removed — TriplePlayz now uses internal community (The TriplePlayz Lounge)
 // These exports are kept as stubs to prevent import errors from the webhook route
 
 export async function handlePaymentSuccess(_username: string, _tierName: string, _tierId?: string): Promise<void> {
