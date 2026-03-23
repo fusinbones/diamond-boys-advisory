@@ -54,16 +54,16 @@ export default function Navbar() {
                 }`}
         >
             <div className="container-db">
-                <div className="flex items-center justify-between h-14 sm:h-20">
+                <div className="flex items-center justify-between h-16 sm:h-24">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center group flex-shrink-0 relative z-[101]">
+                    <Link href="/" className="flex items-center group flex-shrink-0 relative z-[101]" style={{ overflow: 'visible' }}>
                         <Image
                             src="/logo.png"
                             alt="TriplePlayz - Sports Advisory"
-                            width={160}
-                            height={50}
-                            className="sm:w-[200px] sm:h-auto group-hover:scale-105 transition-transform"
-                            style={{ objectFit: 'contain' }}
+                            width={200}
+                            height={120}
+                            className="w-[120px] h-auto sm:w-[180px] group-hover:scale-105 transition-transform"
+                            style={{ objectFit: 'contain', maxHeight: '60px' }}
                             priority
                         />
                     </Link>
