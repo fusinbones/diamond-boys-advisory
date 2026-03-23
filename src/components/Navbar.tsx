@@ -56,22 +56,16 @@ export default function Navbar() {
             <div className="container-db">
                 <div className="flex items-center justify-between h-14 sm:h-20">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0 relative z-[101]">
+                    <Link href="/" className="flex items-center group flex-shrink-0 relative z-[101]">
                         <Image
                             src="/logo.png"
                             alt="TriplePlayz - Sports Advisory"
-                            width={36}
-                            height={36}
-                            className="sm:w-11 sm:h-11 rounded-lg group-hover:scale-105 transition-transform"
+                            width={160}
+                            height={50}
+                            className="sm:w-[200px] sm:h-auto group-hover:scale-105 transition-transform"
+                            style={{ objectFit: 'contain' }}
+                            priority
                         />
-                        <div>
-                            <span className="text-white font-display font-bold text-sm sm:text-lg tracking-wide">
-                                TRIPLEPLAYZ
-                            </span>
-                            <span className="block text-[8px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.2em] text-[#00e59b] uppercase -mt-0.5 sm:-mt-1">
-                                Sports Advisory
-                            </span>
-                        </div>
                     </Link>
 
                     {/* Desktop Nav */}
@@ -160,23 +154,15 @@ export default function Navbar() {
                                 initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.3 }}
-                                style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+                                style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
                             >
                                 <Image
                                     src="/logo.png"
-                                    alt="TriplePlayz"
-                                    width={40}
-                                    height={40}
-                                    style={{ borderRadius: '10px' }}
+                                    alt="TriplePlayz - Sports Advisory"
+                                    width={180}
+                                    height={56}
+                                    style={{ objectFit: 'contain' }}
                                 />
-                                <div>
-                                    <span style={{ color: 'white', fontWeight: 800, fontSize: '16px', letterSpacing: '0.02em', fontFamily: 'var(--font-display)' }}>
-                                        TRIPLEPLAYZ
-                                    </span>
-                                    <span style={{ display: 'block', fontSize: '9px', letterSpacing: '0.15em', color: '#00e59b', textTransform: 'uppercase' as const, marginTop: '-2px' }}>
-                                        Sports Advisory
-                                    </span>
-                                </div>
                             </motion.div>
 
                             {/* Nav Links — staggered entrance */}
