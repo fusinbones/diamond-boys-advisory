@@ -1,6 +1,7 @@
 'use client';
 
 import { type ReactNode } from 'react';
+import { Lock } from 'lucide-react';
 import ConfidenceMeter from './ConfidenceMeter';
 import UnitsBadge from './UnitsBadge';
 
@@ -24,6 +25,7 @@ export interface PickData {
 
 interface PickCardProps {
     pick: PickData;
+    locked?: boolean;
 }
 
 const sportEmoji: Record<string, string> = {
@@ -59,7 +61,7 @@ function formatTime(dateStr: string): string {
     }
 }
 
-export default function PickCard({ pick }: PickCardProps): ReactNode {
+export default function PickCard({ pick, locked = false }: PickCardProps): ReactNode {
     const cardClass = `pick-card ${
         pick.status === 'live' ? 'pick-card--live' :
         pick.status === 'won' ? 'pick-card--won' :
@@ -67,9 +69,9 @@ export default function PickCard({ pick }: PickCardProps): ReactNode {
     }`;
 
     return (
-        <div className={cardClass}>
+        <div className={cardClass} style={{ position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {/* Top row: sport badge + time + status */}
+                {/* Top row: sport badge + time + status — always visible */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                     <span style={{
                         fontSize: '11px',
@@ -84,46 +86,88 @@ export default function PickCard({ pick }: PickCardProps): ReactNode {
                     <span style={{ fontSize: '11px', color: '#6b7280' }}>
                         {formatTime(pick.created_at)}
                     </span>
-                    <StatusPill status={pick.status} score={pick.score} />
+                    <StatusPill status={pick.status} score={locked ? null : pick.score} />
                 </div>
 
                 {/* Matchup + pick */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
                     <div style={{ flex: 1 }}>
+                        {/* Matchup always visible — this is the tease */}
                         <p style={{ fontSize: '14px', color: '#d1d5db', marginBottom: '4px' }}>
                             {pick.matchup}
                         </p>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                            <span style={{ fontSize: '16px', fontWeight: 700, color: 'white' }}>
-                                {pick.pick_value}
-                            </span>
-                            {pick.edge !== null && pick.edge !== undefined && (
-                                <span style={{
-                                    fontSize: '11px',
-                                    fontFamily: 'monospace',
-                                    color: '#00e59b',
-                                    background: 'rgba(0,229,155,0.1)',
-                                    padding: '2px 6px',
-                                    borderRadius: '4px',
+
+                        {locked ? (
+                            /* Locked state — hide pick value, show lock */
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    padding: '6px 12px',
+                                    background: 'rgba(251,146,60,0.08)',
+                                    border: '1px solid rgba(251,146,60,0.15)',
+                                    borderRadius: '8px',
                                 }}>
-                                    Edge: +{pick.edge}%
+                                    <Lock size={14} style={{ color: '#fb923c' }} />
+                                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#fb923c' }}>
+                                        Upgrade to see pick
+                                    </span>
+                                </div>
+                            </div>
+                        ) : (
+                            /* Unlocked — show everything */
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                                <span style={{ fontSize: '16px', fontWeight: 700, color: 'white' }}>
+                                    {pick.pick_value}
                                 </span>
-                            )}
-                            {pick.odds && (
-                                <span style={{ fontSize: '11px', color: '#6b7280', fontFamily: 'monospace' }}>
-                                    ({pick.odds})
-                                </span>
-                            )}
-                        </div>
+                                {pick.edge !== null && pick.edge !== undefined && (
+                                    <span style={{
+                                        fontSize: '11px',
+                                        fontFamily: 'monospace',
+                                        color: '#00e59b',
+                                        background: 'rgba(0,229,155,0.1)',
+                                        padding: '2px 6px',
+                                        borderRadius: '4px',
+                                    }}>
+                                        Edge: +{pick.edge}%
+                                    </span>
+                                )}
+                                {pick.odds && (
+                                    <span style={{ fontSize: '11px', color: '#6b7280', fontFamily: 'monospace' }}>
+                                        ({pick.odds})
+                                    </span>
+                                )}
+                            </div>
+                        )}
                     </div>
 
-                    {/* Right side: confidence + units */}
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
+                    {/* Right side: confidence + units — blurred for locked */}
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-end',
+                        gap: '6px',
+                        ...(locked ? { filter: 'blur(6px)', pointerEvents: 'none' as const, opacity: 0.4 } : {}),
+                    }}>
                         <ConfidenceMeter value={pick.confidence || pick.alt_score || 75} />
                         <UnitsBadge units={pick.units || 1} />
                     </div>
                 </div>
             </div>
+
+            {/* Lock overlay gradient for locked cards */}
+            {locked && (
+                <div style={{
+                    position: 'absolute',
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: '120px',
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(10,15,30,0.6) 100%)',
+                    pointerEvents: 'none',
+                }} />
+            )}
         </div>
     );
 }

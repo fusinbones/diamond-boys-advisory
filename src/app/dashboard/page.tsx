@@ -18,6 +18,15 @@ import BankrollChart from '@/components/dashboard/BankrollChart';
 import TailTracker from '@/components/dashboard/TailTracker';
 import CommunityPulse from '@/components/dashboard/CommunityPulse';
 import PaywallOverlay from '@/components/dashboard/PaywallOverlay';
+import PickDropBanner from '@/components/dashboard/PickDropBanner';
+
+interface UserProfile {
+    subscription_tier: string | null;
+    trial_end: string | null;
+    trial_bonus_days: number;
+    display_name: string;
+    is_admin: boolean;
+}
 
 // ── Types ──
 interface KPIs {
@@ -75,12 +84,29 @@ function DashboardContent(): ReactNode {
     const [bySport, setBySport] = useState<SportBreakdown[]>([]);
     const [tailTracker, setTailTracker] = useState({ seasonUnits: 0, weekUnits: 0, totalPicks: 0 });
     const [dashLoading, setDashLoading] = useState(true);
-    const [loginStreak, setLoginStreak] = useState(1); // placeholder
+    const [loginStreak, setLoginStreak] = useState(1);
+    const [profile, setProfile] = useState<UserProfile | null>(null);
 
     // Auto-select signup tab when coming from free CTA
     useEffect(() => {
         if (isFreeSignup) setIsSignUp(true);
     }, [isFreeSignup]);
+
+    // Fetch user profile from Supabase
+    useEffect(() => {
+        if (!user) return;
+        const fetchProfile = async () => {
+            const { data } = await supabase
+                .from('user_profiles')
+                .select('subscription_tier, trial_end, trial_bonus_days, display_name, is_admin')
+                .eq('id', user.id)
+                .single();
+            if (data) setProfile(data as UserProfile);
+            // Update last_seen
+            await supabase.from('user_profiles').update({ last_seen_at: new Date().toISOString() }).eq('id', user.id);
+        };
+        fetchProfile();
+    }, [user]);
 
     // Fetch dashboard data
     const fetchData = useCallback(async () => {
@@ -116,10 +142,15 @@ function DashboardContent(): ReactNode {
         if (user) fetchData();
     }, [user, fetchData]);
 
-    // Free trial check
-    const daysLeft = user ? Math.max(0, 7 - Math.floor((Date.now() - new Date(user.created_at).getTime()) / 86400000)) : 0;
-    const isFreeUser = true; // TODO: check Stripe subscription status
-    const trialExpired = isFreeUser && daysLeft <= 0;
+    // Access logic: paid vs trial vs expired
+    const isPaid = profile?.subscription_tier && ['starter', 'pro', 'elite', 'daily', 'weekly', 'monthly', 'season'].includes(profile.subscription_tier);
+    const trialEnd = profile?.trial_end ? new Date(profile.trial_end) : (user ? new Date(new Date(user.created_at).getTime() + 7 * 86400000) : new Date());
+    const bonusDays = profile?.trial_bonus_days || 0;
+    const effectiveTrialEnd = new Date(trialEnd.getTime() + bonusDays * 86400000);
+    const daysLeft = Math.max(0, Math.ceil((effectiveTrialEnd.getTime() - Date.now()) / 86400000));
+    const trialActive = !isPaid && daysLeft > 0;
+    const trialExpired = !isPaid && daysLeft <= 0;
+    const picksLocked = !isPaid; // Picks are ONLY for paid users
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -358,8 +389,10 @@ function DashboardContent(): ReactNode {
                             </div>
                         ) : picks.length > 0 ? (
                             <>
+                                {/* Pick drop banner — FOMO for trial, celebration for paid */}
+                                <PickDropBanner pickCount={picks.filter(p => p.status === 'upcoming').length} isPaid={!!isPaid} />
                                 {picks.map((pick) => (
-                                    <PickCard key={pick.id} pick={pick} />
+                                    <PickCard key={pick.id} pick={pick} locked={picksLocked} />
                                 ))}
                             </>
                         ) : (
@@ -464,8 +497,8 @@ function DashboardContent(): ReactNode {
                         {/* Community Pulse */}
                         <CommunityPulse />
 
-                        {/* Free trial badge */}
-                        {isFreeUser && daysLeft > 0 && (
+                        {/* Trial status badge */}
+                        {trialActive && (
                             <div style={{
                                 background: 'rgba(0,229,155,0.06)',
                                 border: '1px solid rgba(0,229,155,0.15)',
@@ -476,8 +509,11 @@ function DashboardContent(): ReactNode {
                                 <p style={{ fontSize: '13px', fontWeight: 600, color: '#00e59b', marginBottom: '4px' }}>
                                     {daysLeft} day{daysLeft !== 1 ? 's' : ''} left on free trial
                                 </p>
-                                <Link href="/pricing" style={{ fontSize: '12px', color: '#9ca3af', textDecoration: 'underline' }}>
-                                    View plans →
+                                <p style={{ fontSize: '11px', color: '#9ca3af', marginBottom: '6px' }}>
+                                    Upgrade to unlock picks &amp; Elite Plays
+                                </p>
+                                <Link href="/pricing" className="btn-glow" style={{ fontSize: '12px', padding: '8px 16px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                    View Plans →
                                 </Link>
                             </div>
                         )}
