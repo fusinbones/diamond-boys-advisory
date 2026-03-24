@@ -54,18 +54,26 @@ export default function Navbar() {
                 }`}
         >
             <div className="container-db">
-                <div className="flex items-center justify-between h-14 sm:h-16">
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center group flex-shrink-0 relative z-[101]" style={{ overflow: 'visible' }}>
+                <div className="flex items-center justify-between h-16 sm:h-20">
+                    {/* Logo + Brand */}
+                    <Link href="/" className="flex items-center gap-3 sm:gap-4 group flex-shrink-0 relative z-[101]">
                         <Image
                             src="/logo.png"
                             alt="TriplePlayz - Sports Advisory"
                             width={200}
                             height={120}
-                            className="w-auto h-[44px] sm:h-[52px] group-hover:scale-105 transition-transform"
+                            className="h-[56px] sm:h-[72px] w-auto group-hover:scale-105 transition-transform"
                             style={{ objectFit: 'contain' }}
                             priority
                         />
+                        <div className="hidden sm:block">
+                            <span className="text-white font-display font-bold text-lg lg:text-xl tracking-wide block">
+                                TriplePlayz
+                            </span>
+                            <span className="block text-[10px] lg:text-[11px] tracking-[0.18em] text-[#00e59b] uppercase -mt-1 font-semibold">
+                                Sports Advisory
+                            </span>
+                        </div>
                     </Link>
 
                     {/* Desktop Nav */}
