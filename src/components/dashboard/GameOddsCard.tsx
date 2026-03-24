@@ -41,11 +41,6 @@ function timeLabel(time: string, live: boolean, done: boolean): string {
     } catch { return 'TBD'; }
 }
 
-/**
- * Compact game card for the horizontal strip / sidebar.
- * Shows: sport emoji, abbreviated teams, moneyline, time.
- * Super clean, fits in ~150px wide on mobile strip.
- */
 export default function GameOddsCard({ game }: { game: GameData }): ReactNode {
     const isValue = game.oddsSpread > 30;
 
@@ -60,32 +55,37 @@ export default function GameOddsCard({ game }: { game: GameData }): ReactNode {
             minWidth: '150px',
             flex: '0 0 auto',
             position: 'relative',
+            overflow: 'hidden',
         }}>
-            {/* Value badge */}
-            {isValue && (
-                <span style={{
-                    position: 'absolute', top: '6px', right: '6px',
-                    fontSize: '8px', fontWeight: 700, color: '#fbbf24',
-                    background: 'rgba(251,191,36,0.15)', padding: '1px 4px', borderRadius: '3px',
-                    display: 'flex', alignItems: 'center', gap: '2px',
-                }}>
-                    <Zap size={7} />
-                </span>
-            )}
-
-            {/* Time + sport */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <span style={{ fontSize: '9px', color: '#6b7280' }}>{game.sportEmoji}</span>
+            {/* Header: sport + time — single row, no overlap */}
+            <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                marginBottom: '8px', gap: '4px',
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0 }}>
+                    <span style={{ fontSize: '9px', color: '#6b7280', flexShrink: 0 }}>{game.sportEmoji}</span>
+                    {isValue && (
+                        <span style={{
+                            fontSize: '8px', fontWeight: 700, color: '#fbbf24',
+                            background: 'rgba(251,191,36,0.15)', padding: '1px 4px', borderRadius: '3px',
+                            display: 'inline-flex', alignItems: 'center', gap: '1px',
+                            flexShrink: 0, lineHeight: 1,
+                        }}>
+                            <Zap size={7} /> VALUE
+                        </span>
+                    )}
+                </div>
                 <span style={{
                     fontSize: '9px', fontWeight: game.isLive ? 700 : 500,
                     color: game.isLive ? '#00e59b' : game.isCompleted ? '#6b7280' : '#9ca3af',
                     display: 'flex', alignItems: 'center', gap: '3px',
+                    flexShrink: 0, whiteSpace: 'nowrap',
                 }}>
                     {game.isLive && (
                         <span style={{
                             width: '4px', height: '4px', borderRadius: '50%',
                             background: '#00e59b', boxShadow: '0 0 4px #00e59b',
-                            animation: 'pulse 2s infinite',
+                            animation: 'pulse 2s infinite', flexShrink: 0,
                         }} />
                     )}
                     {timeLabel(game.gameTime, game.isLive, game.isCompleted)}
@@ -93,11 +93,15 @@ export default function GameOddsCard({ game }: { game: GameData }): ReactNode {
             </div>
 
             {/* Away team row */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                <span style={{ fontSize: '12px', fontWeight: 600, color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '80px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px', gap: '6px' }}>
+                <span style={{
+                    fontSize: '12px', fontWeight: 600, color: 'white',
+                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    flex: 1, minWidth: 0,
+                }}>
                     {shortName(game.awayTeam)}
                 </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                     {!game.isCompleted && game.moneyline && (
                         <span style={{
                             fontSize: '11px', fontWeight: 700,
@@ -107,7 +111,7 @@ export default function GameOddsCard({ game }: { game: GameData }): ReactNode {
                         </span>
                     )}
                     {(game.isLive || game.isCompleted) && game.awayScore !== null && (
-                        <span style={{ fontSize: '14px', fontWeight: 800, color: 'white', fontVariantNumeric: 'tabular-nums' }}>
+                        <span style={{ fontSize: '14px', fontWeight: 800, color: 'white', fontVariantNumeric: 'tabular-nums', minWidth: '18px', textAlign: 'right' }}>
                             {game.awayScore}
                         </span>
                     )}
@@ -115,11 +119,15 @@ export default function GameOddsCard({ game }: { game: GameData }): ReactNode {
             </div>
 
             {/* Home team row */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '12px', fontWeight: 600, color: '#9ca3af', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '80px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
+                <span style={{
+                    fontSize: '12px', fontWeight: 600, color: '#9ca3af',
+                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    flex: 1, minWidth: 0,
+                }}>
                     {shortName(game.homeTeam)}
                 </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                     {!game.isCompleted && game.moneyline && (
                         <span style={{
                             fontSize: '11px', fontWeight: 700,
@@ -129,14 +137,14 @@ export default function GameOddsCard({ game }: { game: GameData }): ReactNode {
                         </span>
                     )}
                     {(game.isLive || game.isCompleted) && game.homeScore !== null && (
-                        <span style={{ fontSize: '14px', fontWeight: 800, color: 'white', fontVariantNumeric: 'tabular-nums' }}>
+                        <span style={{ fontSize: '14px', fontWeight: 800, color: 'white', fontVariantNumeric: 'tabular-nums', minWidth: '18px', textAlign: 'right' }}>
                             {game.homeScore}
                         </span>
                     )}
                 </div>
             </div>
 
-            {/* O/U mini */}
+            {/* O/U mini — only if space allows */}
             {!game.isCompleted && game.total?.overUnder && (
                 <div style={{ marginTop: '6px', paddingTop: '5px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
                     <span style={{ fontSize: '9px', color: '#4b5563' }}>
