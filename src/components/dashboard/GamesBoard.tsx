@@ -128,7 +128,30 @@ export default function GamesBoard(): ReactNode {
                     <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>Check back when games are scheduled!</p>
                 </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    {/* Column headers */}
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr auto auto auto',
+                        gap: '12px',
+                        padding: '0 14px 6px',
+                        borderBottom: '1px solid rgba(255,255,255,0.06)',
+                        marginBottom: '4px',
+                    }}>
+                        <span style={{ fontSize: '10px', fontWeight: 700, color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            Matchup
+                        </span>
+                        <span style={{ fontSize: '10px', fontWeight: 700, color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'right', minWidth: '48px' }}>
+                            ML
+                        </span>
+                        <span style={{ fontSize: '10px', fontWeight: 700, color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'right', minWidth: '42px' }}>
+                            Spread
+                        </span>
+                        <span style={{ fontSize: '10px', fontWeight: 700, color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'right', minWidth: '24px' }}>
+                            
+                        </span>
+                    </div>
+
                     {/* Live Games Section */}
                     {liveGames.length > 0 && (
                         <>

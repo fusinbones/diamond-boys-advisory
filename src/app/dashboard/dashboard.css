@@ -308,3 +308,39 @@
     color: #00e59b;
     font-weight: 700;
 }
+
+/* ═══════════════════════════════════════════
+   Game Cards — Mobile-First
+   ═══════════════════════════════════════════ */
+.game-card {
+    transition: border-color 0.15s ease, transform 0.1s ease;
+}
+.game-card:active {
+    transform: scale(0.99);
+}
+
+/* By default (mobile): show short name, hide full */
+.game-team-full { display: none; }
+.game-team-short { display: inline; }
+
+/* Desktop: show full name, hide short */
+@media (min-width: 600px) {
+    .game-team-full { display: inline; }
+    .game-team-short { display: none; }
+}
+
+/* Pulse keyframes for live dot */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* Games board column headers - hide on mobile */
+.games-col-headers {
+    display: none;
+}
+@media (min-width: 600px) {
+    .games-col-headers {
+        display: flex;
+    }
+}

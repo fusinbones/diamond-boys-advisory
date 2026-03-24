@@ -1,7 +1,7 @@
 'use client';
 
 import { type ReactNode } from 'react';
-import { Clock, Zap, TrendingUp } from 'lucide-react';
+import { Zap, TrendingUp } from 'lucide-react';
 
 export interface GameData {
     id: string;
@@ -27,14 +27,10 @@ function formatOdds(price: number | null): string {
     return price > 0 ? `+${price}` : `${price}`;
 }
 
-function oddsColor(price: number | null): string {
-    if (price === null) return '#6b7280';
-    return price > 0 ? '#00e59b' : '#f87171';
-}
-
-function shortTeam(name: string): string {
+function shortName(name: string): string {
+    // Return last word (e.g., "New York Yankees" → "Yankees")
     const parts = name.split(' ');
-    return parts.length > 1 ? parts[parts.length - 1] : name;
+    return parts[parts.length - 1];
 }
 
 function gameTimeStr(time: string, isLive: boolean, isCompleted: boolean): string {
@@ -42,7 +38,7 @@ function gameTimeStr(time: string, isLive: boolean, isCompleted: boolean): strin
     if (isCompleted) return 'Final';
     try {
         const d = new Date(time);
-        return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/New_York' });
+        return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
     } catch {
         return 'TBD';
     }
@@ -52,164 +48,157 @@ export default function GameOddsCard({ game }: { game: GameData }): ReactNode {
     const isValue = game.oddsSpread > 30;
 
     return (
-        <div className="game-odds-card" style={{
+        <div className="game-card" style={{
             background: game.isLive
-                ? 'linear-gradient(135deg, rgba(0,229,155,0.04) 0%, rgba(10,15,30,0.95) 100%)'
-                : 'rgba(255,255,255,0.02)',
-            border: `1px solid ${game.isLive ? 'rgba(0,229,155,0.15)' : 'rgba(255,255,255,0.06)'}`,
-            borderRadius: '14px',
-            padding: '14px 16px',
-            position: 'relative',
+                ? 'linear-gradient(135deg, rgba(0,229,155,0.05) 0%, rgba(15,20,35,1) 100%)'
+                : 'rgba(255,255,255,0.025)',
+            border: `1px solid ${game.isLive ? 'rgba(0,229,155,0.18)' : 'rgba(255,255,255,0.06)'}`,
+            borderRadius: '10px',
             overflow: 'hidden',
         }}>
-            {/* Value badge */}
-            {isValue && (
-                <div style={{
-                    position: 'absolute',
-                    top: '10px',
-                    right: '10px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '3px',
-                    fontSize: '10px',
-                    fontWeight: 700,
-                    color: '#fbbf24',
-                    background: 'rgba(251,191,36,0.1)',
-                    border: '1px solid rgba(251,191,36,0.15)',
-                    padding: '2px 8px',
-                    borderRadius: '20px',
-                }}>
-                    <Zap size={9} /> BEST VALUE
-                </div>
-            )}
-
-            {/* Header: Sport + Time */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <span style={{
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    color: '#9ca3af',
-                    background: 'rgba(255,255,255,0.05)',
-                    padding: '2px 8px',
-                    borderRadius: '4px',
-                }}>
+            {/* Header bar */}
+            <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '6px 12px',
+                background: 'rgba(0,0,0,0.25)',
+            }}>
+                <span style={{ fontSize: '10px', fontWeight: 600, color: '#6b7280' }}>
                     {game.sportEmoji} {game.sport}
                 </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    {game.isLive && <span className="pulse-dot" style={{ width: '6px', height: '6px' }} />}
-                    <Clock size={11} style={{ color: game.isLive ? '#00e59b' : '#6b7280' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    {isValue && (
+                        <span style={{
+                            fontSize: '9px', fontWeight: 700, color: '#fbbf24',
+                            background: 'rgba(251,191,36,0.12)', padding: '1px 5px', borderRadius: '3px',
+                            display: 'flex', alignItems: 'center', gap: '2px',
+                        }}>
+                            <Zap size={8} /> VALUE
+                        </span>
+                    )}
+                    {game.isLive && (
+                        <span style={{
+                            width: '5px', height: '5px', borderRadius: '50%', background: '#00e59b',
+                            boxShadow: '0 0 6px #00e59b',
+                            animation: 'pulse 2s infinite',
+                        }} />
+                    )}
                     <span style={{
-                        fontSize: '11px',
-                        fontWeight: game.isLive ? 700 : 500,
-                        color: game.isLive ? '#00e59b' : game.isCompleted ? '#a1a1aa' : '#d1d5db',
+                        fontSize: '10px', fontWeight: game.isLive ? 700 : 500,
+                        color: game.isLive ? '#00e59b' : game.isCompleted ? '#6b7280' : '#9ca3af',
                     }}>
-                        {gameTimeStr(game.gameTime, game.isLive, game.isCompleted)} ET
+                        {gameTimeStr(game.gameTime, game.isLive, game.isCompleted)}
                     </span>
                 </div>
             </div>
 
-            {/* Matchup: Team names + scores */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
-                {/* Away team */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 600, color: 'white' }}>
-                        {game.awayTeam}
+            {/* Two team rows */}
+            <div style={{ padding: '0' }}>
+                {/* Away */}
+                <div style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    gap: '8px',
+                }}>
+                    <span className="game-team-name" style={{
+                        fontSize: '13px', fontWeight: 600, color: 'white',
+                        flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>
+                        <span className="game-team-full">{game.awayTeam}</span>
+                        <span className="game-team-short">{shortName(game.awayTeam)}</span>
                     </span>
-                    {(game.isLive || game.isCompleted) && game.awayScore !== null && (
-                        <span style={{ fontSize: '18px', fontWeight: 800, color: 'white', fontFamily: 'monospace' }}>
-                            {game.awayScore}
-                        </span>
-                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0' }}>
+                        {!game.isCompleted && game.moneyline && (
+                            <span style={{
+                                fontSize: '12px', fontWeight: 700, textAlign: 'center',
+                                width: '52px',
+                                color: game.moneyline.away !== null && game.moneyline.away > 0 ? '#00e59b' : '#f87171',
+                            }}>
+                                {formatOdds(game.moneyline.away)}
+                            </span>
+                        )}
+                        {!game.isCompleted && game.spread && (
+                            <span style={{
+                                fontSize: '11px', fontWeight: 600, textAlign: 'center',
+                                width: '44px', color: '#94a3b8',
+                            }}>
+                                {game.spread.line !== null ? (game.spread.line > 0 ? `+${game.spread.line}` : `${game.spread.line}`) : ''}
+                            </span>
+                        )}
+                        {(game.isLive || game.isCompleted) && (
+                            <span style={{
+                                fontSize: '16px', fontWeight: 800, color: 'white', textAlign: 'center',
+                                width: '30px', fontVariantNumeric: 'tabular-nums',
+                            }}>
+                                {game.awayScore ?? ''}
+                            </span>
+                        )}
+                    </div>
                 </div>
-                {/* Home team */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 600, color: '#d1d5db' }}>
-                        @ {game.homeTeam}
+
+                {/* Divider */}
+                <div style={{ height: '1px', background: 'rgba(255,255,255,0.04)', margin: '0 12px' }} />
+
+                {/* Home */}
+                <div style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    gap: '8px',
+                }}>
+                    <span className="game-team-name" style={{
+                        fontSize: '13px', fontWeight: 600, color: '#b0b8c4',
+                        flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>
+                        <span className="game-team-full">{game.homeTeam}</span>
+                        <span className="game-team-short">{shortName(game.homeTeam)}</span>
                     </span>
-                    {(game.isLive || game.isCompleted) && game.homeScore !== null && (
-                        <span style={{ fontSize: '18px', fontWeight: 800, color: 'white', fontFamily: 'monospace' }}>
-                            {game.homeScore}
-                        </span>
-                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0' }}>
+                        {!game.isCompleted && game.moneyline && (
+                            <span style={{
+                                fontSize: '12px', fontWeight: 700, textAlign: 'center',
+                                width: '52px',
+                                color: game.moneyline.home !== null && game.moneyline.home > 0 ? '#00e59b' : '#f87171',
+                            }}>
+                                {formatOdds(game.moneyline.home)}
+                            </span>
+                        )}
+                        {!game.isCompleted && game.spread && (
+                            <span style={{
+                                fontSize: '11px', fontWeight: 600, textAlign: 'center',
+                                width: '44px', color: '#94a3b8',
+                            }}>
+                                {game.spread.line !== null ? (-(game.spread.line) > 0 ? `+${-(game.spread.line)}` : `${-(game.spread.line)}`) : ''}
+                            </span>
+                        )}
+                        {(game.isLive || game.isCompleted) && (
+                            <span style={{
+                                fontSize: '16px', fontWeight: 800, color: 'white', textAlign: 'center',
+                                width: '30px', fontVariantNumeric: 'tabular-nums',
+                            }}>
+                                {game.homeScore ?? ''}
+                            </span>
+                        )}
+                    </div>
                 </div>
             </div>
 
-            {/* Odds Grid — 3 columns: ML | SPREAD | TOTAL */}
-            {!game.isCompleted && game.moneyline && (
+            {/* Bottom: O/U + Value */}
+            {!game.isCompleted && (game.total || game.bestValue) && (
                 <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 1fr 1fr',
-                    gap: '6px',
-                    borderTop: '1px solid rgba(255,255,255,0.06)',
-                    paddingTop: '10px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    padding: '5px 12px',
+                    borderTop: '1px solid rgba(255,255,255,0.04)',
+                    background: 'rgba(0,0,0,0.15)',
                 }}>
-                    {/* Moneyline */}
-                    <div style={{ textAlign: 'center' }}>
-                        <p style={{ fontSize: '9px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>
-                            Moneyline
-                        </p>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                            <span style={{ fontSize: '13px', fontWeight: 700, color: oddsColor(game.moneyline.away), fontFamily: 'monospace' }}>
-                                {shortTeam(game.awayTeam)} {formatOdds(game.moneyline.away)}
-                            </span>
-                            <span style={{ fontSize: '13px', fontWeight: 700, color: oddsColor(game.moneyline.home), fontFamily: 'monospace' }}>
-                                {shortTeam(game.homeTeam)} {formatOdds(game.moneyline.home)}
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Spread */}
-                    <div style={{ textAlign: 'center', borderLeft: '1px solid rgba(255,255,255,0.04)', borderRight: '1px solid rgba(255,255,255,0.04)' }}>
-                        <p style={{ fontSize: '9px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>
-                            Spread
-                        </p>
-                        {game.spread ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                                <span style={{ fontSize: '13px', fontWeight: 700, color: '#e5e7eb', fontFamily: 'monospace' }}>
-                                    {game.spread.line !== null ? (game.spread.line > 0 ? `+${game.spread.line}` : `${game.spread.line}`) : '—'}
-                                </span>
-                                <span style={{ fontSize: '10px', color: '#6b7280' }}>
-                                    {formatOdds(game.spread.home)} / {formatOdds(game.spread.away)}
-                                </span>
-                            </div>
-                        ) : (
-                            <span style={{ fontSize: '12px', color: '#4b5563' }}>N/A</span>
-                        )}
-                    </div>
-
-                    {/* Total */}
-                    <div style={{ textAlign: 'center' }}>
-                        <p style={{ fontSize: '9px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>
-                            O/U
-                        </p>
-                        {game.total ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                                <span style={{ fontSize: '13px', fontWeight: 700, color: '#60a5fa', fontFamily: 'monospace' }}>
-                                    {game.total.overUnder}
-                                </span>
-                                <span style={{ fontSize: '10px', color: '#6b7280' }}>
-                                    O {formatOdds(game.total.overOdds)} / U {formatOdds(game.total.underOdds)}
-                                </span>
-                            </div>
-                        ) : (
-                            <span style={{ fontSize: '12px', color: '#4b5563' }}>N/A</span>
-                        )}
-                    </div>
-                </div>
-            )}
-
-            {/* Best value detail */}
-            {game.bestValue && !game.isCompleted && (
-                <div style={{
-                    marginTop: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    fontSize: '10px',
-                    color: '#fbbf24',
-                }}>
-                    <TrendingUp size={10} />
-                    <span>{game.bestValue}</span>
+                    {game.total ? (
+                        <span style={{ fontSize: '10px', color: '#6b7280' }}>
+                            O/U <span style={{ color: '#60a5fa', fontWeight: 700 }}>{game.total.overUnder}</span>
+                        </span>
+                    ) : <span />}
+                    {game.bestValue ? (
+                        <span style={{ fontSize: '9px', color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                            <TrendingUp size={9} /> {game.bestValue}
+                        </span>
+                    ) : null}
                 </div>
             )}
         </div>

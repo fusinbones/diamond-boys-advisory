@@ -353,31 +353,6 @@ function DashboardContent(): ReactNode {
                     </div>
                 )}
 
-                {/* Tab Bar + Sport Filters */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '14px' }}>
-                    <div className="dash-tabs">
-                        {['today', 'upcoming', 'results'].map((tab) => (
-                            <button
-                                key={tab}
-                                className={`dash-tab ${activeTab === tab ? 'dash-tab--active' : ''}`}
-                                onClick={() => setActiveTab(tab)}
-                            >
-                                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                            </button>
-                        ))}
-                    </div>
-                    <div className="sport-filters">
-                        {SPORT_FILTERS.map((f) => (
-                            <button
-                                key={f}
-                                className={`sport-pill ${activeSport === f ? 'sport-pill--active' : ''}`}
-                                onClick={() => setActiveSport(f)}
-                            >
-                                {f}
-                            </button>
-                        ))}
-                    </div>
-                </div>
 
                 {/* ═══ TODAY'S GAMES — Live Odds Board (ALL users see this) ═══ */}
                 <GamesBoard />
