@@ -19,6 +19,7 @@ import TailTracker from '@/components/dashboard/TailTracker';
 import CommunityPulse from '@/components/dashboard/CommunityPulse';
 import PaywallOverlay from '@/components/dashboard/PaywallOverlay';
 import PickDropBanner from '@/components/dashboard/PickDropBanner';
+import GamesBoard from '@/components/dashboard/GamesBoard';
 
 interface UserProfile {
     subscription_tier: string | null;
@@ -378,9 +379,15 @@ function DashboardContent(): ReactNode {
                     </div>
                 </div>
 
-                {/* Main Dashboard Grid */}
+                {/* ═══ TODAY'S GAMES — Live Odds Board (ALL users see this) ═══ */}
+                <GamesBoard />
+
+                {/* Divider between games and picks */}
+                <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', margin: '20px 0 16px' }} />
+
+                {/* Main Dashboard Grid — Picks + Sidebar */}
                 <div className="dash-main">
-                    {/* Left: Picks */}
+                    {/* Left: Picks (paid-only content) */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', position: 'relative' }}>
                         {dashLoading ? (
                             <div style={{ padding: '60px 0', textAlign: 'center' }}>

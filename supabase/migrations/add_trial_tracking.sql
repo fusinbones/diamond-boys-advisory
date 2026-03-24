@@ -35,13 +35,15 @@ CREATE INDEX IF NOT EXISTS idx_user_profiles_trial_end ON user_profiles(trial_en
 CREATE INDEX IF NOT EXISTS idx_user_profiles_last_seen ON user_profiles(last_seen_at DESC);
 
 -- Allow service role to read all profiles (for admin API)
-CREATE POLICY IF NOT EXISTS "Service role can read all profiles"
+DROP POLICY IF EXISTS "Service role can read all profiles" ON user_profiles;
+CREATE POLICY "Service role can read all profiles"
     ON user_profiles FOR SELECT
     TO service_role
     USING (true);
 
 -- Allow service role to update profiles (for admin actions)
-CREATE POLICY IF NOT EXISTS "Service role can update profiles"
+DROP POLICY IF EXISTS "Service role can update profiles" ON user_profiles;
+CREATE POLICY "Service role can update profiles"
     ON user_profiles FOR UPDATE
     TO service_role
     USING (true)
