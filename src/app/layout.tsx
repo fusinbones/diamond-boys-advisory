@@ -56,7 +56,7 @@ export default function RootLayout({
           <div className="bg-glow" />
           <Analytics />
           <Navbar />
-          <main className="flex-1 relative z-10" style={{ paddingTop: '110px' }}>
+          <main className="flex-1 relative z-10" style={{ paddingTop: '80px' }}>
             {children}
           </main>
           <Footer />
