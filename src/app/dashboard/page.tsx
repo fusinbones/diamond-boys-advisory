@@ -1,15 +1,58 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useCallback, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CreditCard, Calendar, AlertTriangle, CheckCircle, RefreshCw, Shield, Gem, ExternalLink, MessageCircle, ArrowRight, Mail, Lock, UserPlus, LogIn, Loader2 } from 'lucide-react';
+import { Mail, Lock, UserPlus, LogIn, Loader2, Shield, Flame, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import { useSearchParams, useRouter } from 'next/navigation';
+import './dashboard.css';
 
-function DashboardContent() {
+// Dashboard components
+import KPICard from '@/components/dashboard/KPICard';
+import PickCard, { type PickData } from '@/components/dashboard/PickCard';
+import MorningSlate from '@/components/dashboard/MorningSlate';
+import BankrollChart from '@/components/dashboard/BankrollChart';
+import TailTracker from '@/components/dashboard/TailTracker';
+import CommunityPulse from '@/components/dashboard/CommunityPulse';
+import PaywallOverlay from '@/components/dashboard/PaywallOverlay';
+
+// ── Types ──
+interface KPIs {
+    record: string;
+    winRate: string;
+    totalUnits: string;
+    roi: string;
+    streak: string;
+    avgEdge: string;
+}
+
+interface MorningSlateData {
+    totalGames: number;
+    upcomingPicks: number;
+    sports: string[];
+}
+
+interface DailyPnl {
+    date: string;
+    cumulative: number;
+    record: string;
+    units: number;
+}
+
+interface SportBreakdown {
+    sport: string;
+    record: string;
+    winPct: string;
+    units: string;
+    color: string;
+}
+
+const SPORT_FILTERS = ['All', 'MLB', 'NBA', 'NFL', 'NHL'];
+
+function DashboardContent(): ReactNode {
     const { user, loading: authLoading, signOut } = useAuth();
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -21,10 +64,62 @@ function DashboardContent() {
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
 
+    // Dashboard state
+    const [activeTab, setActiveTab] = useState('today');
+    const [activeSport, setActiveSport] = useState('All');
+    const [picks, setPicks] = useState<PickData[]>([]);
+    const [kpis, setKpis] = useState<KPIs | null>(null);
+    const [slate, setSlate] = useState<MorningSlateData | null>(null);
+    const [dailyPnl, setDailyPnl] = useState<DailyPnl[]>([]);
+    const [recentDays, setRecentDays] = useState<DailyPnl[]>([]);
+    const [bySport, setBySport] = useState<SportBreakdown[]>([]);
+    const [tailTracker, setTailTracker] = useState({ seasonUnits: 0, weekUnits: 0, totalPicks: 0 });
+    const [dashLoading, setDashLoading] = useState(true);
+    const [loginStreak, setLoginStreak] = useState(1); // placeholder
+
     // Auto-select signup tab when coming from free CTA
     useEffect(() => {
         if (isFreeSignup) setIsSignUp(true);
     }, [isFreeSignup]);
+
+    // Fetch dashboard data
+    const fetchData = useCallback(async () => {
+        try {
+            setDashLoading(true);
+            const [picksRes, statsRes] = await Promise.all([
+                fetch(`/api/dashboard/picks?tab=${activeTab}&sport=${activeSport}`),
+                fetch('/api/dashboard/stats'),
+            ]);
+
+            if (picksRes.ok) {
+                const data = await picksRes.json();
+                setPicks(data.picks || []);
+                setKpis(data.kpis || null);
+                setSlate(data.morningSlate || null);
+            }
+
+            if (statsRes.ok) {
+                const data = await statsRes.json();
+                setDailyPnl(data.dailyPnl || []);
+                setRecentDays(data.recentDays || []);
+                setBySport(data.bySport || []);
+                setTailTracker(data.tailTracker || { seasonUnits: 0, weekUnits: 0, totalPicks: 0 });
+            }
+        } catch (err) {
+            console.error('Dashboard fetch error:', err);
+        } finally {
+            setDashLoading(false);
+        }
+    }, [activeTab, activeSport]);
+
+    useEffect(() => {
+        if (user) fetchData();
+    }, [user, fetchData]);
+
+    // Free trial check
+    const daysLeft = user ? Math.max(0, 7 - Math.floor((Date.now() - new Date(user.created_at).getTime()) / 86400000)) : 0;
+    const isFreeUser = true; // TODO: check Stripe subscription status
+    const trialExpired = isFreeUser && daysLeft <= 0;
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -38,7 +133,7 @@ function DashboardContent() {
                     email,
                     password,
                     options: {
-                        emailRedirectTo: `${window.location.origin}/community`,
+                        emailRedirectTo: `${window.location.origin}/dashboard`,
                     },
                 });
                 if (error) throw error;
@@ -49,6 +144,7 @@ function DashboardContent() {
                     password,
                 });
                 if (error) throw error;
+                router.push('/dashboard');
             }
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : 'An error occurred');
@@ -57,10 +153,10 @@ function DashboardContent() {
         }
     };
 
-    // Loading state
+    // ── Loading ──
     if (authLoading) {
         return (
-            <div style={{ paddingTop: '40px', paddingBottom: '60px', minHeight: 'calc(100vh - 96px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ paddingTop: '60px', paddingBottom: '60px', minHeight: 'calc(100vh - 96px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ textAlign: 'center' }}>
                     <Loader2 size={28} style={{ color: '#00e59b', animation: 'spin 1s linear infinite', margin: '0 auto 12px' }} />
                     <p style={{ color: '#9ca3af', fontSize: '14px' }}>Loading...</p>
@@ -69,81 +165,41 @@ function DashboardContent() {
         );
     }
 
-    // Not logged in — Auth form
+    // ── Not logged in — Auth Form ──
     if (!user) {
         return (
             <div style={{ paddingTop: '40px', paddingBottom: '60px', minHeight: 'calc(100vh - 96px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div className="container-db" style={{ maxWidth: '420px' }}>
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                    >
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                         {/* Header */}
                         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-                            <Image src="/logo.png" alt="TriplePlayz" width={56} height={56} style={{ margin: '0 auto 16px', borderRadius: '12px' }} />
+                            <Image src="/logo.png" alt="TriplePlayz" width={80} height={80} style={{ margin: '0 auto 16px', objectFit: 'contain' }} />
                             <h1 className="font-display" style={{ fontSize: '28px', fontWeight: 800, color: 'white', marginBottom: '8px' }}>
-                                {isSignUp && isFreeSignup ? 'Join the TriplePlayz Lounge — Free' : isSignUp ? 'Create Account' : 'Member Dashboard'}
+                                {isSignUp && isFreeSignup ? 'Start Your Free Week' : isSignUp ? 'Create Account' : 'Welcome Back'}
                             </h1>
                             <p style={{ color: '#d1d5db', fontSize: '15px', lineHeight: 1.5 }}>
                                 {isSignUp && isFreeSignup
-                                    ? 'Get instant access to game analysis, community chat, and freebie picks. No credit card needed.'
+                                    ? '7 days of full dashboard access — picks, stats, community. No credit card.'
                                     : isSignUp
-                                        ? 'Sign up to join The TriplePlayz Lounge and track your picks.'
-                                        : 'Sign in to manage your account and community access.'
+                                        ? 'Join TriplePlayz and get access to today\'s best picks.'
+                                        : 'Sign in to your picks dashboard.'
                                 }
                             </p>
                         </div>
 
                         {/* Auth tabs */}
-                        <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '4px', marginBottom: '20px' }}>
-                            <button
-                                onClick={() => { setIsSignUp(false); setError(''); setMessage(''); }}
-                                style={{
-                                    flex: 1,
-                                    padding: '10px',
-                                    borderRadius: '9px',
-                                    fontSize: '14px',
-                                    fontWeight: 600,
-                                    cursor: 'pointer',
-                                    border: 'none',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '6px',
-                                    background: !isSignUp ? 'rgba(0,229,155,0.1)' : 'transparent',
-                                    color: !isSignUp ? '#00e59b' : '#6b7280',
-                                    transition: 'all 0.2s',
-                                }}
-                            >
-                                <LogIn size={14} />
+                        <div className="dash-tabs" style={{ marginBottom: '20px' }}>
+                            <button className={`dash-tab ${!isSignUp ? 'dash-tab--active' : ''}`} onClick={() => { setIsSignUp(false); setError(''); setMessage(''); }}>
+                                <LogIn size={14} style={{ display: 'inline', marginRight: '4px', verticalAlign: '-2px' }} />
                                 Sign In
                             </button>
-                            <button
-                                onClick={() => { setIsSignUp(true); setError(''); setMessage(''); }}
-                                style={{
-                                    flex: 1,
-                                    padding: '10px',
-                                    borderRadius: '9px',
-                                    fontSize: '14px',
-                                    fontWeight: 600,
-                                    cursor: 'pointer',
-                                    border: 'none',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '6px',
-                                    background: isSignUp ? 'rgba(0,229,155,0.1)' : 'transparent',
-                                    color: isSignUp ? '#00e59b' : '#6b7280',
-                                    transition: 'all 0.2s',
-                                }}
-                            >
-                                <UserPlus size={14} />
+                            <button className={`dash-tab ${isSignUp ? 'dash-tab--active' : ''}`} onClick={() => { setIsSignUp(true); setError(''); setMessage(''); }}>
+                                <UserPlus size={14} style={{ display: 'inline', marginRight: '4px', verticalAlign: '-2px' }} />
                                 Sign Up
                             </button>
                         </div>
 
-                        {/* Login card */}
+                        {/* Form */}
                         <div className="glass-card" style={{ padding: '28px 24px', marginBottom: '20px' }}>
                             <form onSubmit={handleAuth}>
                                 <label htmlFor="dash-email" style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#e5e7eb', marginBottom: '8px' }}>
@@ -158,122 +214,60 @@ function DashboardContent() {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         style={{
-                                            width: '100%',
-                                            background: 'rgba(26,39,68,0.5)',
-                                            border: '1px solid rgba(255,255,255,0.1)',
-                                            borderRadius: '12px',
-                                            padding: '14px 14px 14px 42px',
-                                            color: 'white',
-                                            fontSize: '15px',
-                                            outline: 'none',
-                                            boxSizing: 'border-box',
+                                            width: '100%', padding: '12px 12px 12px 40px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+                                            borderRadius: '10px', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box',
                                         }}
-                                        placeholder="your@email.com"
+                                        placeholder="you@email.com"
                                     />
                                 </div>
-
                                 <label htmlFor="dash-password" style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#e5e7eb', marginBottom: '8px' }}>
                                     Password
                                 </label>
-                                <div style={{ position: 'relative', marginBottom: '18px' }}>
+                                <div style={{ position: 'relative', marginBottom: '20px' }}>
                                     <Lock size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#6b7280' }} />
                                     <input
                                         id="dash-password"
                                         type="password"
                                         required
-                                        minLength={6}
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         style={{
-                                            width: '100%',
-                                            background: 'rgba(26,39,68,0.5)',
-                                            border: '1px solid rgba(255,255,255,0.1)',
-                                            borderRadius: '12px',
-                                            padding: '14px 14px 14px 42px',
-                                            color: 'white',
-                                            fontSize: '15px',
-                                            outline: 'none',
-                                            boxSizing: 'border-box',
+                                            width: '100%', padding: '12px 12px 12px 40px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+                                            borderRadius: '10px', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box',
                                         }}
                                         placeholder={isSignUp ? 'Create a password (min 6 chars)' : 'Your password'}
+                                        minLength={6}
                                     />
                                 </div>
 
-                                {/* Error / Success messages */}
-                                <AnimatePresence>
+                                <AnimatePresence mode="wait">
                                     {error && (
-                                        <motion.div
-                                            initial={{ opacity: 0, height: 0 }}
-                                            animate={{ opacity: 1, height: 'auto' }}
-                                            exit={{ opacity: 0, height: 0 }}
-                                            style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '10px', padding: '10px 14px', marginBottom: '14px' }}
-                                        >
-                                            <p style={{ color: '#fca5a5', fontSize: '13px', margin: 0 }}>⚠ {error}</p>
-                                        </motion.div>
+                                        <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                                            style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '8px', padding: '10px 14px', marginBottom: '14px', color: '#f87171', fontSize: '13px' }}
+                                        >{error}</motion.div>
                                     )}
                                     {message && (
-                                        <motion.div
-                                            initial={{ opacity: 0, height: 0 }}
-                                            animate={{ opacity: 1, height: 'auto' }}
-                                            exit={{ opacity: 0, height: 0 }}
-                                            style={{ background: 'rgba(0,229,155,0.08)', border: '1px solid rgba(0,229,155,0.2)', borderRadius: '10px', padding: '10px 14px', marginBottom: '14px' }}
-                                        >
-                                            <p style={{ color: '#00e59b', fontSize: '13px', margin: 0 }}>✓ {message}</p>
-                                        </motion.div>
+                                        <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                                            style={{ background: 'rgba(0,229,155,0.1)', border: '1px solid rgba(0,229,155,0.2)', borderRadius: '8px', padding: '10px 14px', marginBottom: '14px', color: '#00e59b', fontSize: '13px' }}
+                                        >{message}</motion.div>
                                     )}
                                 </AnimatePresence>
 
-                                <button
-                                    type="submit"
-                                    disabled={loading}
-                                    className="btn-glow"
-                                    style={{
-                                        width: '100%',
-                                        padding: '14px',
-                                        fontSize: '15px',
-                                        fontWeight: 600,
-                                        borderRadius: '12px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '8px',
-                                        opacity: loading ? 0.7 : 1,
-                                        cursor: loading ? 'not-allowed' : 'pointer',
-                                    }}
+                                <button type="submit" className="btn-glow" disabled={loading}
+                                    style={{ width: '100%', padding: '14px', fontSize: '15px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                                 >
                                     {loading ? (
-                                        <>
-                                            <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
-                                            {isSignUp ? 'Creating Account...' : 'Signing In...'}
-                                        </>
+                                        <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> {isSignUp ? 'Creating Account...' : 'Signing In...'}</>
                                     ) : (
-                                        <>
-                                            {isSignUp ? <UserPlus size={16} /> : <ArrowRight size={16} />}
-                                            {isSignUp ? 'Create Account' : 'Sign In'}
-                                        </>
+                                        <>{isSignUp ? <UserPlus size={16} /> : <LogIn size={16} />} {isSignUp ? 'Start Free Week' : 'Sign In'}</>
                                     )}
                                 </button>
                             </form>
                         </div>
 
-                        {/* Trust bullets */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            {[
-                                { icon: Shield, text: 'Secure — powered by Supabase & Stripe' },
-                                { icon: MessageCircle, text: 'Access The TriplePlayz Lounge community' },
-                                { icon: Gem, text: 'Upgrade or downgrade your tier anytime' },
-                            ].map((item, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.3 + i * 0.08 }}
-                                    style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#9ca3af', fontSize: '13px' }}
-                                >
-                                    <item.icon size={15} style={{ color: '#00e59b', flexShrink: 0 }} />
-                                    <span>{item.text}</span>
-                                </motion.div>
-                            ))}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', color: '#6b7280', fontSize: '12px' }}>
+                            <Shield size={12} />
+                            <span>Secure authentication powered by Supabase</span>
                         </div>
                     </motion.div>
                 </div>
@@ -281,115 +275,212 @@ function DashboardContent() {
         );
     }
 
-    // Logged in — Dashboard
+    // ── Logged in — Pro Dashboard ──
     return (
-        <div style={{ paddingTop: '40px', paddingBottom: '60px' }}>
-            <div className="container-db" style={{ maxWidth: '640px' }}>
+        <div style={{ paddingTop: '24px', paddingBottom: '60px', minHeight: 'calc(100vh - 96px)' }}>
+            <div className="container-db">
                 {/* Header */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
                     <div>
-                        <h1 className="font-display" style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: 800, color: 'white', marginBottom: '4px' }}>
-                            Dashboard
+                        <h1 className="font-display" style={{ fontSize: 'clamp(20px, 3vw, 26px)', fontWeight: 800, color: 'white', marginBottom: '2px' }}>
+                            Your Dashboard
                         </h1>
-                        <p style={{ color: '#9ca3af', fontSize: '14px' }}>{user.email}</p>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '13px', color: '#9ca3af' }}>{user.email}</span>
+                            {loginStreak > 1 && (
+                                <span className="streak-badge">
+                                    <Flame size={12} /> {loginStreak} day streak
+                                </span>
+                            )}
+                        </div>
                     </div>
                     <button
                         onClick={signOut}
-                        style={{ color: '#9ca3af', fontSize: '13px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', padding: '6px 14px', cursor: 'pointer' }}
+                        style={{ color: '#9ca3af', fontSize: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', padding: '6px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
                     >
-                        Sign out
+                        <LogOut size={13} /> Sign out
                     </button>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                    {/* Welcome Card */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="glass-card"
-                        style={{ padding: '24px', textAlign: 'center' }}
-                    >
-                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(0,229,155,0.1)', border: '2px solid rgba(0,229,155,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
-                            <span style={{ fontSize: '20px' }}>💎</span>
-                        </div>
-                        <h2 style={{ color: 'white', fontWeight: 700, fontSize: '18px', marginBottom: '6px' }}>Welcome, TriplePlayz Member!</h2>
-                        <p style={{ color: '#9ca3af', fontSize: '14px', marginBottom: '16px' }}>
-                            Your account is active. Choose a subscription to unlock picks and Lounge access.
-                        </p>
-                        <Link href="/pricing" className="btn-glow" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '12px 24px', fontSize: '14px' }}>
-                            <Gem size={15} />
-                            View Subscription Plans
-                        </Link>
-                    </motion.div>
+                {/* Morning Slate */}
+                {slate && (
+                    <MorningSlate
+                        totalGames={slate.totalGames}
+                        upcomingPicks={slate.upcomingPicks}
+                        sports={slate.sports}
+                    />
+                )}
 
-                    {/* Account Info Card */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        className="glass-card"
-                        style={{ padding: '24px' }}
-                    >
-                        <h2 style={{ color: 'white', fontWeight: 600, fontSize: '17px', marginBottom: '14px' }}>Account Details</h2>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(26,39,68,0.3)', borderRadius: '10px', padding: '14px 16px' }}>
-                                <div>
-                                    <p style={{ color: '#6b7280', fontSize: '12px', marginBottom: '2px' }}>Email</p>
-                                    <p style={{ color: '#e5e7eb', fontSize: '14px', fontWeight: 500 }}>{user.email}</p>
-                                </div>
-                                <CheckCircle size={16} style={{ color: '#00e59b' }} />
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(26,39,68,0.3)', borderRadius: '10px', padding: '14px 16px' }}>
-                                <div>
-                                    <p style={{ color: '#6b7280', fontSize: '12px', marginBottom: '2px' }}>Member Since</p>
-                                    <p style={{ color: '#e5e7eb', fontSize: '14px', fontWeight: 500 }}>
-                                        {new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                                    </p>
-                                </div>
-                                <Calendar size={16} style={{ color: '#9ca3af' }} />
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(26,39,68,0.3)', borderRadius: '10px', padding: '14px 16px' }}>
-                                <div>
-                                    <p style={{ color: '#6b7280', fontSize: '12px', marginBottom: '2px' }}>Subscription</p>
-                                    <p style={{ color: '#fbbf24', fontSize: '14px', fontWeight: 500 }}>No active plan</p>
-                                </div>
-                                <AlertTriangle size={16} style={{ color: '#fbbf24' }} />
-                            </div>
-                        </div>
-                    </motion.div>
+                {/* KPI Cards */}
+                {kpis && (
+                    <div className="dashboard-kpi-grid" style={{ margin: '16px 0' }}>
+                        <KPICard icon="record" label="Record" value={kpis.record} sub={`${kpis.winRate} Win Rate`} trend="Season to date" delay={0.05} />
+                        <KPICard icon="roi" label="ROI" value={`${Number(kpis.totalUnits) >= 0 ? '+' : ''}${kpis.totalUnits}u`} sub={`${kpis.roi} ROI`} trend="Units profit" delay={0.1} />
+                        <KPICard icon="streak" label="Streak" value={kpis.streak} sub="Current streak" delay={0.15} />
+                        <KPICard icon="edge" label="Avg Edge" value={kpis.avgEdge} sub="Model confidence" delay={0.2} />
+                    </div>
+                )}
 
-                    {/* Quick Actions */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="glass-card"
-                        style={{ padding: '24px' }}
-                    >
-                        <h2 style={{ color: 'white', fontWeight: 600, fontSize: '17px', marginBottom: '14px' }}>Quick Actions</h2>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                            <Link
-                                href="/pricing"
-                                className="btn-outline"
-                                style={{ width: '100%', padding: '12px', fontSize: '14px', justifyContent: 'center', gap: '8px' }}
+                {/* Tab Bar + Sport Filters */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '14px' }}>
+                    <div className="dash-tabs">
+                        {['today', 'upcoming', 'results'].map((tab) => (
+                            <button
+                                key={tab}
+                                className={`dash-tab ${activeTab === tab ? 'dash-tab--active' : ''}`}
+                                onClick={() => setActiveTab(tab)}
                             >
-                                <CreditCard size={14} />
-                                Subscribe
-                            </Link>
-                            <Link
-                                href="/community"
-                                className="btn-glow"
-                                style={{ width: '100%', padding: '12px', fontSize: '14px', justifyContent: 'center', gap: '8px' }}
+                                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                            </button>
+                        ))}
+                    </div>
+                    <div className="sport-filters">
+                        {SPORT_FILTERS.map((f) => (
+                            <button
+                                key={f}
+                                className={`sport-pill ${activeSport === f ? 'sport-pill--active' : ''}`}
+                                onClick={() => setActiveSport(f)}
                             >
-                                <MessageCircle size={14} />
-                                The TriplePlayz Lounge
-                            </Link>
-                        </div>
-                    </motion.div>
+                                {f}
+                            </button>
+                        ))}
+                    </div>
+                </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', color: '#6b7280', fontSize: '12px' }}>
-                        <Shield size={12} />
-                        <span>All billing managed securely through Stripe</span>
+                {/* Main Dashboard Grid */}
+                <div className="dash-main">
+                    {/* Left: Picks */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', position: 'relative' }}>
+                        {dashLoading ? (
+                            <div style={{ padding: '60px 0', textAlign: 'center' }}>
+                                <Loader2 size={24} style={{ color: '#00e59b', animation: 'spin 1s linear infinite', margin: '0 auto 8px' }} />
+                                <p style={{ color: '#6b7280', fontSize: '13px' }}>Loading picks...</p>
+                            </div>
+                        ) : picks.length > 0 ? (
+                            <>
+                                {picks.map((pick) => (
+                                    <PickCard key={pick.id} pick={pick} />
+                                ))}
+                            </>
+                        ) : (
+                            <div className="glass-card" style={{ padding: '40px 24px', textAlign: 'center' }}>
+                                <p style={{ fontSize: '15px', fontWeight: 600, color: '#d1d5db', marginBottom: '8px' }}>No picks yet for this view</p>
+                                <p style={{ fontSize: '13px', color: '#6b7280' }}>
+                                    {activeTab === 'today' ? 'Check back closer to game time for today\'s picks.' :
+                                     activeTab === 'upcoming' ? 'All upcoming picks will appear here when published.' :
+                                     'Graded picks and results will populate over time.'}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Bankroll Chart */}
+                        <BankrollChart data={dailyPnl} />
+
+                        {/* Paywall for expired free users */}
+                        {trialExpired && <PaywallOverlay daysLeft={daysLeft} />}
+                    </div>
+
+                    {/* Right: Sidebar */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        {/* Today's Summary */}
+                        <div className="dash-sidebar-card">
+                            <h3 className="dash-sidebar-card__title">Today&apos;s Summary</h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                {[
+                                    { label: 'Total Picks', value: String(picks.filter(p => p.game_date === new Date().toISOString().split('T')[0]).length) },
+                                    { label: 'Record', value: kpis?.record || 'N/A' },
+                                    { label: 'Units P/L', value: kpis ? `${Number(kpis.totalUnits) >= 0 ? '+' : ''}${kpis.totalUnits}u` : 'N/A', isPositive: Number(kpis?.totalUnits) >= 0 },
+                                ].map((row) => (
+                                    <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <span style={{ fontSize: '12px', color: '#9ca3af' }}>{row.label}</span>
+                                        <span style={{ fontSize: '14px', fontWeight: 700, color: 'isPositive' in row ? (row.isPositive ? '#00e59b' : '#f87171') : 'white' }}>
+                                            {row.value}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Tail Tracker */}
+                        <TailTracker
+                            seasonUnits={tailTracker.seasonUnits}
+                            weekUnits={tailTracker.weekUnits}
+                            totalPicks={tailTracker.totalPicks}
+                        />
+
+                        {/* Recent Days */}
+                        {recentDays.length > 0 && (
+                            <div className="dash-sidebar-card">
+                                <h3 className="dash-sidebar-card__title">Recent Days</h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                    {recentDays.map((d) => (
+                                        <div key={d.date} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                                            <div>
+                                                <p style={{ fontSize: '11px', color: '#6b7280' }}>
+                                                    {new Date(d.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                                </p>
+                                                <p style={{ fontSize: '13px', fontWeight: 600, color: 'white' }}>{d.record}</p>
+                                            </div>
+                                            <span style={{
+                                                fontSize: '13px',
+                                                fontWeight: 700,
+                                                fontFamily: 'monospace',
+                                                color: d.units >= 0 ? '#00e59b' : '#f87171',
+                                            }}>
+                                                {d.units >= 0 ? '+' : ''}{d.units}u
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* By Sport */}
+                        {bySport.length > 0 && (
+                            <div className="dash-sidebar-card">
+                                <h3 className="dash-sidebar-card__title">By Sport</h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    {bySport.map((s) => (
+                                        <div key={s.sport} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <div style={{ width: '4px', height: '32px', borderRadius: '9999px', opacity: 0.6 }} className={s.color} />
+                                            <div style={{ flex: 1 }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    <span style={{ fontSize: '12px', fontWeight: 700, color: 'white' }}>{s.sport}</span>
+                                                    <span style={{ fontSize: '11px', color: '#6b7280' }}>{s.record} ({s.winPct})</span>
+                                                </div>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '3px' }}>
+                                                    <div style={{ flex: 1, height: '4px', borderRadius: '9999px', background: 'rgba(255,255,255,0.06)' }}>
+                                                        <div style={{ height: '4px', borderRadius: '9999px', width: s.winPct, opacity: 0.6 }} className={s.color} />
+                                                    </div>
+                                                    <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#00e59b', whiteSpace: 'nowrap' }}>{s.units}u</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Community Pulse */}
+                        <CommunityPulse />
+
+                        {/* Free trial badge */}
+                        {isFreeUser && daysLeft > 0 && (
+                            <div style={{
+                                background: 'rgba(0,229,155,0.06)',
+                                border: '1px solid rgba(0,229,155,0.15)',
+                                borderRadius: '12px',
+                                padding: '14px',
+                                textAlign: 'center',
+                            }}>
+                                <p style={{ fontSize: '13px', fontWeight: 600, color: '#00e59b', marginBottom: '4px' }}>
+                                    {daysLeft} day{daysLeft !== 1 ? 's' : ''} left on free trial
+                                </p>
+                                <Link href="/pricing" style={{ fontSize: '12px', color: '#9ca3af', textDecoration: 'underline' }}>
+                                    View plans →
+                                </Link>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -397,7 +488,7 @@ function DashboardContent() {
     );
 }
 
-export default function DashboardPage() {
+export default function DashboardPage(): ReactNode {
     return (
         <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Loader2 size={28} style={{ color: '#00e59b', animation: 'spin 1s linear infinite' }} /></div>}>
             <DashboardContent />
