@@ -4,11 +4,10 @@
 const ODDS_API_KEY = process.env.ODDS_API_KEY;
 const BASE_URL = 'https://api.the-odds-api.com/v4';
 
-// US Sports we support
+// US Sports we support (active seasons only)
 export const US_SPORTS = [
     { key: 'baseball_mlb', name: 'MLB', emoji: '⚾', color: '#00529b' },
     { key: 'basketball_nba', name: 'NBA', emoji: '🏀', color: '#f58426' },
-    { key: 'americanfootball_nfl', name: 'NFL', emoji: '🏈', color: '#013369' },
     { key: 'icehockey_nhl', name: 'NHL', emoji: '🏒', color: '#000000' },
 ] as const;
 

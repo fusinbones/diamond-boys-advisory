@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, type ReactNode } from 'react';
 import { Loader2, RefreshCw, Wifi } from 'lucide-react';
 import GameOddsCard, { type GameData } from './GameOddsCard';
 
-const SPORT_TABS = ['All', 'MLB', 'NBA', 'NFL', 'NHL'];
+const SPORT_TABS = ['All', 'MLB', 'NBA', 'NHL'];
 
 export default function GamesBoard(): ReactNode {
     const [games, setGames] = useState<GameData[]>([]);
