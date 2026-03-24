@@ -126,18 +126,36 @@ function processEvent(
 
 export async function GET(request: NextRequest) {
     const sportFilter = request.nextUrl.searchParams.get('sport'); // 'MLB', 'NBA', etc or null for all
+    const debug = request.nextUrl.searchParams.get('debug') === '1';
+
+    // Check API key
+    if (!process.env.ODDS_API_KEY) {
+        console.error('[Dashboard Games] ODDS_API_KEY not configured');
+        return NextResponse.json({
+            games: [], sportCounts: {}, totalGames: 0,
+            ...(debug ? { error: 'ODDS_API_KEY not configured' } : {}),
+        });
+    }
 
     try {
         const sportsToFetch = sportFilter
             ? US_SPORTS.filter(s => s.name === sportFilter)
             : US_SPORTS;
 
+        const errors: string[] = [];
+
         // Fetch odds + scores in parallel
         const results = await Promise.allSettled(
             sportsToFetch.map(async (s) => {
                 const [odds, scores] = await Promise.all([
-                    getSportOdds(s.key, 'h2h,spreads,totals').catch(() => [] as OddsEvent[]),
-                    getSportScores(s.key, 1).catch(() => [] as ScoreEvent[]),
+                    getSportOdds(s.key, 'h2h,spreads,totals').catch((err: Error) => {
+                        errors.push(`${s.name} odds: ${err.message}`);
+                        return [] as OddsEvent[];
+                    }),
+                    getSportScores(s.key, 1).catch((err: Error) => {
+                        errors.push(`${s.name} scores: ${err.message}`);
+                        return [] as ScoreEvent[];
+                    }),
                 ]);
 
                 const scoreMap = new Map(scores.map(sc => [sc.id, sc]));
@@ -154,7 +172,13 @@ export async function GET(request: NextRequest) {
             if (r.status === 'fulfilled') {
                 allGames.push(...r.value.games);
                 sportCounts[r.value.sport] = r.value.games.length;
+            } else {
+                errors.push(`Rejected: ${r.reason}`);
             }
+        }
+
+        if (errors.length > 0) {
+            console.error('[Dashboard Games] Errors:', errors);
         }
 
         // Sort: live first, then by game time
@@ -167,11 +191,19 @@ export async function GET(request: NextRequest) {
         });
 
         return NextResponse.json(
-            { games: allGames, sportCounts, totalGames: allGames.length },
+            {
+                games: allGames,
+                sportCounts,
+                totalGames: allGames.length,
+                ...(debug ? { errors, apiKeySet: true } : {}),
+            },
             { headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' } }
         );
     } catch (error) {
         console.error('Dashboard games error:', error);
-        return NextResponse.json({ games: [], sportCounts: {}, totalGames: 0 }, { status: 200 });
+        return NextResponse.json({
+            games: [], sportCounts: {}, totalGames: 0,
+            ...(debug ? { error: String(error) } : {}),
+        }, { status: 200 });
     }
 }
