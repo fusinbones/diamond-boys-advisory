@@ -272,17 +272,98 @@
     text-align: center;
 }
 
-/* Dashboard Main Layout */
-.dash-main {
+/* ═══════════════════════════════════════════
+   3-Panel Dashboard Layout
+   ═══════════════════════════════════════════ */
+
+/* Mobile: games strip visible, sidebar hidden */
+.games-strip-mobile {
+    display: block;
+    margin-bottom: 12px;
+}
+.games-sidebar-desktop {
+    display: none;
+}
+
+/* Mobile: single column layout */
+.dash-3panel {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 14px;
 }
+
+/* Desktop: 3 columns */
 @media (min-width: 1024px) {
-    .dash-main {
-        grid-template-columns: 2fr 1fr;
-        gap: 20px;
+    .games-strip-mobile {
+        display: none; /* hide mobile strip */
     }
+    .games-sidebar-desktop {
+        display: block;
+        position: sticky;
+        top: 80px;
+        align-self: start;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255,255,255,0.06) transparent;
+    }
+    .games-sidebar-desktop::-webkit-scrollbar {
+        width: 4px;
+    }
+    .games-sidebar-desktop::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.08);
+        border-radius: 4px;
+    }
+    .dash-3panel {
+        grid-template-columns: 220px 1fr 260px;
+        gap: 16px;
+    }
+}
+
+/* Tablet: 2 columns (games hidden, shown in mobile strip) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .dash-3panel {
+        grid-template-columns: 1fr 260px;
+        gap: 14px;
+    }
+}
+
+/* ═══════════════════════════════════════════
+   Horizontal Game Strip (Mobile)
+   ═══════════════════════════════════════════ */
+.games-scroll-container {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+}
+.games-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Desktop sidebar: stack vertically */
+@media (min-width: 1024px) {
+    .games-scroll-container {
+        flex-direction: column;
+        overflow-x: visible;
+        overflow-y: visible;
+        scroll-snap-type: none;
+    }
+    .game-tile {
+        min-width: unset !important;
+    }
+}
+
+/* Snap each game tile */
+.game-tile {
+    scroll-snap-align: start;
+    transition: border-color 0.15s ease, transform 0.1s ease;
+}
+.game-tile:active {
+    transform: scale(0.98);
 }
 
 /* Community Pulse */
@@ -309,38 +390,8 @@
     font-weight: 700;
 }
 
-/* ═══════════════════════════════════════════
-   Game Cards — Mobile-First
-   ═══════════════════════════════════════════ */
-.game-card {
-    transition: border-color 0.15s ease, transform 0.1s ease;
-}
-.game-card:active {
-    transform: scale(0.99);
-}
-
-/* By default (mobile): show short name, hide full */
-.game-team-full { display: none; }
-.game-team-short { display: inline; }
-
-/* Desktop: show full name, hide short */
-@media (min-width: 600px) {
-    .game-team-full { display: inline; }
-    .game-team-short { display: none; }
-}
-
-/* Pulse keyframes for live dot */
+/* Pulse animation for live indicator */
 @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.3; }
-}
-
-/* Games board column headers - hide on mobile */
-.games-col-headers {
-    display: none;
-}
-@media (min-width: 600px) {
-    .games-col-headers {
-        display: flex;
-    }
 }

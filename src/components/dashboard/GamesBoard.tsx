@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback, type ReactNode } from 'react';
-import { Loader2, RefreshCw, Wifi } from 'lucide-react';
+import { Loader2, RefreshCw, ChevronRight } from 'lucide-react';
 import GameOddsCard, { type GameData } from './GameOddsCard';
+import Tooltip from './Tooltip';
 
 const SPORT_TABS = ['All', 'MLB', 'NBA', 'NHL'];
 
@@ -13,6 +14,7 @@ export default function GamesBoard(): ReactNode {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+    const [showAll, setShowAll] = useState(false);
 
     const fetchGames = useCallback(async (isRefresh = false) => {
         if (isRefresh) setRefreshing(true); else setLoading(true);
@@ -34,163 +36,126 @@ export default function GamesBoard(): ReactNode {
     }, [activeSport]);
 
     useEffect(() => { fetchGames(); }, [fetchGames]);
-
-    // Auto-refresh every 5 minutes
     useEffect(() => {
-        const interval = setInterval(() => fetchGames(true), 300000);
-        return () => clearInterval(interval);
+        const i = setInterval(() => fetchGames(true), 300000);
+        return () => clearInterval(i);
     }, [fetchGames]);
 
-    const liveGames = games.filter(g => g.isLive);
-    const upcomingGames = games.filter(g => !g.isLive && !g.isCompleted);
-    const completedGames = games.filter(g => g.isCompleted);
+    // Sort: live first, then best value, then by time
+    const sortedGames = [...games].sort((a, b) => {
+        if (a.isLive && !b.isLive) return -1;
+        if (!a.isLive && b.isLive) return 1;
+        if (a.isCompleted && !b.isCompleted) return 1;
+        if (!a.isCompleted && b.isCompleted) return -1;
+        if (a.oddsSpread !== b.oddsSpread) return b.oddsSpread - a.oddsSpread; // best value first
+        return new Date(a.gameTime).getTime() - new Date(b.gameTime).getTime();
+    });
+
+    const liveCount = games.filter(g => g.isLive).length;
 
     return (
-        <div>
+        <div className="games-board">
             {/* Header */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <div>
-                    <h2 style={{ fontSize: '16px', fontWeight: 800, color: 'white', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <Wifi size={15} style={{ color: '#00e59b' }} />
-                        Today&apos;s Games
-                    </h2>
-                    <p style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>
-                        {games.length} games • {liveGames.length > 0 ? `${liveGames.length} live • ` : ''}
-                        {lastUpdated ? `Updated ${lastUpdated.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}` : ''}
-                    </p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', padding: '0 2px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#e5e7eb', margin: 0 }}>
+                        Today&apos;s Lines
+                    </h3>
+                    <Tooltip text="Live odds from sportsbooks. Green numbers mean underdog (higher payout). Red numbers mean favorite." />
+                    {liveCount > 0 && (
+                        <span style={{
+                            fontSize: '9px', fontWeight: 700, color: '#00e59b',
+                            background: 'rgba(0,229,155,0.12)', padding: '2px 6px', borderRadius: '4px',
+                        }}>
+                            {liveCount} LIVE
+                        </span>
+                    )}
                 </div>
                 <button
                     onClick={() => fetchGames(true)}
                     disabled={refreshing}
                     style={{
-                        background: 'rgba(255,255,255,0.04)',
-                        border: '1px solid rgba(255,255,255,0.08)',
-                        borderRadius: '8px',
-                        padding: '6px 10px',
-                        color: '#9ca3af',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        fontSize: '11px',
+                        background: 'none', border: 'none', padding: '4px',
+                        color: '#6b7280', cursor: 'pointer', display: 'flex',
                     }}
+                    aria-label="Refresh games"
                 >
                     <RefreshCw size={12} style={refreshing ? { animation: 'spin 1s linear infinite' } : {}} />
-                    Refresh
                 </button>
             </div>
 
-            {/* Sport Tabs — scrollable on mobile */}
-            <div style={{ display: 'flex', gap: '4px', overflowX: 'auto', WebkitOverflowScrolling: 'touch', marginBottom: '14px', paddingBottom: '2px' }}>
+            {/* Sport filter pills */}
+            <div style={{ display: 'flex', gap: '3px', marginBottom: '8px', flexWrap: 'wrap' }}>
                 {SPORT_TABS.map(tab => {
                     const count = tab === 'All' ? games.length : (sportCounts[tab] || 0);
-                    const isActive = activeSport === tab;
-
+                    const active = activeSport === tab;
                     return (
                         <button
                             key={tab}
-                            onClick={() => setActiveSport(tab)}
+                            onClick={() => { setActiveSport(tab); setShowAll(false); }}
                             style={{
-                                padding: '6px 14px',
-                                borderRadius: '20px',
-                                fontSize: '12px',
-                                fontWeight: 600,
-                                whiteSpace: 'nowrap',
-                                cursor: 'pointer',
-                                border: isActive ? '1px solid rgba(0,229,155,0.3)' : '1px solid rgba(255,255,255,0.06)',
-                                background: isActive ? 'rgba(0,229,155,0.1)' : 'rgba(255,255,255,0.03)',
-                                color: isActive ? '#00e59b' : '#9ca3af',
-                                transition: 'all 0.15s ease',
+                                padding: '3px 10px', borderRadius: '12px',
+                                fontSize: '10px', fontWeight: 600, cursor: 'pointer',
+                                border: active ? '1px solid rgba(0,229,155,0.3)' : '1px solid rgba(255,255,255,0.06)',
+                                background: active ? 'rgba(0,229,155,0.1)' : 'transparent',
+                                color: active ? '#00e59b' : '#6b7280',
                             }}
                         >
-                            {tab} {count > 0 && <span style={{ opacity: 0.6, fontSize: '10px' }}>({count})</span>}
+                            {tab} <span style={{ opacity: 0.5 }}>{count}</span>
                         </button>
                     );
                 })}
             </div>
 
-            {/* Loading state */}
+            {/* Loading */}
             {loading ? (
-                <div style={{ padding: '40px 0', textAlign: 'center' }}>
-                    <Loader2 size={22} style={{ color: '#00e59b', animation: 'spin 1s linear infinite', margin: '0 auto 8px' }} />
-                    <p style={{ color: '#6b7280', fontSize: '12px' }}>Loading today&apos;s lines...</p>
+                <div style={{ padding: '30px 0', textAlign: 'center' }}>
+                    <Loader2 size={16} style={{ color: '#00e59b', animation: 'spin 1s linear infinite', margin: '0 auto 6px' }} />
+                    <p style={{ color: '#6b7280', fontSize: '10px' }}>Loading lines...</p>
                 </div>
             ) : games.length === 0 ? (
-                <div style={{
-                    background: 'rgba(255,255,255,0.02)',
-                    border: '1px solid rgba(255,255,255,0.06)',
-                    borderRadius: '14px',
-                    padding: '40px 24px',
-                    textAlign: 'center',
-                }}>
-                    <p style={{ fontSize: '36px', marginBottom: '8px' }}>🏟️</p>
-                    <p style={{ fontSize: '14px', fontWeight: 600, color: '#d1d5db' }}>No games on the board right now</p>
-                    <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>Check back when games are scheduled!</p>
+                <div style={{ padding: '24px 12px', textAlign: 'center', background: 'rgba(255,255,255,0.02)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <p style={{ fontSize: '24px', marginBottom: '4px' }}>🏟️</p>
+                    <p style={{ fontSize: '11px', color: '#6b7280' }}>No games right now</p>
                 </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    {/* Column headers */}
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: '1fr auto auto auto',
-                        gap: '12px',
-                        padding: '0 14px 6px',
-                        borderBottom: '1px solid rgba(255,255,255,0.06)',
-                        marginBottom: '4px',
-                    }}>
-                        <span style={{ fontSize: '10px', fontWeight: 700, color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                            Matchup
-                        </span>
-                        <span style={{ fontSize: '10px', fontWeight: 700, color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'right', minWidth: '48px' }}>
-                            ML
-                        </span>
-                        <span style={{ fontSize: '10px', fontWeight: 700, color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'right', minWidth: '42px' }}>
-                            Spread
-                        </span>
-                        <span style={{ fontSize: '10px', fontWeight: 700, color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'right', minWidth: '24px' }}>
-                            
-                        </span>
+                <>
+                    {/* Game tiles — horizontal scroll on mobile, vertical list on desktop sidebar */}
+                    <div className="games-scroll-container">
+                        {(showAll ? sortedGames : sortedGames.slice(0, 8)).map(g => (
+                            <GameOddsCard key={g.id} game={g} />
+                        ))}
+                        {/* "More" card */}
+                        {!showAll && sortedGames.length > 8 && (
+                            <button
+                                onClick={() => setShowAll(true)}
+                                className="game-tile"
+                                style={{
+                                    background: 'rgba(0,229,155,0.05)',
+                                    border: '1px solid rgba(0,229,155,0.15)',
+                                    borderRadius: '10px',
+                                    padding: '10px 12px',
+                                    minWidth: '100px',
+                                    flex: '0 0 auto',
+                                    cursor: 'pointer',
+                                    display: 'flex', flexDirection: 'column',
+                                    alignItems: 'center', justifyContent: 'center', gap: '4px',
+                                    color: '#00e59b', fontSize: '11px', fontWeight: 600,
+                                }}
+                            >
+                                <ChevronRight size={16} />
+                                +{sortedGames.length - 8} more
+                            </button>
+                        )}
                     </div>
 
-                    {/* Live Games Section */}
-                    {liveGames.length > 0 && (
-                        <>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                                <span className="pulse-dot" style={{ width: '6px', height: '6px' }} />
-                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#00e59b', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                                    Live Now ({liveGames.length})
-                                </span>
-                            </div>
-                            {liveGames.map(g => <GameOddsCard key={g.id} game={g} />)}
-                        </>
+                    {/* Timestamp */}
+                    {lastUpdated && (
+                        <p style={{ fontSize: '9px', color: '#4b5563', marginTop: '6px', textAlign: 'right' }}>
+                            Updated {lastUpdated.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                        </p>
                     )}
-
-                    {/* Upcoming Games */}
-                    {upcomingGames.length > 0 && (
-                        <>
-                            {liveGames.length > 0 && (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: '8px 0 4px' }}>
-                                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                                        Upcoming ({upcomingGames.length})
-                                    </span>
-                                </div>
-                            )}
-                            {upcomingGames.map(g => <GameOddsCard key={g.id} game={g} />)}
-                        </>
-                    )}
-
-                    {/* Completed Games */}
-                    {completedGames.length > 0 && (
-                        <>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: '8px 0 4px' }}>
-                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                                    Final ({completedGames.length})
-                                </span>
-                            </div>
-                            {completedGames.map(g => <GameOddsCard key={g.id} game={g} />)}
-                        </>
-                    )}
-                </div>
+                </>
             )}
         </div>
     );

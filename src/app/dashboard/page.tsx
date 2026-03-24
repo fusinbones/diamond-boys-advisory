@@ -20,6 +20,7 @@ import CommunityPulse from '@/components/dashboard/CommunityPulse';
 import PaywallOverlay from '@/components/dashboard/PaywallOverlay';
 import PickDropBanner from '@/components/dashboard/PickDropBanner';
 import GamesBoard from '@/components/dashboard/GamesBoard';
+import Tooltip from '@/components/dashboard/Tooltip';
 
 interface UserProfile {
     subscription_tier: string | null;
@@ -60,7 +61,7 @@ interface SportBreakdown {
     color: string;
 }
 
-const SPORT_FILTERS = ['All', 'MLB', 'NBA', 'NFL', 'NHL'];
+// Sport filters moved into GamesBoard component
 
 function DashboardContent(): ReactNode {
     const { user, loading: authLoading, signOut } = useAuth();
@@ -75,8 +76,7 @@ function DashboardContent(): ReactNode {
     const [message, setMessage] = useState('');
 
     // Dashboard state
-    const [activeTab, setActiveTab] = useState('today');
-    const [activeSport, setActiveSport] = useState('All');
+    // Tab/sport state removed — GamesBoard has its own tabs
     const [picks, setPicks] = useState<PickData[]>([]);
     const [kpis, setKpis] = useState<KPIs | null>(null);
     const [slate, setSlate] = useState<MorningSlateData | null>(null);
@@ -114,7 +114,7 @@ function DashboardContent(): ReactNode {
         try {
             setDashLoading(true);
             const [picksRes, statsRes] = await Promise.all([
-                fetch(`/api/dashboard/picks?tab=${activeTab}&sport=${activeSport}`),
+                fetch('/api/dashboard/picks'),
                 fetch('/api/dashboard/stats'),
             ]);
 
@@ -137,7 +137,7 @@ function DashboardContent(): ReactNode {
         } finally {
             setDashLoading(false);
         }
-    }, [activeTab, activeSport]);
+    }, []);
 
     useEffect(() => {
         if (user) fetchData();
@@ -343,9 +343,9 @@ function DashboardContent(): ReactNode {
                     />
                 )}
 
-                {/* KPI Cards */}
+                {/* KPI Strip — always visible above fold */}
                 {kpis && (
-                    <div className="dashboard-kpi-grid" style={{ margin: '16px 0' }}>
+                    <div className="dashboard-kpi-grid" style={{ margin: '16px 0 12px' }}>
                         <KPICard icon="record" label="Record" value={kpis.record} sub={`${kpis.winRate} Win Rate`} trend="Season to date" delay={0.05} />
                         <KPICard icon="roi" label="ROI" value={`${Number(kpis.totalUnits) >= 0 ? '+' : ''}${kpis.totalUnits}u`} sub={`${kpis.roi} ROI`} trend="Units profit" delay={0.1} />
                         <KPICard icon="streak" label="Streak" value={kpis.streak} sub="Current streak" delay={0.15} />
@@ -353,53 +353,53 @@ function DashboardContent(): ReactNode {
                     </div>
                 )}
 
+                {/* ═══ MOBILE: Horizontal Game Strip (above fold) ═══ */}
+                <div className="games-strip-mobile">
+                    <GamesBoard />
+                </div>
 
-                {/* ═══ TODAY'S GAMES — Live Odds Board (ALL users see this) ═══ */}
-                <GamesBoard />
+                {/* ═══ 3-PANEL LAYOUT ═══ */}
+                <div className="dash-3panel">
+                    {/* LEFT: Games Sidebar (desktop only) */}
+                    <aside className="games-sidebar-desktop">
+                        <GamesBoard />
+                    </aside>
 
-                {/* Divider between games and picks */}
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', margin: '20px 0 16px' }} />
-
-                {/* Main Dashboard Grid — Picks + Sidebar */}
-                <div className="dash-main">
-                    {/* Left: Picks (paid-only content) */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', position: 'relative' }}>
+                    {/* CENTER: Main Content */}
+                    <main style={{ display: 'flex', flexDirection: 'column', gap: '10px', position: 'relative', minWidth: 0 }}>
                         {dashLoading ? (
-                            <div style={{ padding: '60px 0', textAlign: 'center' }}>
-                                <Loader2 size={24} style={{ color: '#00e59b', animation: 'spin 1s linear infinite', margin: '0 auto 8px' }} />
-                                <p style={{ color: '#6b7280', fontSize: '13px' }}>Loading picks...</p>
+                            <div style={{ padding: '40px 0', textAlign: 'center' }}>
+                                <Loader2 size={20} style={{ color: '#00e59b', animation: 'spin 1s linear infinite', margin: '0 auto 6px' }} />
+                                <p style={{ color: '#6b7280', fontSize: '12px' }}>Loading picks...</p>
                             </div>
                         ) : picks.length > 0 ? (
                             <>
-                                {/* Pick drop banner — FOMO for trial, celebration for paid */}
                                 <PickDropBanner pickCount={picks.filter(p => p.status === 'upcoming').length} isPaid={!!isPaid} />
                                 {picks.map((pick) => (
                                     <PickCard key={pick.id} pick={pick} locked={picksLocked} />
                                 ))}
                             </>
                         ) : (
-                            <div className="glass-card" style={{ padding: '40px 24px', textAlign: 'center' }}>
-                                <p style={{ fontSize: '15px', fontWeight: 600, color: '#d1d5db', marginBottom: '8px' }}>No picks yet for this view</p>
-                                <p style={{ fontSize: '13px', color: '#6b7280' }}>
-                                    {activeTab === 'today' ? 'Check back closer to game time for today\'s picks.' :
-                                     activeTab === 'upcoming' ? 'All upcoming picks will appear here when published.' :
-                                     'Graded picks and results will populate over time.'}
+                            <div className="glass-card" style={{ padding: '30px 20px', textAlign: 'center' }}>
+                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#d1d5db', marginBottom: '6px' }}>No picks yet</p>
+                                <p style={{ fontSize: '12px', color: '#6b7280' }}>
+                                    Check back closer to game time for today&apos;s picks.
                                 </p>
                             </div>
                         )}
 
-                        {/* Bankroll Chart */}
                         <BankrollChart data={dailyPnl} />
-
-                        {/* Paywall for expired free users */}
                         {trialExpired && <PaywallOverlay daysLeft={daysLeft} />}
-                    </div>
+                    </main>
 
-                    {/* Right: Sidebar */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {/* RIGHT: Stats Sidebar */}
+                    <aside style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                         {/* Today's Summary */}
                         <div className="dash-sidebar-card">
-                            <h3 className="dash-sidebar-card__title">Today&apos;s Summary</h3>
+                            <h3 className="dash-sidebar-card__title" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                Today&apos;s Summary
+                                <Tooltip text="Your daily performance: total picks made, win/loss record, and profit in units. 1 unit = your standard bet size." />
+                            </h3>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                 {[
                                     { label: 'Total Picks', value: String(picks.filter(p => p.game_date === new Date().toISOString().split('T')[0]).length) },
@@ -416,7 +416,6 @@ function DashboardContent(): ReactNode {
                             </div>
                         </div>
 
-                        {/* Tail Tracker */}
                         <TailTracker
                             seasonUnits={tailTracker.seasonUnits}
                             weekUnits={tailTracker.weekUnits}
@@ -476,10 +475,9 @@ function DashboardContent(): ReactNode {
                             </div>
                         )}
 
-                        {/* Community Pulse */}
                         <CommunityPulse />
 
-                        {/* Trial status badge */}
+                        {/* Trial CTA */}
                         {trialActive && (
                             <div style={{
                                 background: 'rgba(0,229,155,0.06)',
@@ -499,7 +497,7 @@ function DashboardContent(): ReactNode {
                                 </Link>
                             </div>
                         )}
-                    </div>
+                    </aside>
                 </div>
             </div>
         </div>
