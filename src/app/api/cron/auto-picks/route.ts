@@ -10,6 +10,16 @@ function getSupabase() {
     );
 }
 
+/** Convert UTC timestamp to YYYY-MM-DD in US Eastern timezone */
+function toEasternDate(utcTime: string): string {
+    try {
+        const d = new Date(utcTime);
+        return d.toLocaleDateString('en-CA', { timeZone: 'America/New_York' }); // en-CA = YYYY-MM-DD
+    } catch {
+        return new Date().toISOString().split('T')[0]; // fallback
+    }
+}
+
 /**
  * AI Auto-Picks Generator
  *
@@ -72,14 +82,14 @@ export async function GET(request: NextRequest) {
 
         // Save to Supabase
         const supabase = getSupabase();
-        const today = new Date().toISOString().split('T')[0];
 
-        // Check for existing AI picks today (avoid duplicates)
+        // Check for existing AI picks (avoid duplicates by game_id)
+        const gameIds = recommendations.map(r => r.gameId);
         const { data: existing } = await supabase
             .from('picks')
             .select('game_id')
             .eq('source', 'ai_consensus')
-            .eq('game_date', today);
+            .in('game_id', gameIds);
 
         const existingGameIds = new Set((existing || []).map((p: { game_id: string }) => p.game_id));
 
@@ -94,24 +104,28 @@ export async function GET(request: NextRequest) {
             });
         }
 
-        const inserts = newPicks.map(pick => ({
-            home_team: pick.homeTeam,
-            away_team: pick.awayTeam,
-            pick_type: pick.pickType,
-            pick_team: pick.pickTeam,
-            pick_value: pick.pickValue,
-            confidence: pick.confidence,
-            reason: pick.reasoning,
-            notes: `Edge: ${pick.edge}% | Consensus: ${pick.consensusStrength}%`,
-            game_date: today,
-            unit_size: pick.confidence >= 80 ? 2 : 1,
-            created_by: 'AI Consensus Engine',
-            game_id: pick.gameId,
-            result: 'pending',
-            source: 'ai_consensus',
-            sport: pick.sport,
-            odds_at_pick: pick.oddsAtPick,
-        }));
+        const inserts = newPicks.map(pick => {
+            // Use the game's actual date in US Eastern timezone
+            const gameDate = toEasternDate(pick.gameTime);
+            return {
+                home_team: pick.homeTeam,
+                away_team: pick.awayTeam,
+                pick_type: pick.pickType,
+                pick_team: pick.pickTeam,
+                pick_value: pick.pickValue,
+                confidence: pick.confidence,
+                reason: pick.reasoning,
+                notes: `Edge: ${pick.edge}% | Consensus: ${pick.consensusStrength}%`,
+                game_date: gameDate,
+                unit_size: pick.confidence >= 80 ? 2 : 1,
+                created_by: 'AI Consensus Engine',
+                game_id: pick.gameId,
+                result: 'pending',
+                source: 'ai_consensus',
+                sport: pick.sport,
+                odds_at_pick: pick.oddsAtPick,
+            };
+        });
 
         const { data: saved, error: insertError } = await supabase
             .from('picks')
