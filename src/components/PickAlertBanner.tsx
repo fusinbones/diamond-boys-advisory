@@ -200,7 +200,7 @@ export default function PickAlertBanner() {
 
                     {/* CTA */}
                     <Link
-                        href={isHit ? '/pricing' : '/community'}
+                        href={isHit ? '/pricing' : '/dashboard'}
                         onClick={handleView}
                         style={{
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',

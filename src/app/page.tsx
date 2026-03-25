@@ -6,10 +6,12 @@ import SocialProof from '@/components/landing/SocialProof';
 import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import FreeSignupSection from '@/components/landing/FreeSignupSection';
 import MagicTicker from '@/components/MagicTicker';
+import AuthRedirect from '@/components/AuthRedirect';
 
 export default function HomePage() {
   return (
     <>
+      <AuthRedirect />
       <HeroSection />
       <MagicTicker />
       <StatsBar />
