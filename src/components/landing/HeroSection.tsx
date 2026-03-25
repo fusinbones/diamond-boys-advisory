@@ -39,6 +39,25 @@ export default function HeroSection() {
                     width: '600px', height: '600px',
                     background: 'radial-gradient(circle, rgba(0,229,155,0.08) 0%, transparent 70%)',
                 }} />
+                {/* Subtle diamond sparkle accents */}
+                <div style={{
+                    position: 'absolute', top: '10%', left: '15%',
+                    width: '3px', height: '3px', borderRadius: '50%',
+                    background: '#00e59b', boxShadow: '0 0 8px rgba(0,229,155,0.5)',
+                    animation: 'pulse 3s ease infinite',
+                }} />
+                <div style={{
+                    position: 'absolute', top: '25%', right: '12%',
+                    width: '2px', height: '2px', borderRadius: '50%',
+                    background: '#fbbf24', boxShadow: '0 0 6px rgba(251,191,36,0.4)',
+                    animation: 'pulse 4s ease infinite 1s',
+                }} />
+                <div style={{
+                    position: 'absolute', bottom: '30%', left: '8%',
+                    width: '2px', height: '2px', borderRadius: '50%',
+                    background: '#818cf8', boxShadow: '0 0 6px rgba(129,140,248,0.4)',
+                    animation: 'pulse 3.5s ease infinite 0.5s',
+                }} />
             </div>
 
             <div style={{
@@ -143,9 +162,9 @@ export default function HeroSection() {
                     style={{ color: '#d1d5db', fontSize: 'clamp(15px, 2vw, 18px)', lineHeight: 1.7, marginBottom: '20px', maxWidth: '540px' }}
                 >
                     Expert analysis, real-time odds from{' '}
-                    <span style={{ color: '#fbbf24', fontWeight: 600 }}>5+ sportsbooks</span>,
-                    and a premium community with a{' '}
-                    <span style={{ color: '#00e59b', fontWeight: 600 }}>65% documented win rate</span>.
+                    <span style={{ color: '#fbbf24', fontWeight: 600 }}>11+ sportsbooks</span>,
+                    and a premium community backed by{' '}
+                    <span style={{ color: '#00e59b', fontWeight: 600 }}>30+ years of experience</span>.
                 </motion.p>
 
                 {/* Value props */}
