@@ -8,38 +8,30 @@ function getSupabase() {
     );
 }
 
-interface GradedPick {
-    game_date: string;
-    status: string;
-    units: number;
-    sport: string;
-    edge: number | null;
-}
-
 export async function GET() {
     try {
         const supabase = getSupabase();
 
-        // Fetch all graded picks
+        // Fetch all graded picks (uses 'result' column: hit/miss/push)
         const { data, error } = await supabase
             .from('picks')
-            .select('game_date, status, units, sport, edge')
-            .in('status', ['won', 'lost', 'push'])
+            .select('game_date, result, unit_size, sport, edge')
+            .in('result', ['hit', 'miss', 'push'])
             .order('game_date', { ascending: true });
 
         if (error) throw error;
 
-        const picks = (data || []) as GradedPick[];
+        const picks = (data || []) as Record<string, unknown>[];
 
         // ── Daily P&L (for bankroll chart) ──
         const dailyMap = new Map<string, { wins: number; losses: number; pushes: number; units: number }>();
         for (const p of picks) {
-            const date = p.game_date || 'unknown';
+            const date = (p.game_date as string) || 'unknown';
             const entry = dailyMap.get(date) || { wins: 0, losses: 0, pushes: 0, units: 0 };
-            const u = Number(p.units) || 1;
-            if (p.status === 'won') { entry.wins++; entry.units += u; }
-            if (p.status === 'lost') { entry.losses++; entry.units -= u; }
-            if (p.status === 'push') { entry.pushes++; }
+            const u = Number(p.unit_size) || 1;
+            if (p.result === 'hit') { entry.wins++; entry.units += u; }
+            if (p.result === 'miss') { entry.losses++; entry.units -= u; }
+            if (p.result === 'push') { entry.pushes++; }
             dailyMap.set(date, entry);
         }
 
@@ -58,11 +50,11 @@ export async function GET() {
         // ── By Sport ──
         const sportMap = new Map<string, { wins: number; losses: number; units: number }>();
         for (const p of picks) {
-            const sport = p.sport || 'MLB';
+            const sport = (p.sport as string) || 'MLB';
             const entry = sportMap.get(sport) || { wins: 0, losses: 0, units: 0 };
-            const u = Number(p.units) || 1;
-            if (p.status === 'won') { entry.wins++; entry.units += u; }
-            if (p.status === 'lost') { entry.losses++; entry.units -= u; }
+            const u = Number(p.unit_size) || 1;
+            if (p.result === 'hit') { entry.wins++; entry.units += u; }
+            if (p.result === 'miss') { entry.losses++; entry.units -= u; }
             sportMap.set(sport, entry);
         }
 
@@ -83,24 +75,24 @@ export async function GET() {
 
         // ── "If You Tailed" totals ──
         const totalWonUnits = picks
-            .filter((p) => p.status === 'won')
-            .reduce((acc, p) => acc + (Number(p.units) || 1), 0);
+            .filter(p => p.result === 'hit')
+            .reduce((acc, p) => acc + (Number(p.unit_size) || 1), 0);
         const totalLostUnits = picks
-            .filter((p) => p.status === 'lost')
-            .reduce((acc, p) => acc + (Number(p.units) || 1), 0);
+            .filter(p => p.result === 'miss')
+            .reduce((acc, p) => acc + (Number(p.unit_size) || 1), 0);
         const netUnits = totalWonUnits - totalLostUnits;
 
         // Last 7 days
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        const recentPicks = picks.filter((p) => new Date(p.game_date) >= sevenDaysAgo);
-        const recentWon = recentPicks.filter((p) => p.status === 'won').reduce((a, p) => a + (Number(p.units) || 1), 0);
-        const recentLost = recentPicks.filter((p) => p.status === 'lost').reduce((a, p) => a + (Number(p.units) || 1), 0);
+        const recentPicks = picks.filter(p => new Date(p.game_date as string) >= sevenDaysAgo);
+        const recentWon = recentPicks.filter(p => p.result === 'hit').reduce((a, p) => a + (Number(p.unit_size) || 1), 0);
+        const recentLost = recentPicks.filter(p => p.result === 'miss').reduce((a, p) => a + (Number(p.unit_size) || 1), 0);
         const recentNet = recentWon - recentLost;
 
         return NextResponse.json({
             dailyPnl,
-            recentDays: dailyPnl.slice(-5).reverse(), // last 5 days, newest first
+            recentDays: dailyPnl.slice(-5).reverse(),
             bySport,
             tailTracker: {
                 seasonUnits: Number(netUnits.toFixed(1)),
