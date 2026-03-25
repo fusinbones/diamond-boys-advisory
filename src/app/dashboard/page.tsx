@@ -77,7 +77,7 @@ function DashboardContent(): ReactNode {
     const [message, setMessage] = useState('');
 
     // Dashboard state
-    // Tab/sport state removed — GamesBoard has its own tabs
+    const [sportFilter, setSportFilter] = useState('All');
     const [picks, setPicks] = useState<PickData[]>([]);
     const [kpis, setKpis] = useState<KPIs | null>(null);
     const [slate, setSlate] = useState<MorningSlateData | null>(null);
@@ -402,14 +402,46 @@ function DashboardContent(): ReactNode {
                                 <Loader2 size={20} style={{ color: '#00e59b', animation: 'spin 1s linear infinite', margin: '0 auto 6px' }} />
                                 <p style={{ color: '#6b7280', fontSize: '12px' }}>Loading picks...</p>
                             </div>
-                        ) : picks.length > 0 ? (
+                        ) : picks.length > 0 ? (() => {
+                            const sportTabs = ['All', ...Array.from(new Set(picks.map(p => p.sport))).filter(Boolean)];
+                            const filteredPicks = sportFilter === 'All' ? picks : picks.filter(p => p.sport === sportFilter);
+                            return (
                             <>
                                 <PickDropBanner pickCount={picks.filter(p => p.status === 'upcoming').length} isPaid={!!isPaid} />
-                                {picks.map((pick) => (
-                                    <PickCard key={pick.id} pick={pick} locked={picksLocked} />
-                                ))}
+
+                                {/* Sport filter pills */}
+                                <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '4px' }}>
+                                    {sportTabs.map(tab => {
+                                        const count = tab === 'All' ? picks.length : picks.filter(p => p.sport === tab).length;
+                                        const active = sportFilter === tab;
+                                        return (
+                                            <button key={tab} onClick={() => setSportFilter(tab)} style={{
+                                                padding: '4px 12px', borderRadius: '14px',
+                                                fontSize: '11px', fontWeight: 600, cursor: 'pointer',
+                                                border: active ? '1px solid rgba(0,229,155,0.3)' : '1px solid rgba(255,255,255,0.06)',
+                                                background: active ? 'rgba(0,229,155,0.1)' : 'transparent',
+                                                color: active ? '#00e59b' : '#6b7280',
+                                                transition: 'all 0.12s',
+                                            }}>
+                                                {tab} <span style={{ opacity: 0.5, marginLeft: '3px' }}>{count}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                {filteredPicks.length > 0 ? (
+                                    filteredPicks.map((pick) => (
+                                        <PickCard key={pick.id} pick={pick} locked={picksLocked} />
+                                    ))
+                                ) : (
+                                    <div className="glass-card" style={{ padding: '24px 20px', textAlign: 'center' }}>
+                                        <p style={{ fontSize: '14px', fontWeight: 600, color: '#d1d5db', marginBottom: '4px' }}>No {sportFilter} picks today</p>
+                                        <p style={{ fontSize: '12px', color: '#6b7280' }}>Check other sports or wait for upcoming picks.</p>
+                                    </div>
+                                )}
                             </>
-                        ) : (
+                            );
+                        })() : (
                             <div className="glass-card" style={{ padding: '30px 20px', textAlign: 'center' }}>
                                 <p style={{ fontSize: '14px', fontWeight: 600, color: '#d1d5db', marginBottom: '6px' }}>No picks yet</p>
                                 <p style={{ fontSize: '12px', color: '#6b7280' }}>
