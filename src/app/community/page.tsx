@@ -157,10 +157,10 @@ function shortName(name: string): string {
 }
 
 const TIER_OPTIONS = [
-    { value: 'daily', label: 'Daily ($39/mo)' },
-    { value: 'weekly', label: 'Weekly ($69/mo)' },
-    { value: 'monthly', label: 'Monthly ($99/mo)' },
-    { value: 'season', label: 'Season Pass ($249/mo)' },
+    { value: 'daily', label: 'Daily Pass ($24.99)' },
+    { value: 'weekly', label: 'Weekly ($74.99/wk)' },
+    { value: 'monthly', label: 'Monthly ($229.99/mo)' },
+    { value: 'season', label: 'Season Pass ($699/6mo)' },
 ];
 
 const CATEGORY_OPTIONS = ['GENERAL', 'PICKS', 'BOT', 'VIP', 'CUSTOM'];

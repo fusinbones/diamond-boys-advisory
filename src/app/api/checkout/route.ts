@@ -22,9 +22,10 @@ export async function POST(request: NextRequest) {
         }
 
         // Create Stripe Checkout Session
+        const isOneTime = tier.isOneTime === true;
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
-            mode: 'subscription',
+            mode: isOneTime ? 'payment' : 'subscription',
             customer_email: email,
             line_items: [
                 {
@@ -37,15 +38,19 @@ export async function POST(request: NextRequest) {
                 tier_id: tierId,
                 tier_name: tier.name,
             },
-            subscription_data: {
-                metadata: {
-                    tier_id: tierId,
-                    tier_name: tier.name,
-                },
-                ...(tier.trialDays
-                    ? { trial_period_days: tier.trialDays }
-                    : {}),
-            },
+            ...(isOneTime
+                ? {}
+                : {
+                      subscription_data: {
+                          metadata: {
+                              tier_id: tierId,
+                              tier_name: tier.name,
+                          },
+                          ...(tier.trialDays
+                              ? { trial_period_days: tier.trialDays }
+                              : {}),
+                      },
+                  }),
             success_url: `${request.nextUrl.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${request.nextUrl.origin}/pricing`,
             allow_promotion_codes: true,

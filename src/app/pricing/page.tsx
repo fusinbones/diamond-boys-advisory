@@ -9,12 +9,14 @@ import Link from 'next/link';
 import { tiers, Tier } from '@/lib/tiers';
 
 const tierIcons: Record<string, React.ReactNode> = {
+    daily: <Zap size={20} />,
     weekly: <Star size={20} />,
     monthly: <Crown size={20} />,
     season: <Gem size={20} />,
 };
 
 const tierAccents: Record<string, { color: string; bg: string; border: string }> = {
+    daily: { color: '#60a5fa', bg: 'rgba(96,165,250,0.08)', border: 'rgba(96,165,250,0.15)' },
     weekly: { color: '#00e59b', bg: 'rgba(0,229,155,0.08)', border: 'rgba(0,229,155,0.15)' },
     monthly: { color: '#fbbf24', bg: 'rgba(251,191,36,0.08)', border: 'rgba(251,191,36,0.2)' },
     season: { color: '#a78bfa', bg: 'rgba(167,139,250,0.08)', border: 'rgba(167,139,250,0.15)' },
@@ -23,7 +25,7 @@ const tierAccents: Record<string, { color: string; bg: string; border: string }>
 const perks = [
     { icon: Target, title: 'Expert Picks Daily', desc: 'Data-driven MLB picks with confidence ratings.' },
     { icon: Users, title: 'The TriplePlayz Lounge', desc: 'Real-time alerts, discussions, and game breakdowns.' },
-    { icon: Trophy, title: '65% Win Rate', desc: 'Fully documented, transparent record.' },
+    { icon: Trophy, title: '30+ Years Experience', desc: 'Decades of sports analysis expertise.' },
     { icon: Bell, title: 'Instant Alerts', desc: 'Line movement notifications straight to your phone.' },
 ];
 
@@ -207,7 +209,7 @@ function TierCard({ tier }: { tier: Tier }) {
                     }}
                 >
                     <Zap size={14} />
-                    {tier.trialDays ? `Start ${tier.trialDays}-Day Free Trial` : 'Subscribe Now'}
+                    {tier.isOneTime ? 'Get Daily Pass' : tier.trialDays ? `Start ${tier.trialDays}-Day Free Trial` : 'Subscribe Now'}
                 </Link>
                 <p style={{ textAlign: 'center', fontSize: '10px', color: '#4b5563', marginTop: '6px' }}>
                     🔒 Secure payment via Stripe. Cancel anytime.
