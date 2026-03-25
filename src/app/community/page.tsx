@@ -47,6 +47,10 @@ interface UserProfile {
     display_name: string;
     avatar_color: string;
     role?: string;
+    is_banned?: boolean;
+    is_muted?: boolean;
+    muted_until?: string | null;
+    suspended_until?: string | null;
 }
 
 interface TickerGame {
@@ -1233,6 +1237,18 @@ export default function CommunityPage() {
     const [showAnalysisLimit, setShowAnalysisLimit] = useState(false);
     const [pickTeaseMsg, setPickTeaseMsg] = useState<string | null>(null);
     const [error, setError] = useState('');
+
+    // Presence & Moderation
+    const [onlineUsers, setOnlineUsers] = useState<{ user_id: string; display_name: string; avatar_color: string; role: string }[]>([]);
+    const [showOnline, setShowOnline] = useState(false);
+    const [isBanned, setIsBanned] = useState(false);
+    const [isMuted, setIsMuted] = useState(false);
+    const [reportModal, setReportModal] = useState<{ msgId: string; userId: string; content: string } | null>(null);
+    const [reportReason, setReportReason] = useState('spam');
+    const [reportDetails, setReportDetails] = useState('');
+    const [reportSending, setReportSending] = useState(false);
+    const [reportSent, setReportSent] = useState(false);
+
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -1246,15 +1262,18 @@ export default function CommunityPage() {
             try {
                 const { data } = await supabase
                     .from('user_profiles')
-                    .select('subscription_tier, is_admin, display_name, avatar_color, role')
+                    .select('subscription_tier, is_admin, display_name, avatar_color, role, is_banned, is_muted, muted_until, suspended_until')
                     .eq('id', user.id)
                     .single();
                 if (data) {
                     setProfile(data);
-                    // All authenticated users get in — tier controls channel access
                     setHasAccess(true);
+                    // Check ban/mute status
+                    if (data.is_banned) { setIsBanned(true); }
+                    if (data.is_muted && (!data.muted_until || new Date(data.muted_until) > new Date())) {
+                        setIsMuted(true);
+                    }
                 } else {
-                    // No profile yet — still allow in as free tier
                     setProfile({ subscription_tier: null, is_admin: false, display_name: user.email?.split('@')[0] || 'User', avatar_color: '#6b7280' });
                     setHasAccess(true);
                 }
@@ -1385,6 +1404,67 @@ export default function CommunityPage() {
         setMessages(prev => prev.filter(m => m.id !== msgId));
         const { error: err } = await supabase.from('community_messages').delete().eq('id', msgId);
         if (err) console.error('Delete failed:', err);
+    };
+
+    // ── Presence heartbeat ──
+    useEffect(() => {
+        if (!user || !activeChannel || !profile) return;
+        const sendHeartbeat = () => {
+            fetch('/api/admin/moderation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'heartbeat',
+                    userId: user.id,
+                    channelId: activeChannel.id,
+                    displayName: profile.display_name || 'User',
+                    avatarColor: profile.avatar_color || '#6b7280',
+                    role: profile.role || (profile.is_admin ? 'admin' : 'member'),
+                }),
+            }).catch(() => { /* silent */ });
+        };
+        sendHeartbeat();
+        const interval = setInterval(sendHeartbeat, 30000);
+        return () => clearInterval(interval);
+    }, [user, activeChannel, profile]);
+
+    // ── Fetch online users ──
+    useEffect(() => {
+        if (!activeChannel) return;
+        const fetchOnline = () => {
+            fetch(`/api/admin/moderation?view=presence&channelId=${activeChannel.id}`)
+                .then(r => r.json())
+                .then(data => setOnlineUsers(data.users || []))
+                .catch(() => { /* silent */ });
+        };
+        fetchOnline();
+        const interval = setInterval(fetchOnline, 15000);
+        return () => clearInterval(interval);
+    }, [activeChannel]);
+
+    // ── Report handler ──
+    const submitReport = async () => {
+        if (!reportModal || !user) return;
+        setReportSending(true);
+        try {
+            await fetch('/api/admin/moderation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'report',
+                    reporterId: user.id,
+                    reporterEmail: user.email,
+                    reportedUserId: reportModal.userId,
+                    messageId: reportModal.msgId,
+                    messageContent: reportModal.content.slice(0, 500),
+                    reason: reportReason,
+                    details: reportDetails || null,
+                }),
+            });
+            setReportSent(true);
+            setTimeout(() => { setReportModal(null); setReportSent(false); setReportDetails(''); }, 2000);
+        } catch (err) { console.error('Report error:', err); }
+        finally { setReportSending(false); }
     };
 
     // ── Toggle reaction ──
@@ -1799,8 +1879,51 @@ export default function CommunityPage() {
                                 </Link>
                             </div>
                         </div>
+                    ) : isBanned ? (
+                        /* Banned user overlay */
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px', textAlign: 'center' }}>
+                            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🚫</div>
+                            <h3 style={{ color: '#f87171', fontSize: '18px', fontWeight: 800, marginBottom: '8px' }}>Account Suspended</h3>
+                            <p style={{ color: '#6b7280', fontSize: '13px', maxWidth: '300px', lineHeight: 1.6 }}>
+                                Your chat access has been suspended. If you believe this was a mistake, contact support.
+                            </p>
+                        </div>
                     ) : (
                     <>
+                    {/* Online users header */}
+                    <div style={{ padding: '0 16px' }}>
+                        <button
+                            onClick={() => setShowOnline(!showOnline)}
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: '6px',
+                                padding: '6px 0', background: 'none', border: 'none',
+                                cursor: 'pointer', color: '#6b7280', fontSize: '11px', fontWeight: 600,
+                                width: '100%',
+                            }}
+                        >
+                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#00e59b', display: 'inline-block' }} />
+                            {onlineUsers.length} online
+                            <span style={{ fontSize: '10px', marginLeft: 'auto', transition: 'transform 0.2s', transform: showOnline ? 'rotate(180deg)' : 'none' }}>▼</span>
+                        </button>
+                        {showOnline && onlineUsers.length > 0 && (
+                            <div style={{
+                                display: 'flex', flexWrap: 'wrap', gap: '4px',
+                                padding: '6px 0 10px', borderBottom: '1px solid rgba(255,255,255,0.04)',
+                                maxHeight: '120px', overflowY: 'auto',
+                            }}>
+                                {onlineUsers.map(u => (
+                                    <div key={u.user_id} style={{
+                                        display: 'flex', alignItems: 'center', gap: '4px',
+                                        padding: '2px 8px', borderRadius: '10px',
+                                        background: 'rgba(255,255,255,0.03)', fontSize: '11px', color: '#9ca3af',
+                                    }}>
+                                        <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: u.role === 'admin' ? '#fbbf24' : u.role === 'staff' ? '#818cf8' : '#00e59b' }} />
+                                        {u.display_name}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                     <div className="lounge-messages" ref={messagesContainerRef} onScroll={handleScroll}>
                         {/* Welcome banner */}
                         {activeChannel?.welcome_message && (
@@ -1851,13 +1974,19 @@ export default function CommunityPage() {
                                                 {!msg.is_bot && msg.user_role === 'admin' && <span className="lounge-msg-badge" style={{ background: 'rgba(251,191,36,0.15)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.3)' }}>ADMIN</span>}
                                                 <span className="lounge-msg-time">{formatTime(msg.created_at)}</span>
                                                 {/* Message actions */}
-                                                {canDelete && (
-                                                    <div className="lounge-msg-actions">
+                                                <div className="lounge-msg-actions">
+                                                    {/* Report button — anyone can report */}
+                                                    {!msg.is_bot && msg.user_id !== user?.id && (
+                                                        <button className="lounge-msg-action-btn" onClick={() => setReportModal({ msgId: msg.id, userId: msg.user_id, content: msg.content })} title="Report" style={{ color: '#fb923c' }}>
+                                                            ⚑
+                                                        </button>
+                                                    )}
+                                                    {canDelete && (
                                                         <button className="lounge-msg-action-btn delete" onClick={() => deleteMessage(msg.id)} title="Delete message">
                                                             <Trash2 size={12} />
                                                         </button>
-                                                    </div>
-                                                )}
+                                                    )}
+                                                </div>
                                             </div>
                                             <div className="lounge-msg-content">{renderContent(msg.content)}</div>
 
@@ -2007,6 +2136,99 @@ export default function CommunityPage() {
                     onClose={() => setShowTeamSearch(false)}
                     onSelectGame={(g) => { setSelectedGame(g); setShowTeamSearch(false); }}
                 />
+            )}
+
+            {/* Report Modal */}
+            {reportModal && (
+                <div style={{
+                    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    zIndex: 1000, padding: '20px',
+                }}>
+                    <div style={{
+                        maxWidth: '380px', width: '100%', padding: '24px',
+                        background: 'linear-gradient(135deg, rgba(15,20,35,0.98), rgba(10,14,23,0.98))',
+                        border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px',
+                        boxShadow: '0 8px 40px rgba(0,0,0,0.5)',
+                    }}>
+                        {reportSent ? (
+                            <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                                <div style={{ fontSize: '36px', marginBottom: '12px' }}>✅</div>
+                                <h3 style={{ color: '#00e59b', fontSize: '16px', fontWeight: 700, marginBottom: '4px' }}>Report Submitted</h3>
+                                <p style={{ color: '#6b7280', fontSize: '12px' }}>Our team will review this shortly.</p>
+                            </div>
+                        ) : (
+                            <>
+                                <h3 style={{ color: 'white', fontSize: '16px', fontWeight: 700, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    ⚑ Report Message
+                                </h3>
+                                <p style={{ color: '#6b7280', fontSize: '11px', marginBottom: '16px' }}>
+                                    This report will be sent to admins for review.
+                                </p>
+
+                                {/* Reported message preview */}
+                                <div style={{
+                                    background: 'rgba(255,255,255,0.03)', borderRadius: '8px',
+                                    padding: '8px 12px', marginBottom: '14px',
+                                    borderLeft: '3px solid rgba(239,68,68,0.3)',
+                                    fontSize: '12px', color: '#9ca3af', maxHeight: '60px', overflow: 'hidden',
+                                }}>
+                                    {reportModal.content.slice(0, 200)}
+                                </div>
+
+                                <label style={{ display: 'block', color: '#9ca3af', fontSize: '11px', fontWeight: 600, marginBottom: '6px', textTransform: 'uppercase' }}>Reason</label>
+                                <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '12px' }}>
+                                    {['spam', 'harassment', 'hate_speech', 'inappropriate', 'impersonation', 'other'].map(r => (
+                                        <button
+                                            key={r}
+                                            onClick={() => setReportReason(r)}
+                                            style={{
+                                                padding: '4px 10px', borderRadius: '8px',
+                                                background: reportReason === r ? 'rgba(239,68,68,0.1)' : 'rgba(255,255,255,0.03)',
+                                                border: `1px solid ${reportReason === r ? 'rgba(239,68,68,0.3)' : 'rgba(255,255,255,0.06)'}`,
+                                                color: reportReason === r ? '#f87171' : '#6b7280',
+                                                fontSize: '11px', fontWeight: 600, cursor: 'pointer',
+                                                textTransform: 'capitalize',
+                                            }}
+                                        >{r.replace('_', ' ')}</button>
+                                    ))}
+                                </div>
+
+                                <textarea
+                                    value={reportDetails}
+                                    onChange={e => setReportDetails(e.target.value)}
+                                    placeholder="Additional details (optional)..."
+                                    style={{
+                                        width: '100%', padding: '8px 12px', borderRadius: '8px',
+                                        background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                                        color: 'white', fontSize: '12px', resize: 'vertical', minHeight: '50px',
+                                        boxSizing: 'border-box', marginBottom: '14px',
+                                    }}
+                                />
+
+                                <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                    <button
+                                        onClick={() => { setReportModal(null); setReportDetails(''); }}
+                                        style={{
+                                            padding: '7px 14px', borderRadius: '8px',
+                                            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                                            color: '#9ca3af', fontSize: '12px', fontWeight: 600, cursor: 'pointer',
+                                        }}
+                                    >Cancel</button>
+                                    <button
+                                        onClick={submitReport}
+                                        disabled={reportSending}
+                                        style={{
+                                            padding: '7px 14px', borderRadius: '8px',
+                                            background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)',
+                                            color: '#f87171', fontSize: '12px', fontWeight: 700, cursor: 'pointer',
+                                        }}
+                                    >{reportSending ? 'Sending...' : 'Submit Report'}</button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
             )}
         </div>
     );

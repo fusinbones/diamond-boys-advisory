@@ -19,6 +19,7 @@ import {
     ShieldCheck,
     ArrowUpDown,
     Users,
+    ShieldAlert,
 } from 'lucide-react';
 import './admin.css';
 
@@ -29,6 +30,7 @@ const navItems = [
     { href: '/admin/picks', label: 'Pick Entry', icon: ClipboardList },
     { href: '/admin/logs', label: 'Pick Logs', icon: History },
     { href: '/admin/users', label: 'Users', icon: Users },
+    { href: '/admin/moderation', label: 'Moderation', icon: ShieldAlert },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
