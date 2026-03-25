@@ -37,6 +37,7 @@ interface Message {
     avatar_color: string;
     is_bot: boolean;
     user_role?: string;
+    reactions?: Record<string, string[]>;
     created_at: string;
 }
 
@@ -1386,6 +1387,46 @@ export default function CommunityPage() {
         if (err) console.error('Delete failed:', err);
     };
 
+    // ── Toggle reaction ──
+    const REACTION_EMOJIS = ['🔥', '💎', '⚡', '🎯', '💪', '👏'];
+
+    const toggleReaction = async (msgId: string, emoji: string) => {
+        if (!user) return;
+        const uid = user.id;
+
+        // Optimistic update
+        setMessages(prev => prev.map(m => {
+            if (m.id !== msgId) return m;
+            const reactions = { ...(m.reactions || {}) };
+            const users = reactions[emoji] ? [...reactions[emoji]] : [];
+            const idx = users.indexOf(uid);
+            if (idx >= 0) users.splice(idx, 1);
+            else users.push(uid);
+            if (users.length === 0) delete reactions[emoji];
+            else reactions[emoji] = users;
+            return { ...m, reactions };
+        }));
+
+        // Persist to Supabase
+        try {
+            const msg = messages.find(m => m.id === msgId);
+            const reactions = { ...(msg?.reactions || {}) };
+            const users = reactions[emoji] ? [...reactions[emoji]] : [];
+            const idx = users.indexOf(uid);
+            if (idx >= 0) users.splice(idx, 1);
+            else users.push(uid);
+            if (users.length === 0) delete reactions[emoji];
+            else reactions[emoji] = users;
+
+            await supabase
+                .from('community_messages')
+                .update({ reactions })
+                .eq('id', msgId);
+        } catch (err) {
+            console.error('Reaction error:', err);
+        }
+    };
+
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
     };
@@ -1819,6 +1860,72 @@ export default function CommunityPage() {
                                                 )}
                                             </div>
                                             <div className="lounge-msg-content">{renderContent(msg.content)}</div>
+
+                                            {/* Emoji reactions */}
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', marginTop: '4px', flexWrap: 'wrap' }}>
+                                                {/* Existing reactions with counts */}
+                                                {msg.reactions && Object.entries(msg.reactions).map(([emoji, users]) => {
+                                                    if (!users || users.length === 0) return null;
+                                                    const iReacted = user ? users.includes(user.id) : false;
+                                                    return (
+                                                        <button
+                                                            key={emoji}
+                                                            onClick={() => toggleReaction(msg.id, emoji)}
+                                                            style={{
+                                                                display: 'flex', alignItems: 'center', gap: '3px',
+                                                                padding: '2px 6px', borderRadius: '10px',
+                                                                background: iReacted ? 'rgba(0,229,155,0.12)' : 'rgba(255,255,255,0.04)',
+                                                                border: `1px solid ${iReacted ? 'rgba(0,229,155,0.3)' : 'rgba(255,255,255,0.08)'}`,
+                                                                cursor: 'pointer', fontSize: '12px', color: '#d1d5db',
+                                                                transition: 'all 0.15s',
+                                                            }}
+                                                        >
+                                                            <span>{emoji}</span>
+                                                            <span style={{ fontSize: '10px', fontWeight: 700, color: iReacted ? '#00e59b' : '#6b7280' }}>{users.length}</span>
+                                                        </button>
+                                                    );
+                                                })}
+                                                {/* Add reaction button */}
+                                                <div style={{ position: 'relative' }} className="lounge-react-trigger">
+                                                    <button
+                                                        style={{
+                                                            padding: '2px 5px', borderRadius: '10px',
+                                                            background: 'transparent', border: '1px solid transparent',
+                                                            cursor: 'pointer', fontSize: '11px', color: '#4b5563',
+                                                            opacity: 0.5, transition: 'opacity 0.15s',
+                                                        }}
+                                                        onMouseEnter={(e) => { (e.target as HTMLElement).style.opacity = '1'; }}
+                                                        onMouseLeave={(e) => { (e.target as HTMLElement).style.opacity = '0.5'; }}
+                                                        title="React"
+                                                    >
+                                                        😊+
+                                                    </button>
+                                                    <div className="lounge-react-picker" style={{
+                                                        position: 'absolute', bottom: '100%', left: 0,
+                                                        display: 'none', flexDirection: 'row', gap: '2px',
+                                                        padding: '4px 6px', borderRadius: '10px',
+                                                        background: 'rgba(10,14,23,0.95)', border: '1px solid rgba(255,255,255,0.08)',
+                                                        backdropFilter: 'blur(12px)', zIndex: 10,
+                                                        boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+                                                    }}>
+                                                        {REACTION_EMOJIS.map(emoji => (
+                                                            <button
+                                                                key={emoji}
+                                                                onClick={() => toggleReaction(msg.id, emoji)}
+                                                                style={{
+                                                                    padding: '4px 5px', borderRadius: '6px', border: 'none',
+                                                                    background: 'transparent', cursor: 'pointer', fontSize: '16px',
+                                                                    transition: 'transform 0.1s',
+                                                                }}
+                                                                onMouseEnter={(e) => { (e.target as HTMLElement).style.transform = 'scale(1.3)'; }}
+                                                                onMouseLeave={(e) => { (e.target as HTMLElement).style.transform = 'scale(1)'; }}
+                                                            >
+                                                                {emoji}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 );

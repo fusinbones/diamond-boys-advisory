@@ -12,6 +12,7 @@ import {
     Users,
     Brain,
     Sparkles,
+    Send,
 } from 'lucide-react';
 import Link from 'next/link';
 import type { Game, TeamStats } from '@/lib/api-sports-types';
@@ -811,6 +812,8 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
     const [analysis, setAnalysis] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [postingFreebie, setPostingFreebie] = useState(false);
+    const [freebiePosted, setFreebiePosted] = useState(false);
 
     const runAnalysis = async () => {
         setLoading(true);
@@ -871,6 +874,97 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
         }
     };
 
+    // Strip alternation insights (proprietary) and format for freebie post
+    const buildFreebieContent = (rawAnalysis: string): string => {
+        const lines = rawAnalysis.split('\n');
+        const filteredLines: string[] = [];
+        let skipSection = false;
+
+        for (const line of lines) {
+            const upper = line.toUpperCase();
+            // Skip ALTERNATION INSIGHT section entirely
+            if (upper.includes('ALTERNATION INSIGHT') || upper.includes('ALTERNATION ANALYSIS') || upper.includes('ALT ACTIVE') || upper.includes('PATTERN PREDICT')) {
+                skipSection = true;
+                continue;
+            }
+            // Resume when we hit another section header
+            if (skipSection && (line.startsWith('**') || line.startsWith('RISK') || line.startsWith('BOTTOM'))) {
+                skipSection = false;
+            }
+            if (!skipSection) {
+                filteredLines.push(line);
+            }
+        }
+
+        const cleanedAnalysis = filteredLines.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+
+        // Build beautiful formatted message
+        const matchup = `${game.teams.away.name} @ ${game.teams.home.name}`;
+        const gameDate = game.date ? new Date(game.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : 'Today';
+
+        return [
+            `🎯 FREE PICK DROP 🎯`,
+            `━━━━━━━━━━━━━━━━━━━━━`,
+            ``,
+            `⚾ ${matchup}`,
+            `📅 ${gameDate}`,
+            ``,
+            cleanedAnalysis,
+            ``,
+            `━━━━━━━━━━━━━━━━━━━━━`,
+            `💎 Powered by TriplePlayz Algorithm`,
+            `🔥 Want MORE picks daily? Upgrade at tripleplayz.com/pricing`,
+        ].join('\n');
+    };
+
+    const postToFreebie = async () => {
+        if (!analysis) return;
+        setPostingFreebie(true);
+        try {
+            const { createClient } = await import('@supabase/supabase-js');
+            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+            const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+            const supabase = createClient(supabaseUrl, supabaseKey);
+
+            // Find the free/freebies channel
+            const { data: channels } = await supabase
+                .from('community_channels')
+                .select('id, name, min_tier')
+                .or('name.ilike.%freebie%,name.ilike.%free%,min_tier.eq.free')
+                .order('sort_order', { ascending: true })
+                .limit(1);
+
+            const freebieChannel = channels?.[0];
+            if (!freebieChannel) {
+                alert('No freebie channel found! Create one first in the community settings.');
+                return;
+            }
+
+            const content = buildFreebieContent(analysis);
+
+            const { error: insertErr } = await supabase
+                .from('community_messages')
+                .insert({
+                    channel_id: freebieChannel.id,
+                    user_id: '00000000-0000-0000-0000-000000000000',
+                    content,
+                    display_name: '💎 TriplePlayz',
+                    avatar_color: '#00e59b',
+                    is_bot: true,
+                    user_role: 'admin',
+                });
+
+            if (insertErr) throw insertErr;
+            setFreebiePosted(true);
+            setTimeout(() => setFreebiePosted(false), 5000);
+        } catch (err) {
+            console.error('Freebie post error:', err);
+            alert('Failed to post — check console for details.');
+        } finally {
+            setPostingFreebie(false);
+        }
+    };
+
     // Auto-run on mount
     useEffect(() => {
         if (!analysis && !loading) runAnalysis();
@@ -879,20 +973,56 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
 
     return (
         <div className="admin-card">
-            <div className="admin-card-header">
+            <div className="admin-card-header" style={{ flexWrap: 'wrap', gap: '8px' }}>
                 <div className="admin-card-title">
                     <Sparkles size={16} style={{ color: '#a78bfa' }} />
                     💎 TriplePlayz Algorithm
                 </div>
-                <button
-                    onClick={runAnalysis}
-                    disabled={loading}
-                    className="admin-btn admin-btn-secondary"
-                    style={{ fontSize: '11px', padding: '4px 10px' }}
-                >
-                    {loading ? <Loader2 size={12} style={{ animation: 'spin 1s linear infinite' }} /> : <Sparkles size={12} />}
-                    {loading ? 'Analyzing...' : 'Re-analyze'}
-                </button>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                    <button
+                        onClick={runAnalysis}
+                        disabled={loading}
+                        className="admin-btn admin-btn-secondary"
+                        style={{ fontSize: '11px', padding: '4px 10px' }}
+                    >
+                        {loading ? <Loader2 size={12} style={{ animation: 'spin 1s linear infinite' }} /> : <Sparkles size={12} />}
+                        {loading ? 'Analyzing...' : 'Re-analyze'}
+                    </button>
+
+                    {/* Post to Freebie Channel */}
+                    {analysis && !loading && (
+                        <button
+                            onClick={postToFreebie}
+                            disabled={postingFreebie}
+                            className="admin-btn"
+                            style={{
+                                fontSize: '11px',
+                                padding: '4px 12px',
+                                background: freebiePosted
+                                    ? 'rgba(0,229,155,0.15)'
+                                    : 'linear-gradient(135deg, rgba(0,229,155,0.15), rgba(59,130,246,0.1))',
+                                border: `1px solid ${freebiePosted ? 'rgba(0,229,155,0.4)' : 'rgba(0,229,155,0.25)'}`,
+                                color: freebiePosted ? '#00e59b' : '#e5e7eb',
+                                borderRadius: '8px',
+                                cursor: postingFreebie ? 'not-allowed' : 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '5px',
+                                fontWeight: 700,
+                                transition: 'all 0.2s',
+                            }}
+                        >
+                            {postingFreebie ? (
+                                <Loader2 size={12} style={{ animation: 'spin 1s linear infinite' }} />
+                            ) : freebiePosted ? (
+                                '✅'
+                            ) : (
+                                <Send size={12} />
+                            )}
+                            {postingFreebie ? 'Posting...' : freebiePosted ? 'Posted!' : 'Post to Freebie Channel'}
+                        </button>
+                    )}
+                </div>
             </div>
 
             {loading && (

@@ -9,3 +9,7 @@ CREATE INDEX IF NOT EXISTS idx_user_profiles_role ON user_profiles(role);
 
 -- Add user_role column to community_messages for Staff/Admin badges in chat
 ALTER TABLE community_messages ADD COLUMN IF NOT EXISTS user_role TEXT DEFAULT 'member';
+
+-- Add reactions JSONB column to community_messages for emoji reactions
+-- Format: { "🔥": ["userId1", "userId2"], "💎": ["userId3"] }
+ALTER TABLE community_messages ADD COLUMN IF NOT EXISTS reactions JSONB DEFAULT '{}'::jsonb;

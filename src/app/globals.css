@@ -446,3 +446,15 @@ body {
   0%, 100% { box-shadow: 0 4px 20px rgba(0,229,155,0.15); }
   50% { box-shadow: 0 4px 30px rgba(0,229,155,0.35), 0 0 0 4px rgba(0,229,155,0.1); }
 }
+
+/* ——— Reaction picker hover ——— */
+.lounge-react-trigger:hover .lounge-react-picker {
+  display: flex !important;
+}
+
+/* Mobile: tap to open reaction picker */
+@media (hover: none) {
+  .lounge-react-trigger:focus-within .lounge-react-picker {
+    display: flex !important;
+  }
+}
