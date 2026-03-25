@@ -56,21 +56,78 @@ export async function GET(request: NextRequest) {
             query = query.eq('sport', sport);
         }
 
-        const { data: picks, error } = await query;
+        const { data: rawPicks, error } = await query;
         if (error) throw error;
 
+        // Transform raw DB rows into PickCard-compatible format
+        // AI picks have: home_team, away_team, result, unit_size, pick_team, pick_type, reason
+        // PickCard expects: matchup, status, units, pick_value, reasoning, odds, edge
+        interface RawPick {
+            id: string;
+            game_date: string;
+            created_at: string;
+            // Legacy columns (old manual picks)
+            matchup?: string;
+            status?: string;
+            units?: number;
+            odds?: string | null;
+            edge?: number | null;
+            pick_value?: string;
+            reasoning?: string | null;
+            // New columns (AI picks + streamlined entry)
+            home_team?: string;
+            away_team?: string;
+            pick_team?: string;
+            pick_type?: string;
+            result?: string;
+            unit_size?: number;
+            reason?: string;
+            confidence?: number;
+            source?: string;
+            sport?: string;
+            score?: string | null;
+            alt_score?: number | null;
+            odds_at_pick?: Record<string, unknown>;
+        }
+
+        const picks: Pick[] = ((rawPicks || []) as RawPick[]).map(raw => ({
+            id: raw.id,
+            game_date: raw.game_date,
+            created_at: raw.created_at,
+            matchup: raw.matchup || (raw.away_team && raw.home_team ? `${raw.away_team} @ ${raw.home_team}` : 'Unknown'),
+            pick_type: raw.pick_type || '',
+            pick_value: raw.pick_value || (raw.pick_team ? `${raw.pick_team} ${raw.pick_type || 'ML'}` : ''),
+            confidence: raw.confidence || 75,
+            units: raw.units || raw.unit_size || 1,
+            edge: raw.edge || null,
+            odds: raw.odds || raw.pick_value || null,
+            sport: raw.sport || 'MLB',
+            // Map 'result' column to 'status' expected by PickCard
+            status: raw.status || (raw.result === 'pending' ? 'upcoming' : raw.result === 'hit' ? 'won' : raw.result === 'miss' ? 'lost' : raw.result || 'upcoming'),
+            score: raw.score || null,
+            reasoning: raw.reasoning || raw.reason || null,
+            alt_score: raw.alt_score || null,
+            result: raw.result || null,
+        }));
+
         // ── Calculate KPIs from all graded picks ──
+        // Support both legacy 'status' column and new 'result' column
         const { data: allGraded, error: kpiError } = await supabase
             .from('picks')
-            .select('status, units, sport, edge, created_at, game_date')
-            .in('status', ['won', 'lost', 'push']);
+            .select('status, result, units, unit_size, sport, edge, created_at, game_date')
+            .or('status.in.(won,lost,push),result.in.(hit,miss,push)');
 
         if (kpiError) throw kpiError;
 
-        const gradedPicks = (allGraded || []) as Pick[];
-        const wins = gradedPicks.filter((p) => p.status === 'won').length;
-        const losses = gradedPicks.filter((p) => p.status === 'lost').length;
-        const pushes = gradedPicks.filter((p) => p.status === 'push').length;
+        // Normalize: map both column schemes to won/lost/push
+        interface GradedPick { status: string; units: number; created_at: string; edge?: number | null; sport?: string; game_date?: string; }
+        const gradedPicks: GradedPick[] = (allGraded || []).map((p: Record<string, unknown>) => {
+            const effectiveStatus = (p.status as string) || (p.result === 'hit' ? 'won' : p.result === 'miss' ? 'lost' : (p.result as string) || '');
+            return { status: effectiveStatus, units: Number(p.units) || Number(p.unit_size) || 1, created_at: p.created_at as string, edge: p.edge as number | null, sport: p.sport as string, game_date: p.game_date as string };
+        });
+        const wins = gradedPicks.filter(p => p.status === 'won').length;
+        const losses = gradedPicks.filter(p => p.status === 'lost').length;
+        const pushes = gradedPicks.filter(p => p.status === 'push').length;
         const totalGraded = wins + losses;
         const winRate = totalGraded > 0 ? ((wins / totalGraded) * 100).toFixed(1) : '0.0';
 
