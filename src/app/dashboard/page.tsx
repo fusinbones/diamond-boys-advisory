@@ -179,7 +179,36 @@ function DashboardContent(): ReactNode {
                 router.push('/dashboard');
             }
         } catch (err: unknown) {
-            setError(err instanceof Error ? err.message : 'An error occurred');
+            // Translate raw errors to user-friendly messages
+            const raw = err instanceof Error ? err.message : String(err);
+            const lower = raw.toLowerCase();
+
+            if (lower.includes('user already registered') || lower.includes('already been registered')) {
+                setError('This email is already registered. Try signing in instead.');
+            } else if (lower.includes('invalid login credentials') || lower.includes('invalid password')) {
+                setError('Incorrect email or password. Please try again.');
+            } else if (lower.includes('email not confirmed')) {
+                setError('Please check your email and confirm your account first.');
+            } else if (lower.includes('password') && lower.includes('6')) {
+                setError('Password must be at least 6 characters.');
+            } else if (lower.includes('rate limit') || lower.includes('too many')) {
+                setError('Too many attempts. Please wait a moment and try again.');
+            } else if (lower.includes('database') || lower.includes('relation') || lower.includes('column') || lower.includes('violates') || lower.includes('duplicate key')) {
+                // Never show DB internals to users
+                console.error('Signup DB error (hidden from user):', raw);
+                if (isSignUp) {
+                    // Signup may have succeeded even if the profile trigger failed
+                    setMessage('Account created! Check your email to confirm. If you have trouble, contact support.');
+                } else {
+                    setError('Something went wrong. Please try again in a moment.');
+                }
+            } else if (lower.includes('network') || lower.includes('fetch')) {
+                setError('Network error. Please check your connection and try again.');
+            } else {
+                // Generic fallback — never show raw error
+                console.error('Auth error (hidden):', raw);
+                setError('Something went wrong. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
