@@ -15,7 +15,7 @@ export async function GET() {
         // Fetch all graded picks (uses 'result' column: hit/miss/push)
         const { data, error } = await supabase
             .from('picks')
-            .select('game_date, result, unit_size, sport, edge')
+            .select('*')
             .in('result', ['hit', 'miss', 'push'])
             .order('game_date', { ascending: true });
 

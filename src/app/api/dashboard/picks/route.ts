@@ -95,7 +95,7 @@ export async function GET(request: NextRequest) {
         // ── Calculate KPIs from all graded picks ──
         const { data: allGraded, error: kpiError } = await supabase
             .from('picks')
-            .select('result, unit_size, sport, edge, created_at, game_date')
+            .select('*')
             .in('result', ['hit', 'miss', 'push']);
 
         if (kpiError) throw kpiError;
@@ -141,7 +141,7 @@ export async function GET(request: NextRequest) {
         // ── Morning Slate ──
         const { data: todayPicks } = await supabase
             .from('picks')
-            .select('sport, result')
+            .select('*')
             .gte('game_date', today);
 
         const todayCount = todayPicks?.length || 0;
@@ -164,9 +164,15 @@ export async function GET(request: NextRequest) {
                 sports: sportsToday,
             },
         });
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('Dashboard picks error:', error);
-        const msg = error instanceof Error ? error.message : String(error);
+        let msg = 'Unknown error';
+        if (error && typeof error === 'object') {
+            const e = error as Record<string, unknown>;
+            msg = (e.message as string) || (e.code as string) || JSON.stringify(error);
+        } else if (error instanceof Error) {
+            msg = error.message;
+        }
         return NextResponse.json({ error: 'Failed to fetch dashboard data', details: msg }, { status: 500 });
     }
 }
