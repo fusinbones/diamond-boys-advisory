@@ -79,6 +79,8 @@ function DashboardContent(): ReactNode {
     // Dashboard state
     const [sportFilter, setSportFilter] = useState('All');
     const [picks, setPicks] = useState<PickData[]>([]);
+    const [newPickCount, setNewPickCount] = useState(0);
+    const seenPickIds = useState<Set<string>>(() => new Set())[0];
     const [kpis, setKpis] = useState<KPIs | null>(null);
     const [slate, setSlate] = useState<MorningSlateData | null>(null);
     const [dailyPnl, setDailyPnl] = useState<DailyPnl[]>([]);
@@ -121,7 +123,13 @@ function DashboardContent(): ReactNode {
 
             if (picksRes.ok) {
                 const data = await picksRes.json();
-                setPicks(data.picks || []);
+                const incoming: PickData[] = data.picks || [];
+                // Calculate genuinely new picks (not seen before)
+                const freshCount = incoming.filter(p => !seenPickIds.has(p.id) && p.status === 'upcoming').length;
+                if (freshCount > 0) setNewPickCount(freshCount);
+                // Mark all as seen
+                incoming.forEach(p => seenPickIds.add(p.id));
+                setPicks(incoming);
                 setKpis(data.kpis || null);
                 setSlate(data.morningSlate || null);
             }
@@ -370,6 +378,7 @@ function DashboardContent(): ReactNode {
                         totalGames={slate.totalGames}
                         upcomingPicks={slate.upcomingPicks}
                         sports={slate.sports}
+                        userEmail={user?.email}
                     />
                 )}
 
@@ -407,7 +416,7 @@ function DashboardContent(): ReactNode {
                             const filteredPicks = sportFilter === 'All' ? picks : picks.filter(p => p.sport === sportFilter);
                             return (
                             <>
-                                <PickDropBanner pickCount={picks.filter(p => p.status === 'upcoming').length} isPaid={!!isPaid} />
+                                <PickDropBanner pickCount={newPickCount} isPaid={!!isPaid} />
 
                                 {/* Sport filter pills */}
                                 <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '4px' }}>

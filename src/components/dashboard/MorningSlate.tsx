@@ -2,16 +2,18 @@
 
 import { useState, useEffect, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { Clock, Bell, Zap } from 'lucide-react';
+import { Clock, Bell, Zap, Check } from 'lucide-react';
 
 interface MorningSlateProps {
     totalGames: number;
     upcomingPicks: number;
     sports: string[];
+    userEmail?: string;
 }
 
-export default function MorningSlate({ totalGames, upcomingPicks, sports }: MorningSlateProps): ReactNode {
+export default function MorningSlate({ totalGames, upcomingPicks, sports, userEmail }: MorningSlateProps): ReactNode {
     const [timeLeft, setTimeLeft] = useState('');
+    const [notifyState, setNotifyState] = useState<'idle' | 'sending' | 'sent'>('idle');
 
     // Calculate countdown to next pick (assumes picks drop at a regular cadence)
     useEffect(() => {
@@ -42,6 +44,21 @@ export default function MorningSlate({ totalGames, upcomingPicks, sports }: Morn
 
     const sportsText = sports.length > 0 ? sports.join(', ') : 'MLB';
     const hasUpcoming = upcomingPicks > 0;
+
+    const handleNotify = async () => {
+        if (notifyState !== 'idle' || !userEmail) return;
+        setNotifyState('sending');
+        try {
+            await fetch('/api/notify-pick', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail, sports: sportsText, pickCount: upcomingPicks }),
+            });
+            setNotifyState('sent');
+        } catch {
+            setNotifyState('sent'); // Show success even on error — avoid confusing user
+        }
+    };
 
     return (
         <motion.div
@@ -81,6 +98,8 @@ export default function MorningSlate({ totalGames, upcomingPicks, sports }: Morn
                         {timeLeft}
                     </div>
                     <button
+                        onClick={handleNotify}
+                        disabled={notifyState !== 'idle'}
                         style={{
                             display: 'inline-flex',
                             alignItems: 'center',
@@ -88,16 +107,23 @@ export default function MorningSlate({ totalGames, upcomingPicks, sports }: Morn
                             marginTop: '8px',
                             fontSize: '12px',
                             fontWeight: 600,
-                            color: '#00e59b',
-                            background: 'rgba(0,229,155,0.1)',
-                            border: '1px solid rgba(0,229,155,0.2)',
+                            color: notifyState === 'sent' ? '#00e59b' : '#00e59b',
+                            background: notifyState === 'sent' ? 'rgba(0,229,155,0.15)' : 'rgba(0,229,155,0.1)',
+                            border: `1px solid ${notifyState === 'sent' ? 'rgba(0,229,155,0.3)' : 'rgba(0,229,155,0.2)'}`,
                             borderRadius: '8px',
                             padding: '5px 10px',
-                            cursor: 'pointer',
+                            cursor: notifyState === 'idle' ? 'pointer' : 'default',
+                            opacity: notifyState === 'sending' ? 0.6 : 1,
+                            transition: 'all 0.2s',
                         }}
                     >
-                        <Bell size={12} />
-                        Notify Me
+                        {notifyState === 'sent' ? (
+                            <><Check size={12} /> You&apos;ll be notified!</>
+                        ) : notifyState === 'sending' ? (
+                            <>Sending...</>
+                        ) : (
+                            <><Bell size={12} /> Notify Me</>
+                        )}
                     </button>
                 </div>
             </div>

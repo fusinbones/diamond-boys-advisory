@@ -429,3 +429,20 @@ body {
     transform: scale(1.2);
   }
 }
+
+/* ——— Menu hint bounce arrow ——— */
+@keyframes menuHintBounce {
+  0%, 100% { transform: translateY(-50%) translateX(0); }
+  50% { transform: translateY(-50%) translateX(-6px); }
+}
+
+/* ——— Pick drop toast ——— */
+@keyframes pickToastSlide {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes pickToastGlow {
+  0%, 100% { box-shadow: 0 4px 20px rgba(0,229,155,0.15); }
+  50% { box-shadow: 0 4px 30px rgba(0,229,155,0.35), 0 0 0 4px rgba(0,229,155,0.1); }
+}

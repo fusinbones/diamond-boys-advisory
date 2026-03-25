@@ -37,7 +37,7 @@ export default function PaywallOverlay({ daysLeft = 0 }: PaywallOverlayProps): R
                 <p style={{ fontSize: '14px', color: '#9ca3af', maxWidth: '320px', lineHeight: 1.5 }}>
                     {daysLeft > 0
                         ? 'Upgrade now to lock in your access and never miss a pick.'
-                        : 'Subscribe to unlock all picks, full stats, and the community — plans start at just $9.99/week.'
+                        : 'Subscribe to unlock all picks, full stats, and the community — plans start at just $24.99/day.'
                     }
                 </p>
             </div>

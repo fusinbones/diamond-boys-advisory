@@ -5,12 +5,13 @@ import Footer from '@/components/Footer';
 import Analytics from '@/components/Analytics';
 import IOSInstallPrompt from '@/components/IOSInstallPrompt';
 import PickAlertBanner from '@/components/PickAlertBanner';
+import PickDropToast from '@/components/PickDropToast';
 import { AuthProvider } from '@/components/AuthProvider';
 
 export const metadata: Metadata = {
   title: 'TriplePlayz - Sports Advisory | Elite MLB Baseball Picks & Community',
   description:
-    'Unlock winning MLB baseball picks from TriplePlayz - Sports Advisory. Join our exclusive TriplePlayz Lounge community with daily expert analysis, proven picks, and a 65% win rate. Sign up for early access now.',
+    'Unlock winning MLB baseball picks from TriplePlayz - Sports Advisory. Join our exclusive TriplePlayz Lounge community with daily expert analysis, 30+ years of experience, and proven picks. Sign up for early access now.',
   keywords: [
     'MLB picks',
     'sports advisory',
@@ -62,6 +63,7 @@ export default function RootLayout({
           <Footer />
           <IOSInstallPrompt />
           <PickAlertBanner />
+          <PickDropToast />
         </AuthProvider>
       </body>
     </html>

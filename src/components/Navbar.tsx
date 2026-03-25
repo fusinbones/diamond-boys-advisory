@@ -17,14 +17,15 @@ const navLinks = [
 ];
 
 const quickStats = [
-    { label: 'Win Rate', value: '65%', icon: TrendingUp, color: '#fbbf24' },
+    { label: 'Experience', value: '30+ Yrs', icon: TrendingUp, color: '#fbbf24' },
     { label: 'Members', value: '1,200+', icon: Users, color: '#00e59b' },
-    { label: 'Units Profit', value: '+187', icon: Trophy, color: '#34d399' },
+    { label: 'Sportsbooks', value: '11+', icon: Trophy, color: '#34d399' },
 ];
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [showMenuHint, setShowMenuHint] = useState(false);
     const { user, signOut } = useAuth();
 
     useEffect(() => {
@@ -42,6 +43,20 @@ export default function Navbar() {
         }
         return () => { document.body.style.overflow = ''; };
     }, [isOpen]);
+
+    // Show mobile menu hint arrow for first-time visitors
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const seen = localStorage.getItem('tp_menu_hint_seen');
+        if (!seen && window.innerWidth < 768) {
+            const timer = setTimeout(() => setShowMenuHint(true), 2000);
+            const dismiss = setTimeout(() => {
+                setShowMenuHint(false);
+                localStorage.setItem('tp_menu_hint_seen', '1');
+            }, 10000);
+            return () => { clearTimeout(timer); clearTimeout(dismiss); };
+        }
+    }, []);
 
     return (
         <motion.nav
@@ -117,11 +132,44 @@ export default function Navbar() {
 
                     {/* Mobile Toggle */}
                     <button
-                        onClick={() => setIsOpen(!isOpen)}
+                        onClick={() => {
+                            setIsOpen(!isOpen);
+                            if (showMenuHint) {
+                                setShowMenuHint(false);
+                                localStorage.setItem('tp_menu_hint_seen', '1');
+                            }
+                        }}
                         className="md:hidden text-white p-1.5 sm:p-2 hover:bg-white/5 rounded-lg transition relative z-[60]"
                         aria-label="Toggle navigation menu"
                     >
                         {isOpen ? <X size={22} /> : <Menu size={22} />}
+                        {/* Animated arrow hint for first-time mobile visitors */}
+                        {showMenuHint && !isOpen && (
+                            <div style={{
+                                position: 'absolute',
+                                top: '50%',
+                                right: 'calc(100% + 8px)',
+                                transform: 'translateY(-50%)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                whiteSpace: 'nowrap',
+                                animation: 'menuHintBounce 1.2s ease-in-out infinite',
+                            }}>
+                                <span style={{
+                                    background: 'linear-gradient(135deg, rgba(0,229,155,0.2), rgba(0,229,155,0.1))',
+                                    border: '1px solid rgba(0,229,155,0.3)',
+                                    borderRadius: '8px',
+                                    padding: '5px 10px',
+                                    fontSize: '11px',
+                                    fontWeight: 700,
+                                    color: '#00e59b',
+                                    backdropFilter: 'blur(8px)',
+                                    boxShadow: '0 2px 12px rgba(0,229,155,0.2)',
+                                }}>Dashboard ⚡</span>
+                                <span style={{ color: '#00e59b', fontSize: '16px' }}>→</span>
+                            </div>
+                        )}
                     </button>
                 </div>
             </div>
