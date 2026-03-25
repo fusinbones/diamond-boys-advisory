@@ -36,6 +36,7 @@ interface Message {
     display_name: string;
     avatar_color: string;
     is_bot: boolean;
+    user_role?: string;
     created_at: string;
 }
 
@@ -44,6 +45,7 @@ interface UserProfile {
     is_admin: boolean;
     display_name: string;
     avatar_color: string;
+    role?: string;
 }
 
 interface TickerGame {
@@ -1243,7 +1245,7 @@ export default function CommunityPage() {
             try {
                 const { data } = await supabase
                     .from('user_profiles')
-                    .select('subscription_tier, is_admin, display_name, avatar_color')
+                    .select('subscription_tier, is_admin, display_name, avatar_color, role')
                     .eq('id', user.id)
                     .single();
                 if (data) {
@@ -1367,6 +1369,7 @@ export default function CommunityPage() {
                     content: newMessage.trim().slice(0, 2000),
                     display_name: profile.display_name || user.email?.split('@')[0] || 'TriplePlayz Member',
                     avatar_color: profile.avatar_color || '#00e59b', is_bot: false,
+                    user_role: profile.role || (profile.is_admin ? 'admin' : 'member'),
                 });
             if (insertErr) { setError(insertErr.message || 'Failed to send'); return; }
             setNewMessage('');
@@ -1803,6 +1806,8 @@ export default function CommunityPage() {
                                             <div className="lounge-msg-header">
                                                 <span className={`lounge-msg-name ${msg.is_bot ? 'bot' : ''}`}>{msg.display_name}</span>
                                                 {msg.is_bot && <span className="lounge-msg-badge bot-badge">BOT</span>}
+                                                {!msg.is_bot && msg.user_role === 'staff' && <span className="lounge-msg-badge" style={{ background: 'rgba(129,140,248,0.15)', color: '#818cf8', border: '1px solid rgba(129,140,248,0.3)' }}>STAFF</span>}
+                                                {!msg.is_bot && msg.user_role === 'admin' && <span className="lounge-msg-badge" style={{ background: 'rgba(251,191,36,0.15)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.3)' }}>ADMIN</span>}
                                                 <span className="lounge-msg-time">{formatTime(msg.created_at)}</span>
                                                 {/* Message actions */}
                                                 {canDelete && (
