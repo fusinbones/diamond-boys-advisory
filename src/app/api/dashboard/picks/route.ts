@@ -166,6 +166,7 @@ export async function GET(request: NextRequest) {
         });
     } catch (error) {
         console.error('Dashboard picks error:', error);
-        return NextResponse.json({ error: 'Failed to fetch dashboard data' }, { status: 500 });
+        const msg = error instanceof Error ? error.message : String(error);
+        return NextResponse.json({ error: 'Failed to fetch dashboard data', details: msg }, { status: 500 });
     }
 }
