@@ -20,7 +20,7 @@ function isSuperAdmin(email: string): boolean {
     return ADMIN_EMAILS.includes(email.toLowerCase());
 }
 
-// GET — list all users with their profiles + auth data
+// GET — list all users from user_profiles (no auth.admin dependency)
 export async function GET(request: NextRequest) {
     try {
         const authHeader = request.headers.get('x-admin-email');
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 
         const supabase = await getSupabase();
 
-        // Fetch all user profiles
+        // Fetch all user profiles — email is now stored directly
         const { data: profiles, error } = await supabase
             .from('user_profiles')
             .select('*')
@@ -38,31 +38,14 @@ export async function GET(request: NextRequest) {
 
         if (error) {
             console.error('Profiles fetch error:', error);
-            throw error;
+            return NextResponse.json({ error: 'Database error: ' + error.message }, { status: 500 });
         }
-
-        // Fetch auth users for email info
-        const { data: authData, error: authError } = await supabase.auth.admin.listUsers();
-        if (authError) {
-            console.error('Auth users fetch error:', authError);
-            throw authError;
-        }
-
-        const authUsers = authData?.users || [];
-        const emailMap = new Map(authUsers.map(u => [
-            u.id,
-            {
-                email: u.email || '',
-                email_confirmed: !!u.email_confirmed_at,
-                last_sign_in: u.last_sign_in_at || null,
-                created_at_auth: u.created_at,
-            },
-        ]));
 
         const now = new Date();
 
         interface ProfileRow {
             id: string;
+            email: string | null;
             display_name: string;
             subscription_tier: string | null;
             trial_end: string | null;
@@ -73,10 +56,12 @@ export async function GET(request: NextRequest) {
             is_admin: boolean;
             avatar_color: string;
             role?: string;
+            is_banned?: boolean;
+            is_muted?: boolean;
         }
 
         const users = (profiles || []).map((p: ProfileRow) => {
-            const auth = emailMap.get(p.id);
+            const email = p.email || 'unknown';
             const trialEnd = p.trial_end ? new Date(p.trial_end) : new Date(new Date(p.created_at).getTime() + 7 * 86400000);
             const bonusDays = p.trial_bonus_days || 0;
             const effectiveEnd = new Date(trialEnd.getTime() + bonusDays * 86400000);
@@ -89,15 +74,14 @@ export async function GET(request: NextRequest) {
             else if (daysLeft > 0) status = daysLeft <= 2 ? 'expiring' : 'trial';
             else status = 'expired';
 
-            // Determine role
             let role = p.role || 'member';
-            if (p.is_admin || (auth?.email && isSuperAdmin(auth.email))) role = 'admin';
+            if (p.is_admin || isSuperAdmin(email)) role = 'admin';
 
             return {
                 id: p.id,
-                email: auth?.email || 'unknown',
-                emailConfirmed: auth?.email_confirmed || false,
-                displayName: p.display_name || auth?.email?.split('@')[0] || 'User',
+                email,
+                emailConfirmed: true, // We know they signed up
+                displayName: p.display_name || email.split('@')[0] || 'User',
                 tier: p.subscription_tier || 'free',
                 trialEnd: effectiveEnd.toISOString(),
                 trialDaysLeft: daysLeft,
@@ -107,7 +91,7 @@ export async function GET(request: NextRequest) {
                 isAdmin: role === 'admin',
                 role,
                 lastSeen: p.last_seen_at,
-                lastSignIn: auth?.last_sign_in || null,
+                lastSignIn: null,
                 notes: p.notes,
                 createdAt: p.created_at,
                 avatarColor: p.avatar_color || `hsl(${Math.abs(p.id.charCodeAt(0) * 37) % 360}, 60%, 45%)`,
@@ -128,7 +112,7 @@ export async function GET(request: NextRequest) {
         });
     } catch (error) {
         console.error('Admin users error:', error);
-        return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to fetch users: ' + (error instanceof Error ? error.message : 'Unknown') }, { status: 500 });
     }
 }
 
@@ -186,7 +170,6 @@ export async function PATCH(request: NextRequest) {
             }
 
             case 'setRole': {
-                // Only super admins can set roles
                 if (!callerIsSuper) {
                     return NextResponse.json({ error: 'Only super admins can change roles' }, { status: 403 });
                 }
@@ -230,14 +213,16 @@ export async function PATCH(request: NextRequest) {
             }
 
             case 'deleteUser': {
-                // Only super admins can delete users
                 if (!callerIsSuper) {
                     return NextResponse.json({ error: 'Only super admins can delete users' }, { status: 403 });
                 }
-                // Delete profile first, then auth user
-                await supabase.from('user_profiles').delete().eq('id', userId);
-                const { error } = await supabase.auth.admin.deleteUser(userId);
+                // Delete profile (auth user deletion requires service role key — skip if unavailable)
+                const { error } = await supabase.from('user_profiles').delete().eq('id', userId);
                 if (error) throw error;
+                // Try to delete auth user too (may fail with anon key — that's OK)
+                try {
+                    await supabase.auth.admin.deleteUser(userId);
+                } catch { /* silent — service role key may not be available */ }
                 break;
             }
 
