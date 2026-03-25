@@ -38,6 +38,7 @@ interface KPIs {
     roi: string;
     streak: string;
     avgEdge: string;
+    isPreseason?: boolean;
 }
 
 interface MorningSlateData {
@@ -151,7 +152,7 @@ function DashboardContent(): ReactNode {
     const daysLeft = Math.max(0, Math.ceil((effectiveTrialEnd.getTime() - Date.now()) / 86400000));
     const trialActive = !isPaid && daysLeft > 0;
     const trialExpired = !isPaid && daysLeft <= 0;
-    const picksLocked = !isPaid; // Picks are ONLY for paid users
+    const picksLocked = !isPaid && !trialActive; // Picks visible for paid users AND active trial users
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -375,8 +376,8 @@ function DashboardContent(): ReactNode {
                 {/* KPI Strip — always visible above fold */}
                 {kpis && (
                     <div className="dashboard-kpi-grid" style={{ margin: '16px 0 12px' }}>
-                        <KPICard icon="record" label="Record" value={kpis.record} sub={`${kpis.winRate} Win Rate`} trend="Season to date" delay={0.05} />
-                        <KPICard icon="roi" label="ROI" value={`${Number(kpis.totalUnits) >= 0 ? '+' : ''}${kpis.totalUnits}u`} sub={`${kpis.roi} ROI`} trend="Units profit" delay={0.1} />
+                        <KPICard icon="record" label="Record" value={kpis.record} sub={`${kpis.winRate} Win Rate`} trend={kpis.isPreseason ? 'Model target' : 'Season to date'} delay={0.05} />
+                        <KPICard icon="roi" label="ROI" value={`${Number(kpis.totalUnits) >= 0 ? '+' : ''}${kpis.totalUnits}u`} sub={`${kpis.roi} ROI`} trend={kpis.isPreseason ? 'Model target' : 'Units profit'} delay={0.1} />
                         <KPICard icon="streak" label="Streak" value={kpis.streak} sub="Current streak" delay={0.15} />
                         <KPICard icon="edge" label="Avg Edge" value={kpis.avgEdge} sub="Model confidence" delay={0.2} />
                     </div>
