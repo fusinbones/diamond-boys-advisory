@@ -73,24 +73,49 @@ export async function GET(request: NextRequest) {
         if (error) throw error;
 
         // ── Transform raw DB rows → PickCard format ──
-        const picks: PickOutput[] = ((rawPicks || []) as Record<string, unknown>[]).map(raw => ({
-            id: raw.id as string,
-            game_date: raw.game_date as string,
-            created_at: raw.created_at as string,
-            matchup: (raw.matchup as string) || (raw.away_team && raw.home_team ? `${raw.away_team} @ ${raw.home_team}` : 'Unknown'),
-            pick_type: (raw.pick_type as string) || '',
-            pick_value: (raw.pick_value as string) || (raw.pick_team ? `${raw.pick_team} ${raw.pick_type || 'ML'}` : ''),
-            confidence: (raw.confidence as number) || 75,
-            units: Number(raw.units) || Number(raw.unit_size) || 1,
-            edge: (raw.edge as number) || null,
-            odds: (raw.odds as string) || (raw.pick_value as string) || null,
-            sport: (raw.sport as string) || 'MLB',
-            status: mapResultToStatus(raw.result as string),
-            score: (raw.score as string) || null,
-            result: (raw.result as string) || null,
-            reasoning: (raw.reasoning as string) || (raw.reason as string) || null,
-            alt_score: (raw.alt_score as number) || null,
-        }));
+        // Map Odds API sport keys to clean display names
+        const sportKeyMap: Record<string, string> = {
+            baseball_mlb: 'MLB', 'baseball_mlb_preseason': 'MLB',
+            basketball_nba: 'NBA', 'basketball_nba_preseason': 'NBA',
+            icehockey_nhl: 'NHL', 'icehockey_nhl_preseason': 'NHL',
+            americanfootball_nfl: 'NFL', 'americanfootball_nfl_preseason': 'NFL',
+        };
+
+        const picks: PickOutput[] = ((rawPicks || []) as Record<string, unknown>[]).map(raw => {
+            const cleanSport = sportKeyMap[(raw.sport as string) || ''] || (raw.sport as string) || 'MLB';
+            const pickTeam = (raw.pick_team as string) || '';
+            const pickType = (raw.pick_type as string) || 'ML';
+            const rawOdds = (raw.pick_value as string) || (raw.odds as string) || '';
+
+            // Build a clear pick_value: "Team Name ML +105"
+            let displayValue = '';
+            if (pickTeam) {
+                displayValue = `${pickTeam} ${pickType} ${rawOdds}`.trim();
+            } else if (raw.pick_value) {
+                displayValue = raw.pick_value as string;
+            } else {
+                displayValue = `${pickType} ${rawOdds}`.trim();
+            }
+
+            return {
+                id: raw.id as string,
+                game_date: raw.game_date as string,
+                created_at: raw.created_at as string,
+                matchup: (raw.matchup as string) || (raw.away_team && raw.home_team ? `${raw.away_team} @ ${raw.home_team}` : 'Unknown'),
+                pick_type: pickType,
+                pick_value: displayValue,
+                confidence: (raw.confidence as number) || 75,
+                units: Number(raw.units) || Number(raw.unit_size) || 1,
+                edge: (raw.edge as number) || null,
+                odds: rawOdds || null,
+                sport: cleanSport,
+                status: mapResultToStatus(raw.result as string),
+                score: (raw.score as string) || null,
+                result: (raw.result as string) || null,
+                reasoning: (raw.reasoning as string) || (raw.reason as string) || null,
+                alt_score: (raw.alt_score as number) || null,
+            };
+        });
 
         // ── Calculate KPIs from all graded picks ──
         const { data: allGraded, error: kpiError } = await supabase
@@ -146,7 +171,7 @@ export async function GET(request: NextRequest) {
 
         const todayCount = todayPicks?.length || 0;
         const upcomingToday = todayPicks?.filter(p => p.result === 'pending').length || 0;
-        const sportsToday = [...new Set((todayPicks || []).map(p => p.sport as string).filter(Boolean))];
+        const sportsToday = [...new Set((todayPicks || []).map(p => sportKeyMap[(p.sport as string) || ''] || (p.sport as string) || 'MLB').filter(Boolean))];
 
         return NextResponse.json({
             picks,
