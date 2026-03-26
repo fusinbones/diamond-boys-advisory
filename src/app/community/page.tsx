@@ -1812,11 +1812,13 @@ export default function CommunityPage() {
                         ))
                     )}
 
-                    {/* ═══ Conversion Widgets ═══ */}
+                    {/* ═══ Conversion Widgets (free users only) ═══ */}
+                    {!isPaid && !isAdmin && (
                     <div style={{ padding: '8px 10px' }}>
-                        <StreakCounter isPaid={(TIER_HIERARCHY[userTier] ?? 0) >= 1} />
-                        <PremiumRevealFeed isPaid={(TIER_HIERARCHY[userTier] ?? 0) >= 1} />
+                        <StreakCounter isPaid={false} />
+                        <PremiumRevealFeed isPaid={false} />
                     </div>
+                    )}
 
                     {/* Admin settings button */}
                     {isAdmin && (

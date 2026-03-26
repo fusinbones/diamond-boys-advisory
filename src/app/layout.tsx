@@ -26,6 +26,8 @@ export const metadata: Metadata = {
     title: 'TriplePlayz - Sports Advisory | Expert Sports Picks',
     description: 'Expert daily sports picks backed by 30+ years of experience and a premium community.',
     type: 'website',
+    url: 'https://tripleplayz.com',
+    siteName: 'TriplePlayz - Sports Advisory',
     images: ['/logo.png'],
   },
   twitter: {
