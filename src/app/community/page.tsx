@@ -1545,10 +1545,11 @@ export default function CommunityPage() {
         if (err) throw err;
     };
 
-    const isAdmin = profile?.is_admin ?? false;
-    const userTier = profile?.is_admin ? 'elite' : (profile?.subscription_tier || 'free');
+    const ADMIN_EMAILS = ['support@tripleplayz.com', 'diamondboysadvisory@gmail.com'];
+    const isAdmin = (profile?.is_admin ?? false) || (user?.email ? ADMIN_EMAILS.includes(user.email.toLowerCase()) : false);
+    const userTier = isAdmin ? 'elite' : (profile?.subscription_tier || 'free');
     const isPaid = userTier !== 'free';
-    const canPost = activeChannel ? (!activeChannel.is_readonly || profile?.is_admin) && canAccessChannel(userTier, activeChannel.min_tier) : false;
+    const canPost = activeChannel ? (!activeChannel.is_readonly || isAdmin) && canAccessChannel(userTier, activeChannel.min_tier) : false;
 
     // Init analysis count on mount
     useEffect(() => {

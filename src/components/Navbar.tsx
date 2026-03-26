@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Zap, Home, CreditCard, LayoutDashboard, FileText, TrendingUp, Users, Trophy, LogOut, User, MessageCircle, Shield } from 'lucide-react';
+import { Menu, X, Zap, Home, CreditCard, LayoutDashboard, FileText, TrendingUp, Users, Trophy, LogOut, User, MessageCircle, Shield, Settings } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 import { isAdminEmail } from '@/lib/adminAuth';
 
@@ -114,6 +114,9 @@ export default function Navbar() {
                                         <Shield size={12} /> Admin
                                     </Link>
                                 )}
+                                <Link href="/settings" className="text-xs text-gray-500 hover:text-gray-300 transition-colors flex items-center gap-1" style={{ textDecoration: 'none' }}>
+                                    <Settings size={12} /> Settings
+                                </Link>
                                 <button
                                     onClick={signOut}
                                     className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
@@ -305,6 +308,29 @@ export default function Navbar() {
                                                 Admin Panel
                                             </Link>
                                         )}
+                                        <Link
+                                            href="/settings"
+                                            onClick={() => setIsOpen(false)}
+                                            style={{
+                                                width: '100%',
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                gap: '8px',
+                                                padding: '14px',
+                                                fontSize: '14px',
+                                                fontWeight: 600,
+                                                borderRadius: '12px',
+                                                background: 'rgba(255,255,255,0.04)',
+                                                border: '1px solid rgba(255,255,255,0.06)',
+                                                color: '#9ca3af',
+                                                textDecoration: 'none',
+                                                marginBottom: '8px',
+                                            }}
+                                        >
+                                            <Settings size={16} />
+                                            Account Settings
+                                        </Link>
                                         <button
                                             onClick={() => { signOut(); setIsOpen(false); }}
                                             style={{
