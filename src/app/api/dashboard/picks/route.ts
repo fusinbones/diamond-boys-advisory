@@ -48,7 +48,14 @@ export async function GET(request: NextRequest) {
         const limit = Number(searchParams.get('limit')) || 50;
 
         const supabase = getSupabase();
-        const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
+        // Use US Eastern date for today
+        const nowET = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
+        const today = nowET.toISOString().split('T')[0]; // YYYY-MM-DD
+        const tomorrowDate = new Date(nowET);
+        tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+        const tomorrow = tomorrowDate.toISOString().split('T')[0];
+
+        console.log('[Dashboard Picks] today=', today, 'tomorrow=', tomorrow);
 
         // ── Fetch picks based on tab ──
         let query = supabase
@@ -58,7 +65,9 @@ export async function GET(request: NextRequest) {
             .limit(limit);
 
         if (tab === 'today') {
-            query = query.eq('game_date', today);
+            // Range filter: game_date >= today AND game_date < tomorrow
+            // Works with both date and timestamptz column types
+            query = query.gte('game_date', today).lt('game_date', tomorrow);
         } else if (tab === 'upcoming') {
             query = query.eq('result', 'pending');
         } else if (tab === 'results') {
@@ -167,7 +176,8 @@ export async function GET(request: NextRequest) {
         const { data: todayPicks } = await supabase
             .from('picks')
             .select('*')
-            .eq('game_date', today);
+            .gte('game_date', today)
+            .lt('game_date', tomorrow);
 
         const todayCount = todayPicks?.length || 0;
         const upcomingToday = todayPicks?.filter(p => p.result === 'pending').length || 0;
