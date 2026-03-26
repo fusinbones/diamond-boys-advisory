@@ -61,7 +61,7 @@ export default function LiveGameTicker() {
                 fontWeight: 700,
                 marginBottom: '10px',
             }}>
-                ⚾ Live MLB Scores
+                ⚾🏀🏒 Live Scores
             </p>
             <div style={{
                 position: 'relative',
@@ -104,14 +104,25 @@ function TickerCard({ game }: { game: TickerGame }) {
             backdropFilter: 'blur(8px)',
             minWidth: '200px',
         }}>
+            {/* Sport badge */}
+            <span style={{
+                fontSize: '10px', fontWeight: 700,
+                color: game.league === 'MLB' ? '#00529b' : game.league === 'NBA' ? '#f58426' : '#888',
+                background: 'rgba(255,255,255,0.06)', borderRadius: '4px',
+                padding: '1px 5px', marginRight: '2px',
+            }}>
+                {game.league === 'MLB' ? '⚾' : game.league === 'NBA' ? '🏀' : '🏒'}
+            </span>
             {/* Away team */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                    src={game.away.logo}
-                    alt={game.away.name}
-                    style={{ width: '20px', height: '20px', borderRadius: '3px', objectFit: 'contain' }}
-                />
+                {game.away.logo && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                        src={game.away.logo}
+                        alt={game.away.name}
+                        style={{ width: '20px', height: '20px', borderRadius: '3px', objectFit: 'contain' }}
+                    />
+                )}
                 <span style={{ fontSize: '13px', fontWeight: 700, color: '#f3f4f6' }}>
                     {shortName(game.away.name)}
                 </span>
@@ -135,12 +146,14 @@ function TickerCard({ game }: { game: TickerGame }) {
                 <span style={{ fontSize: '13px', fontWeight: 700, color: '#f3f4f6' }}>
                     {shortName(game.home.name)}
                 </span>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                    src={game.home.logo}
-                    alt={game.home.name}
-                    style={{ width: '20px', height: '20px', borderRadius: '3px', objectFit: 'contain' }}
-                />
+                {game.home.logo && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                        src={game.home.logo}
+                        alt={game.home.name}
+                        style={{ width: '20px', height: '20px', borderRadius: '3px', objectFit: 'contain' }}
+                    />
+                )}
             </div>
 
             {/* Status badge */}
