@@ -108,22 +108,22 @@ export default function Navbar() {
                     </Link>
 
                     {/* Desktop Nav */}
-                    <div className="hidden md:flex items-center gap-6 lg:gap-8">
+                    <div className="hidden md:flex items-center gap-4 lg:gap-6" style={{ whiteSpace: 'nowrap' }}>
                         {navLinks.map((link) => (
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className="text-sm font-medium text-gray-300 hover:text-white transition-colors relative group"
+                                className="text-xs lg:text-sm font-medium text-gray-300 hover:text-white transition-colors relative group"
                             >
                                 {link.label}
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#00e59b] transition-all group-hover:w-full" />
                             </Link>
                         ))}
                         {user ? (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <Link href="/dashboard" className="text-sm text-gray-300 hover:text-white transition-colors flex items-center gap-2">
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap' }}>
+                                <Link href="/dashboard" className="text-xs text-gray-300 hover:text-white transition-colors flex items-center gap-1">
                                     <User size={14} style={{ color: '#00e59b' }} />
-                                    <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</span>
+                                    <span style={{ maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '11px' }}>{user.email}</span>
                                 </Link>
                                 {user.email && isAdminEmail(user.email) && (
                                     <Link href="/admin" className="text-xs text-gray-400 hover:text-amber-400 transition-colors flex items-center gap-1">
@@ -136,7 +136,7 @@ export default function Navbar() {
                                 <button
                                     onClick={signOut}
                                     className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
-                                    style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
                                 >
                                     Sign Out
                                 </button>
