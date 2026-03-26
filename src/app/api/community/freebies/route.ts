@@ -151,6 +151,18 @@ function analyzeEvent(event: OddsEvent): FreebiePickResult | null {
     };
 }
 
+/** Format a game time correctly in Eastern Time */
+function formatGameTime(commenceTime: string): string {
+    try {
+        const d = new Date(commenceTime);
+        const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/New_York' });
+        const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/New_York' });
+        return `${date} · ${time} ET`;
+    } catch {
+        return 'TBD';
+    }
+}
+
 /**
  * Format a pick as the TriplePlayz branded text
  */
@@ -160,11 +172,13 @@ function formatPick(pick: FreebiePickResult, index: number): string {
     const unitDots = '⬢'.repeat(units) + '⬡'.repeat(5 - units);
     const confEmoji = pick.confidence === 'high' ? '🔥 HIGH' : pick.confidence === 'medium' ? '⭐ MEDIUM' : '📘 LOW';
     const divider = '━━━━━━━━━━━━━━━━━━━━━━━';
+    const gameTime = formatGameTime(pick.commenceTime);
 
     return [
         `🎯 **FREEBIE #${index + 1}** 🎯`,
         divider,
         `${pick.sportEmoji} **${pick.sport}** | ${pick.awayTeam} vs ${pick.homeTeam}`,
+        `🕐 **Game Time:** ${gameTime}`,
         ``,
         `📍 **Pick:** ${pick.pickTeam} ${pick.pickType}`,
         `💰 **Odds:** ${pick.odds > 0 ? '+' : ''}${pick.odds}`,
@@ -179,14 +193,20 @@ function formatPick(pick: FreebiePickResult, index: number): string {
 
 export async function GET() {
     try {
-        // Fetch odds for MLB only
-        let mlbOdds = await getSportOdds('baseball_mlb', 'h2h');
-        const sportLabel = 'MLB';
-        const sportEmoji = '⚾';
+        // Fetch odds for ALL active sports
+        const allEvents: OddsEvent[] = [];
+        for (const sport of US_SPORTS) {
+            try {
+                const events = await getSportOdds(sport.key, 'h2h');
+                allEvents.push(...events);
+            } catch (err) {
+                console.error(`Freebies: Failed to fetch ${sport.name} odds:`, err);
+            }
+        }
 
         // Analyze each event
         const allPicks: FreebiePickResult[] = [];
-        for (const event of mlbOdds) {
+        for (const event of allEvents) {
             const pick = analyzeEvent(event);
             if (pick) allPicks.push(pick);
         }
@@ -198,19 +218,26 @@ export async function GET() {
         // Generate formatted messages
         const formatted = topPicks.map((p, i) => formatPick(p, i));
 
-        // Build the daily announcement
-        const gameCount = mlbOdds.length;
+        // Build the daily announcement with all sports
+        const gameCount = allEvents.length;
+        const sportCounts = US_SPORTS.map(s => {
+            const count = allEvents.filter(e => e.sport_key === s.key).length;
+            return count > 0 ? `${s.emoji} ${count} ${s.name}` : null;
+        }).filter(Boolean).join(' • ');
+
         const announcement = [
-            `📢 **TODAY'S MLB SCHEDULE** 📢`,
+            `📢 **TODAY'S SCHEDULE** 📢`,
             `━━━━━━━━━━━━━━━━━━━━━━━`,
-            `⚾ **${gameCount} games** on the board today`,
+            `**${gameCount} games** on the board today`,
+            sportCounts,
             ``,
-            ...mlbOdds.slice(0, 8).map(e => {
+            ...allEvents.slice(0, 10).map(e => {
+                const sport = US_SPORTS.find(s => s.key === e.sport_key);
                 const bestH2H = e.bookmakers[0]?.markets.find(m => m.key === 'h2h');
                 const homeOdds = bestH2H?.outcomes.find(o => o.name === e.home_team)?.price;
                 const awayOdds = bestH2H?.outcomes.find(o => o.name === e.away_team)?.price;
-                const time = new Date(e.commence_time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' });
-                return `🕐 **${time} ET** — ${e.away_team} (${awayOdds && awayOdds > 0 ? '+' : ''}${awayOdds || '?'}) @ ${e.home_team} (${homeOdds && homeOdds > 0 ? '+' : ''}${homeOdds || '?'})`;
+                const gameTime = formatGameTime(e.commence_time);
+                return `${sport?.emoji || '🏟️'} **${gameTime}** — ${e.away_team} (${awayOdds && awayOdds > 0 ? '+' : ''}${awayOdds || '?'}) @ ${e.home_team} (${homeOdds && homeOdds > 0 ? '+' : ''}${homeOdds || '?'})`;
             }),
             ``,
             `━━━━━━━━━━━━━━━━━━━━━━━`,
