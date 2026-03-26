@@ -2240,6 +2240,7 @@ export default function CommunityPage() {
             {showNicknamePrompt && user && (
                 <NicknamePrompt
                     userId={user.id}
+                    userEmail={user.email || ''}
                     currentNickname={profile?.nickname}
                     onSaved={(nick) => {
                         setShowNicknamePrompt(false);

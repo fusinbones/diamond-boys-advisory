@@ -18,6 +18,7 @@ interface UserProfile {
 
 export default function SettingsPage() {
     const { user, loading: authLoading } = useAuth();
+    const userEmail = user?.email || '';
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -59,7 +60,7 @@ export default function SettingsPage() {
         if (nick.trim() === profile?.nickname) { setNickAvailability({ available: true, error: null }); return; }
         setNickChecking(true);
         try {
-            const res = await fetch(`/api/nickname?nickname=${encodeURIComponent(nick.trim())}`);
+            const res = await fetch(`/api/nickname?nickname=${encodeURIComponent(nick.trim())}&email=${encodeURIComponent(userEmail)}`);
             const data = await res.json();
             setNickAvailability(data);
         } catch {
@@ -82,7 +83,7 @@ export default function SettingsPage() {
             const res = await fetch('/api/nickname', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: user.id, nickname: nickname.trim() }),
+                body: JSON.stringify({ userId: user.id, nickname: nickname.trim(), email: userEmail }),
             });
             const data = await res.json();
             if (data.success) {

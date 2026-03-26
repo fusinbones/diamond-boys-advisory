@@ -15,16 +15,20 @@ const NICKNAME_MIN = 3;
 const NICKNAME_MAX = 16;
 const NICKNAME_REGEX = /^[a-zA-Z0-9_]+$/;
 
-function validateNickname(nick: string): string | null {
+const ADMIN_EMAILS = ['support@tripleplayz.com', 'diamondboysadvisory@gmail.com'];
+
+function validateNickname(nick: string, isAdmin = false): string | null {
     if (!nick || nick.trim().length === 0) return 'Nickname is required';
     const trimmed = nick.trim();
     if (trimmed.length < NICKNAME_MIN) return `Min ${NICKNAME_MIN} characters`;
     if (trimmed.length > NICKNAME_MAX) return `Max ${NICKNAME_MAX} characters`;
     if (!NICKNAME_REGEX.test(trimmed)) return 'Letters, numbers, and underscores only';
 
-    // Block offensive patterns
-    const blocked = ['admin', 'moderator', 'staff', 'tripleplayz', 'system', 'bot', 'support'];
-    if (blocked.some(b => trimmed.toLowerCase().includes(b))) return 'That nickname is reserved';
+    // Block reserved names (admins can bypass)
+    if (!isAdmin) {
+        const blocked = ['admin', 'moderator', 'staff', 'tripleplayz', 'system', 'bot', 'support'];
+        if (blocked.some(b => trimmed.toLowerCase().includes(b))) return 'That nickname is reserved';
+    }
 
     return null;
 }
@@ -35,7 +39,10 @@ export async function GET(request: NextRequest) {
         const nick = request.nextUrl.searchParams.get('nickname');
         if (!nick) return NextResponse.json({ error: 'nickname param required' }, { status: 400 });
 
-        const validationError = validateNickname(nick);
+        const adminEmail = request.nextUrl.searchParams.get('email') || '';
+        const isAdmin = ADMIN_EMAILS.includes(adminEmail.toLowerCase());
+
+        const validationError = validateNickname(nick, isAdmin);
         if (validationError) return NextResponse.json({ available: false, error: validationError });
 
         const supabase = getSupabase();
@@ -58,13 +65,14 @@ export async function GET(request: NextRequest) {
 // POST — set nickname for a user
 export async function POST(request: NextRequest) {
     try {
-        const { userId, nickname } = await request.json() as { userId: string; nickname: string };
+        const { userId, nickname, email } = await request.json() as { userId: string; nickname: string; email?: string };
 
         if (!userId || !nickname) {
             return NextResponse.json({ error: 'userId and nickname required' }, { status: 400 });
         }
 
-        const validationError = validateNickname(nickname);
+        const isAdmin = email ? ADMIN_EMAILS.includes(email.toLowerCase()) : false;
+        const validationError = validateNickname(nickname, isAdmin);
         if (validationError) return NextResponse.json({ error: validationError }, { status: 400 });
 
         const trimmed = nickname.trim();

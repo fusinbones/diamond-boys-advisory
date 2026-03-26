@@ -4,11 +4,12 @@ import { useState, useEffect, useCallback } from 'react';
 
 interface NicknamePromptProps {
     userId: string;
+    userEmail?: string;
     currentNickname?: string | null;
     onSaved: (nickname: string) => void;
 }
 
-export default function NicknamePrompt({ userId, currentNickname, onSaved }: NicknamePromptProps) {
+export default function NicknamePrompt({ userId, userEmail, currentNickname, onSaved }: NicknamePromptProps) {
     const [nickname, setNickname] = useState(currentNickname || '');
     const [checking, setChecking] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -23,7 +24,7 @@ export default function NicknamePrompt({ userId, currentNickname, onSaved }: Nic
         }
         setChecking(true);
         try {
-            const res = await fetch(`/api/nickname?nickname=${encodeURIComponent(nick.trim())}`);
+            const res = await fetch(`/api/nickname?nickname=${encodeURIComponent(nick.trim())}&email=${encodeURIComponent(userEmail || '')}`);
             const data = await res.json();
             setAvailability(data);
         } catch {
@@ -52,7 +53,7 @@ export default function NicknamePrompt({ userId, currentNickname, onSaved }: Nic
             const res = await fetch('/api/nickname', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, nickname: nickname.trim() }),
+                body: JSON.stringify({ userId, nickname: nickname.trim(), email: userEmail }),
             });
             const data = await res.json();
             if (data.success) {
