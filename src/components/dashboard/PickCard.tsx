@@ -54,7 +54,10 @@ function StatusPill({ status, score }: { status: string; score: string | null })
 
 function formatTime(dateStr: string): string {
     try {
-        const d = new Date(dateStr);
+        // Fix: date-only strings like '2026-03-25' are parsed as UTC midnight,
+        // which shifts to the previous day in US Eastern. Append noon to prevent this.
+        const safeStr = dateStr.length === 10 ? `${dateStr}T12:00:00` : dateStr;
+        const d = new Date(safeStr);
         const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/New_York' });
         const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/New_York' });
         return `${date} · ${time} ET`;

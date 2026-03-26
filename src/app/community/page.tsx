@@ -209,8 +209,10 @@ function SmartTicker({ onGameClick, onSearchClick }: { onGameClick: (g: TickerGa
                                 title="Click for full analysis"
                             >
                                 <div className="lounge-ticker-team">
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src={g.away.logo} alt={g.away.name} />
+                                    {g.away.logo && (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img src={g.away.logo} alt={g.away.name} />
+                                    )}
                                     <span className="lounge-ticker-name">{shortName(g.away.name)}</span>
                                     {hasScore && <span className="lounge-ticker-score">{g.away.score ?? 0}</span>}
                                 </div>
@@ -218,8 +220,10 @@ function SmartTicker({ onGameClick, onSearchClick }: { onGameClick: (g: TickerGa
                                 <div className="lounge-ticker-team">
                                     {hasScore && <span className="lounge-ticker-score">{g.home.score ?? 0}</span>}
                                     <span className="lounge-ticker-name">{shortName(g.home.name)}</span>
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src={g.home.logo} alt={g.home.name} />
+                                    {g.home.logo && (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img src={g.home.logo} alt={g.home.name} />
+                                    )}
                                 </div>
                                 {isLive ? (
                                     <span className="lounge-ticker-badge live-badge"><span className="live-dot" /> LIVE</span>
