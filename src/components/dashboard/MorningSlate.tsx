@@ -15,22 +15,37 @@ export default function MorningSlate({ totalGames, upcomingPicks, sports, userEm
     const [timeLeft, setTimeLeft] = useState('');
     const [notifyState, setNotifyState] = useState<'idle' | 'sending' | 'sent'>('idle');
 
-    // Calculate countdown to next pick (assumes picks drop at a regular cadence)
+    // Calculate countdown to next pick drop in Eastern Time
     useEffect(() => {
         const updateCountdown = () => {
+            // Get current ET hour
             const now = new Date();
-            // Next pick time: find next game time or default to 1PM ET
+            const etStr = now.toLocaleString('en-US', { timeZone: 'America/New_York', hour12: false });
+            const etParts = etStr.split(', ')[1]?.split(':') || [];
+            const etHour = parseInt(etParts[0] || '0', 10);
+
+            // Build next drop time in ET
+            // Pick drops: 12:00 PM ET (noon slate) and 5:00 PM ET (evening slate)
             const nextDrop = new Date();
-            nextDrop.setHours(13, 0, 0, 0); // 1 PM local as default
-            if (nextDrop <= now) {
-                nextDrop.setHours(19, 0, 0, 0); // 7 PM if past 1 PM
-            }
-            if (nextDrop <= now) {
-                nextDrop.setDate(nextDrop.getDate() + 1);
-                nextDrop.setHours(13, 0, 0, 0);
+            if (etHour < 12) {
+                // Before noon → next drop at 12 PM ET
+                const targetET = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+                targetET.setHours(12, 0, 0, 0);
+                nextDrop.setTime(now.getTime() + (targetET.getTime() - new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' })).getTime()));
+            } else if (etHour < 17) {
+                // Between noon and 5 PM → next drop at 5 PM ET
+                const targetET = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+                targetET.setHours(17, 0, 0, 0);
+                nextDrop.setTime(now.getTime() + (targetET.getTime() - new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' })).getTime()));
+            } else {
+                // After 5 PM → drop tomorrow at 12 PM ET
+                const targetET = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+                targetET.setDate(targetET.getDate() + 1);
+                targetET.setHours(12, 0, 0, 0);
+                nextDrop.setTime(now.getTime() + (targetET.getTime() - new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' })).getTime()));
             }
 
-            const diff = nextDrop.getTime() - now.getTime();
+            const diff = Math.max(0, nextDrop.getTime() - now.getTime());
             const hours = Math.floor(diff / 3600000);
             const mins = Math.floor((diff % 3600000) / 60000);
             const secs = Math.floor((diff % 60000) / 1000);

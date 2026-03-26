@@ -19,8 +19,7 @@ export default function GamesBoard(): ReactNode {
     const fetchGames = useCallback(async (isRefresh = false) => {
         if (isRefresh) setRefreshing(true); else setLoading(true);
         try {
-            const sportParam = activeSport !== 'All' ? `?sport=${activeSport}` : '';
-            const res = await fetch(`/api/dashboard/games${sportParam}`);
+            const res = await fetch(`/api/dashboard/games`);
             if (res.ok) {
                 const data = await res.json();
                 setGames(data.games || []);
@@ -33,7 +32,7 @@ export default function GamesBoard(): ReactNode {
             setLoading(false);
             setRefreshing(false);
         }
-    }, [activeSport]);
+    }, []);
 
     useEffect(() => { fetchGames(); }, [fetchGames]);
     useEffect(() => {
@@ -41,8 +40,13 @@ export default function GamesBoard(): ReactNode {
         return () => clearInterval(i);
     }, [fetchGames]);
 
+    // Client-side sport filter
+    const displayGames = activeSport === 'All'
+        ? games
+        : games.filter(g => g.sport === activeSport);
+
     // Sort: live first, then best value, then by time
-    const sortedGames = [...games].sort((a, b) => {
+    const sortedGames = [...displayGames].sort((a, b) => {
         if (a.isLive && !b.isLive) return -1;
         if (!a.isLive && b.isLive) return 1;
         if (a.isCompleted && !b.isCompleted) return 1;

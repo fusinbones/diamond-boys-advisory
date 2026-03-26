@@ -55,7 +55,9 @@ function StatusPill({ status, score }: { status: string; score: string | null })
 function formatTime(dateStr: string): string {
     try {
         const d = new Date(dateStr);
-        return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/New_York' }) + ' ET';
+        const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/New_York' });
+        const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/New_York' });
+        return `${date} · ${time} ET`;
     } catch {
         return '';
     }
