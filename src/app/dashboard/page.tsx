@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, Suspense, useCallback, type ReactNode } from 'react';
+import { useState, useEffect, Suspense, useCallback, useRef, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, UserPlus, LogIn, Loader2, Shield, Flame, LogOut } from 'lucide-react';
+import { Mail, Lock, UserPlus, LogIn, Loader2, Shield, Flame, LogOut, ArrowUp } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
@@ -90,6 +90,17 @@ function DashboardContent(): ReactNode {
     const [dashLoading, setDashLoading] = useState(true);
     const [loginStreak, setLoginStreak] = useState(1);
     const [profile, setProfile] = useState<UserProfile | null>(null);
+    const [showScrollTop, setShowScrollTop] = useState(false);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+    // Scroll-to-top listener
+    useEffect(() => {
+        const handleScroll = () => {
+            setShowScrollTop(window.scrollY > 400);
+        };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     // Auto-select signup tab when coming from free CTA
     useEffect(() => {
@@ -571,6 +582,31 @@ function DashboardContent(): ReactNode {
                     </aside>
                 </div>
             </div>
+
+            {/* Scroll to Top Button */}
+            <AnimatePresence>
+                {showScrollTop && (
+                    <motion.button
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.5 }}
+                        transition={{ duration: 0.2 }}
+                        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                        style={{
+                            position: 'fixed', bottom: '24px', right: '24px',
+                            width: '44px', height: '44px', borderRadius: '50%',
+                            background: 'linear-gradient(135deg, #00e59b, #00c9ff)',
+                            border: 'none', cursor: 'pointer',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            boxShadow: '0 4px 20px rgba(0,229,155,0.3)',
+                            zIndex: 100,
+                        }}
+                        title="Back to top"
+                    >
+                        <ArrowUp size={20} style={{ color: '#0a0a0f', strokeWidth: 3 }} />
+                    </motion.button>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

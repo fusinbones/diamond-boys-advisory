@@ -10,6 +10,7 @@ import './community.css';
 import './game-panel.css';
 import './team-search.css';
 import StreakCounter from '@/components/StreakCounter';
+import NicknamePrompt from '@/components/NicknamePrompt';
 import PremiumRevealFeed from '@/components/PremiumRevealFeed';
 
 /* ═══════════════════════════════════════════════════════
@@ -47,6 +48,7 @@ interface UserProfile {
     display_name: string;
     avatar_color: string;
     role?: string;
+    nickname?: string | null;
     is_banned?: boolean;
     is_muted?: boolean;
     muted_until?: string | null;
@@ -1248,6 +1250,7 @@ export default function CommunityPage() {
     const [reportDetails, setReportDetails] = useState('');
     const [reportSending, setReportSending] = useState(false);
     const [reportSent, setReportSent] = useState(false);
+    const [showNicknamePrompt, setShowNicknamePrompt] = useState(false);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -1262,12 +1265,14 @@ export default function CommunityPage() {
             try {
                 const { data } = await supabase
                     .from('user_profiles')
-                    .select('subscription_tier, is_admin, display_name, avatar_color, role, is_banned, is_muted, muted_until, suspended_until')
+                    .select('subscription_tier, is_admin, display_name, avatar_color, role, nickname, is_banned, is_muted, muted_until, suspended_until')
                     .eq('id', user.id)
                     .single();
                 if (data) {
                     setProfile(data);
                     setHasAccess(true);
+                    // Check nickname
+                    if (!data.nickname) { setShowNicknamePrompt(true); }
                     // Check ban/mute status
                     if (data.is_banned) { setIsBanned(true); }
                     if (data.is_muted && (!data.muted_until || new Date(data.muted_until) > new Date())) {
@@ -2229,6 +2234,17 @@ export default function CommunityPage() {
                         )}
                     </div>
                 </div>
+            )}
+            {/* Nickname Prompt */}
+            {showNicknamePrompt && user && (
+                <NicknamePrompt
+                    userId={user.id}
+                    currentNickname={profile?.nickname}
+                    onSaved={(nick) => {
+                        setShowNicknamePrompt(false);
+                        setProfile(prev => prev ? { ...prev, nickname: nick, display_name: nick } : prev);
+                    }}
+                />
             )}
         </div>
     );
