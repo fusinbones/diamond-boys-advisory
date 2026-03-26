@@ -105,7 +105,7 @@ export default function PremiumRevealFeed({ isPaid = false }: { isPaid?: boolean
                     </span>
                 </div>
                 <p style={{ color: '#6b7280', fontSize: '11px', margin: 0 }}>
-                    See what premium members are getting — results revealed after each game
+                    {isPaid ? 'Your picks & results — updated after each game' : 'See what premium members are getting — results revealed after each game'}
                 </p>
             </div>
 
@@ -113,7 +113,7 @@ export default function PremiumRevealFeed({ isPaid = false }: { isPaid?: boolean
             <div style={{ display: 'flex', padding: '0 16px', gap: '4px', marginBottom: '12px' }}>
                 {[
                     { key: 'revealed' as const, label: `Results (${revealed.length})`, icon: '📊' },
-                    { key: 'locked' as const, label: `Upcoming (${locked.length})`, icon: '🔒' },
+                    { key: 'locked' as const, label: `Upcoming (${locked.length})`, icon: isPaid ? '📅' : '🔒' },
                 ].map(tab => (
                     <button
                         key={tab.key}
