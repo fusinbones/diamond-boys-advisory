@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense, useCallback, useRef, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, UserPlus, LogIn, Loader2, Shield, Flame, LogOut, ArrowUp, KeyRound } from 'lucide-react';
+import { Mail, Lock, UserPlus, LogIn, Loader2, Shield, Flame, LogOut, ArrowUp, KeyRound, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
@@ -21,6 +21,7 @@ import PaywallOverlay from '@/components/dashboard/PaywallOverlay';
 import PickDropBanner from '@/components/dashboard/PickDropBanner';
 import GamesBoard from '@/components/dashboard/GamesBoard';
 import Tooltip from '@/components/dashboard/Tooltip';
+import FirePickCard from '@/components/dashboard/FirePickCard';
 
 interface UserProfile {
     subscription_tier: string | null;
@@ -95,6 +96,24 @@ function DashboardContent(): ReactNode {
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [showScrollTop, setShowScrollTop] = useState(false);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+    // Fire Pick state
+    interface FirePickData {
+        id: string;
+        matchup: string;
+        sport: string;
+        pick_type?: string;
+        pick_team?: string;
+        pick_value?: string;
+        odds?: string;
+        confidence?: number;
+        units?: number;
+        reasoning?: string;
+        scheduled_at: string;
+        status: string;
+    }
+    const [firePick, setFirePick] = useState<FirePickData | null>(null);
+    const [deletingPickId, setDeletingPickId] = useState<string | null>(null);
 
     // Scroll-to-top listener
     useEffect(() => {
@@ -200,9 +219,10 @@ function DashboardContent(): ReactNode {
     const fetchData = useCallback(async () => {
         try {
             setDashLoading(true);
-            const [picksRes, statsRes] = await Promise.all([
+            const [picksRes, statsRes, fireRes] = await Promise.all([
                 fetch('/api/dashboard/picks'),
                 fetch('/api/dashboard/stats'),
+                fetch('/api/public/fire-pick'),
             ]);
 
             if (picksRes.ok) {
@@ -225,6 +245,11 @@ function DashboardContent(): ReactNode {
                 setBySport(data.bySport || []);
                 setTailTracker(data.tailTracker || { seasonUnits: 0, weekUnits: 0, totalPicks: 0 });
             }
+
+            if (fireRes.ok) {
+                const data = await fireRes.json();
+                setFirePick(data.firePick || null);
+            }
         } catch (err) {
             console.error('Dashboard fetch error:', err);
         } finally {
@@ -235,6 +260,20 @@ function DashboardContent(): ReactNode {
     useEffect(() => {
         if (user) fetchData();
     }, [user, fetchData]);
+
+    // Delete pick handler (admin only)
+    const handleDeletePick = async (pickId: string) => {
+        try {
+            const res = await fetch(`/api/admin/picks/${pickId}`, { method: 'DELETE' });
+            if (res.ok) {
+                setPicks(prev => prev.filter(p => p.id !== pickId));
+            }
+        } catch (err) {
+            console.error('Delete pick error:', err);
+        } finally {
+            setDeletingPickId(null);
+        }
+    };
 
     // Access logic: paid vs trial vs expired
     const isPaid = profile?.subscription_tier && ['starter', 'pro', 'elite', 'daily', 'weekly', 'monthly', 'season'].includes(profile.subscription_tier);
@@ -634,6 +673,11 @@ function DashboardContent(): ReactNode {
                             <>
                                 <PickDropBanner pickCount={newPickCount} isPaid={!!isPaid} />
 
+                                {/* 🔥 Fire Pick — pinned to top */}
+                                {firePick && (
+                                    <FirePickCard firePick={firePick} isPaid={!!isPaid} />
+                                )}
+
                                 {/* Sport filter pills */}
                                 <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '4px' }}>
                                     {sportTabs.map(tab => {
@@ -656,7 +700,23 @@ function DashboardContent(): ReactNode {
 
                                 {filteredPicks.length > 0 ? (
                                     filteredPicks.map((pick) => (
-                                        <PickCard key={pick.id} pick={pick} locked={picksLocked} />
+                                        <div key={pick.id} style={{ position: 'relative' }}>
+                                            <PickCard pick={pick} locked={picksLocked} />
+                                            {profile?.is_admin && (
+                                                <button
+                                                    onClick={() => setDeletingPickId(pick.id)}
+                                                    style={{
+                                                        position: 'absolute', top: '10px', right: '10px',
+                                                        background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)',
+                                                        borderRadius: '6px', padding: '4px 6px', cursor: 'pointer',
+                                                        color: '#f87171', fontSize: '10px', display: 'flex', alignItems: 'center', gap: '3px',
+                                                        zIndex: 5,
+                                                    }}
+                                                >
+                                                    <Trash2 size={11} /> Delete
+                                                </button>
+                                            )}
+                                        </div>
                                     ))
                                 ) : (
                                     <div className="glass-card" style={{ padding: '24px 20px', textAlign: 'center' }}>
@@ -787,6 +847,60 @@ function DashboardContent(): ReactNode {
                     </aside>
                 </div>
             </div>
+
+            {/* Delete Confirmation Modal */}
+            <AnimatePresence>
+                {deletingPickId && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        style={{
+                            position: 'fixed', inset: 0, zIndex: 200,
+                            background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            padding: '20px',
+                        }}
+                        onClick={() => setDeletingPickId(null)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            onClick={(e) => e.stopPropagation()}
+                            style={{
+                                background: '#1a1f2e', border: '1px solid rgba(239,68,68,0.2)',
+                                borderRadius: '14px', padding: '24px', maxWidth: '340px', width: '100%',
+                                textAlign: 'center',
+                            }}
+                        >
+                            <Trash2 size={28} style={{ color: '#f87171', margin: '0 auto 12px' }} />
+                            <h3 style={{ color: 'white', fontSize: '16px', fontWeight: 700, marginBottom: '6px' }}>Delete This Pick?</h3>
+                            <p style={{ color: '#9ca3af', fontSize: '13px', marginBottom: '18px' }}>
+                                This action cannot be undone. The pick will be permanently removed.
+                            </p>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                <button
+                                    onClick={() => setDeletingPickId(null)}
+                                    style={{
+                                        flex: 1, padding: '10px', borderRadius: '8px', cursor: 'pointer',
+                                        background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+                                        color: '#d1d5db', fontSize: '13px', fontWeight: 600,
+                                    }}
+                                >Cancel</button>
+                                <button
+                                    onClick={() => handleDeletePick(deletingPickId)}
+                                    style={{
+                                        flex: 1, padding: '10px', borderRadius: '8px', cursor: 'pointer',
+                                        background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)',
+                                        color: '#f87171', fontSize: '13px', fontWeight: 700,
+                                    }}
+                                >Delete Pick</button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Scroll to Top Button */}
             <AnimatePresence>
