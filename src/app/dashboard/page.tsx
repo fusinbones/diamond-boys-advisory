@@ -120,12 +120,25 @@ function DashboardContent(): ReactNode {
             }
         });
 
-        // Check URL hash for expired/invalid link errors
+        // Check URL hash for recovery type or expired/invalid link errors
         if (typeof window !== 'undefined') {
             const hash = window.location.hash;
+
+            // Detect recovery flow from URL hash (type=recovery)
+            if (hash.includes('type=recovery')) {
+                setRecoveryMode(true);
+                setError('');
+                setMessage('');
+                // Don't clean hash immediately — Supabase needs it to establish the session
+                // Clean it after a delay so the auth tokens are processed
+                setTimeout(() => {
+                    window.history.replaceState(null, '', window.location.pathname);
+                }, 2000);
+            }
+
+            // Detect expired/invalid links
             if (hash.includes('error=access_denied') || hash.includes('otp_expired')) {
                 setError('This password reset link has expired. Please request a new one below.');
-                // Clean the hash
                 window.history.replaceState(null, '', window.location.pathname);
             }
         }
