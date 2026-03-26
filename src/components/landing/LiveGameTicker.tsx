@@ -71,7 +71,7 @@ export default function LiveGameTicker() {
             }}>
                 <motion.div
                     animate={{ x: ['0%', '-50%'] }}
-                    transition={{ duration: Math.max(25, games.length * 3), repeat: Infinity, ease: 'linear' }}
+                    transition={{ duration: Math.max(60, games.length * 8), repeat: Infinity, ease: 'linear' }}
                     style={{ display: 'flex', gap: '10px', width: 'max-content' }}
                 >
                     {doubled.map((g, i) => (
