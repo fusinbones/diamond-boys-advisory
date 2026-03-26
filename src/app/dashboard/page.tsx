@@ -259,6 +259,9 @@ function DashboardContent(): ReactNode {
 
     useEffect(() => {
         if (user) fetchData();
+        // Auto-refresh every 60s so stats update in real-time
+        const interval = setInterval(() => { if (user) fetchData(); }, 60000);
+        return () => clearInterval(interval);
     }, [user, fetchData]);
 
     // Delete pick handler (admin only)
