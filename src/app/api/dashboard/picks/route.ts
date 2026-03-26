@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
             .limit(limit);
 
         if (tab === 'today') {
-            query = query.gte('game_date', today);
+            query = query.eq('game_date', today);
         } else if (tab === 'upcoming') {
             query = query.eq('result', 'pending');
         } else if (tab === 'results') {
@@ -167,7 +167,7 @@ export async function GET(request: NextRequest) {
         const { data: todayPicks } = await supabase
             .from('picks')
             .select('*')
-            .gte('game_date', today);
+            .eq('game_date', today);
 
         const todayCount = todayPicks?.length || 0;
         const upcomingToday = todayPicks?.filter(p => p.result === 'pending').length || 0;
