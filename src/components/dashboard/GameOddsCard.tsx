@@ -36,8 +36,11 @@ function timeLabel(time: string, live: boolean, done: boolean): string {
     if (live) return 'LIVE';
     if (done) return 'Final';
     try {
-        const d = new Date(time);
-        return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        const safeTime = time.length === 10 ? `${time}T12:00:00` : time;
+        const d = new Date(safeTime);
+        const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/New_York' });
+        const t = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/New_York' });
+        return `${date} · ${t}`;
     } catch { return 'TBD'; }
 }
 
