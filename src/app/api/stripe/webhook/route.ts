@@ -1,7 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import Stripe from 'stripe';
-import { handlePaymentSuccess, handlePaymentFailure, logToModChannel } from '@/lib/discord';
+import { createClient } from '@supabase/supabase-js';
+
+function getSupabaseAdmin() {
+    return createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
+}
+
+/** Look up a Supabase user by email and update their subscription_tier */
+async function updateUserTier(email: string, tier: string | null): Promise<boolean> {
+    try {
+        const supabaseAdmin = getSupabaseAdmin();
+        const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
+        const authUser = authUsers?.users?.find(
+            (u) => u.email?.toLowerCase() === email.toLowerCase()
+        );
+        if (!authUser) {
+            console.error(`[webhook] No Supabase user found for email: ${email}`);
+            return false;
+        }
+
+        const { error } = await supabaseAdmin
+            .from('user_profiles')
+            .update({ subscription_tier: tier })
+            .eq('id', authUser.id);
+
+        if (error) {
+            console.error(`[webhook] Failed to update tier for ${email}:`, error.message);
+            return false;
+        }
+
+        console.log(`[webhook] Updated ${email} → subscription_tier: ${tier}`);
+        return true;
+    } catch (err) {
+        console.error(`[webhook] updateUserTier error:`, err);
+        return false;
+    }
+}
 
 export async function POST(request: NextRequest) {
     const body = await request.text();
@@ -31,16 +69,19 @@ export async function POST(request: NextRequest) {
         switch (event.type) {
             case 'checkout.session.completed': {
                 const session = event.data.object as Stripe.Checkout.Session;
-                const discordUsername = session.metadata?.discord_username;
-                const tierName = session.metadata?.tier_name || 'Unknown Tier';
                 const tierId = session.metadata?.tier_id;
+                const tierName = session.metadata?.tier_name || 'Unknown';
+                const customerEmail = session.customer_email || session.customer_details?.email;
 
-                if (discordUsername) {
-                    await handlePaymentSuccess(discordUsername, tierName, tierId);
-                    await logToModChannel(
-                        `💳 New subscription: **${discordUsername}** → ${tierName} | Email: ${session.customer_email || 'N/A'}`
-                    );
+                // Update Supabase subscription tier
+                if (customerEmail && tierId) {
+                    const success = await updateUserTier(customerEmail, tierId);
+                    console.log(`[webhook] checkout.session.completed: ${customerEmail} → ${tierId} (${success ? 'OK' : 'FAILED'})`);
+                } else {
+                    console.error(`[webhook] checkout.session.completed: missing email (${customerEmail}) or tierId (${tierId})`);
                 }
+
+                console.log(`[webhook] 💳 New subscription: ${customerEmail || 'N/A'} → ${tierName} (${tierId})`);
                 break;
             }
 
@@ -49,16 +90,19 @@ export async function POST(request: NextRequest) {
                 const invoice = event.data.object as any;
                 const subscriptionId = typeof invoice.subscription === 'string'
                     ? invoice.subscription
-                    : invoice.subscription?.id;
+                    : (invoice.subscription as Stripe.Subscription | null)?.id;
 
                 if (subscriptionId) {
                     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-                    const discordUsername = subscription.metadata?.discord_username;
-                    const tierName = subscription.metadata?.tier_name || 'Unknown Tier';
+                    const tierId = subscription.metadata?.tier_id;
+                    const customerEmail = invoice.customer_email;
 
-                    if (discordUsername) {
-                        await logToModChannel(`✅ Payment succeeded: **${discordUsername}** → ${tierName}`);
+                    // Re-confirm tier on renewal
+                    if (customerEmail && tierId) {
+                        await updateUserTier(customerEmail, tierId);
                     }
+
+                    console.log(`[webhook] ✅ Payment succeeded: ${customerEmail} → ${tierId}`);
                 }
                 break;
             }
@@ -66,33 +110,32 @@ export async function POST(request: NextRequest) {
             case 'invoice.payment_failed': {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const invoice = event.data.object as any;
-                const subscriptionId = typeof invoice.subscription === 'string'
-                    ? invoice.subscription
-                    : invoice.subscription?.id;
+                const customerEmail = invoice.customer_email;
 
-                if (subscriptionId) {
-                    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-                    const discordUsername = subscription.metadata?.discord_username;
-
-                    if (discordUsername) {
-                        await handlePaymentFailure(discordUsername);
-                        await logToModChannel(
-                            `🚫 Payment FAILED: **${discordUsername}** — KICKED from server`
-                        );
-                    }
+                // Revoke access on failed payment
+                if (customerEmail) {
+                    await updateUserTier(customerEmail, null);
+                    console.log(`[webhook] 🚫 Payment FAILED: ${customerEmail} — access revoked`);
                 }
                 break;
             }
 
             case 'customer.subscription.deleted': {
                 const subscription = event.data.object as Stripe.Subscription;
-                const discordUsername = subscription.metadata?.discord_username;
+                const customerId = typeof subscription.customer === 'string'
+                    ? subscription.customer
+                    : subscription.customer?.id;
 
-                if (discordUsername) {
-                    await handlePaymentFailure(discordUsername);
-                    await logToModChannel(
-                        `❌ Subscription cancelled: **${discordUsername}** — KICKED from server`
-                    );
+                if (customerId) {
+                    try {
+                        const customer = await stripe.customers.retrieve(customerId) as Stripe.Customer;
+                        if (customer.email) {
+                            await updateUserTier(customer.email, null);
+                            console.log(`[webhook] ❌ Subscription cancelled: ${customer.email} — access revoked`);
+                        }
+                    } catch (err) {
+                        console.error(`[webhook] Could not retrieve customer ${customerId}:`, err);
+                    }
                 }
                 break;
             }
@@ -103,28 +146,24 @@ export async function POST(request: NextRequest) {
                 const customerId = typeof charge.customer === 'string' ? charge.customer : charge.customer?.id;
 
                 if (customerId) {
-                    // Look up subscriptions for this customer to find Discord username
-                    const subscriptions = await stripe.subscriptions.list({ customer: customerId, limit: 1 });
-                    const discordUsername = subscriptions.data[0]?.metadata?.discord_username;
-
-                    if (discordUsername) {
-                        await handlePaymentFailure(discordUsername);
-                        await logToModChannel(
-                            `💸 Charge REFUNDED / Chargeback: **${discordUsername}** — KICKED from server`
-                        );
+                    try {
+                        const customer = await stripe.customers.retrieve(customerId) as Stripe.Customer;
+                        if (customer.email) {
+                            await updateUserTier(customer.email, null);
+                            console.log(`[webhook] 💸 Refund/chargeback: ${customer.email} — access revoked`);
+                        }
+                    } catch (err) {
+                        console.error(`[webhook] Could not retrieve customer ${customerId}:`, err);
                     }
                 }
                 break;
             }
 
             default:
-                // Unhandled event type
-                console.log(`Unhandled event type: ${event.type}`);
+                console.log(`[webhook] Unhandled event type: ${event.type}`);
         }
     } catch (error) {
-        console.error(`Error processing webhook event ${event.type}:`, error);
-        // Still return 200 to acknowledge receipt — we'll handle failures via cron
-        await logToModChannel(`⚠️ Webhook processing error for event: ${event.type}`);
+        console.error(`[webhook] Error processing ${event.type}:`, error);
     }
 
     return NextResponse.json({ received: true });
