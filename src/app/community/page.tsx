@@ -70,8 +70,12 @@ interface TickerGame {
 const TIER_HIERARCHY: Record<string, number> = {
     free: 0,
     starter: 1,
+    daily: 1,
     pro: 2,
+    weekly: 2,
     elite: 3,
+    monthly: 3,
+    season: 3,
 };
 
 function canAccessChannel(userTier: string, channelMinTier: string): boolean {

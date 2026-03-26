@@ -31,7 +31,7 @@ export const tiers: Tier[] = [
     intervalLabel: '/day',
     description: 'One-time payment. Full access for 24 hours — no subscription.',
     features: [
-      'All daily MLB picks & analysis',
+      'All daily sports picks & analysis',
       'TriplePlayz Lounge access',
       'Real-time odds & line movement',
       'Game-day alerts',
@@ -50,7 +50,7 @@ export const tiers: Tier[] = [
     intervalLabel: '/week',
     description: 'All picks & analysis, billed weekly. Cancel anytime.',
     features: [
-      'All daily MLB game analysis',
+      'All daily sports game analysis',
       'TriplePlayz Lounge community access',
       'Game-day alerts & notifications',
       'Real-time odds & line movement',

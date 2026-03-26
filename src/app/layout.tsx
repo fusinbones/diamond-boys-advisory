@@ -9,29 +9,29 @@ import PickDropToast from '@/components/PickDropToast';
 import { AuthProvider } from '@/components/AuthProvider';
 
 export const metadata: Metadata = {
-  title: 'TriplePlayz - Sports Advisory | Elite MLB Baseball Picks & Community',
+  title: 'TriplePlayz - Sports Advisory | Elite Sports Picks & Community',
   description:
-    'Unlock winning MLB baseball picks from TriplePlayz - Sports Advisory. Join our exclusive TriplePlayz Lounge community with daily expert analysis, 30+ years of experience, and proven picks. Sign up for early access now.',
+    'Expert sports picks from TriplePlayz - Sports Advisory. Join our exclusive TriplePlayz Lounge community with daily expert analysis, 30+ years of experience, and documented picks across MLB, NBA, NFL & NHL.',
   keywords: [
-    'MLB picks',
+    'sports picks',
     'sports advisory',
     'TriplePlayz',
     'sports betting community',
     'sports picks subscription',
-    'MLB picks',
-    'baseball analysis',
+    'expert picks',
+    'sports analysis',
     'sports betting picks',
   ],
   openGraph: {
-    title: 'TriplePlayz - Sports Advisory | Winning MLB Baseball Picks',
-    description: 'Join 1,200+ members getting daily winning MLB picks and exclusive community access.',
+    title: 'TriplePlayz - Sports Advisory | Expert Sports Picks',
+    description: 'Expert daily sports picks backed by 30+ years of experience and a premium community.',
     type: 'website',
     images: ['/logo.png'],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'TriplePlayz - Sports Advisory',
-    description: 'Premium MLB baseball picks + elite TriplePlayz Lounge community.',
+    description: 'Premium sports picks + elite TriplePlayz Lounge community.',
   },
   robots: 'index, follow',
 };
