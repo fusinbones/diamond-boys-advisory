@@ -1,7 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { isAdminEmail } from '@/lib/adminAuth';
 
 export const dynamic = 'force-dynamic';
+
+// Inline admin check — can't import from '@/lib/adminAuth' because it's 'use client'
+const ADMIN_EMAILS = [
+    'support@tripleplayz.com',
+    'diamondboysadvisory@gmail.com',
+];
+
+function isAdminEmail(email: string): boolean {
+    return ADMIN_EMAILS.includes(email.toLowerCase());
+}
+
+function isSuperAdmin(email: string): boolean {
+    return ADMIN_EMAILS.includes(email.toLowerCase());
+}
 
 async function getSupabase() {
     const { createClient } = await import('@supabase/supabase-js');
@@ -9,15 +22,6 @@ async function getSupabase() {
         process.env.NEXT_PUBLIC_SUPABASE_URL || '',
         process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
     );
-}
-
-const ADMIN_EMAILS = [
-    'support@tripleplayz.com',
-    'diamondboysadvisory@gmail.com',
-];
-
-function isSuperAdmin(email: string): boolean {
-    return ADMIN_EMAILS.includes(email.toLowerCase());
 }
 
 // GET — list all users from user_profiles (no auth.admin dependency)
