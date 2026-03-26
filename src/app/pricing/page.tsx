@@ -106,7 +106,7 @@ export default function PricingPage() {
                     style={{ textAlign: 'center', marginTop: '28px' }}
                 >
                     <p style={{ color: '#6b7280', fontSize: '13px' }}>
-                        💎 Already trusted by 1,200+ sports bettors • For entertainment purposes only • 21+
+                        💎 Backed by 30+ years of sports analysis • For entertainment purposes only • 21+
                     </p>
                 </motion.div>
             </div>

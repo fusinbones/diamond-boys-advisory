@@ -44,8 +44,8 @@ export default function FreeSignupSection() {
                         fontWeight: 900, color: 'white',
                         lineHeight: 1.1, marginBottom: '14px',
                     }}>
-                        Start Winning{' '}
-                        <span className="gradient-text">Before You Pay</span>
+                        Experience the Edge{' '}
+                        <span className="gradient-text">Before You Commit</span>
                     </h2>
 
                     <p style={{
@@ -133,6 +133,10 @@ export default function FreeSignupSection() {
                             Upgrade anytime
                         </span>
                     </div>
+                    <p style={{ fontSize: '13px', color: '#6b7280', marginTop: '12px' }}>
+                        Already have an account?{' '}
+                        <a href="/dashboard" style={{ color: '#00e59b', textDecoration: 'none', fontWeight: 600 }}>Log In →</a>
+                    </p>
                 </motion.div>
             </div>
         </section>

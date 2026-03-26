@@ -18,8 +18,8 @@ const navLinks = [
 
 const quickStats = [
     { label: 'Experience', value: '30+ Yrs', icon: TrendingUp, color: '#fbbf24' },
-    { label: 'Members', value: '1,200+', icon: Users, color: '#00e59b' },
-    { label: 'Sportsbooks', value: '11+', icon: Trophy, color: '#34d399' },
+    { label: 'Sportsbooks', value: '11+', icon: Trophy, color: '#00e59b' },
+    { label: 'Analysis', value: 'Proven', icon: Shield, color: '#34d399' },
 ];
 
 export default function Navbar() {
@@ -126,10 +126,15 @@ export default function Navbar() {
                                 </button>
                             </div>
                         ) : (
-                            <Link href="/pricing" className="btn-glow text-xs sm:text-sm !py-2 !px-4 sm:!py-2.5 sm:!px-5">
-                                <Zap size={14} className="sm:w-4 sm:h-4" />
-                                Early Access
-                            </Link>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <Link href="/dashboard" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
+                                    Log In
+                                </Link>
+                                <Link href="/dashboard?signup=free" className="btn-glow text-xs sm:text-sm !py-2 !px-4 sm:!py-2.5 sm:!px-5">
+                                    <Zap size={14} className="sm:w-4 sm:h-4" />
+                                    Sign Up Free
+                                </Link>
+                            </div>
                         )}
                     </div>
 
@@ -443,7 +448,7 @@ export default function Navbar() {
                                 style={{ marginTop: 'auto', textAlign: 'center', paddingBottom: '20px' }}
                             >
                                 <p style={{ fontSize: '12px', color: '#6b7280' }}>
-                                    💎 Trusted by 1,200+ sports bettors since 2024
+                                    💎 Backed by 30+ years of sports analysis expertise
                                 </p>
                             </motion.div>
                         </div>

@@ -2,7 +2,7 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
-import { Users, TrendingUp, Trophy, Flame } from 'lucide-react';
+import { Clock, TrendingUp, Target, Shield } from 'lucide-react';
 
 function AnimatedCounter({ target, suffix = '', prefix = '' }: { target: number; suffix?: string; prefix?: string }) {
     const [count, setCount] = useState(0);
@@ -35,10 +35,10 @@ function AnimatedCounter({ target, suffix = '', prefix = '' }: { target: number;
 }
 
 const stats = [
-    { icon: Users, label: 'Active Members', value: 1247, suffix: '+', color: '#00e59b', bg: 'rgba(0,229,155,0.1)', detail: 'Growing daily' },
-    { icon: TrendingUp, label: 'Win Rate', value: 65, suffix: '%', color: '#fbbf24', bg: 'rgba(251,191,36,0.1)', detail: 'Documented & verified' },
-    { icon: Trophy, label: 'Units Profit', value: 187, suffix: '', prefix: '+', color: '#34d399', bg: 'rgba(52,211,153,0.1)', detail: 'This season' },
-    { icon: Flame, label: 'Win Streak', value: 8, suffix: ' picks', color: '#f97316', bg: 'rgba(249,115,22,0.1)', detail: 'Current streak' },
+    { icon: Clock, label: 'Years Experience', value: 30, suffix: '+', prefix: '', color: '#fbbf24', bg: 'rgba(251,191,36,0.1)', detail: 'Combined expertise' },
+    { icon: TrendingUp, label: 'Sportsbooks Tracked', value: 11, suffix: '+', prefix: '', color: '#00e59b', bg: 'rgba(0,229,155,0.1)', detail: 'Real-time odds' },
+    { icon: Target, label: 'Picks Documented', value: 100, suffix: '%', prefix: '', color: '#34d399', bg: 'rgba(52,211,153,0.1)', detail: 'Wins & losses' },
+    { icon: Shield, label: 'Proprietary Models', value: 5, suffix: '+', prefix: '', color: '#a78bfa', bg: 'rgba(167,139,250,0.1)', detail: 'Analysis engines' },
 ];
 
 export default function StatsBar() {
@@ -52,10 +52,10 @@ export default function StatsBar() {
                     style={{ textAlign: 'center', marginBottom: '28px' }}
                 >
                     <h2 className="font-display" style={{ fontSize: 'clamp(22px, 3vw, 34px)', fontWeight: 700, color: 'white', marginBottom: '8px' }}>
-                        Real Results. <span className="gradient-text">Real Transparency.</span>
+                        Built on Experience. <span className="gradient-text">Backed by Data.</span>
                     </h2>
-                    <p style={{ color: '#d1d5db', fontSize: '15px', maxWidth: '420px', margin: '0 auto' }}>
-                        Every pick tracked and verified. No fluff — just documented performance.
+                    <p style={{ color: '#d1d5db', fontSize: '15px', maxWidth: '480px', margin: '0 auto' }}>
+                        Proprietary analysis models refined over three decades. Every single pick documented — wins and losses alike.
                     </p>
                 </motion.div>
 
@@ -81,7 +81,7 @@ export default function StatsBar() {
                 </div>
 
                 <p style={{ textAlign: 'center', fontSize: '12px', color: '#6b7280', marginTop: '14px' }}>
-                    * Statistics reflect current season. Past results ≠ future outcomes.
+                    For entertainment purposes only. Past analysis ≠ future outcomes.
                 </p>
             </div>
         </section>

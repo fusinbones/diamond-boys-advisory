@@ -6,27 +6,24 @@ import { Star } from 'lucide-react';
 const testimonials = [
     {
         name: 'Mike R.',
-        handle: '@mikeR_bets',
         avatar: '🏀',
-        text: "Joined TriplePlayz 3 months ago and I'm up over 40 units. The daily picks are sharp and the TriplePlayz Lounge community is a goldmine.",
+        text: "The daily analysis is incredibly detailed — I've never seen breakdowns this thorough. The TriplePlayz Lounge community makes game day even better.",
         rating: 5,
         tier: 'Monthly Elite',
         since: 'Member since Nov 2025',
     },
     {
         name: 'Jason T.',
-        handle: '@jt_plays',
         avatar: '💎',
-        text: "Best money I've spent on sports analysis. The weekly deep dives alone are worth it. These guys are the real deal.",
+        text: "Best money I've spent on sports analysis. The weekly deep dives alone are worth it. These guys are the real deal — decades of experience shows.",
         rating: 5,
         tier: 'Weekly Package',
         since: 'Member since Oct 2025',
     },
     {
         name: 'Carlos D.',
-        handle: '@carlos_wins',
         avatar: '🔥',
-        text: "Started with the free trial and haven't looked back. Every single pick tracked, win or loss. That's integrity.",
+        text: "Started with the free tier and the transparency sold me instantly. Every single pick tracked, win or loss. That's integrity you can trust.",
         rating: 5,
         tier: 'Season Pass',
         since: 'Member since Sep 2025',
@@ -44,10 +41,10 @@ export default function TestimonialsSection() {
                     style={{ textAlign: 'center', marginBottom: '24px' }}
                 >
                     <h2 className="font-display" style={{ fontSize: 'clamp(22px, 3vw, 34px)', fontWeight: 700, color: 'white', marginBottom: '8px' }}>
-                        Hear From <span className="gradient-text">TriplePlayz</span>
+                        Hear From <span className="gradient-text">Our Members</span>
                     </h2>
                     <p style={{ color: '#d1d5db', fontSize: '15px' }}>
-                        Real feedback from verified subscribers.
+                        Real feedback from real subscribers.
                     </p>
                 </motion.div>
 

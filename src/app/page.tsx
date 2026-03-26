@@ -7,6 +7,7 @@ import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import FreeSignupSection from '@/components/landing/FreeSignupSection';
 import MagicTicker from '@/components/MagicTicker';
 import AuthRedirect from '@/components/AuthRedirect';
+import SocialProofToast from '@/components/landing/SocialProofToast';
 
 export default function HomePage() {
   return (
@@ -35,8 +36,8 @@ export default function HomePage() {
             <a href="/dashboard?signup=free" className="btn-glow btn-glow-lg pulse-ring" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
               ✨ Create Free Account
             </a>
-            <a href="/pricing" className="btn-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-              See Premium Plans →
+            <a href="/dashboard" className="btn-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              Log In →
             </a>
           </div>
           <p className="text-[10px] sm:text-xs text-gray-600 mt-4 sm:mt-6">
@@ -45,6 +46,9 @@ export default function HomePage() {
           </p>
         </div>
       </section>
+
+      {/* Social proof purchase toast */}
+      <SocialProofToast />
     </>
   );
 }

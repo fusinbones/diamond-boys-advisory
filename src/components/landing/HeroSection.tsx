@@ -129,7 +129,7 @@ export default function HeroSection() {
                     </Link>
                 </motion.div>
 
-                {/* Social proof badge */}
+                {/* Trust badge */}
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -137,8 +137,8 @@ export default function HeroSection() {
                     style={{ marginBottom: '18px' }}
                 >
                     <span className="badge-emerald" style={{ padding: '7px 18px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                        <span className="live-dot" />
-                        Live Now — 1,200+ Active Members
+                        <Shield size={13} style={{ color: '#00e59b' }} />
+                        Backed by 30+ Years of Sports Analysis
                     </span>
                 </motion.div>
 
@@ -150,8 +150,8 @@ export default function HeroSection() {
                     className="font-display"
                     style={{ fontSize: 'clamp(30px, 5vw, 54px)', fontWeight: 900, lineHeight: 1.08, marginBottom: '16px', color: 'white' }}
                 >
-                    The Picks That{' '}
-                    <span className="gradient-text">Beat Vegas</span>
+                    Smarter Picks.{' '}
+                    <span className="gradient-text">Sharper Edge.</span>
                 </motion.h1>
 
                 {/* Subheadline */}
@@ -161,10 +161,11 @@ export default function HeroSection() {
                     transition={{ delay: 0.15, duration: 0.6 }}
                     style={{ color: '#d1d5db', fontSize: 'clamp(15px, 2vw, 18px)', lineHeight: 1.7, marginBottom: '20px', maxWidth: '540px' }}
                 >
-                    Expert analysis, real-time odds from{' '}
+                    Proprietary analysis powered by{' '}
                     <span style={{ color: '#fbbf24', fontWeight: 600 }}>11+ sportsbooks</span>,
-                    and a premium community backed by{' '}
-                    <span style={{ color: '#00e59b', fontWeight: 600 }}>30+ years of experience</span>.
+                    built on{' '}
+                    <span style={{ color: '#00e59b', fontWeight: 600 }}>30+ years of experience</span>,
+                    and a premium community that gives you the edge.
                 </motion.p>
 
                 {/* Value props */}
@@ -176,7 +177,7 @@ export default function HeroSection() {
                 >
                     {[
                         { icon: <TrendingUp size={14} style={{ color: '#00e59b' }} />, text: 'Live odds & analysis' },
-                        { icon: <Shield size={14} style={{ color: '#00e59b' }} />, text: 'Transparent W/L record' },
+                        { icon: <Shield size={14} style={{ color: '#00e59b' }} />, text: 'Every pick documented' },
                         { icon: <CheckCircle size={14} style={{ color: '#00e59b' }} />, text: 'Exclusive community' },
                     ].map((prop, i) => (
                         <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#e5e7eb', fontSize: '14px' }}>
@@ -194,22 +195,22 @@ export default function HeroSection() {
                     style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '10px', justifyContent: 'center', width: '100%' }}
                 >
                     <Link
-                        href="/pricing"
+                        href="/dashboard?signup=free"
                         className="btn-glow btn-glow-lg pulse-ring"
                         style={{ flex: '1 1 200px', maxWidth: '300px', textAlign: 'center' as const, justifyContent: 'center' }}
-                        onClick={() => trackEvent('cta_click', { location: 'hero', label: 'join_now' })}
+                        onClick={() => trackEvent('cta_click', { location: 'hero', label: 'signup_free' })}
                     >
-                        <Zap size={16} />
-                        Join TriplePlayz — Get Picks Now
+                        <Sparkles size={16} />
+                        Sign Up Free — No Card Required
                     </Link>
                     <Link
-                        href="/dashboard?signup=free"
+                        href="/dashboard"
                         className="btn-outline"
                         style={{ flex: '1 1 160px', maxWidth: '260px', textAlign: 'center' as const, justifyContent: 'center' }}
-                        onClick={() => trackEvent('cta_click', { location: 'hero', label: 'free_account' })}
+                        onClick={() => trackEvent('cta_click', { location: 'hero', label: 'login' })}
                     >
-                        <Sparkles size={14} />
-                        Try Free — No Card Required
+                        <ArrowRight size={14} />
+                        Log In to Dashboard
                     </Link>
                 </motion.div>
 
@@ -220,7 +221,7 @@ export default function HeroSection() {
                     transition={{ delay: 0.6 }}
                     style={{ fontSize: '13px', color: '#9ca3af', marginTop: '14px' }}
                 >
-                    ⚡ Free game analysis • 1,200+ members • Cancel anytime • 21+ only
+                    ⚡ Free game analysis • Proprietary data models • Cancel anytime • 21+ only
                 </motion.p>
             </div>
         </section>
