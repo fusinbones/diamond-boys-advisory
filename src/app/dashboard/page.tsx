@@ -234,6 +234,32 @@ function DashboardContent(): ReactNode {
         }
     };
 
+    const handleForgotPassword = async () => {
+        if (!email.trim()) {
+            setError('Please enter your email address first.');
+            return;
+        }
+        setLoading(true);
+        setError('');
+        setMessage('');
+        try {
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}/dashboard`,
+            });
+            if (error) throw error;
+            setMessage('Password reset link sent! Check your email.');
+        } catch (err: unknown) {
+            const raw = err instanceof Error ? err.message : String(err);
+            if (raw.toLowerCase().includes('rate limit') || raw.toLowerCase().includes('too many')) {
+                setError('Too many attempts. Please wait a moment and try again.');
+            } else {
+                setError('Could not send reset email. Please try again.');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // ── Loading ──
     if (authLoading) {
         return (
@@ -320,6 +346,22 @@ function DashboardContent(): ReactNode {
                                         minLength={6}
                                     />
                                 </div>
+                                {!isSignUp && (
+                                    <div style={{ textAlign: 'right', marginTop: '-12px', marginBottom: '16px' }}>
+                                        <button
+                                            type="button"
+                                            onClick={handleForgotPassword}
+                                            disabled={loading}
+                                            style={{
+                                                background: 'none', border: 'none', cursor: 'pointer',
+                                                color: '#00e59b', fontSize: '13px', fontWeight: 600,
+                                                padding: 0, opacity: loading ? 0.5 : 1,
+                                            }}
+                                        >
+                                            Forgot Password?
+                                        </button>
+                                    </div>
+                                )}
 
                                 <AnimatePresence mode="wait">
                                     {error && (
