@@ -90,9 +90,9 @@ export const tiers: Tier[] = [
     features: [
       'Everything in Monthly',
       'Full half-season coverage',
-      'World Series special picks',
+      'Playoff special picks (World Series, NBA Finals, Stanley Cup)',
       'Season Pass TriplePlayz badge',
-      'Early access to new sports (NFL)',
+      'Early access to new sports & features',
       'Private strategy sessions',
       'Best value — massive savings',
     ],

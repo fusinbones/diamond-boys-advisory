@@ -23,7 +23,7 @@ const tierAccents: Record<string, { color: string; bg: string; border: string }>
 };
 
 const perks = [
-    { icon: Target, title: 'Expert Picks Daily', desc: 'Data-driven MLB picks with confidence ratings.' },
+    { icon: Target, title: 'Expert Picks Daily', desc: 'Data-driven picks across MLB, NBA & NHL with confidence ratings.' },
     { icon: Users, title: 'The TriplePlayz Lounge', desc: 'Real-time alerts, discussions, and game breakdowns.' },
     { icon: Trophy, title: '30+ Years Experience', desc: 'Decades of sports analysis expertise.' },
     { icon: Bell, title: 'Instant Alerts', desc: 'Line movement notifications straight to your phone.' },
