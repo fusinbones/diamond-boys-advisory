@@ -61,7 +61,7 @@ export default function LiveGameTicker() {
                 fontWeight: 700,
                 marginBottom: '10px',
             }}>
-                ⚾ Live Spring Training Scores
+                ⚾ Live MLB Scores
             </p>
             <div style={{
                 position: 'relative',

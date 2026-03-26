@@ -230,15 +230,15 @@ function mapMLBGameToGame(g: any): Game {
 // PUBLIC: Games / Schedule
 // ═══════════════════════════════════════════
 
-/** Get games for a date. Fetches both regular + Spring Training. */
+/** Get games for a date. Regular season only. */
 export async function getMLBGames(params: {
     date?: string;
     season?: number;
     team?: number;
-    gameType?: string;  // 'R', 'S', or 'R,S' for both
+    gameType?: string;  // 'R' regular, 'S' spring training
 } = {}): Promise<{ games: Game[]; pitcherMap: Record<string, { id: number; fullName: string }> }> {
     const d = params.date || new Date().toISOString().split('T')[0];
-    const gt = params.gameType || 'R,S'; // Default: both regular + spring training
+    const gt = params.gameType || 'R'; // Default: regular season only
 
     let path = `/schedule?sportId=1&date=${d}&hydrate=probablePitcher,linescore,team&gameType=${gt}`;
     if (params.team) path += `&teamId=${params.team}`;
@@ -272,7 +272,7 @@ export async function getMLBGames(params: {
 export async function getMLBTeamGames(
     teamId: number,
     season?: number,
-    gameType: string = 'R,S',
+    gameType: string = 'R',
 ): Promise<Game[]> {
     const yr = season || new Date().getFullYear();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -418,7 +418,7 @@ export async function getMLBH2H(
     season?: number,
 ): Promise<Game[]> {
     const yr = season || new Date().getFullYear();
-    const games = await getMLBTeamGames(team1Id, yr, 'R,S');
+    const games = await getMLBTeamGames(team1Id, yr, 'R');
     return games.filter(g =>
         (g.teams.home.id === team1Id && g.teams.away.id === team2Id) ||
         (g.teams.home.id === team2Id && g.teams.away.id === team1Id)
@@ -433,7 +433,7 @@ export async function getMLBH2H(
 export async function getMLBSchedule(date?: string): Promise<MLBScheduleGame[]> {
     const d = date || new Date().toISOString().split('T')[0];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data: any = await mlbFetch(`/schedule?sportId=1&date=${d}&hydrate=probablePitcher&gameType=R,S`);
+    const data: any = await mlbFetch(`/schedule?sportId=1&date=${d}&hydrate=probablePitcher&gameType=R`);
     const games: MLBScheduleGame[] = [];
 
     for (const dateEntry of data.dates || []) {

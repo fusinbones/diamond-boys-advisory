@@ -27,10 +27,9 @@ export async function GET(
         // Fetch stats for current context
         let stats = await getMLBTeamStats(teamId, season, gameType).catch(() => null);
 
-        // Fetch games across all seasons (regular + spring training)
+        // Fetch games across seasons (regular season only — spring training excluded)
         const allGamesPromises = seasonsToFetch.map(async (yr) => {
-            const types = yr === currentYear ? (gameType === 'S' ? 'S' : 'R,S') : 'R';
-            return getMLBTeamGames(teamId, yr, types).catch(() => []);
+            return getMLBTeamGames(teamId, yr, 'R').catch(() => []);
         });
 
         const allSeasonGames = await Promise.all(allGamesPromises);
@@ -49,19 +48,7 @@ export async function GET(
             }
         }
 
-        // If no games at all for current season, try spring training
-        const currentSeasonGames = allGames.filter(g => {
-            const gYear = new Date(g.date).getFullYear();
-            return gYear === currentYear;
-        });
-        if (currentSeasonGames.filter(g => g.status.short === 'FT').length === 0 && gameType !== 'S') {
-            const stGames = await getMLBTeamGames(teamId, currentYear, 'S').catch(() => []);
-            if (stGames.length > 0) {
-                allGames = [...stGames, ...allGames];
-                const stStats = await getMLBTeamStats(teamId, currentYear, 'S').catch(() => null);
-                if (stStats) stats = stStats;
-            }
-        }
+        // Regular season: if no games yet, that's expected early season — don't fall back to spring training
 
         // ═══ Derive streak data from ALL finished games ═══
         const finishedGames = allGames
