@@ -119,20 +119,6 @@ export default function Navbar() {
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#00e59b] transition-all group-hover:w-full" />
                             </Link>
                         ))}
-                        {/* Live Clock */}
-                        {currentTime && (
-                            <div style={{
-                                display: 'flex', alignItems: 'center', gap: '6px',
-                                padding: '4px 10px', borderRadius: '8px',
-                                background: 'rgba(0,229,155,0.06)',
-                                border: '1px solid rgba(0,229,155,0.12)',
-                            }}>
-                                <Clock size={13} style={{ color: '#00e59b' }} />
-                                <span style={{ color: '#00e59b', fontSize: '12px', fontWeight: 700, fontVariantNumeric: 'tabular-nums', letterSpacing: '0.02em' }}>
-                                    {currentTime}
-                                </span>
-                            </div>
-                        )}
                         {user ? (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                 <Link href="/dashboard" className="text-sm text-gray-300 hover:text-white transition-colors flex items-center gap-2">
@@ -164,6 +150,21 @@ export default function Navbar() {
                                     <Zap size={14} className="sm:w-4 sm:h-4" />
                                     Sign Up Free
                                 </Link>
+                            </div>
+                        )}
+                        {/* Live Clock — far right */}
+                        {currentTime && (
+                            <div style={{
+                                display: 'flex', alignItems: 'center', gap: '6px',
+                                padding: '4px 10px', borderRadius: '8px',
+                                background: 'rgba(0,229,155,0.06)',
+                                border: '1px solid rgba(0,229,155,0.12)',
+                                marginLeft: '4px',
+                            }}>
+                                <Clock size={13} style={{ color: '#00e59b' }} />
+                                <span style={{ color: '#00e59b', fontSize: '12px', fontWeight: 700, fontVariantNumeric: 'tabular-nums', letterSpacing: '0.02em' }}>
+                                    {currentTime}
+                                </span>
                             </div>
                         )}
                     </div>

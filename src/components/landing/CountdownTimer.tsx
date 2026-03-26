@@ -7,12 +7,19 @@ import Link from 'next/link';
 
 function getNextPickDrop(): Date {
     const now = new Date();
-    // Next pick drop is always today at 5 PM ET (or tomorrow if past 5 PM)
-    const target = new Date(now);
-    target.setHours(17, 0, 0, 0); // 5 PM
-    if (target <= now) {
-        target.setDate(target.getDate() + 1); // Tomorrow
+    // Next pick drop is always today at 10 AM ET (or tomorrow if past 10 AM)
+    const etStr = now.toLocaleString('en-US', { timeZone: 'America/New_York', hour12: false });
+    const etParts = etStr.split(', ')[1]?.split(':') || [];
+    const etHour = parseInt(etParts[0] || '0', 10);
+
+    const targetET = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    if (etHour >= 10) {
+        targetET.setDate(targetET.getDate() + 1);
     }
+    targetET.setHours(10, 0, 0, 0);
+
+    const offset = targetET.getTime() - new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' })).getTime();
+    const target = new Date(now.getTime() + offset);
     return target;
 }
 

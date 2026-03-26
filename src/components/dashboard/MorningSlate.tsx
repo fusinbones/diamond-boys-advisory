@@ -25,23 +25,18 @@ export default function MorningSlate({ totalGames, upcomingPicks, sports, userEm
             const etHour = parseInt(etParts[0] || '0', 10);
 
             // Build next drop time in ET
-            // Pick drops: 12:00 PM ET (noon slate) and 5:00 PM ET (evening slate)
+            // Picks drop daily at 10:00 AM ET
             const nextDrop = new Date();
-            if (etHour < 12) {
-                // Before noon → next drop at 12 PM ET
+            if (etHour < 10) {
+                // Before 10 AM → next drop at 10 AM ET today
                 const targetET = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
-                targetET.setHours(12, 0, 0, 0);
-                nextDrop.setTime(now.getTime() + (targetET.getTime() - new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' })).getTime()));
-            } else if (etHour < 17) {
-                // Between noon and 5 PM → next drop at 5 PM ET
-                const targetET = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
-                targetET.setHours(17, 0, 0, 0);
+                targetET.setHours(10, 0, 0, 0);
                 nextDrop.setTime(now.getTime() + (targetET.getTime() - new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' })).getTime()));
             } else {
-                // After 5 PM → drop tomorrow at 12 PM ET
+                // After 10 AM → drop tomorrow at 10 AM ET
                 const targetET = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
                 targetET.setDate(targetET.getDate() + 1);
-                targetET.setHours(12, 0, 0, 0);
+                targetET.setHours(10, 0, 0, 0);
                 nextDrop.setTime(now.getTime() + (targetET.getTime() - new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' })).getTime()));
             }
 
