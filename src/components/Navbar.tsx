@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Zap, Home, CreditCard, LayoutDashboard, FileText, TrendingUp, Users, Trophy, LogOut, User, MessageCircle, Shield, Settings } from 'lucide-react';
+import { Menu, X, Zap, Home, CreditCard, LayoutDashboard, FileText, TrendingUp, Users, Trophy, LogOut, User, MessageCircle, Shield, Settings, Clock } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 import { isAdminEmail } from '@/lib/adminAuth';
 
@@ -27,6 +27,22 @@ export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const [showMenuHint, setShowMenuHint] = useState(false);
     const { user, signOut } = useAuth();
+    const [currentTime, setCurrentTime] = useState('');
+
+    // Live clock — updates every second using user's local timezone
+    useEffect(() => {
+        const updateTime = () => {
+            setCurrentTime(new Date().toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true,
+            }));
+        };
+        updateTime();
+        const interval = setInterval(updateTime, 1000);
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -103,6 +119,20 @@ export default function Navbar() {
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#00e59b] transition-all group-hover:w-full" />
                             </Link>
                         ))}
+                        {/* Live Clock */}
+                        {currentTime && (
+                            <div style={{
+                                display: 'flex', alignItems: 'center', gap: '6px',
+                                padding: '4px 10px', borderRadius: '8px',
+                                background: 'rgba(0,229,155,0.06)',
+                                border: '1px solid rgba(0,229,155,0.12)',
+                            }}>
+                                <Clock size={13} style={{ color: '#00e59b' }} />
+                                <span style={{ color: '#00e59b', fontSize: '12px', fontWeight: 700, fontVariantNumeric: 'tabular-nums', letterSpacing: '0.02em' }}>
+                                    {currentTime}
+                                </span>
+                            </div>
+                        )}
                         {user ? (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                 <Link href="/dashboard" className="text-sm text-gray-300 hover:text-white transition-colors flex items-center gap-2">
@@ -138,7 +168,21 @@ export default function Navbar() {
                         )}
                     </div>
 
-                    {/* Mobile Toggle */}
+                    {/* Mobile Clock + Toggle */}
+                    <div className="md:hidden flex items-center gap-2">
+                        {currentTime && (
+                            <div style={{
+                                display: 'flex', alignItems: 'center', gap: '4px',
+                                padding: '3px 8px', borderRadius: '6px',
+                                background: 'rgba(0,229,155,0.06)',
+                                border: '1px solid rgba(0,229,155,0.1)',
+                            }}>
+                                <Clock size={11} style={{ color: '#00e59b' }} />
+                                <span style={{ color: '#00e59b', fontSize: '11px', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>
+                                    {currentTime}
+                                </span>
+                            </div>
+                        )}
                     <button
                         onClick={() => {
                             setIsOpen(!isOpen);
@@ -179,6 +223,7 @@ export default function Navbar() {
                             </div>
                         )}
                     </button>
+                    </div>
                 </div>
             </div>
 
