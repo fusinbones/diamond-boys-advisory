@@ -66,6 +66,10 @@ export async function GET() {
                 const awayScore = ev.scores?.find(sc => sc.name === ev.away_team);
 
                 const gameTime = new Date(ev.commence_time);
+                const dateStr = gameTime.toLocaleDateString('en-US', {
+                    month: 'short', day: 'numeric',
+                    timeZone: 'America/New_York',
+                });
                 const time = gameTime.toLocaleTimeString('en-US', {
                     hour: 'numeric', minute: '2-digit', hour12: true,
                     timeZone: 'America/New_York',
@@ -85,7 +89,7 @@ export async function GET() {
                         score: homeScore ? Number(homeScore.score) : null,
                     },
                     league: item.sport,
-                    time: `${time} ET`,
+                    time: `${dateStr} · ${time} ET`,
                 });
             }
         }

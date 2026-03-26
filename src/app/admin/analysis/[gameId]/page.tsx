@@ -505,7 +505,7 @@ function TeamAlternation({ data, team, label }: { data: TeamData | null; team: {
                                 return (
                                     <tr key={g.gameId}>
                                         <td style={{ color: '#4b5563', fontSize: '10px' }}>{idx + 1}</td>
-                                        <td style={{ fontSize: '11px' }}>{new Date(g.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</td>
+                                        <td style={{ fontSize: '11px' }}>{new Date(g.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</td>
                                         <td style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px' }}>
                                             {/* eslint-disable-next-line @next/next/no-img-element */}
                                             <img src={g.opponentLogo} alt="" width={14} height={14} style={{ borderRadius: '2px' }} />
@@ -625,7 +625,7 @@ function PitchingTab({ homeP, awayP, game }: { homeP: PitcherData | null; awayP:
                             <tbody>
                                 {gameLog.slice(0, 5).map((g, i) => (
                                     <tr key={i}>
-                                        <td>{new Date(g.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</td>
+                                        <td>{new Date(g.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</td>
                                         <td>{g.opponent}</td>
                                         <td>{g.inningsPitched}</td>
                                         <td>{g.earnedRuns}</td>
@@ -900,7 +900,7 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
 
         // Build beautiful formatted message
         const matchup = `${game.teams.away.name} @ ${game.teams.home.name}`;
-        const gameDate = game.date ? new Date(game.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : 'Today';
+        const gameDate = game.date ? new Date(game.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : 'Today';
 
         return [
             `🎯 FREE PICK DROP 🎯`,

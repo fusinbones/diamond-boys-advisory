@@ -32,7 +32,10 @@ function fmtOdds(p: number | null): string {
 
 function shortTime(time: string): string {
     try {
-        return new Date(time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        const d = new Date(time);
+        const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/New_York' });
+        const t = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/New_York' });
+        return `${date} · ${t} ET`;
     } catch { return 'TBD'; }
 }
 
