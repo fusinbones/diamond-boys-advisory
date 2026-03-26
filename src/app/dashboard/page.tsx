@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense, useCallback, useRef, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, UserPlus, LogIn, Loader2, Shield, Flame, LogOut, ArrowUp } from 'lucide-react';
+import { Mail, Lock, UserPlus, LogIn, Loader2, Shield, Flame, LogOut, ArrowUp, KeyRound } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
@@ -75,6 +75,9 @@ function DashboardContent(): ReactNode {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
+    const [recoveryMode, setRecoveryMode] = useState(false);
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     // Dashboard state
     const [sportFilter, setSportFilter] = useState('All');
@@ -106,6 +109,63 @@ function DashboardContent(): ReactNode {
     useEffect(() => {
         if (isFreeSignup) setIsSignUp(true);
     }, [isFreeSignup]);
+
+    // Listen for PASSWORD_RECOVERY event from Supabase
+    useEffect(() => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+            if (event === 'PASSWORD_RECOVERY') {
+                setRecoveryMode(true);
+                setError('');
+                setMessage('');
+            }
+        });
+
+        // Check URL hash for expired/invalid link errors
+        if (typeof window !== 'undefined') {
+            const hash = window.location.hash;
+            if (hash.includes('error=access_denied') || hash.includes('otp_expired')) {
+                setError('This password reset link has expired. Please request a new one below.');
+                // Clean the hash
+                window.history.replaceState(null, '', window.location.pathname);
+            }
+        }
+
+        return () => subscription.unsubscribe();
+    }, []);
+
+    // Handle setting new password
+    const handleSetNewPassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+        setMessage('');
+
+        if (newPassword.length < 6) {
+            setError('Password must be at least 6 characters.');
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            setError('Passwords do not match.');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const { error } = await supabase.auth.updateUser({ password: newPassword });
+            if (error) throw error;
+            setMessage('Password updated successfully! Redirecting...');
+            setRecoveryMode(false);
+            setTimeout(() => router.push('/dashboard'), 1500);
+        } catch (err: unknown) {
+            const raw = err instanceof Error ? err.message : String(err);
+            if (raw.toLowerCase().includes('same')) {
+                setError('New password must be different from your current password.');
+            } else {
+                setError('Could not update password. Please try again.');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Fetch user profile from Supabase
     useEffect(() => {
@@ -273,7 +333,97 @@ function DashboardContent(): ReactNode {
     }
 
     // ── Not logged in — Auth Form ──
-    if (!user) {
+    if (!user || recoveryMode) {
+        // Password recovery mode — show "Set New Password" form
+        if (recoveryMode) {
+            return (
+                <div style={{ paddingTop: '40px', paddingBottom: '60px', minHeight: 'calc(100vh - 96px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className="container-db" style={{ maxWidth: '420px' }}>
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                            <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(0,229,155,0.1)', border: '1px solid rgba(0,229,155,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                                    <KeyRound size={28} style={{ color: '#00e59b' }} />
+                                </div>
+                                <h1 className="font-display" style={{ fontSize: '28px', fontWeight: 800, color: 'white', marginBottom: '8px' }}>
+                                    Set New Password
+                                </h1>
+                                <p style={{ color: '#d1d5db', fontSize: '15px', lineHeight: 1.5 }}>
+                                    Enter your new password below.
+                                </p>
+                            </div>
+
+                            <div className="glass-card" style={{ padding: '28px 24px', marginBottom: '20px' }}>
+                                <form onSubmit={handleSetNewPassword}>
+                                    <label htmlFor="new-password" style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#e5e7eb', marginBottom: '8px' }}>
+                                        New Password
+                                    </label>
+                                    <div style={{ position: 'relative', marginBottom: '14px' }}>
+                                        <Lock size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#6b7280' }} />
+                                        <input
+                                            id="new-password"
+                                            type="password"
+                                            required
+                                            value={newPassword}
+                                            onChange={(e) => setNewPassword(e.target.value)}
+                                            style={{
+                                                width: '100%', padding: '12px 12px 12px 40px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+                                                borderRadius: '10px', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box',
+                                            }}
+                                            placeholder="New password (min 6 chars)"
+                                            minLength={6}
+                                        />
+                                    </div>
+
+                                    <label htmlFor="confirm-password" style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#e5e7eb', marginBottom: '8px' }}>
+                                        Confirm Password
+                                    </label>
+                                    <div style={{ position: 'relative', marginBottom: '20px' }}>
+                                        <Lock size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#6b7280' }} />
+                                        <input
+                                            id="confirm-password"
+                                            type="password"
+                                            required
+                                            value={confirmPassword}
+                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                            style={{
+                                                width: '100%', padding: '12px 12px 12px 40px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+                                                borderRadius: '10px', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box',
+                                            }}
+                                            placeholder="Confirm new password"
+                                            minLength={6}
+                                        />
+                                    </div>
+
+                                    <AnimatePresence mode="wait">
+                                        {error && (
+                                            <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                                                style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '8px', padding: '10px 14px', marginBottom: '14px', color: '#f87171', fontSize: '13px' }}
+                                            >{error}</motion.div>
+                                        )}
+                                        {message && (
+                                            <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                                                style={{ background: 'rgba(0,229,155,0.1)', border: '1px solid rgba(0,229,155,0.2)', borderRadius: '8px', padding: '10px 14px', marginBottom: '14px', color: '#00e59b', fontSize: '13px' }}
+                                            >{message}</motion.div>
+                                        )}
+                                    </AnimatePresence>
+
+                                    <button type="submit" className="btn-glow" disabled={loading}
+                                        style={{ width: '100%', padding: '14px', fontSize: '15px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                                    >
+                                        {loading ? (
+                                            <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Updating...</>
+                                        ) : (
+                                            <><KeyRound size={16} /> Set New Password</>
+                                        )}
+                                    </button>
+                                </form>
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+            );
+        }
+
         return (
             <div style={{ paddingTop: '40px', paddingBottom: '60px', minHeight: 'calc(100vh - 96px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div className="container-db" style={{ maxWidth: '420px' }}>
