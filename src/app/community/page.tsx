@@ -69,10 +69,10 @@ interface TickerGame {
 
 const TIER_HIERARCHY: Record<string, number> = {
     free: 0,
-    starter: 1,
-    daily: 1,
-    pro: 2,
-    weekly: 2,
+    starter: 3,
+    daily: 3,
+    pro: 3,
+    weekly: 3,
     elite: 3,
     monthly: 3,
     season: 3,

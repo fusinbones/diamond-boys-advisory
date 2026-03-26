@@ -75,10 +75,13 @@ export async function GET() {
 
 function getTierLevel(tier: string | null): number {
     switch (tier) {
-        case 'daily': return 1;
-        case 'weekly': return 2;
-        case 'monthly': return 3;
-        case 'season': return 4;
+        case 'starter':
+        case 'daily':
+        case 'pro':
+        case 'weekly':
+        case 'monthly':
+        case 'elite':
+        case 'season': return 3;
         default: return 0;
     }
 }
