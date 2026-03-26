@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getSportScores, US_SPORTS, type ScoreEvent } from '@/lib/odds-api';
 
 function getSupabase() {
     return createClient(
@@ -56,6 +57,11 @@ export async function GET(request: NextRequest) {
         const tomorrow = tomorrowDate.toISOString().split('T')[0];
 
         console.log('[Dashboard Picks] today=', today, 'tomorrow=', tomorrow);
+
+        // ══ INLINE AUTO-GRADING ══
+        // Grade any pending picks whose games have completed, so stats update
+        // within 60s of game end (dashboard polls every 60s)
+        await inlineGradePending(supabase);
 
         // ── Fetch picks based on tab ──
         let query = supabase
@@ -221,4 +227,122 @@ export async function GET(request: NextRequest) {
         }
         return NextResponse.json({ error: 'Failed to fetch dashboard data', details: msg }, { status: 500 });
     }
+}
+
+// ═══════════════════════════════════════════
+// Inline Auto-Grading (runs on every dashboard poll)
+// ═══════════════════════════════════════════
+
+let lastGradeCheck = 0;
+const GRADE_COOLDOWN = 120_000; // 2 min cooldown between Odds API checks
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function inlineGradePending(supabase: any) {
+    // Cooldown to avoid spamming Odds API (dashboard polls every 60s, but
+    // multiple users could be polling simultaneously)
+    if (Date.now() - lastGradeCheck < GRADE_COOLDOWN) return;
+    lastGradeCheck = Date.now();
+
+    try {
+        // 1. Get pending picks that have a game_id
+        const { data: pending } = await supabase
+            .from('picks')
+            .select('id, game_id, pick_type, pick_team, pick_value')
+            .eq('result', 'pending')
+            .not('game_id', 'is', null)
+            .limit(50);
+
+        if (!pending || pending.length === 0) return;
+
+        // 2. Fetch completed scores for all sports
+        const allScores: ScoreEvent[] = [];
+        for (const sport of US_SPORTS) {
+            try {
+                const scores = await getSportScores(sport.key, 2);
+                allScores.push(...scores.filter(s => s.completed && s.scores));
+            } catch { /* skip sport */ }
+        }
+
+        const scoreMap = new Map(allScores.map(s => [s.id, s]));
+
+        // 3. Grade matching picks
+        let graded = 0;
+        for (const pick of pending) {
+            const score = scoreMap.get(pick.game_id as string);
+            if (!score || !score.scores) continue;
+
+            const homeScore = Number(score.scores.find(s => s.name === score.home_team)?.score || 0);
+            const awayScore = Number(score.scores.find(s => s.name === score.away_team)?.score || 0);
+            const finalScore = `${awayScore}-${homeScore}`;
+            const pickType = ((pick.pick_type as string) || 'ML').toUpperCase();
+            const pickTeam = (pick.pick_team as string) || '';
+            let result: string = 'miss';
+
+            if (pickType === 'ML' || pickType === 'MONEYLINE') {
+                const isHome = isTeamMatch(pickTeam, score.home_team);
+                const isAway = isTeamMatch(pickTeam, score.away_team);
+                if (isHome) result = homeScore > awayScore ? 'hit' : homeScore === awayScore ? 'push' : 'miss';
+                else if (isAway) result = awayScore > homeScore ? 'hit' : awayScore === homeScore ? 'push' : 'miss';
+            } else if (pickType === 'SPREAD' || pickType === 'ATS') {
+                const spreadMatch = ((pick.pick_value as string) || '').match(/([+-]?\d+\.?\d*)/);
+                if (spreadMatch) {
+                    const line = parseFloat(spreadMatch[1]);
+                    const isHome = isTeamMatch(pickTeam, score.home_team);
+                    const teamScore = isHome ? homeScore : awayScore;
+                    const oppScore = isHome ? awayScore : homeScore;
+                    const adj = teamScore + line;
+                    result = adj > oppScore ? 'hit' : adj === oppScore ? 'push' : 'miss';
+                }
+            } else if (pickType === 'TOTAL' || pickType.includes('O/U') || pickType.includes('OVER')) {
+                const totalMatch = ((pick.pick_value as string) || '').match(/(\d+\.?\d*)/);
+                const isOver = ((pick.pick_value as string) || '').toLowerCase().includes('over') || ((pick.pick_value as string) || '').toLowerCase().includes(' o');
+                if (totalMatch) {
+                    const line = parseFloat(totalMatch[1]);
+                    const total = homeScore + awayScore;
+                    result = total === line ? 'push' : (isOver ? (total > line ? 'hit' : 'miss') : (total < line ? 'hit' : 'miss'));
+                }
+            }
+
+            await supabase.from('picks').update({ result, score: finalScore }).eq('id', pick.id);
+            graded++;
+        }
+
+        // 4. Also grade revealed fire picks
+        const { data: pendingFire } = await supabase
+            .from('fire_picks')
+            .select('id, game_id, pick_team, pick_type, pick_value')
+            .eq('status', 'revealed')
+            .not('game_id', 'is', null);
+
+        if (pendingFire) {
+            for (const fp of pendingFire) {
+                const score = scoreMap.get(fp.game_id as string);
+                if (!score || !score.scores) continue;
+                const homeScore = Number(score.scores.find(s => s.name === score.home_team)?.score || 0);
+                const awayScore = Number(score.scores.find(s => s.name === score.away_team)?.score || 0);
+                const isHome = isTeamMatch((fp.pick_team as string) || '', score.home_team);
+                const isAway = isTeamMatch((fp.pick_team as string) || '', score.away_team);
+                let fireResult = 'lost';
+                if (isHome) fireResult = homeScore > awayScore ? 'won' : homeScore === awayScore ? 'push' : 'lost';
+                else if (isAway) fireResult = awayScore > homeScore ? 'won' : awayScore === homeScore ? 'push' : 'lost';
+                await supabase.from('fire_picks').update({ status: fireResult, result: fireResult }).eq('id', fp.id);
+            }
+        }
+
+        if (graded > 0) console.log(`[Inline Grade] Auto-graded ${graded} picks`);
+    } catch (err) {
+        // Non-fatal — grading failures should never break the picks API
+        console.error('[Inline Grade] Error (non-fatal):', err);
+    }
+}
+
+/** Fuzzy team name matching — handles "Tigers" vs "Detroit Tigers" */
+function isTeamMatch(pickTeam: string, apiTeam: string): boolean {
+    const pick = pickTeam.toLowerCase().trim();
+    const api = apiTeam.toLowerCase().trim();
+    if (pick === api) return true;
+    if (api.includes(pick) || pick.includes(api)) return true;
+    const pickLast = pick.split(' ').pop() || '';
+    const apiLast = api.split(' ').pop() || '';
+    return pickLast === apiLast && pickLast.length > 2;
 }
