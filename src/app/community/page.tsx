@@ -60,6 +60,7 @@ interface TickerGame {
     status: { long: string; short: string };
     away: { name: string; logo: string; score: number | null };
     home: { name: string; logo: string; score: number | null };
+    league: string;
     time: string;
 }
 
@@ -195,52 +196,69 @@ function SmartTicker({ onGameClick, onSearchClick }: { onGameClick: (g: TickerGa
     }, []);
 
     if (games.length === 0) return null;
-    const doubled = [...games, ...games];
+
+    // Group games by sport
+    const sportOrder = ['MLB', 'NBA', 'NHL'];
+    const grouped: Record<string, TickerGame[]> = {};
+    for (const g of games) {
+        const key = g.league || 'Other';
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(g);
+    }
+    const activeSports = sportOrder.filter(s => (grouped[s] || []).length > 0);
 
     return (
-        <div className="lounge-ticker">
-            <div className="lounge-ticker-inner">
-                <div className="lounge-ticker-track">
-                    {doubled.map((g, i) => {
-                        const isLive = g.status.short.startsWith('IN');
-                        const isDone = g.status.short === 'FT';
-                        const hasScore = isDone || isLive;
-                        return (
-                            <div key={`${g.id}-${i}`}
-                                className={`lounge-ticker-card ${isLive ? 'live' : ''}`}
-                                onClick={() => onGameClick(g)}
-                                style={{ cursor: 'pointer' }}
-                                title="Click for full analysis"
-                            >
-                                <div className="lounge-ticker-team">
-                                    {g.away.logo && (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img src={g.away.logo} alt={g.away.name} />
-                                    )}
-                                    <span className="lounge-ticker-name">{shortName(g.away.name)}</span>
-                                    {hasScore && <span className="lounge-ticker-score">{g.away.score ?? 0}</span>}
-                                </div>
-                                <span className="lounge-ticker-vs">@</span>
-                                <div className="lounge-ticker-team">
-                                    {hasScore && <span className="lounge-ticker-score">{g.home.score ?? 0}</span>}
-                                    <span className="lounge-ticker-name">{shortName(g.home.name)}</span>
-                                    {g.home.logo && (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img src={g.home.logo} alt={g.home.name} />
-                                    )}
-                                </div>
-                                {isLive ? (
-                                    <span className="lounge-ticker-badge live-badge"><span className="live-dot" /> LIVE</span>
-                                ) : isDone ? (
-                                    <span className="lounge-ticker-badge final-badge">FINAL</span>
-                                ) : (
-                                    <span className="lounge-ticker-badge time-badge">{g.time}</span>
-                                )}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', width: '100%', position: 'relative' }}>
+            {activeSports.map(sport => {
+                const sportGames = grouped[sport] || [];
+                const doubled = [...sportGames, ...sportGames];
+                return (
+                    <div key={sport} className="lounge-ticker">
+                        <div className="lounge-ticker-inner">
+                            <div className="lounge-ticker-track">
+                                {doubled.map((g, i) => {
+                                    const isLive = g.status.short.startsWith('IN');
+                                    const isDone = g.status.short === 'FT';
+                                    const hasScore = isDone || isLive;
+                                    return (
+                                        <div key={`${g.id}-${i}`}
+                                            className={`lounge-ticker-card ${isLive ? 'live' : ''}`}
+                                            onClick={() => onGameClick(g)}
+                                            style={{ cursor: 'pointer' }}
+                                            title="Click for full analysis"
+                                        >
+                                            <div className="lounge-ticker-team">
+                                                {g.away.logo && (
+                                                    // eslint-disable-next-line @next/next/no-img-element
+                                                    <img src={g.away.logo} alt={g.away.name} />
+                                                )}
+                                                <span className="lounge-ticker-name">{shortName(g.away.name)}</span>
+                                                {hasScore && <span className="lounge-ticker-score">{g.away.score ?? 0}</span>}
+                                            </div>
+                                            <span className="lounge-ticker-vs">@</span>
+                                            <div className="lounge-ticker-team">
+                                                {hasScore && <span className="lounge-ticker-score">{g.home.score ?? 0}</span>}
+                                                <span className="lounge-ticker-name">{shortName(g.home.name)}</span>
+                                                {g.home.logo && (
+                                                    // eslint-disable-next-line @next/next/no-img-element
+                                                    <img src={g.home.logo} alt={g.home.name} />
+                                                )}
+                                            </div>
+                                            {isLive ? (
+                                                <span className="lounge-ticker-badge live-badge"><span className="live-dot" /> LIVE</span>
+                                            ) : isDone ? (
+                                                <span className="lounge-ticker-badge final-badge">FINAL</span>
+                                            ) : (
+                                                <span className="lounge-ticker-badge time-badge">{g.time}</span>
+                                            )}
+                                        </div>
+                                    );
+                                })}
                             </div>
-                        );
-                    })}
-                </div>
-            </div>
+                        </div>
+                    </div>
+                );
+            })}
             <button className="lounge-ticker-search" onClick={onSearchClick} title="Search teams & schedules">
                 <Search size={14} />
             </button>
@@ -548,6 +566,7 @@ function TeamSearchPanel({
             status: g.status,
             away: g.away,
             home: g.home,
+            league: '',
             time: g.time,
         });
         onClose();
