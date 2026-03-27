@@ -65,95 +65,86 @@ function SportTickerRow({ sport, items, delay }: { sport: SportConfig; items: Ti
             </div>
 
             {/* Horizontal scrolling cards */}
-            <div style={{
+            <div className={`ticker-scroll-${sport.key}`} style={{
                 display: 'flex', gap: '8px',
                 overflowX: 'auto',
                 paddingBottom: '6px',
                 scrollSnapType: 'x mandatory',
                 WebkitOverflowScrolling: 'touch',
                 scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
             }}>
-                <style>{`
-                    .ticker-row-${sport.key}::-webkit-scrollbar { display: none; }
-                `}</style>
-                <div className={`ticker-row-${sport.key}`} style={{
-                    display: 'flex', gap: '8px',
-                    overflowX: 'auto',
-                    scrollSnapType: 'x mandatory',
-                    scrollbarWidth: 'none',
-                    width: '100%',
-                }}>
-                    {items.map((item) => (
-                        <div
-                            key={item.id}
-                            style={{
-                                minWidth: '300px',
-                                maxWidth: '380px',
-                                flex: '0 0 auto',
-                                scrollSnapAlign: 'start',
-                                background: sport.gradient,
-                                border: `1px solid ${sport.color}15`,
-                                borderRadius: '10px',
-                                padding: '12px 14px',
-                                position: 'relative',
-                                overflow: 'hidden',
-                                transition: 'border-color 0.2s',
-                            }}
-                        >
-                            {/* Top accent line */}
-                            <div style={{
-                                position: 'absolute', top: 0, left: '15%', right: '15%', height: '2px',
-                                background: `linear-gradient(90deg, transparent, ${sport.color}40, transparent)`,
-                                borderRadius: '0 0 4px 4px',
-                            }} />
+                <style>{`.ticker-scroll-${sport.key}::-webkit-scrollbar { display: none; }`}</style>
+                {items.map((item) => (
+                    <div
+                        key={item.id}
+                        style={{
+                            minWidth: '300px',
+                            maxWidth: '380px',
+                            flex: '0 0 auto',
+                            scrollSnapAlign: 'start',
+                            background: sport.gradient,
+                            border: `1px solid ${sport.color}15`,
+                            borderRadius: '10px',
+                            padding: '12px 14px',
+                            position: 'relative',
+                            overflow: 'hidden',
+                            transition: 'border-color 0.2s',
+                        }}
+                    >
+                        {/* Top accent line */}
+                        <div style={{
+                            position: 'absolute', top: 0, left: '15%', right: '15%', height: '2px',
+                            background: `linear-gradient(90deg, transparent, ${sport.color}40, transparent)`,
+                            borderRadius: '0 0 4px 4px',
+                        }} />
 
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-                                <div style={{ flex: 1, minWidth: 0 }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '5px' }}>
-                                        <span style={{
-                                            fontSize: '9px', fontWeight: 700,
-                                            color: '#fbbf24', background: 'rgba(251,191,36,0.12)',
-                                            padding: '1px 6px', borderRadius: '4px',
-                                        }}>
-                                            {formatTime(item.timestamp)} ET
-                                        </span>
-                                        {item.urgency === 'high' && (
-                                            <span style={{
-                                                fontSize: '8px', fontWeight: 800,
-                                                color: '#ef4444', background: 'rgba(239,68,68,0.1)',
-                                                padding: '1px 5px', borderRadius: '3px',
-                                                textTransform: 'uppercase', letterSpacing: '0.5px',
-                                            }}>HOT</span>
-                                        )}
-                                    </div>
-                                    <div style={{
-                                        fontSize: '13px', fontWeight: 700, color: '#f3f4f6',
-                                        whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                                    }}>
-                                        {item.headline}
-                                    </div>
-                                </div>
-
-                                {/* Blurred odds — LOCKED teaser */}
-                                <div style={{
-                                    display: 'flex', alignItems: 'center', gap: '5px',
-                                    padding: '5px 10px', borderRadius: '7px',
-                                    background: `${sport.color}08`,
-                                    border: `1px solid ${sport.color}15`,
-                                    flexShrink: 0,
-                                }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '5px' }}>
                                     <span style={{
-                                        fontSize: '11px', fontWeight: 700, color: '#9ca3af',
-                                        filter: 'blur(4px)', userSelect: 'none', WebkitUserSelect: 'none',
+                                        fontSize: '9px', fontWeight: 700,
+                                        color: '#fbbf24', background: 'rgba(251,191,36,0.12)',
+                                        padding: '1px 6px', borderRadius: '4px',
                                     }}>
-                                        -135 / +115
+                                        {formatTime(item.timestamp)} ET
                                     </span>
-                                    <Lock size={11} style={{ color: sport.color, flexShrink: 0 }} />
+                                    {item.urgency === 'high' && (
+                                        <span style={{
+                                            fontSize: '8px', fontWeight: 800,
+                                            color: '#ef4444', background: 'rgba(239,68,68,0.1)',
+                                            padding: '1px 5px', borderRadius: '3px',
+                                            textTransform: 'uppercase', letterSpacing: '0.5px',
+                                        }}>HOT</span>
+                                    )}
+                                </div>
+                                <div style={{
+                                    fontSize: '13px', fontWeight: 700, color: '#f3f4f6',
+                                    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                                }}>
+                                    {item.headline}
                                 </div>
                             </div>
+
+                            {/* Blurred odds — LOCKED teaser */}
+                            <div style={{
+                                display: 'flex', alignItems: 'center', gap: '5px',
+                                padding: '5px 10px', borderRadius: '7px',
+                                background: `${sport.color}08`,
+                                border: `1px solid ${sport.color}15`,
+                                flexShrink: 0,
+                            }}>
+                                <span style={{
+                                    fontSize: '11px', fontWeight: 700, color: '#9ca3af',
+                                    filter: 'blur(4px)', userSelect: 'none', WebkitUserSelect: 'none',
+                                }}>
+                                    -135 / +115
+                                </span>
+                                <Lock size={11} style={{ color: sport.color, flexShrink: 0 }} />
+                            </div>
                         </div>
-                    ))}
-                </div>
+                    </div>
+                ))}
             </div>
         </motion.div>
     );
