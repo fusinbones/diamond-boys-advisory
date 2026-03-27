@@ -1,19 +1,21 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Lock, ArrowRight } from 'lucide-react';
 
-interface TickerItem {
+interface GameData {
     id: string;
-    type: 'odds' | 'edge' | 'streak' | 'score' | 'movement';
     sport: string;
     sportEmoji: string;
-    headline: string;
-    detail: string;
-    urgency: 'low' | 'medium' | 'high';
-    timestamp: string;
+    homeTeam: string;
+    awayTeam: string;
+    gameTime: string;
+    isLive: boolean;
+    isCompleted: boolean;
+    homeScore: string | null;
+    awayScore: string | null;
 }
 
 interface SportConfig {
@@ -37,8 +39,31 @@ function formatTime(iso: string): string {
     } catch { return ''; }
 }
 
-/** A single horizontal scrolling ticker row for one sport */
-function SportTickerRow({ sport, items, delay }: { sport: SportConfig; items: TickerItem[]; delay: number }) {
+/** A single sport ticker row — fetches its own data */
+function SportTickerRow({ sport, delay }: { sport: SportConfig; delay: number }) {
+    const [games, setGames] = useState<GameData[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchGames = async () => {
+            try {
+                const res = await fetch(`/api/dashboard/games?sport=${sport.key}`);
+                const data = await res.json();
+                setGames((data.games || []) as GameData[]);
+            } catch {
+                /* skip */
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchGames();
+        const interval = setInterval(fetchGames, 90000); // refresh every 90s
+        return () => clearInterval(interval);
+    }, [sport.key]);
+
+    if (loading) return null; // don't show loading spinners — rows appear as data arrives
+    if (games.length === 0) return null; // hide sport with no games
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -57,7 +82,7 @@ function SportTickerRow({ sport, items, delay }: { sport: SportConfig; items: Ti
                 }}>{sport.label}</span>
                 <span style={{
                     fontSize: '10px', color: '#4b5563', fontWeight: 600,
-                }}>{items.length} game{items.length !== 1 ? 's' : ''}</span>
+                }}>{games.length} game{games.length !== 1 ? 's' : ''}</span>
                 <div style={{
                     flex: 1, height: '1px',
                     background: `linear-gradient(90deg, ${sport.color}22, transparent)`,
@@ -75,12 +100,12 @@ function SportTickerRow({ sport, items, delay }: { sport: SportConfig; items: Ti
                 msOverflowStyle: 'none',
             }}>
                 <style>{`.ticker-scroll-${sport.key}::-webkit-scrollbar { display: none; }`}</style>
-                {items.map((item) => (
+                {games.map((game) => (
                     <div
-                        key={item.id}
+                        key={game.id}
                         style={{
-                            minWidth: '300px',
-                            maxWidth: '380px',
+                            minWidth: '280px',
+                            maxWidth: '360px',
                             flex: '0 0 auto',
                             scrollSnapAlign: 'start',
                             background: sport.gradient,
@@ -89,10 +114,9 @@ function SportTickerRow({ sport, items, delay }: { sport: SportConfig; items: Ti
                             padding: '12px 14px',
                             position: 'relative',
                             overflow: 'hidden',
-                            transition: 'border-color 0.2s',
                         }}
                     >
-                        {/* Top accent line */}
+                        {/* Top accent */}
                         <div style={{
                             position: 'absolute', top: 0, left: '15%', right: '15%', height: '2px',
                             background: `linear-gradient(90deg, transparent, ${sport.color}40, transparent)`,
@@ -102,46 +126,61 @@ function SportTickerRow({ sport, items, delay }: { sport: SportConfig; items: Ti
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
                             <div style={{ flex: 1, minWidth: 0 }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '5px' }}>
-                                    <span style={{
-                                        fontSize: '9px', fontWeight: 700,
-                                        color: '#fbbf24', background: 'rgba(251,191,36,0.12)',
-                                        padding: '1px 6px', borderRadius: '4px',
-                                    }}>
-                                        {formatTime(item.timestamp)} ET
-                                    </span>
-                                    {item.urgency === 'high' && (
+                                    {game.isLive && (
                                         <span style={{
-                                            fontSize: '8px', fontWeight: 800,
-                                            color: '#ef4444', background: 'rgba(239,68,68,0.1)',
-                                            padding: '1px 5px', borderRadius: '3px',
-                                            textTransform: 'uppercase', letterSpacing: '0.5px',
-                                        }}>HOT</span>
+                                            fontSize: '8px', fontWeight: 800, color: '#00e59b',
+                                            background: 'rgba(0,229,155,0.12)', padding: '1px 5px',
+                                            borderRadius: '3px', textTransform: 'uppercase', letterSpacing: '0.5px',
+                                        }}>LIVE</span>
+                                    )}
+                                    {game.isCompleted && (
+                                        <span style={{
+                                            fontSize: '8px', fontWeight: 800, color: '#6b7280',
+                                            background: 'rgba(107,114,128,0.12)', padding: '1px 5px',
+                                            borderRadius: '3px', textTransform: 'uppercase',
+                                        }}>FINAL</span>
+                                    )}
+                                    {!game.isLive && !game.isCompleted && (
+                                        <span style={{
+                                            fontSize: '9px', fontWeight: 700,
+                                            color: '#fbbf24', background: 'rgba(251,191,36,0.12)',
+                                            padding: '1px 6px', borderRadius: '4px',
+                                        }}>
+                                            {formatTime(game.gameTime)} ET
+                                        </span>
                                     )}
                                 </div>
                                 <div style={{
                                     fontSize: '13px', fontWeight: 700, color: '#f3f4f6',
                                     whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                                 }}>
-                                    {item.headline}
+                                    {game.awayTeam} @ {game.homeTeam}
                                 </div>
+                                {(game.isLive || game.isCompleted) && game.homeScore && game.awayScore && (
+                                    <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '3px', fontWeight: 600 }}>
+                                        {game.awayScore} - {game.homeScore}
+                                    </div>
+                                )}
                             </div>
 
                             {/* Blurred odds — LOCKED teaser */}
-                            <div style={{
-                                display: 'flex', alignItems: 'center', gap: '5px',
-                                padding: '5px 10px', borderRadius: '7px',
-                                background: `${sport.color}08`,
-                                border: `1px solid ${sport.color}15`,
-                                flexShrink: 0,
-                            }}>
-                                <span style={{
-                                    fontSize: '11px', fontWeight: 700, color: '#9ca3af',
-                                    filter: 'blur(4px)', userSelect: 'none', WebkitUserSelect: 'none',
+                            {!game.isCompleted && (
+                                <div style={{
+                                    display: 'flex', alignItems: 'center', gap: '5px',
+                                    padding: '5px 10px', borderRadius: '7px',
+                                    background: `${sport.color}08`,
+                                    border: `1px solid ${sport.color}15`,
+                                    flexShrink: 0,
                                 }}>
-                                    -135 / +115
-                                </span>
-                                <Lock size={11} style={{ color: sport.color, flexShrink: 0 }} />
-                            </div>
+                                    <span style={{
+                                        fontSize: '11px', fontWeight: 700, color: '#9ca3af',
+                                        filter: 'blur(4px)', userSelect: 'none', WebkitUserSelect: 'none',
+                                    }}>
+                                        -135 / +115
+                                    </span>
+                                    <Lock size={11} style={{ color: sport.color, flexShrink: 0 }} />
+                                </div>
+                            )}
                         </div>
                     </div>
                 ))}
@@ -151,37 +190,11 @@ function SportTickerRow({ sport, items, delay }: { sport: SportConfig; items: Ti
 }
 
 export default function MagicTicker() {
-    const [items, setItems] = useState<TickerItem[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [loaded, setLoaded] = useState(false);
 
-    const fetchTicker = useCallback(async () => {
-        try {
-            const res = await fetch('/api/public/ticker');
-            const data = await res.json();
-            if (data.items) setItems(data.items);
-        } catch (err) {
-            console.error('Ticker fetch error:', err);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+    useEffect(() => { setLoaded(true); }, []);
 
-    useEffect(() => {
-        fetchTicker();
-        const interval = setInterval(fetchTicker, 60000);
-        return () => clearInterval(interval);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    // Group items by sport and filter to only sports with games
-    const sportGroups = SPORTS
-        .map(sport => ({
-            sport,
-            items: items.filter(i => i.sport === sport.key),
-        }))
-        .filter(g => g.items.length > 0);
-
-    const totalGames = items.length;
+    if (!loaded) return null;
 
     return (
         <section style={{
@@ -211,64 +224,37 @@ export default function MagicTicker() {
                     }}>
                         LIVE
                     </span>
-                    {!loading && totalGames > 0 && (
-                        <span style={{ fontSize: '11px', color: '#6b7280', marginLeft: 'auto' }}>
-                            {totalGames} games across {sportGroups.length} sport{sportGroups.length !== 1 ? 's' : ''}
-                        </span>
-                    )}
                 </div>
 
-                {/* Per-sport tickers stacked vertically */}
-                {loading ? (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '50px 20px', color: '#4b5563', gap: '10px' }}>
-                        <div style={{
-                            width: '16px', height: '16px',
-                            border: '2px solid rgba(0,229,155,0.3)', borderTopColor: '#00e59b',
-                            borderRadius: '50%', animation: 'spin 1s linear infinite',
-                        }} />
-                        <span style={{ fontSize: '13px' }}>Loading live games...</span>
-                    </div>
-                ) : sportGroups.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '40px 20px', color: '#4b5563', fontSize: '13px' }}>
-                        No games scheduled right now. Check back closer to game time!
-                    </div>
-                ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        {sportGroups.map((group, i) => (
-                            <SportTickerRow
-                                key={group.sport.key}
-                                sport={group.sport}
-                                items={group.items}
-                                delay={i * 0.1}
-                            />
-                        ))}
-                    </div>
-                )}
+                {/* Each sport fetches its own data — hidden if no games */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {SPORTS.map((sport, i) => (
+                        <SportTickerRow key={sport.key} sport={sport} delay={i * 0.1} />
+                    ))}
+                </div>
 
-                {/* CTA — Unlock full board */}
-                {!loading && sportGroups.length > 0 && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.4 }}
-                        style={{ marginTop: '18px', textAlign: 'center' }}
-                    >
-                        <Link href="/pricing" style={{
-                            display: 'inline-flex', alignItems: 'center', gap: '8px',
-                            color: '#00e59b', fontSize: '14px', fontWeight: 700,
-                            textDecoration: 'none', padding: '10px 24px',
-                            borderRadius: '10px', border: '1px solid rgba(0,229,155,0.15)',
-                            background: 'rgba(0,229,155,0.04)',
-                            transition: 'all 0.2s',
-                        }}>
-                            🔓 Unlock Full Odds, Analysis & Expert Picks
-                            <ArrowRight size={14} />
-                        </Link>
-                        <p style={{ fontSize: '11px', color: '#4b5563', marginTop: '8px' }}>
-                            {totalGames} games on the board today • Members see live odds from 5+ sportsbooks
-                        </p>
-                    </motion.div>
-                )}
+                {/* CTA */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    style={{ marginTop: '18px', textAlign: 'center' }}
+                >
+                    <Link href="/pricing" style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '8px',
+                        color: '#00e59b', fontSize: '14px', fontWeight: 700,
+                        textDecoration: 'none', padding: '10px 24px',
+                        borderRadius: '10px', border: '1px solid rgba(0,229,155,0.15)',
+                        background: 'rgba(0,229,155,0.04)',
+                        transition: 'all 0.2s',
+                    }}>
+                        🔓 Unlock Full Odds, Analysis & Expert Picks
+                        <ArrowRight size={14} />
+                    </Link>
+                    <p style={{ fontSize: '11px', color: '#4b5563', marginTop: '8px' }}>
+                        Members see live odds from 5+ sportsbooks
+                    </p>
+                </motion.div>
             </div>
         </section>
     );

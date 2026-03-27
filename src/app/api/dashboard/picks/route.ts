@@ -9,6 +9,17 @@ function getSupabase() {
     );
 }
 
+/** Convert any date/timestamp to YYYY-MM-DD in US Eastern timezone */
+function toETDate(dateStr: string | null | undefined): string {
+    if (!dateStr) return '';
+    try {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('en-CA', { timeZone: 'America/New_York' }); // en-CA gives YYYY-MM-DD
+    } catch {
+        return (dateStr || '').split('T')[0]; // fallback
+    }
+}
+
 interface PickOutput {
     id: string;
     game_date: string;
@@ -116,7 +127,7 @@ export async function GET(request: NextRequest) {
 
             return {
                 id: raw.id as string,
-                game_date: raw.game_date as string,
+                game_date: toETDate(raw.game_date as string),
                 created_at: raw.created_at as string,
                 matchup: (raw.matchup as string) || (raw.away_team && raw.home_team ? `${raw.away_team} @ ${raw.home_team}` : 'Unknown'),
                 pick_type: pickType,
