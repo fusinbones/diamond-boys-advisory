@@ -26,6 +26,10 @@
     position: relative;
 }
 
+.lounge-ticker:first-child {
+    padding-top: 2px;
+}
+
 .lounge-ticker-search {
     position: absolute;
     right: 0;
