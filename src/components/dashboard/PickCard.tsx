@@ -54,10 +54,16 @@ function StatusPill({ status, score }: { status: string; score: string | null })
 
 function formatTime(dateStr: string): string {
     try {
-        // Fix: date-only strings like '2026-03-25' are parsed as UTC midnight,
-        // which shifts to the previous day in US Eastern. Append noon to prevent this.
-        const safeStr = dateStr.length === 10 ? `${dateStr}T12:00:00` : dateStr;
-        const d = new Date(safeStr);
+        if (!dateStr) return '';
+        
+        // If it's pure YYYY-MM-DD, only render the date part
+        if (dateStr.length === 10 && dateStr.includes('-')) {
+            const d = new Date(`${dateStr}T12:00:00`); // Force noon to prevent shifting
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/New_York' });
+        }
+        
+        // Otherwise it's a timestamp, render both
+        const d = new Date(dateStr);
         const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/New_York' });
         const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/New_York' });
         return `${date} · ${time} ET`;
@@ -89,7 +95,7 @@ export default function PickCard({ pick, locked = false }: PickCardProps): React
                         {sportEmoji[pick.sport] || '🎯'} {pick.sport}
                     </span>
                     <span style={{ fontSize: '11px', color: '#6b7280' }}>
-                        {formatTime(pick.created_at)}
+                        {formatTime(pick.game_date)}
                     </span>
                     <StatusPill status={pick.status} score={locked ? null : pick.score} />
                 </div>
