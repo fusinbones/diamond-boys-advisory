@@ -114,6 +114,10 @@ function DashboardContent(): ReactNode {
     }
     const [firePick, setFirePick] = useState<FirePickData | null>(null);
     const [deletingPickId, setDeletingPickId] = useState<string | null>(null);
+    const [todayStr, setTodayStr] = useState(() => {
+        const now = new Date();
+        return new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' })).toISOString().split('T')[0];
+    });
 
     // Scroll-to-top listener
     useEffect(() => {
@@ -236,6 +240,7 @@ function DashboardContent(): ReactNode {
                 setPicks(incoming);
                 setKpis(data.kpis || null);
                 setSlate(data.morningSlate || null);
+                if (data.todayStr) setTodayStr(data.todayStr);
             }
 
             if (statsRes.ok) {
@@ -701,8 +706,11 @@ function DashboardContent(): ReactNode {
                                     })}
                                 </div>
 
-                                {filteredPicks.length > 0 ? (
-                                    filteredPicks.map((pick) => (
+                                {(() => {
+                                    const todayPicks = filteredPicks.filter(p => (p.game_date || '').startsWith(todayStr));
+                                    const yesterdayPicks = filteredPicks.filter(p => !(p.game_date || '').startsWith(todayStr));
+
+                                    const renderPick = (pick: PickData) => (
                                         <div key={pick.id} style={{ position: 'relative' }}>
                                             <PickCard pick={pick} locked={picksLocked} />
                                             {profile?.is_admin && (
@@ -720,13 +728,61 @@ function DashboardContent(): ReactNode {
                                                 </button>
                                             )}
                                         </div>
-                                    ))
-                                ) : (
-                                    <div className="glass-card" style={{ padding: '24px 20px', textAlign: 'center' }}>
-                                        <p style={{ fontSize: '14px', fontWeight: 600, color: '#d1d5db', marginBottom: '4px' }}>No {sportFilter} picks today</p>
-                                        <p style={{ fontSize: '12px', color: '#6b7280' }}>Check other sports or wait for upcoming picks.</p>
-                                    </div>
-                                )}
+                                    );
+
+                                    return (
+                                        <>
+                                            {/* Today's Picks */}
+                                            {todayPicks.length > 0 && (
+                                                <>
+                                                    <div style={{
+                                                        display: 'flex', alignItems: 'center', gap: '8px',
+                                                        marginBottom: '6px', marginTop: '2px',
+                                                    }}>
+                                                        <div style={{
+                                                            width: '6px', height: '6px', borderRadius: '50%',
+                                                            background: '#00e59b', boxShadow: '0 0 6px #00e59b',
+                                                        }} />
+                                                        <span style={{
+                                                            fontSize: '12px', fontWeight: 700, color: '#00e59b',
+                                                            textTransform: 'uppercase', letterSpacing: '0.5px',
+                                                        }}>Today&apos;s Picks</span>
+                                                        <span style={{ fontSize: '11px', color: '#6b7280' }}>{todayPicks.length}</span>
+                                                        <div style={{ flex: 1, height: '1px', background: 'rgba(0,229,155,0.15)' }} />
+                                                    </div>
+                                                    {todayPicks.map(renderPick)}
+                                                </>
+                                            )}
+
+                                            {/* Yesterday's Picks */}
+                                            {yesterdayPicks.length > 0 && (
+                                                <>
+                                                    <div style={{
+                                                        display: 'flex', alignItems: 'center', gap: '8px',
+                                                        marginBottom: '6px', marginTop: todayPicks.length > 0 ? '16px' : '2px',
+                                                    }}>
+                                                        <span style={{
+                                                            fontSize: '12px', fontWeight: 700, color: '#6b7280',
+                                                            textTransform: 'uppercase', letterSpacing: '0.5px',
+                                                        }}>Yesterday&apos;s Picks</span>
+                                                        <span style={{ fontSize: '11px', color: '#4b5563' }}>{yesterdayPicks.length}</span>
+                                                        <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.05)' }} />
+                                                    </div>
+                                                    <div style={{ opacity: 0.7 }}>
+                                                        {yesterdayPicks.map(renderPick)}
+                                                    </div>
+                                                </>
+                                            )}
+
+                                            {todayPicks.length === 0 && yesterdayPicks.length === 0 && (
+                                                <div className="glass-card" style={{ padding: '24px 20px', textAlign: 'center' }}>
+                                                    <p style={{ fontSize: '14px', fontWeight: 600, color: '#d1d5db', marginBottom: '4px' }}>No {sportFilter} picks today</p>
+                                                    <p style={{ fontSize: '12px', color: '#6b7280' }}>Check other sports or wait for upcoming picks.</p>
+                                                </div>
+                                            )}
+                                        </>
+                                    );
+                                })()}
                             </>
                             );
                         })() : (

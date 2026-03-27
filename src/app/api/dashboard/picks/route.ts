@@ -55,6 +55,9 @@ export async function GET(request: NextRequest) {
         const tomorrowDate = new Date(nowET);
         tomorrowDate.setDate(tomorrowDate.getDate() + 1);
         const tomorrow = tomorrowDate.toISOString().split('T')[0];
+        const yesterdayDate = new Date(nowET);
+        yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+        const yesterday = yesterdayDate.toISOString().split('T')[0];
 
         console.log('[Dashboard Picks] today=', today, 'tomorrow=', tomorrow);
 
@@ -71,9 +74,8 @@ export async function GET(request: NextRequest) {
             .limit(limit);
 
         if (tab === 'today') {
-            // Range filter: game_date >= today AND game_date < tomorrow
-            // Works with both date and timestamptz column types
-            query = query.gte('game_date', today).lt('game_date', tomorrow);
+            // Fetch yesterday + today so we can show "Yesterday's Picks" section
+            query = query.gte('game_date', yesterday).lt('game_date', tomorrow);
         } else if (tab === 'upcoming') {
             query = query.eq('result', 'pending');
         } else if (tab === 'results') {
@@ -215,6 +217,7 @@ export async function GET(request: NextRequest) {
                 upcomingPicks: upcomingToday,
                 sports: sportsToday,
             },
+            todayStr: today,
         });
     } catch (error: unknown) {
         console.error('Dashboard picks error:', error);
