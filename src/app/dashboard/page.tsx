@@ -232,15 +232,20 @@ function DashboardContent(): ReactNode {
             if (picksRes.ok) {
                 const data = await picksRes.json();
                 const incoming: PickData[] = data.picks || [];
-                // Calculate genuinely new picks (not seen before)
-                const freshCount = incoming.filter(p => !seenPickIds.has(p.id) && p.status === 'upcoming').length;
+                const serverToday = data.todayStr || todayStr;
+                if (data.todayStr) setTodayStr(data.todayStr);
+                // Only count TODAY's unseen upcoming picks as "new" (ignore yesterday's)
+                const freshCount = incoming.filter(p =>
+                    !seenPickIds.has(p.id) &&
+                    p.status === 'upcoming' &&
+                    (p.game_date || '').startsWith(serverToday)
+                ).length;
                 if (freshCount > 0) setNewPickCount(freshCount);
                 // Mark all as seen
                 incoming.forEach(p => seenPickIds.add(p.id));
                 setPicks(incoming);
                 setKpis(data.kpis || null);
                 setSlate(data.morningSlate || null);
-                if (data.todayStr) setTodayStr(data.todayStr);
             }
 
             if (statsRes.ok) {

@@ -12,70 +12,56 @@ interface TickerGame {
     time: string;
 }
 
-// Shorten full team names for compact ticker display
-function shortName(name: string): string {
-    // "New York Yankees" → "NY Yankees", "Los Angeles Dodgers" → "LA Dodgers", etc.
-    const map: Record<string, string> = {
-        'New York Yankees': 'NY Yankees',
-        'New York Mets': 'NY Mets',
-        'Los Angeles Dodgers': 'LA Dodgers',
-        'Los Angeles Angels': 'LA Angels',
-        'San Francisco Giants': 'SF Giants',
-        'San Diego Padres': 'SD Padres',
-        'Tampa Bay Rays': 'TB Rays',
-        'St. Louis Cardinals': 'STL Cardinals',
-        'Kansas City Royals': 'KC Royals',
-        'Chicago White Sox': 'CHI White Sox',
-        'Chicago Cubs': 'CHI Cubs',
-    };
-    return map[name] || name.split(' ').slice(-1)[0]; // Fallback: just the last word (team name)
+interface SportConfig {
+    key: string;
+    emoji: string;
+    label: string;
+    color: string;
 }
 
-export default function LiveGameTicker() {
-    const [games, setGames] = useState<TickerGame[]>([]);
-    const [loaded, setLoaded] = useState(false);
+const SPORTS: SportConfig[] = [
+    { key: 'MLB', emoji: '⚾', label: 'MLB', color: '#ef4444' },
+    { key: 'NBA', emoji: '🏀', label: 'NBA', color: '#f97316' },
+    { key: 'NHL', emoji: '🏒', label: 'NHL', color: '#3b82f6' },
+];
 
-    useEffect(() => {
-        fetch('/api/games/public')
-            .then(r => r.json())
-            .then(data => {
-                setGames(data.games || []);
-                setLoaded(true);
-            })
-            .catch(() => setLoaded(true));
-    }, []);
+function shortName(name: string): string {
+    const map: Record<string, string> = {
+        'New York Yankees': 'NY Yankees', 'New York Mets': 'NY Mets',
+        'Los Angeles Dodgers': 'LA Dodgers', 'Los Angeles Angels': 'LA Angels',
+        'San Francisco Giants': 'SF Giants', 'San Diego Padres': 'SD Padres',
+        'Tampa Bay Rays': 'TB Rays', 'St. Louis Cardinals': 'STL Cardinals',
+        'Kansas City Royals': 'KC Royals', 'Chicago White Sox': 'CHI White Sox',
+        'Chicago Cubs': 'CHI Cubs',
+        'Los Angeles Lakers': 'LA Lakers', 'Los Angeles Clippers': 'LA Clippers',
+        'Golden State Warriors': 'GS Warriors', 'Oklahoma City Thunder': 'OKC Thunder',
+        'San Antonio Spurs': 'SA Spurs', 'New Orleans Pelicans': 'NO Pelicans',
+        'Portland Trail Blazers': 'POR Blazers', 'Minnesota Timberwolves': 'MIN Wolves',
+    };
+    return map[name] || name.split(' ').slice(-1)[0];
+}
 
-    if (!loaded || games.length === 0) return null;
+/** Single sport ticker row — infinitely scrolling */
+function SportRow({ sport, games }: { sport: SportConfig; games: TickerGame[] }) {
+    if (games.length === 0) return null;
 
-    // Double the array for seamless infinite scroll
     const doubled = [...games, ...games];
+    const duration = Math.max(60, games.length * 12);
 
     return (
-        <div style={{ width: '100%', marginBottom: '22px' }}>
-            <p style={{
-                textAlign: 'center',
-                fontSize: '10px',
-                color: '#6b7280',
-                textTransform: 'uppercase',
-                letterSpacing: '0.14em',
-                fontWeight: 700,
-                marginBottom: '10px',
-            }}>
-                ⚾🏀🏒 Live Scores
-            </p>
+        <div style={{ width: '100%' }}>
             <div style={{
-                position: 'relative',
-                overflow: 'hidden',
-                maskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
-                WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
+                position: 'relative', overflow: 'hidden',
+                maskImage: 'linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%)',
+                WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%)',
             }}>
                 <motion.div
                     animate={{ x: ['0%', '-50%'] }}
-                    transition={{ duration: Math.max(120, games.length * 15), repeat: Infinity, ease: 'linear' }}
-                    style={{ display: 'flex', gap: '10px', width: 'max-content' }}
+                    transition={{ duration, repeat: Infinity, ease: 'linear' }}
+                    style={{ display: 'flex', gap: '8px', width: 'max-content' }}
                 >
                     {doubled.map((g, i) => (
-                        <TickerCard key={`${g.id}-${i}`} game={g} />
+                        <TickerCard key={`${g.id}-${i}`} game={g} sport={sport} />
                     ))}
                 </motion.div>
             </div>
@@ -83,119 +69,114 @@ export default function LiveGameTicker() {
     );
 }
 
-function TickerCard({ game }: { game: TickerGame }) {
+function TickerCard({ game, sport }: { game: TickerGame; sport: SportConfig }) {
     const isLive = game.status.short.startsWith('IN');
     const isDone = game.status.short === 'FT';
     const hasScore = isDone || isLive;
 
     return (
         <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            background: isLive
-                ? 'rgba(0,229,155,0.08)'
-                : 'rgba(255,255,255,0.03)',
-            border: `1px solid ${isLive ? 'rgba(0,229,155,0.2)' : 'rgba(255,255,255,0.06)'}`,
-            borderRadius: '10px',
-            padding: '8px 14px',
-            whiteSpace: 'nowrap',
-            flexShrink: 0,
-            backdropFilter: 'blur(8px)',
-            minWidth: '200px',
+            display: 'flex', alignItems: 'center', gap: '8px',
+            background: isLive ? 'rgba(0,229,155,0.08)' : `${sport.color}08`,
+            border: `1px solid ${isLive ? 'rgba(0,229,155,0.2)' : `${sport.color}12`}`,
+            borderRadius: '8px', padding: '6px 12px',
+            whiteSpace: 'nowrap', flexShrink: 0,
+            minWidth: '180px',
         }}>
-            {/* Sport badge */}
-            <span style={{
-                fontSize: '10px', fontWeight: 700,
-                color: game.league === 'MLB' ? '#00529b' : game.league === 'NBA' ? '#f58426' : '#888',
-                background: 'rgba(255,255,255,0.06)', borderRadius: '4px',
-                padding: '1px 5px', marginRight: '2px',
-            }}>
-                {game.league === 'MLB' ? '⚾' : game.league === 'NBA' ? '🏀' : '🏒'}
-            </span>
-            {/* Away team */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            {/* Away */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 {game.away.logo && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                        src={game.away.logo}
-                        alt={game.away.name}
-                        style={{ width: '20px', height: '20px', borderRadius: '3px', objectFit: 'contain' }}
-                    />
+                    <img src={game.away.logo} alt={game.away.name}
+                        style={{ width: '18px', height: '18px', borderRadius: '3px', objectFit: 'contain' }} />
                 )}
-                <span style={{ fontSize: '13px', fontWeight: 700, color: '#f3f4f6' }}>
+                <span style={{ fontSize: '12px', fontWeight: 700, color: '#f3f4f6' }}>
                     {shortName(game.away.name)}
                 </span>
                 {hasScore && (
-                    <span style={{ fontSize: '15px', fontWeight: 800, color: 'white', minWidth: '16px', textAlign: 'center' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 800, color: 'white', minWidth: '14px', textAlign: 'center' }}>
                         {game.away.score ?? 0}
                     </span>
                 )}
             </div>
 
-            {/* Divider */}
-            <span style={{ color: '#6b7280', fontSize: '10px', fontWeight: 800 }}>@</span>
+            <span style={{ color: '#6b7280', fontSize: '9px', fontWeight: 800 }}>@</span>
 
-            {/* Home team */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            {/* Home */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 {hasScore && (
-                    <span style={{ fontSize: '15px', fontWeight: 800, color: 'white', minWidth: '16px', textAlign: 'center' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 800, color: 'white', minWidth: '14px', textAlign: 'center' }}>
                         {game.home.score ?? 0}
                     </span>
                 )}
-                <span style={{ fontSize: '13px', fontWeight: 700, color: '#f3f4f6' }}>
+                <span style={{ fontSize: '12px', fontWeight: 700, color: '#f3f4f6' }}>
                     {shortName(game.home.name)}
                 </span>
                 {game.home.logo && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                        src={game.home.logo}
-                        alt={game.home.name}
-                        style={{ width: '20px', height: '20px', borderRadius: '3px', objectFit: 'contain' }}
-                    />
+                    <img src={game.home.logo} alt={game.home.name}
+                        style={{ width: '18px', height: '18px', borderRadius: '3px', objectFit: 'contain' }} />
                 )}
             </div>
 
-            {/* Status badge */}
+            {/* Status */}
             {isLive ? (
                 <span style={{
-                    fontSize: '9px',
-                    fontWeight: 800,
-                    color: '#00e59b',
-                    background: 'rgba(0,229,155,0.2)',
-                    padding: '2px 6px',
-                    borderRadius: '4px',
-                    letterSpacing: '0.06em',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '3px',
+                    fontSize: '8px', fontWeight: 800, color: '#00e59b',
+                    background: 'rgba(0,229,155,0.2)', padding: '1px 5px',
+                    borderRadius: '3px', letterSpacing: '0.06em',
+                    display: 'flex', alignItems: 'center', gap: '2px',
                 }}>
-                    <span className="live-dot" style={{ width: '5px', height: '5px' }} />
+                    <span className="live-dot" style={{ width: '4px', height: '4px' }} />
                     LIVE
                 </span>
             ) : isDone ? (
                 <span style={{
-                    fontSize: '9px',
-                    fontWeight: 700,
-                    color: '#6b7280',
-                    background: 'rgba(107,114,128,0.15)',
-                    padding: '2px 6px',
-                    borderRadius: '4px',
-                }}>
-                    FINAL
-                </span>
+                    fontSize: '8px', fontWeight: 700, color: '#6b7280',
+                    background: 'rgba(107,114,128,0.15)', padding: '1px 5px', borderRadius: '3px',
+                }}>FINAL</span>
             ) : (
                 <span style={{
-                    fontSize: '9px',
-                    fontWeight: 700,
-                    color: '#fbbf24',
-                    background: 'rgba(251,191,36,0.12)',
-                    padding: '2px 6px',
-                    borderRadius: '4px',
-                }}>
-                    {game.time}
-                </span>
+                    fontSize: '8px', fontWeight: 700, color: '#fbbf24',
+                    background: 'rgba(251,191,36,0.12)', padding: '1px 5px', borderRadius: '3px',
+                }}>{game.time}</span>
             )}
+        </div>
+    );
+}
+
+export default function LiveGameTicker() {
+    const [gamesBySport, setGamesBySport] = useState<Record<string, TickerGame[]>>({});
+    const [loaded, setLoaded] = useState(false);
+
+    useEffect(() => {
+        fetch('/api/games/public')
+            .then(r => r.json())
+            .then(data => {
+                const allGames: TickerGame[] = data.games || [];
+                // Group by league
+                const grouped: Record<string, TickerGame[]> = {};
+                for (const g of allGames) {
+                    const league = g.league || 'Other';
+                    if (!grouped[league]) grouped[league] = [];
+                    grouped[league].push(g);
+                }
+                setGamesBySport(grouped);
+                setLoaded(true);
+            })
+            .catch(() => setLoaded(true));
+    }, []);
+
+    if (!loaded) return null;
+
+    const activeSports = SPORTS.filter(s => (gamesBySport[s.key] || []).length > 0);
+    if (activeSports.length === 0) return null;
+
+    return (
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            {activeSports.map(sport => (
+                <SportRow key={sport.key} sport={sport} games={gamesBySport[sport.key] || []} />
+            ))}
         </div>
     );
 }
