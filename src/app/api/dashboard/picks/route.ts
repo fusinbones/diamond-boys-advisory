@@ -12,6 +12,9 @@ function getSupabase() {
 /** Convert any date/timestamp to YYYY-MM-DD in US Eastern timezone */
 function toETDate(dateStr: string | null | undefined): string {
     if (!dateStr) return '';
+    // If it is already exactly YYYY-MM-DD, do NOT parse it as UTC midnight and shift it back 4 hours
+    if (dateStr.length === 10 && dateStr.includes('-')) return dateStr;
+
     try {
         const d = new Date(dateStr);
         const formatter = new Intl.DateTimeFormat('en-US', {
@@ -273,6 +276,7 @@ async function inlineGradePending(supabase: any) {
             .select('id, game_id, pick_type, pick_team, pick_value')
             .eq('result', 'pending')
             .not('game_id', 'is', null)
+            .order('created_at', { ascending: false })
             .limit(50);
 
         if (!pending || pending.length === 0) return;
