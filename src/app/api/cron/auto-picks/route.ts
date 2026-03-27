@@ -14,7 +14,16 @@ function getSupabase() {
 function toEasternDate(utcTime: string): string {
     try {
         const d = new Date(utcTime);
-        return d.toLocaleDateString('en-CA', { timeZone: 'America/New_York' }); // en-CA = YYYY-MM-DD
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            timeZone: 'America/New_York',
+            year: 'numeric', month: '2-digit', day: '2-digit'
+        });
+        const parts = formatter.formatToParts(d);
+        const y = parts.find(p => p.type === 'year')?.value;
+        const m = parts.find(p => p.type === 'month')?.value;
+        const day = parts.find(p => p.type === 'day')?.value;
+        if (y && m && day) return `${y}-${m}-${day}`;
+        return new Date().toISOString().split('T')[0];
     } catch {
         return new Date().toISOString().split('T')[0]; // fallback
     }
