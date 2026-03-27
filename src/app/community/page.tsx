@@ -208,7 +208,7 @@ function SmartTicker({ onGameClick, onSearchClick }: { onGameClick: (g: TickerGa
     const activeSports = sportOrder.filter(s => (grouped[s] || []).length > 0);
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', width: '100%', position: 'relative' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', width: '100%', position: 'relative', paddingTop: '4px' }}>
             {activeSports.map(sport => {
                 const sportGames = grouped[sport] || [];
                 const doubled = [...sportGames, ...sportGames];
@@ -1926,20 +1926,25 @@ export default function CommunityPage() {
                     ) : (
                     <>
                     {/* Online users header */}
-                    <div style={{ padding: '0 16px' }}>
+                    <div style={{ padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <button
                             onClick={() => setShowOnline(!showOnline)}
                             style={{
                                 display: 'flex', alignItems: 'center', gap: '6px',
                                 padding: '6px 0', background: 'none', border: 'none',
                                 cursor: 'pointer', color: '#6b7280', fontSize: '11px', fontWeight: 600,
-                                width: '100%',
                             }}
                         >
                             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#00e59b', display: 'inline-block' }} />
                             {onlineUsers.length} online
-                            <span style={{ fontSize: '10px', marginLeft: 'auto', transition: 'transform 0.2s', transform: showOnline ? 'rotate(180deg)' : 'none' }}>▼</span>
+                            <span style={{ fontSize: '10px', transition: 'transform 0.2s', transform: showOnline ? 'rotate(180deg)' : 'none' }}>▼</span>
                         </button>
+                        
+                        <button className="lounge-mobile-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
+                            <Menu size={16} />
+                            <span>Chat Rooms</span>
+                        </button>
+                    </div>
                         {showOnline && onlineUsers.length > 0 && (
                             <div style={{
                                 display: 'flex', flexWrap: 'wrap', gap: '4px',
@@ -2136,10 +2141,7 @@ export default function CommunityPage() {
                 </div>
             </div>
 
-            <button className="lounge-mobile-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
-                <Menu size={18} />
-                <span>Chat Rooms</span>
-            </button>
+
 
             {/* Admin Panel Modal */}
             {showAdminPanel && (
