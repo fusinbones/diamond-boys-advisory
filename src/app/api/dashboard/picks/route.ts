@@ -333,8 +333,12 @@ async function inlineGradePending(supabase: any) {
                 }
             }
 
-            await supabase.from('picks').update({ result, score: finalScore }).eq('id', pick.id);
-            graded++;
+            const { error: updateErr } = await supabase.from('picks').update({ result }).eq('id', pick.id);
+            if (updateErr) {
+                console.error(`Failed to grade pick ${pick.id}:`, updateErr.message);
+            } else {
+                graded++;
+            }
         }
 
         // 4. Also grade revealed fire picks
