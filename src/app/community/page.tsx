@@ -1963,7 +1963,6 @@ export default function CommunityPage() {
                                 ))}
                             </div>
                         )}
-                    </div>
                     <div className="lounge-messages" ref={messagesContainerRef} onScroll={handleScroll}>
                         {/* Welcome banner */}
                         {activeChannel?.welcome_message && (
