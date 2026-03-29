@@ -200,10 +200,10 @@ export async function GET(request: NextRequest) {
             }
         }
 
-        // Avg edge
-        const edgePicks = gradedPicks.filter(p => p.edge !== null && p.edge !== undefined);
-        const avgEdge = edgePicks.length > 0
-            ? (edgePicks.reduce((acc, p) => acc + Number(p.edge), 0) / edgePicks.length).toFixed(1)
+        // Avg Confidence
+        const confPicks = gradedPicks.filter(p => p.confidence !== null && p.confidence !== undefined);
+        const avgConf = confPicks.length > 0
+            ? (confPicks.reduce((acc, p) => acc + Number(p.confidence), 0) / confPicks.length).toFixed(1)
             : '0.0';
 
         // ── Morning Slate ──
@@ -227,7 +227,7 @@ export async function GET(request: NextRequest) {
                 totalUnits: totalUnits.toFixed(1),
                 roi: ((totalUnits / totalGraded) * 100).toFixed(1) + '%',
                 streak: streak > 0 ? `${streakType}${streak}` : 'N/A',
-                avgEdge: `+${avgEdge}%`,
+                avgEdge: `${avgConf}%`,
                 isPreseason: false,
             } : {
                 record: '0-0',
@@ -235,7 +235,7 @@ export async function GET(request: NextRequest) {
                 totalUnits: '+0.0',
                 roi: '8.5%',
                 streak: 'N/A',
-                avgEdge: '+3.2%',
+                avgEdge: '75.0%',
                 isPreseason: true,
             },
             morningSlate: {

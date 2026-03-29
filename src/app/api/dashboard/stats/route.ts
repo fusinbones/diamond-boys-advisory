@@ -48,9 +48,17 @@ export async function GET() {
         });
 
         // ── By Sport ──
+        const sportKeyMap: Record<string, string> = {
+            baseball_mlb: 'MLB', 'baseball_mlb_preseason': 'MLB',
+            basketball_nba: 'NBA', 'basketball_nba_preseason': 'NBA',
+            icehockey_nhl: 'NHL', 'icehockey_nhl_preseason': 'NHL',
+            americanfootball_nfl: 'NFL', 'americanfootball_nfl_preseason': 'NFL',
+        };
+
         const sportMap = new Map<string, { wins: number; losses: number; units: number }>();
         for (const p of picks) {
-            const sport = (p.sport as string) || 'MLB';
+            const rawSport = (p.sport as string) || '';
+            const sport = sportKeyMap[rawSport] || rawSport || 'MLB';
             const entry = sportMap.get(sport) || { wins: 0, losses: 0, units: 0 };
             const u = Number(p.unit_size) || 1;
             if (p.result === 'hit') { entry.wins++; entry.units += u; }
