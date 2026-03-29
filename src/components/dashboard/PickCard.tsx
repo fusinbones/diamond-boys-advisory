@@ -12,6 +12,7 @@ export interface PickData {
     matchup: string;
     pick_type: string;
     pick_value: string;
+    game_time?: string | null;
     confidence: number;
     units: number;
     edge: number | null;
@@ -52,21 +53,28 @@ function StatusPill({ status, score }: { status: string; score: string | null })
     );
 }
 
-function formatTime(dateStr: string): string {
+function formatTime(dateStr: string, timeStr?: string | null): string {
     try {
         if (!dateStr) return '';
+        let baseDateStr = '';
         
         // If it's pure YYYY-MM-DD, only render the date part
         if (dateStr.length === 10 && dateStr.includes('-')) {
             const d = new Date(`${dateStr}T12:00:00`); // Force noon to prevent shifting
-            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/New_York' });
+            baseDateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/New_York' });
+        } else {
+            // Otherwise it's a timestamp, render it
+            const d = new Date(dateStr);
+            baseDateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/New_York' });
         }
-        
-        // Otherwise it's a timestamp, render both
-        const d = new Date(dateStr);
-        const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/New_York' });
-        const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/New_York' });
-        return `${date} · ${time} ET`;
+
+        if (timeStr) {
+            const t = new Date(timeStr);
+            const timeFormatted = t.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/New_York' });
+            return `${baseDateStr} · ${timeFormatted} ET`;
+        }
+
+        return baseDateStr;
     } catch {
         return '';
     }
@@ -95,7 +103,7 @@ export default function PickCard({ pick, locked = false }: PickCardProps): React
                         {sportEmoji[pick.sport] || '🎯'} {pick.sport}
                     </span>
                     <span style={{ fontSize: '11px', color: '#6b7280' }}>
-                        {formatTime(pick.game_date)}
+                        {formatTime(pick.game_date, pick.game_time)}
                     </span>
                     <StatusPill status={pick.status} score={locked ? null : pick.score} />
                 </div>

@@ -35,6 +35,7 @@ function toETDate(dateStr: string | null | undefined): string {
 interface PickOutput {
     id: string;
     game_date: string;
+    game_time?: string | null;
     created_at: string;
     matchup: string;
     pick_type: string;
@@ -143,6 +144,7 @@ export async function GET(request: NextRequest) {
             return {
                 id: raw.id as string,
                 game_date: toETDate(raw.game_date as string),
+                game_time: (raw.game_time as string) || null,
                 created_at: raw.created_at as string,
                 matchup: (raw.matchup as string) || (raw.away_team && raw.home_team ? `${raw.away_team} @ ${raw.home_team}` : 'Unknown'),
                 pick_type: pickType,

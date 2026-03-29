@@ -126,6 +126,7 @@ export async function GET(request: NextRequest) {
                 reason: pick.reasoning,
                 notes: `Edge: ${pick.edge}% | Consensus: ${pick.consensusStrength}%`,
                 game_date: gameDate,
+                game_time: pick.gameTime,
                 unit_size: pick.confidence >= 80 ? 2 : 1,
                 created_by: 'AI Consensus Engine',
                 game_id: pick.gameId,
