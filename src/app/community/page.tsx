@@ -1032,8 +1032,15 @@ function PickComposer({
         const divider = '━━━━━━━━━━━━━━━━━━━━━━━';
         const unitDots = '⬢'.repeat(units) + '⬡'.repeat(5 - units);
         const confEmoji = confidence === 'lock' ? '🔒 LOCK' : confidence === 'high' ? '🔥 HIGH' : confidence === 'medium' ? '⭐ MEDIUM' : '📘 LOW';
-        const gameStr = awayTeam && homeTeam ? `${awayTeam} vs ${homeTeam}` : customTeam || 'TBD';
-        const pickStr = pickDetail || `${awayTeam || 'TBD'} ${pickType}`;
+        
+        let gameStr = 'TBD';
+        if (awayTeam && homeTeam) gameStr = `${awayTeam} vs ${homeTeam}`;
+        else if (awayTeam) gameStr = `${awayTeam} (Matchup)`;
+        else if (homeTeam) gameStr = `${homeTeam} (Matchup)`;
+        else if (customTeam) gameStr = customTeam;
+
+        const selectedTeam = awayTeam || homeTeam || customTeam || 'TBD';
+        const pickStr = pickDetail || `${selectedTeam} ${pickType}`;
 
         const hypePrefix = hypeLevel === 'nuclear' ? '🚨🚨🚨 **NUCLEAR PICK** 🚨🚨🚨' : hypeLevel === 'hot' ? '🔥🔥 **HOT PICK** 🔥🔥' : '🔥 **TRIPLEPLAYZ PICK** 🔥';
 
@@ -1092,14 +1099,14 @@ function PickComposer({
                     {sportData.teams.length > 0 ? (
                         <div className="lounge-form-row">
                             <div className="lounge-form-group">
-                                <label className="lounge-form-label">Away Team</label>
+                                <label className="lounge-form-label">Team Pick</label>
                                 <select className="lounge-form-select" value={awayTeam} onChange={e => setAwayTeam(e.target.value)}>
                                     <option value="">Select...</option>
                                     {sportData.teams.map(t => <option key={t} value={t}>{t}</option>)}
                                 </select>
                             </div>
                             <div className="lounge-form-group">
-                                <label className="lounge-form-label">Home Team</label>
+                                <label className="lounge-form-label">Opponent (Optional)</label>
                                 <select className="lounge-form-select" value={homeTeam} onChange={e => setHomeTeam(e.target.value)}>
                                     <option value="">Select...</option>
                                     {sportData.teams.map(t => <option key={t} value={t}>{t}</option>)}
