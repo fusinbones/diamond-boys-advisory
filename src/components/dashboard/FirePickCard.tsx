@@ -140,16 +140,6 @@ export default function FirePickCard({ firePick, isPaid }: FirePickCardProps): R
                                 </div>
                             </div>
 
-                            {/* Reasoning */}
-                            {firePick.reasoning && (
-                                <p style={{
-                                    fontSize: '12px', color: '#d1d5db', lineHeight: 1.5,
-                                    borderTop: '1px solid rgba(255,255,255,0.06)',
-                                    paddingTop: '10px', marginTop: '6px',
-                                }}>
-                                    {firePick.reasoning}
-                                </p>
-                            )}
                         </div>
                     ) : (
                         /* Paywall for free/trial users */
