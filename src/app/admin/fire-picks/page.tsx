@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAdminAuth } from '@/lib/adminAuth';
 import {
     Flame, Save, Loader2, AlertCircle, Check, Clock, ChevronDown,
-    Calendar, Zap, Trophy,
+    Calendar, Zap, Trophy, Trash2,
 } from 'lucide-react';
 
 interface OddsGame {
@@ -175,6 +175,16 @@ export default function FirePicksPage() {
         } catch { /* ignore */ }
     };
 
+    const deleteFirePick = async (id: string) => {
+        if (!window.confirm('Are you sure you want to delete this fire pick? This cannot be undone.')) return;
+        try {
+            await fetch(`/api/admin/fire-picks?id=${id}`, {
+                method: 'DELETE',
+            });
+            fetchFirePicks();
+        } catch { /* ignore */ }
+    };
+
     if (!user) return null;
 
     return (
@@ -246,7 +256,14 @@ export default function FirePicksPage() {
                         </div>
                         <div>
                             <label className="admin-label">Pick Team</label>
-                            <select className="admin-select" value={pickTeam} onChange={e => setPickTeam(e.target.value)}>
+                            <select className="admin-select" value={pickTeam} onChange={e => {
+                                const newTeam = e.target.value;
+                                setPickTeam(newTeam);
+                                const isHome = newTeam === selectedGame.homeTeam;
+                                const mlOdds = isHome ? selectedGame.moneyline?.home : selectedGame.moneyline?.away;
+                                setPickValue(`${newTeam} ML ${fmtOdds(mlOdds ?? null)}`);
+                                setOdds(fmtOdds(mlOdds ?? null));
+                            }}>
                                 <option value={selectedGame.awayTeam}>{selectedGame.awayTeam}</option>
                                 <option value={selectedGame.homeTeam}>{selectedGame.homeTeam}</option>
                             </select>
@@ -397,9 +414,14 @@ export default function FirePicksPage() {
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                     {fp.status === 'scheduled' && (
-                                        <span style={{ fontSize: '11px', fontWeight: 600, color: '#fbbf24', background: 'rgba(251,191,36,0.1)', padding: '3px 8px', borderRadius: '6px' }}>
-                                            <Clock size={10} style={{ display: 'inline', marginRight: '3px' }} />Scheduled
-                                        </span>
+                                        <>
+                                            <span style={{ fontSize: '11px', fontWeight: 600, color: '#fbbf24', background: 'rgba(251,191,36,0.1)', padding: '3px 8px', borderRadius: '6px' }}>
+                                                <Clock size={10} style={{ display: 'inline', marginRight: '3px' }} />Scheduled
+                                            </span>
+                                            <button onClick={() => deleteFirePick(fp.id)} className="admin-btn" style={{ padding: '4px', background: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)', marginLeft: '8px' }}>
+                                                <Trash2 size={12} />
+                                            </button>
+                                        </>
                                     )}
                                     {fp.status === 'revealed' && (
                                         <>
