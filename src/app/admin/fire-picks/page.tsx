@@ -428,16 +428,24 @@ export default function FirePicksPage() {
                                             <button onClick={() => gradeFirePick(fp.id, 'won')} className="admin-btn" style={{ padding: '4px 10px', fontSize: '11px', background: 'rgba(0,229,155,0.1)', color: '#00e59b', border: '1px solid rgba(0,229,155,0.2)' }}>Won</button>
                                             <button onClick={() => gradeFirePick(fp.id, 'lost')} className="admin-btn" style={{ padding: '4px 10px', fontSize: '11px', background: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }}>Lost</button>
                                             <button onClick={() => gradeFirePick(fp.id, 'push')} className="admin-btn" style={{ padding: '4px 10px', fontSize: '11px', background: 'rgba(251,191,36,0.1)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.2)' }}>Push</button>
+                                            <button onClick={() => deleteFirePick(fp.id)} className="admin-btn" style={{ padding: '4px', background: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)', marginLeft: '8px' }}>
+                                                <Trash2 size={12} />
+                                            </button>
                                         </>
                                     )}
                                     {(fp.status === 'won' || fp.status === 'lost' || fp.status === 'push') && (
-                                        <span style={{
-                                            fontSize: '11px', fontWeight: 700, padding: '3px 8px', borderRadius: '6px',
-                                            color: fp.status === 'won' ? '#00e59b' : fp.status === 'lost' ? '#f87171' : '#fbbf24',
-                                            background: fp.status === 'won' ? 'rgba(0,229,155,0.1)' : fp.status === 'lost' ? 'rgba(239,68,68,0.1)' : 'rgba(251,191,36,0.1)',
-                                        }}>
-                                            {fp.status.toUpperCase()}
-                                        </span>
+                                        <>
+                                            <span style={{
+                                                fontSize: '11px', fontWeight: 700, padding: '3px 8px', borderRadius: '6px',
+                                                color: fp.status === 'won' ? '#00e59b' : fp.status === 'lost' ? '#f87171' : '#fbbf24',
+                                                background: fp.status === 'won' ? 'rgba(0,229,155,0.1)' : fp.status === 'lost' ? 'rgba(239,68,68,0.1)' : 'rgba(251,191,36,0.1)',
+                                            }}>
+                                                {fp.status.toUpperCase()}
+                                            </span>
+                                            <button onClick={() => deleteFirePick(fp.id)} className="admin-btn" style={{ padding: '4px', background: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)', marginLeft: '8px' }}>
+                                                <Trash2 size={12} />
+                                            </button>
+                                        </>
                                     )}
                                 </div>
                             </div>
