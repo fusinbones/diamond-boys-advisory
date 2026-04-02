@@ -402,10 +402,17 @@
     .admin-nav {
         display: flex;
         flex-direction: row;
-        padding: 4px 8px;
+        padding: 6px 8px;
         width: 100%;
-        justify-content: space-around;
-        gap: 2px;
+        justify-content: flex-start;
+        gap: 6px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .admin-nav::-webkit-scrollbar {
+        display: none;
     }
 
     .admin-nav-section {
@@ -414,19 +421,21 @@
 
     .admin-nav-link {
         flex-direction: column;
-        padding: 8px 4px;
-        font-size: 9px;
-        gap: 3px;
+        padding: 8px 6px;
+        font-size: 10px;
+        font-weight: 700;
+        gap: 4px;
         text-align: center;
-        border-radius: 6px;
-        flex: 1;
+        border-radius: 8px;
+        flex: 0 0 auto;
+        min-width: 72px;
         justify-content: center;
-        min-width: 0;
     }
 
     .admin-nav-link svg {
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
+        margin: 0 auto;
     }
 
     /* Content area */

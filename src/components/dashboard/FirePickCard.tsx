@@ -108,73 +108,83 @@ export default function FirePickCard({ firePick, isPaid }: FirePickCardProps): R
 
                 {/* Revealed state — show the pick (or paywall) */}
                 {(firePick.status === 'revealed' || isDropped) && (
-                    isPaid ? (
-                        <div>
-                            {/* Pick details */}
-                            <div style={{
-                                background: 'rgba(251,191,36,0.06)',
-                                border: '1px solid rgba(251,191,36,0.15)',
-                                borderRadius: '10px',
-                                padding: '14px',
-                                marginBottom: '10px',
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                                    <span style={{ fontSize: '18px', fontWeight: 800, color: '#fbbf24' }}>
-                                        {firePick.pick_value || 'Pick loading...'}
-                                    </span>
-                                    {firePick.odds && (
-                                        <span style={{
-                                            fontSize: '13px', fontWeight: 700,
-                                            color: '#00e59b',
-                                            background: 'rgba(0,229,155,0.1)',
-                                            padding: '2px 8px',
-                                            borderRadius: '6px',
-                                        }}>
-                                            {firePick.odds}
-                                        </span>
-                                    )}
-                                </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px', color: '#9ca3af' }}>
-                                    <span>🎯 {firePick.confidence || 85}% confidence</span>
-                                    <span>📊 {firePick.units || 3}u</span>
-                                </div>
-                            </div>
-
-                        </div>
-                    ) : (
-                        /* Paywall for free/trial users */
+                    <div style={{ position: 'relative' }}>
+                        {/* Pick details (Blurred if unpaid) */}
                         <div style={{
-                            textAlign: 'center', padding: '20px 0',
+                            background: 'rgba(251,191,36,0.06)',
+                            border: '1px solid rgba(251,191,36,0.15)',
+                            borderRadius: '10px',
+                            padding: '14px',
+                            marginBottom: '10px',
+                            filter: isPaid ? 'none' : 'blur(6px)',
+                            opacity: isPaid ? 1 : 0.6,
+                            userSelect: isPaid ? 'auto' : 'none',
                         }}>
-                            <div style={{
-                                width: '40px', height: '40px', borderRadius: '50%',
-                                background: 'rgba(251,191,36,0.1)',
-                                border: '2px solid rgba(251,191,36,0.2)',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                margin: '0 auto 10px',
-                            }}>
-                                <Lock size={18} style={{ color: '#fbbf24' }} />
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                <span style={{ fontSize: '18px', fontWeight: 800, color: '#fbbf24' }}>
+                                    {isPaid ? (firePick.pick_value || 'Pick loading...') : '███████████'}
+                                </span>
+                                {(firePick.odds || !isPaid) && (
+                                    <span style={{
+                                        fontSize: '13px', fontWeight: 700,
+                                        color: '#00e59b',
+                                        background: 'rgba(0,229,155,0.1)',
+                                        padding: '2px 8px',
+                                        borderRadius: '6px',
+                                    }}>
+                                        {isPaid ? firePick.odds : '-███'}
+                                    </span>
+                                )}
                             </div>
-                            <p style={{ fontSize: '14px', fontWeight: 700, color: 'white', marginBottom: '4px' }}>
-                                🔥 This Fire Pick is for premium members only
-                            </p>
-                            <p style={{ fontSize: '12px', color: '#9ca3af', marginBottom: '12px' }}>
-                                Upgrade to see our rarest, highest-conviction picks.
-                            </p>
-                            <Link
-                                href="/pricing"
-                                className="btn-glow"
-                                style={{
-                                    display: 'inline-flex', alignItems: 'center', gap: '6px',
-                                    padding: '10px 20px', fontSize: '13px', fontWeight: 700,
-                                }}
-                            >
-                                <Zap size={14} />
-                                Unlock Fire Picks
-                                <ArrowRight size={12} />
-                            </Link>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px', color: '#9ca3af' }}>
+                                <span>🎯 {firePick.confidence || 85}% confidence</span>
+                                <span>📊 {firePick.units || 3}u</span>
+                            </div>
                         </div>
-                    )
+
+                        {/* Paywall Overlay for free/trial users */}
+                        {!isPaid && (
+                            <div style={{
+                                position: 'absolute',
+                                top: 0, left: 0, right: 0, bottom: 0,
+                                display: 'flex', flexDirection: 'column',
+                                alignItems: 'center', justifyContent: 'center',
+                                textAlign: 'center',
+                                background: 'rgba(10, 10, 15, 0.4)',
+                                borderRadius: '10px',
+                                padding: '10px',
+                            }}>
+                                <div style={{
+                                    width: '36px', height: '36px', borderRadius: '50%',
+                                    background: 'rgba(251,191,36,0.1)',
+                                    border: '2px solid rgba(251,191,36,0.2)',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    margin: '0 auto 8px',
+                                    boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                                }}>
+                                    <Lock size={16} style={{ color: '#fbbf24' }} />
+                                </div>
+                                <p style={{ fontSize: '13px', fontWeight: 700, color: 'white', marginBottom: '3px', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
+                                    Members Only Fire Pick
+                                </p>
+                                <p style={{ fontSize: '11px', color: '#e5e7eb', marginBottom: '10px', textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>
+                                    Upgrade to see this rare pick
+                                </p>
+                                <Link
+                                    href="/pricing"
+                                    className="btn-glow"
+                                    style={{
+                                        display: 'inline-flex', alignItems: 'center', gap: '6px',
+                                        padding: '8px 16px', fontSize: '12px', fontWeight: 700,
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                                    }}
+                                >
+                                    <Zap size={12} />
+                                    Unlock Fire Pick
+                                </Link>
+                            </div>
+                        )}
+                    </div>
                 )}
             </div>
         </motion.div>
