@@ -222,6 +222,10 @@ function DashboardContent(): ReactNode {
             if (data) setProfile(data as UserProfile);
             // Update last_seen
             await supabase.from('user_profiles').update({ last_seen_at: new Date().toISOString() }).eq('id', user.id);
+            // Autowire fix: Heal broken Stripe subs that fired before the user registered
+            if (user.email) {
+                fetch('/api/user/sync-tier', { method: 'POST', body: JSON.stringify({ email: user.email }) }).catch(console.error);
+            }
         };
         fetchProfile();
     }, [user]);
