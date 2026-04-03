@@ -168,7 +168,7 @@ function DashboardContent(): ReactNode {
 
             // Detect expired/invalid links
             if (hash.includes('error=access_denied') || hash.includes('otp_expired')) {
-                setError('This password reset link has expired. Please request a new one below.');
+                setError('This link has expired or is invalid. Please try signing in again or request a new link.');
                 window.history.replaceState(null, '', window.location.pathname);
             }
         }
