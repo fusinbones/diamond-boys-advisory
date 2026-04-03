@@ -525,6 +525,7 @@ function DashboardContent(): ReactNode {
                         </motion.div>
                     </div>
                 </div>
+            );
         }
 
         if (showOtp) {
