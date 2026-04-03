@@ -140,6 +140,15 @@ export default function FirePickCard({ firePick, isPaid }: FirePickCardProps): R
                                 <span>🎯 {firePick.confidence || 85}% confidence</span>
                                 <span>📊 {firePick.units || 3}u</span>
                             </div>
+                            {isPaid && firePick.reasoning && (
+                                <div style={{ 
+                                    marginTop: '10px', paddingTop: '10px', 
+                                    borderTop: '1px solid rgba(251,191,36,0.15)', 
+                                    fontSize: '13px', color: '#d1d5db', lineHeight: 1.5 
+                                }}>
+                                    {firePick.reasoning}
+                                </div>
+                            )}
                         </div>
 
                         {/* Paywall Overlay for free/trial users */}

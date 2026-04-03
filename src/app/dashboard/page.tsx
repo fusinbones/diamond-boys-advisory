@@ -743,12 +743,19 @@ function DashboardContent(): ReactNode {
                             )}
                         </div>
                     </div>
-                    <button
-                        onClick={signOut}
-                        style={{ color: '#9ca3af', fontSize: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', padding: '6px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                    >
-                        <LogOut size={13} /> Sign out
-                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {profile?.is_admin && (
+                            <Link href="/admin" className="btn-glow" style={{ fontSize: '12px', padding: '6px 12px', background: 'rgba(251,191,36,0.1)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.3)', display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}>
+                                <Shield size={13} /> Admin Panel
+                            </Link>
+                        )}
+                        <button
+                            onClick={signOut}
+                            style={{ color: '#9ca3af', fontSize: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', padding: '6px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                        >
+                            <LogOut size={13} /> Sign out
+                        </button>
+                    </div>
                 </div>
 
                 {/* Morning Slate */}
