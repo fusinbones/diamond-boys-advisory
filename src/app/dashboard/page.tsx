@@ -745,7 +745,7 @@ function DashboardContent(): ReactNode {
                         </div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {profile?.is_admin && (
+                        {(profile?.is_admin || profile?.role === 'admin' || profile?.role === 'staff') && (
                             <Link href="/admin" className="btn-glow" style={{ fontSize: '12px', padding: '6px 12px', background: 'rgba(251,191,36,0.1)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.3)', display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}>
                                 <Shield size={13} /> Admin Panel
                             </Link>
