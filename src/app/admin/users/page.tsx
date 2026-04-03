@@ -102,8 +102,9 @@ export default function AdminUsersPage() {
     const fetchUsers = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/admin/users', {
+            const res = await fetch(`/api/admin/users?t=${Date.now()}`, {
                 headers: { 'x-admin-email': getAdminEmail() },
+                cache: 'no-store'
             });
             if (res.ok) {
                 const data = await res.json();
@@ -413,18 +414,18 @@ export default function AdminUsersPage() {
                                                 <div style={{ position: 'relative' }}>
                                                     <select
                                                         onChange={(e) => {
-                                                            if (e.target.value) handleAction(user.id, 'setRole', e.target.value);
-                                                            e.target.value = '';
+                                                            if (e.target.value && e.target.value !== user.role) {
+                                                                handleAction(user.id, 'setRole', e.target.value);
+                                                            }
                                                         }}
                                                         className="admin-input"
                                                         style={{ fontSize: '11px', padding: '4px 8px', paddingRight: '20px', width: 'auto', minWidth: '80px', cursor: 'pointer', appearance: 'none' }}
-                                                        defaultValue=""
+                                                        value={user.role}
                                                         disabled={isActioning}
                                                     >
-                                                        <option value="" disabled>🛡️ Role</option>
-                                                        <option value="member">Member</option>
-                                                        <option value="staff">Staff Mod</option>
-                                                        <option value="admin">Admin</option>
+                                                        <option value="member">Role: Member</option>
+                                                        <option value="staff">Role: Staff</option>
+                                                        <option value="admin">Role: Admin</option>
                                                     </select>
                                                     <ChevronDown size={10} style={{ position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)', color: '#6b7280', pointerEvents: 'none' }} />
                                                 </div>
