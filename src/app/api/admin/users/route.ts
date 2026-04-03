@@ -24,15 +24,27 @@ async function getSupabase() {
     );
 }
 
+async function verifyAdmin(supabase: any, email: string): Promise<boolean> {
+    if (ADMIN_EMAILS.includes(email.toLowerCase())) return true;
+    const { data } = await supabase.from('user_profiles').select('is_admin, role').eq('email', email.toLowerCase()).single();
+    if (data && (data.is_admin || data.role === 'admin' || data.role === 'staff')) return true;
+    return false;
+}
+
 // GET — list all users from user_profiles (no auth.admin dependency)
 export async function GET(request: NextRequest) {
     try {
         const authHeader = request.headers.get('x-admin-email');
-        if (!authHeader || !isAdminEmail(authHeader)) {
+        if (!authHeader) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         const supabase = await getSupabase();
+        
+        const isAuthorized = await verifyAdmin(supabase, authHeader);
+        if (!isAuthorized) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
 
         // Fetch actual auth.users to get email_confirmed_at and catch trigger failures
         const { data: authData } = await supabase.auth.admin.listUsers();
@@ -163,7 +175,7 @@ export async function GET(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
     try {
         const authHeader = request.headers.get('x-admin-email');
-        if (!authHeader || !isAdminEmail(authHeader)) {
+        if (!authHeader) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
@@ -175,6 +187,12 @@ export async function PATCH(request: NextRequest) {
         }
 
         const supabase = await getSupabase();
+        
+        const isAuthorized = await verifyAdmin(supabase, authHeader);
+        if (!isAuthorized) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const callerIsSuper = isSuperAdmin(authHeader);
 
         // Ensure profile exists for Ghost users before applying updates
@@ -183,7 +201,7 @@ export async function PATCH(request: NextRequest) {
             if (!profile) {
                 const { data: authUser } = await supabase.auth.admin.getUserById(userId);
                 if (authUser?.user) {
-                    await supabase.from('user_profiles').insert({
+                    const { error: insertErr } = await supabase.from('user_profiles').insert({
                         id: userId,
                         email: authUser.user.email,
                         display_name: authUser.user.email?.split('@')[0] || 'User',
@@ -191,6 +209,12 @@ export async function PATCH(request: NextRequest) {
                         subscription_tier: 'free',
                         trial_end: new Date(Date.now() + 7 * 86400000).toISOString(),
                     });
+                    if (insertErr) {
+                        console.error('Auto-heal insert failed:', insertErr);
+                        return NextResponse.json({ error: 'Failed to create database profile for user: ' + insertErr.message }, { status: 500 });
+                    }
+                } else {
+                    return NextResponse.json({ error: 'User does not exist in authentication server' }, { status: 404 });
                 }
             }
         }

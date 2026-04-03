@@ -5,8 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Zap, Home, CreditCard, LayoutDashboard, FileText, TrendingUp, Users, Trophy, LogOut, User, MessageCircle, Shield, Settings, Clock } from 'lucide-react';
-import { useAuth } from '@/components/AuthProvider';
-import { isAdminEmail } from '@/lib/adminAuth';
+import { useAdminAuth } from '@/lib/adminAuth';
 
 const navLinks = [
     { href: '/', label: 'Home', icon: Home },
@@ -26,7 +25,7 @@ export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [showMenuHint, setShowMenuHint] = useState(false);
-    const { user, signOut } = useAuth();
+    const { user, isAdmin, signOut } = useAdminAuth();
     const [currentTime, setCurrentTime] = useState('');
 
     // Live clock — updates every second using user's local timezone
@@ -125,7 +124,7 @@ export default function Navbar() {
                                     <User size={14} style={{ color: '#00e59b' }} />
                                     <span style={{ maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '11px' }}>{user.email}</span>
                                 </Link>
-                                {user.email && isAdminEmail(user.email) && (
+                                {isAdmin && (
                                     <Link href="/admin" className="text-xs text-gray-400 hover:text-amber-400 transition-colors flex items-center gap-1">
                                         <Shield size={12} /> Admin
                                     </Link>
@@ -334,7 +333,7 @@ export default function Navbar() {
                                                 <p style={{ color: '#6b7280', fontSize: '11px', margin: 0 }}>Signed in</p>
                                             </div>
                                         </div>
-                                        {user.email && isAdminEmail(user.email) && (
+                                        {isAdmin && (
                                             <Link
                                                 href="/admin"
                                                 onClick={() => setIsOpen(false)}
