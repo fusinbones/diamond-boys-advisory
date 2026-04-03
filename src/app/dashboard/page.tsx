@@ -79,6 +79,8 @@ function DashboardContent(): ReactNode {
     const [recoveryMode, setRecoveryMode] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [showOtp, setShowOtp] = useState(false);
+    const [otp, setOtp] = useState('');
 
     // Dashboard state
     const [sportFilter, setSportFilter] = useState('All');
@@ -320,12 +322,11 @@ function DashboardContent(): ReactNode {
                 const { error } = await supabase.auth.signUp({
                     email,
                     password,
-                    options: {
-                        emailRedirectTo: `${window.location.origin}/dashboard`,
-                    },
+                    // No emailRedirectTo needed since we use OTP Verification on this page
                 });
                 if (error) throw error;
-                setMessage('Check your email for a confirmation link!');
+                setShowOtp(true);
+                setMessage('A 6-digit confirmation code has been sent to your email.');
             } else {
                 const { error } = await supabase.auth.signInWithPassword({
                     email,
@@ -335,7 +336,6 @@ function DashboardContent(): ReactNode {
                 router.push('/dashboard');
             }
         } catch (err: unknown) {
-            // Translate raw errors to user-friendly messages
             const raw = err instanceof Error ? err.message : String(err);
             const lower = raw.toLowerCase();
 
@@ -344,26 +344,54 @@ function DashboardContent(): ReactNode {
             } else if (lower.includes('invalid login credentials') || lower.includes('invalid password')) {
                 setError('Incorrect email or password. Please try again.');
             } else if (lower.includes('email not confirmed')) {
-                setError('Please check your email and confirm your account first.');
+                // If they haven't confirmed, let them trigger OTP again by re-signing up
+                setShowOtp(true);
+                setError('Please check your email and enter the 6-digit code to confirm your account first.');
             } else if (lower.includes('password') && lower.includes('6')) {
                 setError('Password must be at least 6 characters.');
             } else if (lower.includes('rate limit') || lower.includes('too many')) {
                 setError('Too many attempts. Please wait a moment and try again.');
             } else if (lower.includes('database') || lower.includes('relation') || lower.includes('column') || lower.includes('violates') || lower.includes('duplicate key')) {
-                // Never show DB internals to users
                 console.error('Signup DB error (hidden from user):', raw);
                 if (isSignUp) {
-                    // Signup may have succeeded even if the profile trigger failed
-                    setMessage('Account created! Check your email to confirm. If you have trouble, contact support.');
+                    setShowOtp(true);
+                    setMessage('Account creation partially complete. Enter your code to continue.');
                 } else {
                     setError('Something went wrong. Please try again in a moment.');
                 }
             } else if (lower.includes('network') || lower.includes('fetch')) {
                 setError('Network error. Please check your connection and try again.');
             } else {
-                // Generic fallback — never show raw error
                 console.error('Auth error (hidden):', raw);
                 setError('Something went wrong. Please try again.');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleVerifyOtp = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!otp || otp.length !== 6) {
+            setError('Please enter the 6-digit code.');
+            return;
+        }
+        setLoading(true);
+        setError('');
+        setMessage('');
+
+        try {
+            const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: 'signup' });
+            if (error) throw error;
+            router.push('/dashboard');
+        } catch (err: unknown) {
+            const raw = err instanceof Error ? err.message : String(err);
+            if (raw.toLowerCase().includes('expired')) {
+                setError('That code has expired. Please go back and sign up again to get a new code.');
+            } else if (raw.toLowerCase().includes('invalid')) {
+                setError('Invalid code. Please double-check what was sent to your email.');
+            } else {
+                setError('Failed to verify code. Please try again.');
             }
         } finally {
             setLoading(false);
@@ -493,6 +521,78 @@ function DashboardContent(): ReactNode {
                                         )}
                                     </button>
                                 </form>
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+        }
+
+        if (showOtp) {
+            return (
+                <div style={{ paddingTop: '40px', paddingBottom: '60px', minHeight: 'calc(100vh - 96px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className="container-db" style={{ maxWidth: '420px' }}>
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                            <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(0,229,155,0.1)', border: '1px solid rgba(0,229,155,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                                    <KeyRound size={28} style={{ color: '#00e59b' }} />
+                                </div>
+                                <h1 className="font-display" style={{ fontSize: '28px', fontWeight: 800, color: 'white', marginBottom: '8px' }}>
+                                    Verify Email
+                                </h1>
+                                <p style={{ color: '#d1d5db', fontSize: '15px', lineHeight: 1.5 }}>
+                                    Enter the 6-digit code sent to <strong style={{ color: 'white' }}>{email}</strong>
+                                </p>
+                            </div>
+
+                            <div className="glass-card" style={{ padding: '28px 24px', marginBottom: '20px' }}>
+                                <form onSubmit={handleVerifyOtp}>
+                                    <div style={{ position: 'relative', marginBottom: '20px' }}>
+                                        <input
+                                            id="otp-code"
+                                            type="text"
+                                            inputMode="numeric"
+                                            required
+                                            value={otp}
+                                            onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                            style={{
+                                                width: '100%', padding: '16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+                                                borderRadius: '10px', color: 'white', fontSize: '24px', letterSpacing: '0.5em', outline: 'none', boxSizing: 'border-box',
+                                                textAlign: 'center', fontWeight: 'bold'
+                                            }}
+                                            placeholder="------"
+                                            maxLength={6}
+                                        />
+                                    </div>
+
+                                    <AnimatePresence mode="wait">
+                                        {error && (
+                                            <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                                                style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '8px', padding: '10px 14px', marginBottom: '14px', color: '#f87171', fontSize: '13px' }}
+                                            >{error}</motion.div>
+                                        )}
+                                        {message && (
+                                            <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                                                style={{ background: 'rgba(0,229,155,0.1)', border: '1px solid rgba(0,229,155,0.2)', borderRadius: '8px', padding: '10px 14px', marginBottom: '14px', color: '#00e59b', fontSize: '13px' }}
+                                            >{message}</motion.div>
+                                        )}
+                                    </AnimatePresence>
+
+                                    <button type="submit" className="btn-glow" disabled={loading}
+                                        style={{ width: '100%', padding: '14px', fontSize: '15px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                                    >
+                                        {loading ? (
+                                            <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Verifying...</>
+                                        ) : (
+                                            <><KeyRound size={16} /> Verify & Access</>
+                                        )}
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div style={{ textAlign: 'center' }}>
+                                <button type="button" onClick={() => setShowOtp(false)} style={{ background: 'none', border: 'none', color: '#9ca3af', fontSize: '14px', cursor: 'pointer', textDecoration: 'underline' }}>
+                                    Go back to Sign In
+                                </button>
                             </div>
                         </motion.div>
                     </div>
