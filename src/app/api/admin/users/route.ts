@@ -177,6 +177,24 @@ export async function PATCH(request: NextRequest) {
         const supabase = await getSupabase();
         const callerIsSuper = isSuperAdmin(authHeader);
 
+        // Ensure profile exists for Ghost users before applying updates
+        if (action !== 'deleteUser' && action !== 'confirmEmail') {
+            const { data: profile } = await supabase.from('user_profiles').select('id').eq('id', userId).single();
+            if (!profile) {
+                const { data: authUser } = await supabase.auth.admin.getUserById(userId);
+                if (authUser?.user) {
+                    await supabase.from('user_profiles').insert({
+                        id: userId,
+                        email: authUser.user.email,
+                        display_name: authUser.user.email?.split('@')[0] || 'User',
+                        avatar_color: `hsl(${Math.abs(userId.charCodeAt(0) * 37) % 360}, 60%, 45%)`,
+                        subscription_tier: 'free',
+                        trial_end: new Date(Date.now() + 7 * 86400000).toISOString(),
+                    });
+                }
+            }
+        }
+
         switch (action) {
             case 'confirmEmail': {
                 if (!callerIsSuper) {
