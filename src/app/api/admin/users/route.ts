@@ -34,6 +34,10 @@ export async function GET(request: NextRequest) {
 
         const supabase = await getSupabase();
 
+        // Fetch actual auth.users to get email_confirmed_at and catch trigger failures
+        const { data: authData } = await supabase.auth.admin.listUsers();
+        const authUsersMap = new Map(authData?.users?.map(u => [u.id, u]) || []);
+
         // Fetch all user profiles — email is now stored directly
         const { data: profiles, error } = await supabase
             .from('user_profiles')
@@ -64,8 +68,13 @@ export async function GET(request: NextRequest) {
             is_muted?: boolean;
         }
 
-        const users = (profiles || []).map((p: ProfileRow) => {
-            const email = p.email || 'unknown';
+        const mappedUserIds = new Set<string>();
+
+        const usersData = (profiles || []).map((p: ProfileRow) => {
+            mappedUserIds.add(p.id);
+            const authUser = authUsersMap.get(p.id);
+            const emailConfirmed = !!authUser?.email_confirmed_at;
+            const email = p.email || authUser?.email || 'unknown';
             const trialEnd = p.trial_end ? new Date(p.trial_end) : new Date(new Date(p.created_at).getTime() + 7 * 86400000);
             const bonusDays = p.trial_bonus_days || 0;
             const effectiveEnd = new Date(trialEnd.getTime() + bonusDays * 86400000);
@@ -84,7 +93,7 @@ export async function GET(request: NextRequest) {
             return {
                 id: p.id,
                 email,
-                emailConfirmed: true, // We know they signed up
+                emailConfirmed,
                 displayName: p.display_name || email.split('@')[0] || 'User',
                 tier: p.subscription_tier || 'free',
                 trialEnd: effectiveEnd.toISOString(),
@@ -95,12 +104,42 @@ export async function GET(request: NextRequest) {
                 isAdmin: role === 'admin',
                 role,
                 lastSeen: p.last_seen_at,
-                lastSignIn: null,
+                lastSignIn: authUser?.last_sign_in_at || null,
                 notes: p.notes,
                 createdAt: p.created_at,
                 avatarColor: p.avatar_color || `hsl(${Math.abs(p.id.charCodeAt(0) * 37) % 360}, 60%, 45%)`,
             };
         });
+
+        // Add any missing auth.users that failed the trigger
+        if (authData?.users) {
+            authData.users.forEach(u => {
+                if (!mappedUserIds.has(u.id)) {
+                    usersData.push({
+                        id: u.id,
+                        email: u.email || 'unknown',
+                        emailConfirmed: !!u.email_confirmed_at,
+                        displayName: u.email?.split('@')[0] || 'User',
+                        tier: 'free',
+                        trialEnd: new Date(new Date(u.created_at).getTime() + 7 * 86400000).toISOString(),
+                        trialDaysLeft: 7,
+                        trialBonusDays: 0,
+                        status: 'trial',
+                        isPaid: false,
+                        isAdmin: isSuperAdmin(u.email || ''),
+                        role: isSuperAdmin(u.email || '') ? 'admin' : 'member',
+                        lastSeen: null,
+                        lastSignIn: u.last_sign_in_at || null,
+                        notes: null,
+                        createdAt: u.created_at,
+                        avatarColor: `hsl(${Math.abs(u.id.charCodeAt(0) * 37) % 360}, 60%, 45%)`,
+                    });
+                }
+            });
+        }
+
+        // Sort by created_at desc
+        const users = usersData.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
         // Stats
         const totalUsers = users.length;
@@ -139,6 +178,17 @@ export async function PATCH(request: NextRequest) {
         const callerIsSuper = isSuperAdmin(authHeader);
 
         switch (action) {
+            case 'confirmEmail': {
+                if (!callerIsSuper) {
+                    return NextResponse.json({ error: 'Only super admins can manually confirm users' }, { status: 403 });
+                }
+                const { error } = await supabase.auth.admin.updateUserById(userId, {
+                    email_confirm: true
+                });
+                if (error) throw error;
+                break;
+            }
+
             case 'grantBonusDays': {
                 const days = Number(value);
                 if (isNaN(days) || days <= 0) {

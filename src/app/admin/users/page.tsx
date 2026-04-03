@@ -397,6 +397,17 @@ export default function AdminUsersPage() {
                                                 <Loader2 size={14} style={{ color: '#00e59b', animation: 'spin 1s linear infinite' }} />
                                             )}
 
+                                            {!user.emailConfirmed && (
+                                                <button
+                                                    onClick={() => handleAction(user.id, 'confirmEmail', '')}
+                                                    className="admin-btn"
+                                                    style={{ fontSize: '11px', padding: '4px 8px', background: 'rgba(0,229,155,0.1)', color: '#00e59b', border: '1px solid rgba(0,229,155,0.2)', display: 'flex', alignItems: 'center', gap: '4px' }}
+                                                    disabled={isActioning}
+                                                >
+                                                    <CheckCircle2 size={12} /> Confirm Email
+                                                </button>
+                                            )}
+
                                             {/* Role selector — super admin only */}
                                             {isSuperAdmin() && (
                                                 <div style={{ position: 'relative' }}>
