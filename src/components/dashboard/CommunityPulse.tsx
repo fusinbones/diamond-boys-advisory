@@ -15,7 +15,7 @@ export default function CommunityPulse(): ReactNode {
             </div>
 
             <p style={{ fontSize: '13px', color: '#9ca3af', marginBottom: '16px', lineHeight: 1.5 }}>
-                Connect with the Diamond Boys team and other members to discuss today's slate, track live games, and more.
+                Connect with the TriplePlayz team and other members to discuss today's slate, track live games, and more.
             </p>
 
             <Link

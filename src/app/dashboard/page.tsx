@@ -29,6 +29,7 @@ interface UserProfile {
     trial_bonus_days: number;
     display_name: string;
     is_admin: boolean;
+    role?: string;
 }
 
 // ── Types ──
