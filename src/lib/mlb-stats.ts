@@ -157,7 +157,13 @@ function mapMLBGameToGame(g: any): Game {
     const detailed = g.status?.detailedState || '';
     let status: { long: string; short: string };
 
-    if (abstract === 'Final') {
+    if (detailed === 'Postponed') {
+        status = { long: 'Postponed', short: 'PST' };
+    } else if (detailed === 'Cancelled') {
+        status = { long: 'Cancelled', short: 'CANC' };
+    } else if (detailed === 'Suspended') {
+        status = { long: 'Suspended', short: 'SUSP' };
+    } else if (abstract === 'Final') {
         status = { long: 'Finished', short: 'FT' };
     } else if (abstract === 'Live') {
         // Use IN prefix so frontend startsWith('IN') works
@@ -167,10 +173,6 @@ function mapMLBGameToGame(g: any): Game {
             long: detailed || 'In Progress',
             short: inning ? `IN${half}${inning}` : 'IN',
         };
-    } else if (detailed === 'Postponed') {
-        status = { long: 'Postponed', short: 'PST' };
-    } else if (detailed === 'Cancelled') {
-        status = { long: 'Cancelled', short: 'CANC' };
     } else if (detailed === 'Delayed' || detailed === 'Delayed Start') {
         status = { long: detailed, short: 'DLY' };
     } else {

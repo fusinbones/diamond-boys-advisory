@@ -163,8 +163,10 @@ export async function GET() {
 
         for (const date of scheduleData.dates || []) {
             for (const game of date.games || []) {
-                const status = game.status?.abstractGameState;
-                if (status !== 'Final') continue;
+                const abstractStatus = game.status?.abstractGameState;
+                const detailedStatus = game.status?.detailedState;
+                if (abstractStatus !== 'Final') continue;
+                if (detailedStatus === 'Postponed' || detailedStatus === 'Cancelled' || detailedStatus === 'Suspended') continue;
 
                 const homeId = game.teams?.home?.team?.id;
                 const awayId = game.teams?.away?.team?.id;
