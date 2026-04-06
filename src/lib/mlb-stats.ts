@@ -164,7 +164,16 @@ function mapMLBGameToGame(g: any): Game {
     } else if (detailed === 'Suspended') {
         status = { long: 'Suspended', short: 'SUSP' };
     } else if (abstract === 'Final') {
-        status = { long: 'Finished', short: 'FT' };
+        // CRITICAL: Baseball games cannot end in a tie.
+        // If a game is 0-0 (or any tied score), it was rained out/suspended 
+        // without MLB API properly assigning the postponed detailedState.
+        const hr = linescore.teams?.home?.runs ?? 0;
+        const ar = linescore.teams?.away?.runs ?? 0;
+        if (hr === ar) {
+            status = { long: 'Postponed (Ghost Game)', short: 'PST' };
+        } else {
+            status = { long: 'Finished', short: 'FT' };
+        }
     } else if (abstract === 'Live') {
         // Use IN prefix so frontend startsWith('IN') works
         const inning = linescore.currentInning || '';
@@ -206,7 +215,7 @@ function mapMLBGameToGame(g: any): Game {
 
     return {
         id: g.gamePk,
-        date: (g.officialDate || gameDate.toISOString().split('T')[0]),
+        date: (g.gameDate || g.officialDate || gameDate.toISOString().split('T')[0]),
         time: gameDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/New_York' }) +
             ' · ' + gameDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/New_York' }) + ' ET',
         timestamp: Math.floor(gameDate.getTime() / 1000),

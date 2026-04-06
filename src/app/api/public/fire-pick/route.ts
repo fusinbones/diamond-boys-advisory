@@ -39,6 +39,14 @@ export async function GET() {
             data.revealed_at = now;
         }
 
+        // Fetch history
+        const { data: historyData } = await supabaseAdmin
+            .from('fire_picks')
+            .select('*')
+            .in('status', ['won', 'lost', 'push'])
+            .order('scheduled_at', { ascending: false })
+            .limit(5);
+
         // Return teaser for scheduled, full details for revealed
         if (!isRevealed) {
             return NextResponse.json({
@@ -51,12 +59,13 @@ export async function GET() {
                     confidence: data.confidence,
                     units: data.units,
                 },
+                history: historyData || [],
             });
         }
 
-        return NextResponse.json({ firePick: data });
+        return NextResponse.json({ firePick: data, history: historyData || [] });
     } catch (err: unknown) {
         const message = err instanceof Error ? err.message : 'Unknown error';
-        return NextResponse.json({ error: message, firePick: null }, { status: 500 });
+        return NextResponse.json({ error: message, firePick: null, history: [] }, { status: 500 });
     }
 }

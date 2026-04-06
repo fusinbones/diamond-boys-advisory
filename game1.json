@@ -1,0 +1,27 @@
+{
+  "id": "dc790b25-8a4a-44f8-b246-8a0c15420f3a",
+  "created_at": "2026-04-03T14:00:25.753887+00:00",
+  "created_by": "AI Consensus Engine",
+  "game_id": "9c1e11abdcd795ef8ff437128ea5e829",
+  "home_team": "Cleveland Guardians",
+  "away_team": "Chicago Cubs",
+  "pick_type": "RL",
+  "pick_team": "Cleveland Guardians",
+  "pick_value": "+1.5",
+  "confidence": 95,
+  "reason": "📊 Consensus across 11 sportsbooks:\nCleveland Guardians available at +103 (underdog value play)\n⚡ High odds divergence (210pts) — books disagree here\nAI Confidence: 80%",
+  "notes": "Edge: 20% | Consensus: 27% (Adjusted to RunLine +1.5)",
+  "result": "hit",
+  "game_date": "2026-04-03",
+  "source": "ai_consensus",
+  "odds_at_pick": {
+    "total": null,
+    "moneyline": {
+      "away": -117,
+      "home": 45
+    }
+  },
+  "sport": "baseball_mlb",
+  "unit_size": "2",
+  "game_time": "2026-04-03T20:10:00+00:00"
+}

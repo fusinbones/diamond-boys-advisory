@@ -159,7 +159,7 @@ export async function GET() {
         const scheduleData: any = await scheduleRes.json();
 
         // Build per-team game results
-        const teamResults: Record<number, Array<{ date: string; result: 'W' | 'L'; opponent: string; score: string }>> = {};
+        const teamResults: Record<number, Array<{ date: string; result: 'W' | 'L'; opponent: string; score: string; index: number }>> = {};
 
         for (const date of scheduleData.dates || []) {
             for (const game of date.games || []) {
@@ -174,7 +174,15 @@ export async function GET() {
                 const awayRuns = game.teams?.away?.score ?? game.linescore?.teams?.away?.runs ?? 0;
                 const homeName = game.teams?.home?.team?.name || 'Unknown';
                 const awayName = game.teams?.away?.team?.name || 'Unknown';
-                const gameDate = game.officialDate || date.date;
+                
+                // CRITICAL FIX: Use exact gameDate timestamp (which includes the hour) to properly 
+                // sort doubleheaders and makeup games, rather than the generic YYYY-MM-DD date
+                const gameDate = game.gameDate || game.officialDate || date.date;
+
+                // CRITICAL FIX: There are no ties in MLB.
+                // If a game is 0-0, it was rained out or suspended before completion.
+                // It MUST NOT count as a result for pattern analysis.
+                if (homeRuns === awayRuns) continue;
 
                 if (homeId) {
                     if (!teamResults[homeId]) teamResults[homeId] = [];
@@ -183,6 +191,7 @@ export async function GET() {
                         result: homeRuns > awayRuns ? 'W' : 'L',
                         opponent: awayName,
                         score: `${homeRuns}-${awayRuns}`,
+                        index: teamResults[homeId].length
                     });
                 }
                 if (awayId) {
@@ -192,6 +201,7 @@ export async function GET() {
                         result: awayRuns > homeRuns ? 'W' : 'L',
                         opponent: `@ ${homeName}`,
                         score: `${awayRuns}-${homeRuns}`,
+                        index: teamResults[awayId].length
                     });
                 }
             }
@@ -200,7 +210,12 @@ export async function GET() {
         // Build team patterns
         const patterns: TeamPattern[] = MLB_TEAMS.map(team => {
             const games = (teamResults[team.id] || [])
-                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                .sort((a, b) => {
+                    const diff = new Date(b.date).getTime() - new Date(a.date).getTime();
+                    // If same date (double header), sort descending by index (newer game first)
+                    if (diff === 0) return b.index - a.index;
+                    return diff;
+                })
                 .slice(0, 10);
 
             const { altStreak, isAlternating, isDeveloping, nextPrediction, predictionType, altScore } = analyzeAlternation(games);

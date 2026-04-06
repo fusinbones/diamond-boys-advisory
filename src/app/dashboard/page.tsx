@@ -94,6 +94,7 @@ function DashboardContent(): ReactNode {
     const [recentDays, setRecentDays] = useState<DailyPnl[]>([]);
     const [bySport, setBySport] = useState<SportBreakdown[]>([]);
     const [tailTracker, setTailTracker] = useState({ seasonUnits: 0, weekUnits: 0, totalPicks: 0 });
+    const [fireStats, setFireStats] = useState({ record: '0-0', winPct: '0.0%', units: 0 });
     const [dashLoading, setDashLoading] = useState(true);
     const [loginStreak, setLoginStreak] = useState(1);
     const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -116,6 +117,7 @@ function DashboardContent(): ReactNode {
         status: string;
     }
     const [firePick, setFirePick] = useState<FirePickData | null>(null);
+    const [fireHistory, setFireHistory] = useState<FirePickData[]>([]);
     const [deletingPickId, setDeletingPickId] = useState<string | null>(null);
     const [todayStr, setTodayStr] = useState(() => {
         const formatter = new Intl.DateTimeFormat('en-US', {
@@ -268,11 +270,15 @@ function DashboardContent(): ReactNode {
                 setRecentDays(data.recentDays || []);
                 setBySport(data.bySport || []);
                 setTailTracker(data.tailTracker || { seasonUnits: 0, weekUnits: 0, totalPicks: 0 });
+                if (data.fireStats) {
+                    setFireStats(data.fireStats);
+                }
             }
 
             if (fireRes.ok) {
                 const data = await fireRes.json();
                 setFirePick(data.firePick || null);
+                setFireHistory(data.history || []);
             }
         } catch (err) {
             console.error('Dashboard fetch error:', err);
@@ -811,6 +817,35 @@ function DashboardContent(): ReactNode {
                                     <FirePickCard firePick={firePick} isPaid={!!isPaid} />
                                 )}
 
+                                {/* 🔥 Past Fire Picks (Paid Only) */}
+                                {isPaid && fireHistory.length > 0 && (
+                                    <div className="glass-card" style={{ padding: '16px', marginBottom: '20px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                                            <Flame size={16} style={{ color: '#6b7280' }} />
+                                            <span style={{ fontSize: '13px', fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Past Fire Picks</span>
+                                        </div>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                            {fireHistory.map((pick) => (
+                                                <div key={pick.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '10px 14px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                                    <div>
+                                                        <p style={{ fontSize: '14px', fontWeight: 700, color: 'white', marginBottom: '2px' }}>{pick.pick_value}</p>
+                                                        <p style={{ fontSize: '11px', color: '#6b7280' }}>
+                                                            {new Date(pick.scheduled_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • {pick.matchup}
+                                                        </p>
+                                                    </div>
+                                                    <span style={{ 
+                                                        fontSize: '12px', fontWeight: 700, padding: '4px 10px', borderRadius: '6px', 
+                                                        color: pick.status === 'won' ? '#00e59b' : pick.status === 'lost' ? '#f87171' : '#fbbf24',
+                                                        background: pick.status === 'won' ? 'rgba(0,229,155,0.1)' : pick.status === 'lost' ? 'rgba(239,68,68,0.1)' : 'rgba(251,191,36,0.1)'
+                                                    }}>
+                                                        {pick.status.toUpperCase()}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
                                 {/* Sport filter pills */}
                                 <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '4px' }}>
                                     {sportTabs.map(tab => {
@@ -944,6 +979,38 @@ function DashboardContent(): ReactNode {
                                         </span>
                                     </div>
                                 ))}
+                            </div>
+                        </div>
+
+                        {/* Fire Pick Marketing Widget */}
+                        <div className="dash-sidebar-card" style={{ 
+                            background: 'linear-gradient(180deg, rgba(251,191,36,0.1) 0%, rgba(20,20,25,0.95) 100%)',
+                            border: '1px solid rgba(251,191,36,0.2)' 
+                        }}>
+                            <h3 className="dash-sidebar-card__title" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#fbbf24', marginBottom: '10px' }}>
+                                <Flame size={14} style={{ color: '#fbbf24' }} />
+                                Fire Pick Record
+                                <Tooltip text="The official win/loss record for all highest-confidence Fire Picks." />
+                            </h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ fontSize: '12px', color: '#d1d5db', fontWeight: 600 }}>All-Time Record</span>
+                                    <span style={{ fontSize: '15px', fontWeight: 800, color: 'white' }}>
+                                        {fireStats.record}
+                                    </span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ fontSize: '12px', color: '#d1d5db', fontWeight: 600 }}>Win Rate</span>
+                                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#fbbf24' }}>
+                                        {fireStats.winPct}
+                                    </span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ fontSize: '12px', color: '#d1d5db', fontWeight: 600 }}>Net Profit</span>
+                                    <span style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'monospace', color: fireStats.units >= 0 ? '#00e59b' : '#f87171' }}>
+                                        {fireStats.units >= 0 ? '+' : ''}{fireStats.units}u
+                                    </span>
+                                </div>
                             </div>
                         </div>
 

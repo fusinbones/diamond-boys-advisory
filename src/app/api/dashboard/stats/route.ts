@@ -98,6 +98,42 @@ export async function GET() {
         const recentLost = recentPicks.filter(p => p.result === 'miss').reduce((a, p) => a + (Number(p.unit_size) || 1), 0);
         const recentNet = recentWon - recentLost;
 
+        // ── Fire Picks Aggregation ──
+        const { data: fireData, error: fireError } = await supabase
+            .from('fire_picks')
+            .select('*')
+            .in('status', ['won', 'lost', 'push'])
+            .order('scheduled_at', { ascending: true });
+
+        const fireStats = {
+            wins: 0,
+            losses: 0,
+            pushes: 0,
+            units: 0,
+            record: '0-0',
+            winPct: '0.0%',
+        };
+
+        if (fireData && !fireError) {
+            for (const fp of fireData) {
+                const result = fp.result || fp.status;
+                const u = Number(fp.units) || 3;
+                if (result === 'won') { fireStats.wins++; fireStats.units += u; }
+                if (result === 'lost') { fireStats.losses++; fireStats.units -= u; }
+                if (result === 'push') { fireStats.pushes++; }
+            }
+            
+            const totalDecisions = fireStats.wins + fireStats.losses;
+            const w = fireStats.wins;
+            const l = fireStats.losses;
+            const p = fireStats.pushes;
+            
+            fireStats.record = `${w}-${l}${p > 0 ? `-${p}` : ''}`;
+            fireStats.winPct = totalDecisions > 0 ? `${((w / totalDecisions) * 100).toFixed(1)}%` : '0.0%';
+            // Limit units to 1 decimal
+            fireStats.units = Number(fireStats.units.toFixed(1));
+        }
+
         return NextResponse.json({
             dailyPnl,
             recentDays: dailyPnl.slice(-5).reverse(),
@@ -107,6 +143,7 @@ export async function GET() {
                 weekUnits: Number(recentNet.toFixed(1)),
                 totalPicks: picks.length,
             },
+            fireStats,
         });
     } catch (error) {
         console.error('Dashboard stats error:', error);
