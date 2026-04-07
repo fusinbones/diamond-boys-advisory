@@ -66,6 +66,54 @@ interface SportBreakdown {
 
 // Sport filters moved into GamesBoard component
 
+// ── Resend OTP Code Button with cooldown ──
+function ResendCodeButton({ email }: { email: string }): ReactNode {
+    const [cooldown, setCooldown] = useState(0);
+    const [sending, setSending] = useState(false);
+    const [sent, setSent] = useState(false);
+
+    useEffect(() => {
+        if (cooldown <= 0) return;
+        const timer = setTimeout(() => setCooldown(c => c - 1), 1000);
+        return () => clearTimeout(timer);
+    }, [cooldown]);
+
+    const handleResend = async () => {
+        if (cooldown > 0 || sending) return;
+        setSending(true);
+        setSent(false);
+        try {
+            await supabase.auth.resend({ type: 'signup', email });
+            setSent(true);
+            setCooldown(30);
+            setTimeout(() => setSent(false), 4000);
+        } catch {
+            // silent — Supabase rate-limits internally
+        } finally {
+            setSending(false);
+        }
+    };
+
+    return (
+        <button
+            type="button"
+            onClick={handleResend}
+            disabled={cooldown > 0 || sending}
+            style={{
+                background: 'none', border: 'none', padding: '4px 0',
+                color: cooldown > 0 ? '#4b5563' : sent ? '#00e59b' : '#9ca3af',
+                fontSize: '13px', cursor: cooldown > 0 ? 'default' : 'pointer',
+                transition: 'color 0.2s',
+            }}
+        >
+            {sending ? 'Sending...'
+                : sent ? '✓ Code sent! Check your email'
+                : cooldown > 0 ? `Resend code in ${cooldown}s`
+                : "Didn't get a code? Resend"}
+        </button>
+    );
+}
+
 function DashboardContent(): ReactNode {
     const { user, loading: authLoading, signOut } = useAuth();
     const searchParams = useSearchParams();
@@ -653,9 +701,10 @@ function DashboardContent(): ReactNode {
                                 </form>
                             </div>
 
-                            <div style={{ textAlign: 'center' }}>
-                                <button type="button" onClick={() => setShowOtp(false)} style={{ background: 'none', border: 'none', color: '#9ca3af', fontSize: '14px', cursor: 'pointer', textDecoration: 'underline' }}>
-                                    Go back to Sign In
+                            <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+                                <ResendCodeButton email={email} />
+                                <button type="button" onClick={() => setShowOtp(false)} style={{ background: 'none', border: 'none', color: '#6b7280', fontSize: '13px', cursor: 'pointer' }}>
+                                    ← Go back
                                 </button>
                             </div>
                         </motion.div>
