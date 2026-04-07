@@ -333,7 +333,7 @@ function DashboardContent(): ReactNode {
                 });
                 if (error) throw error;
                 setShowOtp(true);
-                setMessage('A 6-digit confirmation code has been sent to your email.');
+                setMessage('A confirmation code has been sent to your email.');
             } else {
                 const { error } = await supabase.auth.signInWithPassword({
                     email,
@@ -353,7 +353,7 @@ function DashboardContent(): ReactNode {
             } else if (lower.includes('email not confirmed')) {
                 // If they haven't confirmed, let them trigger OTP again by re-signing up
                 setShowOtp(true);
-                setError('Please check your email and enter the 6-digit code to confirm your account first.');
+                setError('Please check your email and enter the confirmation code to verify your account first.');
             } else if (lower.includes('password') && lower.includes('6')) {
                 setError('Password must be at least 6 characters.');
             } else if (lower.includes('rate limit') || lower.includes('too many')) {
@@ -379,8 +379,8 @@ function DashboardContent(): ReactNode {
 
     const handleVerifyOtp = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!otp || otp.length !== 6) {
-            setError('Please enter the 6-digit code.');
+        if (!otp || otp.length !== 8) {
+            setError('Please enter the 8-digit code from your email.');
             return;
         }
         setLoading(true);
@@ -536,16 +536,16 @@ function DashboardContent(): ReactNode {
         }
 
         if (showOtp) {
-            const otpDigits = otp.padEnd(6, ' ').split('').slice(0, 6);
+            const OTP_LENGTH = 8;
             const handleOtpBoxChange = (index: number, value: string) => {
                 const digit = value.replace(/\D/g, '').slice(-1); // take last char typed
                 const newOtp = otp.split('');
-                while (newOtp.length < 6) newOtp.push('');
+                while (newOtp.length < OTP_LENGTH) newOtp.push('');
                 newOtp[index] = digit;
-                const joined = newOtp.join('').replace(/\s/g, '').slice(0, 6);
+                const joined = newOtp.join('').replace(/\s/g, '').slice(0, OTP_LENGTH);
                 setOtp(joined);
                 // Auto-focus next box
-                if (digit && index < 5) {
+                if (digit && index < OTP_LENGTH - 1) {
                     const next = document.getElementById(`otp-${index + 1}`) as HTMLInputElement | null;
                     next?.focus();
                 }
@@ -561,10 +561,10 @@ function DashboardContent(): ReactNode {
             };
             const handleOtpPaste = (e: React.ClipboardEvent) => {
                 e.preventDefault();
-                const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+                const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, OTP_LENGTH);
                 setOtp(pasted);
                 // Focus last filled box or submit button
-                const focusIdx = Math.min(pasted.length, 5);
+                const focusIdx = Math.min(pasted.length, OTP_LENGTH - 1);
                 const target = document.getElementById(`otp-${focusIdx}`) as HTMLInputElement | null;
                 target?.focus();
             };
@@ -581,13 +581,13 @@ function DashboardContent(): ReactNode {
                                     Verify Email
                                 </h1>
                                 <p style={{ color: '#d1d5db', fontSize: '14px', lineHeight: 1.5 }}>
-                                    Enter the 6-digit code sent to<br /><strong style={{ color: 'white' }}>{email}</strong>
+                                    Enter the confirmation code sent to<br /><strong style={{ color: 'white' }}>{email}</strong>
                                 </p>
                             </div>
 
                             <div className="glass-card" style={{ padding: '24px 20px', marginBottom: '20px' }}>
                                 <form onSubmit={handleVerifyOtp}>
-                                    {/* 6-Box OTP Input — mobile perfect */}
+                                    {/* 8-Box OTP Input — mobile perfect */}
                                     <div
                                         style={{
                                             display: 'flex', gap: '8px', justifyContent: 'center',
@@ -595,7 +595,7 @@ function DashboardContent(): ReactNode {
                                         }}
                                         onPaste={handleOtpPaste}
                                     >
-                                        {[0, 1, 2, 3, 4, 5].map(i => (
+                                        {Array.from({ length: OTP_LENGTH }, (_, i) => i).map(i => (
                                             <input
                                                 key={i}
                                                 id={`otp-${i}`}
@@ -608,11 +608,11 @@ function DashboardContent(): ReactNode {
                                                 onFocus={(e) => e.target.select()}
                                                 maxLength={1}
                                                 style={{
-                                                    width: '44px', height: '54px',
+                                                    width: '38px', height: '50px',
                                                     background: otp[i] ? 'rgba(0,229,155,0.08)' : 'rgba(255,255,255,0.04)',
                                                     border: `2px solid ${otp[i] ? 'rgba(0,229,155,0.4)' : 'rgba(255,255,255,0.1)'}`,
                                                     borderRadius: '12px', color: 'white',
-                                                    fontSize: '22px', fontWeight: 800,
+                                                    fontSize: '20px', fontWeight: 800,
                                                     textAlign: 'center', outline: 'none',
                                                     caretColor: '#00e59b',
                                                     transition: 'border-color 0.2s, background 0.2s',
@@ -637,11 +637,11 @@ function DashboardContent(): ReactNode {
                                         )}
                                     </AnimatePresence>
 
-                                    <button type="submit" className="btn-glow" disabled={loading || otp.length < 6}
+                                    <button type="submit" className="btn-glow" disabled={loading || otp.length < OTP_LENGTH}
                                         style={{
                                             width: '100%', padding: '14px', fontSize: '15px', fontWeight: 700,
                                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                                            opacity: otp.length < 6 ? 0.5 : 1,
+                                            opacity: otp.length < OTP_LENGTH ? 0.5 : 1,
                                         }}
                                     >
                                         {loading ? (
