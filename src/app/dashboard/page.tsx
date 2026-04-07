@@ -536,41 +536,93 @@ function DashboardContent(): ReactNode {
         }
 
         if (showOtp) {
+            const otpDigits = otp.padEnd(6, ' ').split('').slice(0, 6);
+            const handleOtpBoxChange = (index: number, value: string) => {
+                const digit = value.replace(/\D/g, '').slice(-1); // take last char typed
+                const newOtp = otp.split('');
+                while (newOtp.length < 6) newOtp.push('');
+                newOtp[index] = digit;
+                const joined = newOtp.join('').replace(/\s/g, '').slice(0, 6);
+                setOtp(joined);
+                // Auto-focus next box
+                if (digit && index < 5) {
+                    const next = document.getElementById(`otp-${index + 1}`) as HTMLInputElement | null;
+                    next?.focus();
+                }
+            };
+            const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === 'Backspace' && !otp[index] && index > 0) {
+                    const prev = document.getElementById(`otp-${index - 1}`) as HTMLInputElement | null;
+                    prev?.focus();
+                    const newOtp = otp.split('');
+                    newOtp[index - 1] = '';
+                    setOtp(newOtp.join('').trimEnd());
+                }
+            };
+            const handleOtpPaste = (e: React.ClipboardEvent) => {
+                e.preventDefault();
+                const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+                setOtp(pasted);
+                // Focus last filled box or submit button
+                const focusIdx = Math.min(pasted.length, 5);
+                const target = document.getElementById(`otp-${focusIdx}`) as HTMLInputElement | null;
+                target?.focus();
+            };
+
             return (
                 <div style={{ paddingTop: '40px', paddingBottom: '60px', minHeight: 'calc(100vh - 96px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div className="container-db" style={{ maxWidth: '420px' }}>
+                    <div className="container-db" style={{ maxWidth: '420px', padding: '0 16px' }}>
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                             <div style={{ textAlign: 'center', marginBottom: '28px' }}>
                                 <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(0,229,155,0.1)', border: '1px solid rgba(0,229,155,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
                                     <KeyRound size={28} style={{ color: '#00e59b' }} />
                                 </div>
-                                <h1 className="font-display" style={{ fontSize: '28px', fontWeight: 800, color: 'white', marginBottom: '8px' }}>
+                                <h1 className="font-display" style={{ fontSize: '24px', fontWeight: 800, color: 'white', marginBottom: '8px' }}>
                                     Verify Email
                                 </h1>
-                                <p style={{ color: '#d1d5db', fontSize: '15px', lineHeight: 1.5 }}>
-                                    Enter the 6-digit code sent to <strong style={{ color: 'white' }}>{email}</strong>
+                                <p style={{ color: '#d1d5db', fontSize: '14px', lineHeight: 1.5 }}>
+                                    Enter the 6-digit code sent to<br /><strong style={{ color: 'white' }}>{email}</strong>
                                 </p>
                             </div>
 
-                            <div className="glass-card" style={{ padding: '28px 24px', marginBottom: '20px' }}>
+                            <div className="glass-card" style={{ padding: '24px 20px', marginBottom: '20px' }}>
                                 <form onSubmit={handleVerifyOtp}>
-                                    <div style={{ position: 'relative', marginBottom: '20px' }}>
-                                        <input
-                                            id="otp-code"
-                                            type="text"
-                                            inputMode="numeric"
-                                            required
-                                            value={otp}
-                                            onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                                            style={{
-                                                width: '100%', padding: '16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
-                                                borderRadius: '10px', color: 'white', fontSize: '24px', letterSpacing: '0.5em', outline: 'none', boxSizing: 'border-box',
-                                                textAlign: 'center', fontWeight: 'bold'
-                                            }}
-                                            placeholder="------"
-                                            maxLength={6}
-                                        />
+                                    {/* 6-Box OTP Input — mobile perfect */}
+                                    <div
+                                        style={{
+                                            display: 'flex', gap: '8px', justifyContent: 'center',
+                                            marginBottom: '20px',
+                                        }}
+                                        onPaste={handleOtpPaste}
+                                    >
+                                        {[0, 1, 2, 3, 4, 5].map(i => (
+                                            <input
+                                                key={i}
+                                                id={`otp-${i}`}
+                                                type="text"
+                                                inputMode="numeric"
+                                                autoComplete="one-time-code"
+                                                value={otp[i] || ''}
+                                                onChange={(e) => handleOtpBoxChange(i, e.target.value)}
+                                                onKeyDown={(e) => handleOtpKeyDown(i, e)}
+                                                onFocus={(e) => e.target.select()}
+                                                maxLength={1}
+                                                style={{
+                                                    width: '44px', height: '54px',
+                                                    background: otp[i] ? 'rgba(0,229,155,0.08)' : 'rgba(255,255,255,0.04)',
+                                                    border: `2px solid ${otp[i] ? 'rgba(0,229,155,0.4)' : 'rgba(255,255,255,0.1)'}`,
+                                                    borderRadius: '12px', color: 'white',
+                                                    fontSize: '22px', fontWeight: 800,
+                                                    textAlign: 'center', outline: 'none',
+                                                    caretColor: '#00e59b',
+                                                    transition: 'border-color 0.2s, background 0.2s',
+                                                }}
+                                            />
+                                        ))}
                                     </div>
+
+                                    {/* Hidden real input for form submission */}
+                                    <input type="hidden" name="otp" value={otp} />
 
                                     <AnimatePresence mode="wait">
                                         {error && (
@@ -585,8 +637,12 @@ function DashboardContent(): ReactNode {
                                         )}
                                     </AnimatePresence>
 
-                                    <button type="submit" className="btn-glow" disabled={loading}
-                                        style={{ width: '100%', padding: '14px', fontSize: '15px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                                    <button type="submit" className="btn-glow" disabled={loading || otp.length < 6}
+                                        style={{
+                                            width: '100%', padding: '14px', fontSize: '15px', fontWeight: 700,
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                                            opacity: otp.length < 6 ? 0.5 : 1,
+                                        }}
                                     >
                                         {loading ? (
                                             <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Verifying...</>

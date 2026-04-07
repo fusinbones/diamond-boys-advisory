@@ -39,6 +39,15 @@ export async function GET() {
             data.revealed_at = now;
         }
 
+        // SAFETY: Auto-expire revealed picks older than 12 hours.
+        // This prevents stale fire picks from lingering if manual grading is missed.
+        const revealedAt = data.revealed_at ? new Date(data.revealed_at) : new Date(data.scheduled_at);
+        const hoursSinceReveal = (Date.now() - revealedAt.getTime()) / (1000 * 60 * 60);
+        if (data.status === 'revealed' && hoursSinceReveal > 12) {
+            // Don't show stale pick — return null so the dashboard shows nothing
+            return NextResponse.json({ firePick: null, history: [] });
+        }
+
         // Fetch history
         const { data: historyData } = await supabaseAdmin
             .from('fire_picks')
