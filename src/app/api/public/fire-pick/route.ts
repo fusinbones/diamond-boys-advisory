@@ -12,40 +12,52 @@ export async function GET() {
     try {
         const now = new Date().toISOString();
 
-        // Get the latest fire pick that is scheduled or revealed
-        const { data, error } = await supabaseAdmin
+        // Get ALL active fire picks (scheduled or revealed)
+        const { data: activePicks, error } = await supabaseAdmin
             .from('fire_picks')
             .select('*')
             .in('status', ['scheduled', 'revealed'])
-            .order('scheduled_at', { ascending: false })
-            .limit(1)
-            .single();
+            .order('scheduled_at', { ascending: true });
 
-        if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows
+        if (error && error.code !== 'PGRST116') throw error;
 
-        if (!data) {
-            return NextResponse.json({ firePick: null });
-        }
+        const picks = activePicks || [];
+        const validPicks = [];
 
-        const isRevealed = data.status === 'revealed' || new Date(data.scheduled_at) <= new Date(now);
+        for (const pick of picks) {
+            const isRevealed = pick.status === 'revealed' || new Date(pick.scheduled_at) <= new Date(now);
 
-        // If it should be revealed but status is still 'scheduled', auto-reveal it
-        if (isRevealed && data.status === 'scheduled') {
-            await supabaseAdmin
-                .from('fire_picks')
-                .update({ status: 'revealed', revealed_at: now })
-                .eq('id', data.id);
-            data.status = 'revealed';
-            data.revealed_at = now;
-        }
+            // If it should be revealed but status is still 'scheduled', auto-reveal it
+            if (isRevealed && pick.status === 'scheduled') {
+                await supabaseAdmin
+                    .from('fire_picks')
+                    .update({ status: 'revealed', revealed_at: now })
+                    .eq('id', pick.id);
+                pick.status = 'revealed';
+                pick.revealed_at = now;
+            }
 
-        // SAFETY: Auto-expire revealed picks older than 12 hours.
-        // This prevents stale fire picks from lingering if manual grading is missed.
-        const revealedAt = data.revealed_at ? new Date(data.revealed_at) : new Date(data.scheduled_at);
-        const hoursSinceReveal = (Date.now() - revealedAt.getTime()) / (1000 * 60 * 60);
-        if (data.status === 'revealed' && hoursSinceReveal > 12) {
-            // Don't show stale pick — return null so the dashboard shows nothing
-            return NextResponse.json({ firePick: null, history: [] });
+            // SAFETY: Auto-expire revealed picks older than 12 hours.
+            const revealedAt = pick.revealed_at ? new Date(pick.revealed_at) : new Date(pick.scheduled_at);
+            const hoursSinceReveal = (Date.now() - revealedAt.getTime()) / (1000 * 60 * 60);
+            if (pick.status === 'revealed' && hoursSinceReveal > 12) {
+                continue; // Skip stale picks
+            }
+
+            // For scheduled (not yet revealed), return teaser only
+            if (!isRevealed) {
+                validPicks.push({
+                    id: pick.id,
+                    matchup: pick.matchup,
+                    sport: pick.sport,
+                    scheduled_at: pick.scheduled_at,
+                    status: 'scheduled',
+                    confidence: pick.confidence,
+                    units: pick.units,
+                });
+            } else {
+                validPicks.push(pick);
+            }
         }
 
         // Fetch history
@@ -54,27 +66,16 @@ export async function GET() {
             .select('*')
             .in('status', ['won', 'lost', 'push'])
             .order('scheduled_at', { ascending: false })
-            .limit(5);
+            .limit(10);
 
-        // Return teaser for scheduled, full details for revealed
-        if (!isRevealed) {
-            return NextResponse.json({
-                firePick: {
-                    id: data.id,
-                    matchup: data.matchup,
-                    sport: data.sport,
-                    scheduled_at: data.scheduled_at,
-                    status: 'scheduled',
-                    confidence: data.confidence,
-                    units: data.units,
-                },
-                history: historyData || [],
-            });
-        }
-
-        return NextResponse.json({ firePick: data, history: historyData || [] });
+        // Return array of fire picks + single legacy firePick for backward compat
+        return NextResponse.json({
+            firePicks: validPicks,
+            firePick: validPicks[0] || null, // backward compat
+            history: historyData || [],
+        });
     } catch (err: unknown) {
         const message = err instanceof Error ? err.message : 'Unknown error';
-        return NextResponse.json({ error: message, firePick: null, history: [] }, { status: 500 });
+        return NextResponse.json({ error: message, firePicks: [], firePick: null, history: [] }, { status: 500 });
     }
 }

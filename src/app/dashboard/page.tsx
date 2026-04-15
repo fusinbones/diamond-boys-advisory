@@ -164,7 +164,7 @@ function DashboardContent(): ReactNode {
         scheduled_at: string;
         status: string;
     }
-    const [firePick, setFirePick] = useState<FirePickData | null>(null);
+    const [firePicks, setFirePicks] = useState<FirePickData[]>([]);
     const [fireHistory, setFireHistory] = useState<FirePickData[]>([]);
     const [deletingPickId, setDeletingPickId] = useState<string | null>(null);
     const [todayStr, setTodayStr] = useState(() => {
@@ -325,7 +325,7 @@ function DashboardContent(): ReactNode {
 
             if (fireRes.ok) {
                 const data = await fireRes.json();
-                setFirePick(data.firePick || null);
+                setFirePicks(data.firePicks || (data.firePick ? [data.firePick] : []));
                 setFireHistory(data.history || []);
             }
         } catch (err) {
@@ -917,10 +917,10 @@ function DashboardContent(): ReactNode {
                             <>
                                 <PickDropBanner pickCount={newPickCount} isPaid={!!isPaid} />
 
-                                {/* 🔥 Fire Pick — pinned to top */}
-                                {firePick && (
-                                    <FirePickCard firePick={firePick} isPaid={!!isPaid} />
-                                )}
+                                {/* 🔥 Fire Picks — pinned to top */}
+                                {firePicks.map(fp => (
+                                    <FirePickCard key={fp.id} firePick={fp} isPaid={!!isPaid} />
+                                ))}
 
                                 {/* 🔥 Past Fire Picks (Paid Only) */}
                                 {isPaid && fireHistory.length > 0 && (
