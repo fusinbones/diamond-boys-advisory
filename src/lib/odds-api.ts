@@ -1,5 +1,11 @@
-// The Odds API v4 Client
+// The Odds API v4 Client — with Supabase-backed persistent cache
 // Docs: https://the-odds-api.com/liveapi/guides/v4/
+//
+// ARCHITECTURE: Users NEVER hit the live Odds API.
+// A cron job (/api/cron/refresh-odds) refreshes data every 2-4 hours.
+// All user-facing endpoints read from the Supabase `odds_cache` table.
+
+import { createClient } from '@supabase/supabase-js';
 
 const ODDS_API_KEY = process.env.ODDS_API_KEY;
 const BASE_URL = 'https://api.the-odds-api.com/v4';
@@ -67,35 +73,62 @@ export interface ScoreEvent {
 }
 
 // ═══════════════════════════════════════════
-// In-memory cache
+// Supabase cache client
 // ═══════════════════════════════════════════
 
-interface CacheEntry<T> {
-    data: T;
-    timestamp: number;
+function getSupabase() {
+    return createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
 }
 
-const cache = new Map<string, CacheEntry<unknown>>();
+/** Read from Supabase odds_cache table */
+async function readCache<T>(cacheKey: string): Promise<T | null> {
+    try {
+        const supabase = getSupabase();
+        const { data, error } = await supabase
+            .from('odds_cache')
+            .select('data, updated_at, expires_at')
+            .eq('cache_key', cacheKey)
+            .single();
 
-function getCached<T>(key: string, ttlMs: number): T | null {
-    const entry = cache.get(key);
-    if (!entry) return null;
-    if (Date.now() - entry.timestamp > ttlMs) {
-        cache.delete(key);
+        if (error || !data) return null;
+
+        // Check if expired
+        if (new Date(data.expires_at) < new Date()) return null;
+
+        return data.data as T;
+    } catch {
         return null;
     }
-    return entry.data as T;
 }
 
-function setCache<T>(key: string, data: T) {
-    cache.set(key, { data, timestamp: Date.now() });
+/** Write to Supabase odds_cache table */
+async function writeCache<T>(cacheKey: string, data: T, ttlHours: number = 4): Promise<void> {
+    try {
+        const supabase = getSupabase();
+        const now = new Date();
+        const expiresAt = new Date(now.getTime() + ttlHours * 60 * 60 * 1000);
+
+        await supabase
+            .from('odds_cache')
+            .upsert({
+                cache_key: cacheKey,
+                data,
+                updated_at: now.toISOString(),
+                expires_at: expiresAt.toISOString(),
+            }, { onConflict: 'cache_key' });
+    } catch (err) {
+        console.error('[Odds Cache] Write error:', err);
+    }
 }
 
 // ═══════════════════════════════════════════
-// API Fetcher
+// Direct API Fetcher (ONLY used by cron job)
 // ═══════════════════════════════════════════
 
-async function oddsFetch<T>(path: string, params: Record<string, string> = {}): Promise<T> {
+async function oddsFetchDirect<T>(path: string, params: Record<string, string> = {}): Promise<T> {
     if (!ODDS_API_KEY) throw new Error('ODDS_API_KEY not configured');
 
     const url = new URL(`${BASE_URL}${path}`);
@@ -104,13 +137,13 @@ async function oddsFetch<T>(path: string, params: Record<string, string> = {}): 
         url.searchParams.set(k, v);
     }
 
-    const res = await fetch(url.toString(), { next: { revalidate: 300 } }); // 5min cache
+    const res = await fetch(url.toString());
     if (!res.ok) {
         const body = await res.text();
         throw new Error(`Odds API error ${res.status}: ${body}`);
     }
 
-    // Log remaining quota from headers
+    // Log remaining quota
     const remaining = res.headers.get('x-requests-remaining');
     const used = res.headers.get('x-requests-used');
     if (remaining) console.log(`[Odds API] Quota: ${used} used / ${remaining} remaining`);
@@ -119,49 +152,65 @@ async function oddsFetch<T>(path: string, params: Record<string, string> = {}): 
 }
 
 // ═══════════════════════════════════════════
-// Public Functions
+// Public Functions (read from cache ONLY)
 // ═══════════════════════════════════════════
 
 /** Get list of active sports */
 export async function getActiveSports(): Promise<SportInfo[]> {
-    const cacheKey = 'sports-list';
-    const cached = getCached<SportInfo[]>(cacheKey, 3600000); // 1hr
+    const cached = await readCache<SportInfo[]>('sports-list');
     if (cached) return cached;
-
-    const data = await oddsFetch<SportInfo[]>('/sports');
-    setCache(cacheKey, data);
-    return data;
+    // Fallback: return static list if cache is empty
+    return US_SPORTS.map(s => ({
+        key: s.key, group: 'Sports', title: s.name,
+        description: s.name, active: true, has_outrights: false,
+    }));
 }
 
-/** Get odds for a sport — returns events with bookmaker odds */
+/** Get odds for a sport — reads from Supabase cache */
 export async function getSportOdds(
     sportKey: string,
     markets: string = 'h2h,spreads,totals',
     regions: string = 'us'
 ): Promise<OddsEvent[]> {
     const cacheKey = `odds-${sportKey}-${markets}-${regions}`;
-    const cached = getCached<OddsEvent[]>(cacheKey, 300000); // 5min
-    if (cached) return cached;
+    const cached = await readCache<OddsEvent[]>(cacheKey);
+    return cached || [];
+}
 
-    const data = await oddsFetch<OddsEvent[]>(`/sports/${sportKey}/odds`, {
+/** Get scores for a sport — reads from Supabase cache */
+export async function getSportScores(sportKey: string, daysFrom: number = 1): Promise<ScoreEvent[]> {
+    const cacheKey = `scores-${sportKey}-${daysFrom}`;
+    const cached = await readCache<ScoreEvent[]>(cacheKey);
+    return cached || [];
+}
+
+// ═══════════════════════════════════════════
+// Refresh Functions (called ONLY by cron job)
+// ═══════════════════════════════════════════
+
+/** Refresh odds for a sport from the live API and store in cache */
+export async function refreshSportOdds(
+    sportKey: string,
+    markets: string = 'h2h,spreads,totals',
+    regions: string = 'us'
+): Promise<OddsEvent[]> {
+    const data = await oddsFetchDirect<OddsEvent[]>(`/sports/${sportKey}/odds`, {
         regions,
         markets,
         oddsFormat: 'american',
     });
-    setCache(cacheKey, data);
+    const cacheKey = `odds-${sportKey}-${markets}-${regions}`;
+    await writeCache(cacheKey, data, 4); // Cache for 4 hours
     return data;
 }
 
-/** Get scores for a sport */
-export async function getSportScores(sportKey: string, daysFrom: number = 1): Promise<ScoreEvent[]> {
-    const cacheKey = `scores-${sportKey}-${daysFrom}`;
-    const cached = getCached<ScoreEvent[]>(cacheKey, 120000); // 2min
-    if (cached) return cached;
-
-    const data = await oddsFetch<ScoreEvent[]>(`/sports/${sportKey}/scores`, {
+/** Refresh scores for a sport from the live API and store in cache */
+export async function refreshSportScores(sportKey: string, daysFrom: number = 1): Promise<ScoreEvent[]> {
+    const data = await oddsFetchDirect<ScoreEvent[]>(`/sports/${sportKey}/scores`, {
         daysFrom: String(daysFrom),
     });
-    setCache(cacheKey, data);
+    const cacheKey = `scores-${sportKey}-${daysFrom}`;
+    await writeCache(cacheKey, data, 2); // Cache for 2 hours (scores change more often)
     return data;
 }
 
