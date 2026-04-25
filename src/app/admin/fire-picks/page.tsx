@@ -248,10 +248,43 @@ export default function FirePicksPage() {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '16px' }}>
                         <div>
                             <label className="admin-label">Pick Type</label>
-                            <select className="admin-select" value={pickType} onChange={e => setPickType(e.target.value)}>
+                            <select className="admin-select" value={pickType} onChange={e => {
+                                const newType = e.target.value;
+                                setPickType(newType);
+                                // Auto-update pick value to match new type
+                                if (selectedGame && pickTeam) {
+                                    const isHome = pickTeam === selectedGame.homeTeam;
+                                    if (newType === 'ML') {
+                                        const ml = isHome ? selectedGame.moneyline?.home : selectedGame.moneyline?.away;
+                                        setPickValue(`${pickTeam} ML ${fmtOdds(ml ?? null)}`);
+                                        setOdds(fmtOdds(ml ?? null));
+                                    } else if (newType === 'RL') {
+                                        const sp = isHome ? selectedGame.spread?.home : selectedGame.spread?.away;
+                                        const line = selectedGame.spread?.line;
+                                        const displayLine = isHome ? (line ?? 0) : -(line ?? 0);
+                                        setPickValue(`${pickTeam} RL ${displayLine > 0 ? '+' : ''}${displayLine} (${fmtOdds(sp ?? null)})`);
+                                        setOdds(fmtOdds(sp ?? null));
+                                    } else if (newType === 'Spread') {
+                                        const sp = isHome ? selectedGame.spread?.home : selectedGame.spread?.away;
+                                        const line = selectedGame.spread?.line;
+                                        const displayLine = isHome ? (line ?? 0) : -(line ?? 0);
+                                        setPickValue(`${pickTeam} ${displayLine > 0 ? '+' : ''}${displayLine} (${fmtOdds(sp ?? null)})`);
+                                        setOdds(fmtOdds(sp ?? null));
+                                    } else if (newType === 'Total') {
+                                        const ou = selectedGame.total?.overUnder;
+                                        setPickValue(`Over ${ou ?? ''}`);
+                                        setOdds(fmtOdds(selectedGame.total?.overOdds ?? null));
+                                    } else {
+                                        setPickValue(`${pickTeam} ${newType}`);
+                                    }
+                                }
+                            }}>
                                 <option value="ML">Moneyline</option>
+                                <option value="RL">Run Line</option>
                                 <option value="Spread">Spread</option>
                                 <option value="Total">Over/Under</option>
+                                <option value="F5">First 5 Innings</option>
+                                <option value="Prop">Player Prop</option>
                             </select>
                         </div>
                         <div>
@@ -260,9 +293,27 @@ export default function FirePicksPage() {
                                 const newTeam = e.target.value;
                                 setPickTeam(newTeam);
                                 const isHome = newTeam === selectedGame.homeTeam;
-                                const mlOdds = isHome ? selectedGame.moneyline?.home : selectedGame.moneyline?.away;
-                                setPickValue(`${newTeam} ML ${fmtOdds(mlOdds ?? null)}`);
-                                setOdds(fmtOdds(mlOdds ?? null));
+                                if (pickType === 'ML') {
+                                    const ml = isHome ? selectedGame.moneyline?.home : selectedGame.moneyline?.away;
+                                    setPickValue(`${newTeam} ML ${fmtOdds(ml ?? null)}`);
+                                    setOdds(fmtOdds(ml ?? null));
+                                } else if (pickType === 'RL') {
+                                    const sp = isHome ? selectedGame.spread?.home : selectedGame.spread?.away;
+                                    const line = selectedGame.spread?.line;
+                                    const displayLine = isHome ? (line ?? 0) : -(line ?? 0);
+                                    setPickValue(`${newTeam} RL ${displayLine > 0 ? '+' : ''}${displayLine} (${fmtOdds(sp ?? null)})`);
+                                    setOdds(fmtOdds(sp ?? null));
+                                } else if (pickType === 'Spread') {
+                                    const sp = isHome ? selectedGame.spread?.home : selectedGame.spread?.away;
+                                    const line = selectedGame.spread?.line;
+                                    const displayLine = isHome ? (line ?? 0) : -(line ?? 0);
+                                    setPickValue(`${newTeam} ${displayLine > 0 ? '+' : ''}${displayLine} (${fmtOdds(sp ?? null)})`);
+                                    setOdds(fmtOdds(sp ?? null));
+                                } else if (pickType === 'Total') {
+                                    // Total doesn't change with team
+                                } else {
+                                    setPickValue(`${newTeam} ${pickType}`);
+                                }
                             }}>
                                 <option value={selectedGame.awayTeam}>{selectedGame.awayTeam}</option>
                                 <option value={selectedGame.homeTeam}>{selectedGame.homeTeam}</option>
