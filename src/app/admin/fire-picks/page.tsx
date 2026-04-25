@@ -65,6 +65,7 @@ export default function FirePicksPage() {
     const [pickType, setPickType] = useState('ML');
     const [pickTeam, setPickTeam] = useState('');
     const [pickValue, setPickValue] = useState('');
+    const [spreadLine, setSpreadLine] = useState('');
     const [odds, setOdds] = useState('');
     const [confidence, setConfidence] = useState(90);
     const [units, setUnits] = useState(3);
@@ -266,17 +267,22 @@ export default function FirePicksPage() {
                                         const ml = isHome ? selectedGame.moneyline?.home : selectedGame.moneyline?.away;
                                         setPickValue(`${pickTeam} ML ${fmtOdds(ml ?? null)}`);
                                         setOdds(fmtOdds(ml ?? null));
+                                        setSpreadLine('');
                                     } else if (newType === 'RL') {
                                         const sp = isHome ? selectedGame.spread?.home : selectedGame.spread?.away;
                                         const line = selectedGame.spread?.line;
                                         const displayLine = isHome ? (line ?? 0) : -(line ?? 0);
-                                        setPickValue(`${pickTeam} RL ${displayLine > 0 ? '+' : ''}${displayLine} (${fmtOdds(sp ?? null)})`);
+                                        const lineStr = `${displayLine > 0 ? '+' : ''}${displayLine}`;
+                                        setSpreadLine(lineStr);
+                                        setPickValue(`${pickTeam} RL ${lineStr} (${fmtOdds(sp ?? null)})`);
                                         setOdds(fmtOdds(sp ?? null));
                                     } else if (newType === 'Spread') {
                                         const sp = isHome ? selectedGame.spread?.home : selectedGame.spread?.away;
                                         const line = selectedGame.spread?.line;
                                         const displayLine = isHome ? (line ?? 0) : -(line ?? 0);
-                                        setPickValue(`${pickTeam} ${displayLine > 0 ? '+' : ''}${displayLine} (${fmtOdds(sp ?? null)})`);
+                                        const lineStr = `${displayLine > 0 ? '+' : ''}${displayLine}`;
+                                        setSpreadLine(lineStr);
+                                        setPickValue(`${pickTeam} ${lineStr} (${fmtOdds(sp ?? null)})`);
                                         setOdds(fmtOdds(sp ?? null));
                                     } else if (newType === 'Total') {
                                         const ou = selectedGame.total?.overUnder;
@@ -327,10 +333,28 @@ export default function FirePicksPage() {
                                 <option value={selectedGame.homeTeam}>{selectedGame.homeTeam}</option>
                             </select>
                         </div>
+
+                        {/* Line field — only for RL / Spread */}
+                        {(pickType === 'RL' || pickType === 'Spread') && (
+                            <div>
+                                <label className="admin-label">Line (e.g. -1.5, +2.5)</label>
+                                <input className="admin-input" value={spreadLine}
+                                    onChange={e => {
+                                        const newLine = e.target.value;
+                                        setSpreadLine(newLine);
+                                        // Auto-rebuild pick value display
+                                        const prefix = pickType === 'RL' ? 'RL' : '';
+                                        const lineDisplay = newLine || '?';
+                                        setPickValue(`${pickTeam} ${prefix} ${lineDisplay} (${odds})`.trim());
+                                    }}
+                                    placeholder="-1.5" />
+                            </div>
+                        )}
+
                         <div>
                             <label className="admin-label">Pick Value (displayed)</label>
                             <input className="admin-input" value={pickValue} onChange={e => setPickValue(e.target.value)}
-                                placeholder="e.g. Tigers ML -150" />
+                                placeholder="e.g. Tigers RL -1.5 (+180)" />
                         </div>
                         <div>
                             <label className="admin-label">Odds</label>
