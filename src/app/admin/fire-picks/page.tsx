@@ -233,11 +233,19 @@ export default function FirePicksPage() {
                                 <div style={{ fontSize: '13px', fontWeight: 600 }}>
                                     {game.awayTeam} @ {game.homeTeam}
                                 </div>
-                                {game.moneyline && (
-                                    <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '4px' }}>
-                                        ML: {fmtOdds(game.moneyline.away)} / {fmtOdds(game.moneyline.home)}
-                                    </div>
-                                )}
+                                <div style={{ fontSize: '10px', color: '#9ca3af', marginTop: '4px', display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                                    {game.moneyline && (
+                                        <span>ML: {fmtOdds(game.moneyline.away)} / {fmtOdds(game.moneyline.home)}</span>
+                                    )}
+                                    {game.spread && (
+                                        <span style={{ color: '#a78bfa' }}>
+                                            {game.sport === 'MLB' ? 'RL' : 'Spread'}: {game.spread.line != null ? `${game.spread.line > 0 ? '+' : ''}${game.spread.line}` : '—'} ({fmtOdds(game.spread.away)} / {fmtOdds(game.spread.home)})
+                                        </span>
+                                    )}
+                                    {game.total && (
+                                        <span style={{ color: '#67e8f9' }}>O/U: {game.total.overUnder ?? '—'}</span>
+                                    )}
+                                </div>
                             </button>
                         ))}
                     </div>
