@@ -70,7 +70,7 @@ export async function GET(
             const oppScore = isHome ? g.scores.away.total : g.scores.home.total;
             return {
                 gameId: g.id,
-                date: g.date,
+                date: g.date?.split('T')[0] || g.date,
                 opponent: isHome ? g.teams.away.name : g.teams.home.name,
                 opponentLogo: isHome ? g.teams.away.logo : g.teams.home.logo,
                 isHome,
