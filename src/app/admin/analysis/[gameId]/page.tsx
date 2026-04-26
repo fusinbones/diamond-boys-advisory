@@ -798,7 +798,7 @@ function OddsTab({ oddsData }: { oddsData: OddsData | null }) {
 }
 
 // ═══════════════════════════════════════════
-// TAB: AI Analysis (DB Algorithm)
+// TAB: AI Analysis — DUAL ENGINE
 // ═══════════════════════════════════════════
 
 function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
@@ -809,64 +809,120 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
     awayP: PitcherData | null;
     oddsData: OddsData | null;
 }) {
-    const [analysis, setAnalysis] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [activeEngine, setActiveEngine] = useState<'stats' | 'pattern'>('stats');
+    const [statsAnalysis, setStatsAnalysis] = useState<string | null>(null);
+    const [patternAnalysis, setPatternAnalysis] = useState<string | null>(null);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [edgeReport, setEdgeReport] = useState<Record<string, any> | null>(null);
+    const [loadingStats, setLoadingStats] = useState(false);
+    const [loadingPattern, setLoadingPattern] = useState(false);
     const [error, setError] = useState('');
     const [postingFreebie, setPostingFreebie] = useState(false);
     const [freebiePosted, setFreebiePosted] = useState(false);
 
-    const runAnalysis = async () => {
+    const buildBody = (engine: 'stats' | 'pattern') => {
+        const body: Record<string, unknown> = {
+            awayTeam: game.teams.away.name,
+            homeTeam: game.teams.home.name,
+            gameDate: game.date?.split('T')[0] || '',
+            engine,
+        };
+
+        if (homeData?.streakInfo) {
+            body.homeStats = {
+                record: `${homeData.stats?.games?.wins?.all?.total || 0}-${homeData.stats?.games?.loses?.all?.total || 0}`,
+                altPct: homeData.streakInfo.altPercentage,
+                longestAltRun: homeData.streakInfo.longestAltRun,
+                currentAltStreak: homeData.streakInfo.currentAltStreak,
+                isCurrentlyAlternating: homeData.streakInfo.isCurrentlyAlternating,
+                predictedNext: homeData.streakInfo.predictedNext,
+                overallAltPct: homeData.streakInfo.overallAltPct,
+                currentStreak: `${homeData.streakInfo.currentStreak}${homeData.streakInfo.currentResult}`,
+                recentSequence: homeData.streakInfo.recentSequence,
+            };
+        }
+
+        if (awayData?.streakInfo) {
+            body.awayStats = {
+                record: `${awayData.stats?.games?.wins?.all?.total || 0}-${awayData.stats?.games?.loses?.all?.total || 0}`,
+                altPct: awayData.streakInfo.altPercentage,
+                longestAltRun: awayData.streakInfo.longestAltRun,
+                currentAltStreak: awayData.streakInfo.currentAltStreak,
+                isCurrentlyAlternating: awayData.streakInfo.isCurrentlyAlternating,
+                predictedNext: awayData.streakInfo.predictedNext,
+                overallAltPct: awayData.streakInfo.overallAltPct,
+                currentStreak: `${awayData.streakInfo.currentStreak}${awayData.streakInfo.currentResult}`,
+                recentSequence: awayData.streakInfo.recentSequence,
+            };
+        }
+
+        // Extract odds from the game odds data
+        if (oddsData?.odds?.[0]?.bookmakers?.[0]) {
+            const bm = oddsData.odds[0].bookmakers[0];
+            const mlBet = bm.bets.find((b: { name: string }) => b.name.toLowerCase().includes('money') || b.name.toLowerCase().includes('winner'));
+            const spreadBet = bm.bets.find((b: { name: string }) => b.name.toLowerCase().includes('spread') || b.name.toLowerCase().includes('handicap'));
+            const totalBet = bm.bets.find((b: { name: string }) => b.name.toLowerCase().includes('total') || b.name.toLowerCase().includes('over'));
+
+            if (mlBet) {
+                const oddsObj: Record<string, unknown> = {
+                    moneyline: {
+                        home: parseFloat(mlBet.values[0]?.odd || '0'),
+                        away: parseFloat(mlBet.values[1]?.odd || '0'),
+                    },
+                };
+                if (spreadBet) {
+                    oddsObj.spread = {
+                        line: parseFloat(spreadBet.values[0]?.value || '0'),
+                        homeOdds: parseFloat(spreadBet.values[0]?.odd || '0'),
+                        awayOdds: parseFloat(spreadBet.values[1]?.odd || '0'),
+                    };
+                }
+                if (totalBet) {
+                    oddsObj.total = {
+                        line: parseFloat(totalBet.values[0]?.value?.replace('Over ', '') || '0'),
+                        overOdds: parseFloat(totalBet.values[0]?.odd || '0'),
+                        underOdds: parseFloat(totalBet.values[1]?.odd || '0'),
+                    };
+                }
+                body.odds = oddsObj;
+            }
+        }
+
+        if (homeP || awayP) {
+            body.pitchers = {
+                home: homeP?.info ? {
+                    name: homeP.info.fullName || 'TBD',
+                    era: homeP.stats ? parseFloat(homeP.stats.era) : undefined,
+                    whip: homeP.stats ? parseFloat(homeP.stats.whip) : undefined,
+                } : undefined,
+                away: awayP?.info ? {
+                    name: awayP.info.fullName || 'TBD',
+                    era: awayP.stats ? parseFloat(awayP.stats.era) : undefined,
+                    whip: awayP.stats ? parseFloat(awayP.stats.whip) : undefined,
+                } : undefined,
+            };
+        }
+
+        return body;
+    };
+
+    const runEngine = async (engine: 'stats' | 'pattern') => {
+        const setLoading = engine === 'stats' ? setLoadingStats : setLoadingPattern;
+        const setResult = engine === 'stats' ? setStatsAnalysis : setPatternAnalysis;
         setLoading(true);
         setError('');
         try {
-            // Build context from all available data
-            const body: Record<string, unknown> = {
-                awayTeam: game.teams.away.name,
-                homeTeam: game.teams.home.name,
-                gameDate: game.date?.split('T')[0] || '',
-            };
-
-            if (homeData?.streakInfo) {
-                body.homeStats = {
-                    altPct: homeData.streakInfo.altPercentage,
-                    longestAltRun: homeData.streakInfo.longestAltRun,
-                    currentAltStreak: homeData.streakInfo.currentAltStreak,
-                    isCurrentlyAlternating: homeData.streakInfo.isCurrentlyAlternating,
-                    predictedNext: homeData.streakInfo.predictedNext,
-                    overallAltPct: homeData.streakInfo.overallAltPct,
-                    currentStreak: `${homeData.streakInfo.currentStreak}${homeData.streakInfo.currentResult}`,
-                    recentSequence: homeData.streakInfo.recentSequence,
-                };
-            }
-
-            if (awayData?.streakInfo) {
-                body.awayStats = {
-                    altPct: awayData.streakInfo.altPercentage,
-                    longestAltRun: awayData.streakInfo.longestAltRun,
-                    currentAltStreak: awayData.streakInfo.currentAltStreak,
-                    isCurrentlyAlternating: awayData.streakInfo.isCurrentlyAlternating,
-                    predictedNext: awayData.streakInfo.predictedNext,
-                    overallAltPct: awayData.streakInfo.overallAltPct,
-                    currentStreak: `${awayData.streakInfo.currentStreak}${awayData.streakInfo.currentResult}`,
-                    recentSequence: awayData.streakInfo.recentSequence,
-                };
-            }
-
-            if (homeP || awayP) {
-                body.pitchers = {
-                    home: homeP?.info ? { name: homeP.info.fullName || 'TBD' } : undefined,
-                    away: awayP?.info ? { name: awayP.info.fullName || 'TBD' } : undefined,
-                };
-            }
-
             const res = await fetch('/api/admin/ai/analyze', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
+                body: JSON.stringify(buildBody(engine)),
             });
             const data = await res.json();
             if (data.error) throw new Error(data.error);
-            setAnalysis(data.analysis);
+            setResult(data.analysis);
+            if (engine === 'stats' && data.edgeReport) {
+                setEdgeReport(data.edgeReport);
+            }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Analysis failed');
         } finally {
@@ -874,167 +930,136 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
         }
     };
 
-    // Strip alternation insights (proprietary) and format for freebie post
+    useEffect(() => {
+        if (activeEngine === 'stats' && !statsAnalysis && !loadingStats) runEngine('stats');
+        if (activeEngine === 'pattern' && !patternAnalysis && !loadingPattern) runEngine('pattern');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeEngine]);
+
+    const currentAnalysis = activeEngine === 'stats' ? statsAnalysis : patternAnalysis;
+    const isLoading = activeEngine === 'stats' ? loadingStats : loadingPattern;
+
     const buildFreebieContent = (rawAnalysis: string): string => {
         const lines = rawAnalysis.split('\n');
         const filteredLines: string[] = [];
         let skipSection = false;
-
         for (const line of lines) {
             const upper = line.toUpperCase();
-            // Skip ALTERNATION INSIGHT section entirely
-            if (upper.includes('ALTERNATION INSIGHT') || upper.includes('ALTERNATION ANALYSIS') || upper.includes('ALT ACTIVE') || upper.includes('PATTERN PREDICT')) {
-                skipSection = true;
-                continue;
+            if (upper.includes('ALTERNATION') || upper.includes('PATTERN STATUS') || upper.includes('BREAK PREDICTION')) {
+                skipSection = true; continue;
             }
-            // Resume when we hit another section header
-            if (skipSection && (line.startsWith('**') || line.startsWith('RISK') || line.startsWith('BOTTOM'))) {
-                skipSection = false;
-            }
-            if (!skipSection) {
-                filteredLines.push(line);
-            }
+            if (skipSection && (line.startsWith('**') || line.startsWith('RISK') || line.startsWith('BOTTOM'))) skipSection = false;
+            if (!skipSection) filteredLines.push(line);
         }
-
         const cleanedAnalysis = filteredLines.join('\n').replace(/\n{3,}/g, '\n\n').trim();
-
-        // Build beautiful formatted message
         const matchup = `${game.teams.away.name} @ ${game.teams.home.name}`;
         const gameDate = game.date ? new Date(game.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : 'Today';
-
-        return [
-            `🎯 FREE PICK DROP 🎯`,
-            `━━━━━━━━━━━━━━━━━━━━━`,
-            ``,
-            `⚾ ${matchup}`,
-            `📅 ${gameDate}`,
-            ``,
-            cleanedAnalysis,
-            ``,
-            `━━━━━━━━━━━━━━━━━━━━━`,
-            `💎 Powered by TriplePlayz Algorithm`,
-            `🔥 Want MORE picks daily? Upgrade at tripleplayz.com/pricing`,
-        ].join('\n');
+        return [`🎯 FREE PICK DROP 🎯`, `━━━━━━━━━━━━━━━━━━━━━`, ``, `⚾ ${matchup}`, `📅 ${gameDate}`, ``, cleanedAnalysis, ``, `━━━━━━━━━━━━━━━━━━━━━`, `💎 Powered by TriplePlayz Algorithm`, `🔥 Want MORE picks daily? Upgrade at tripleplayz.com/pricing`].join('\n');
     };
 
     const postToFreebie = async () => {
-        if (!analysis) return;
+        if (!currentAnalysis) return;
         setPostingFreebie(true);
         try {
             const { createClient } = await import('@supabase/supabase-js');
-            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-            const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-            const supabase = createClient(supabaseUrl, supabaseKey);
-
-            // Find the free/freebies channel
-            const { data: channels } = await supabase
-                .from('community_channels')
-                .select('id, name, min_tier')
-                .or('name.ilike.%freebie%,name.ilike.%free%,min_tier.eq.free')
-                .order('sort_order', { ascending: true })
-                .limit(1);
-
+            const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL || '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '');
+            const { data: channels } = await supabase.from('community_channels').select('id, name, min_tier').or('name.ilike.%freebie%,name.ilike.%free%,min_tier.eq.free').order('sort_order', { ascending: true }).limit(1);
             const freebieChannel = channels?.[0];
-            if (!freebieChannel) {
-                alert('No freebie channel found! Create one first in the community settings.');
-                return;
-            }
-
-            const content = buildFreebieContent(analysis);
-
-            const { error: insertErr } = await supabase
-                .from('community_messages')
-                .insert({
-                    channel_id: freebieChannel.id,
-                    user_id: '00000000-0000-0000-0000-000000000000',
-                    content,
-                    display_name: '💎 TriplePlayz',
-                    avatar_color: '#00e59b',
-                    is_bot: true,
-                    user_role: 'admin',
-                });
-
+            if (!freebieChannel) { alert('No freebie channel found!'); return; }
+            const content = buildFreebieContent(currentAnalysis);
+            const { error: insertErr } = await supabase.from('community_messages').insert({ channel_id: freebieChannel.id, user_id: '00000000-0000-0000-0000-000000000000', content, display_name: '💎 TriplePlayz', avatar_color: '#00e59b', is_bot: true, user_role: 'admin' });
             if (insertErr) throw insertErr;
             setFreebiePosted(true);
             setTimeout(() => setFreebiePosted(false), 5000);
-        } catch (err) {
-            console.error('Freebie post error:', err);
-            alert('Failed to post — check console for details.');
-        } finally {
-            setPostingFreebie(false);
-        }
+        } catch (err) { console.error('Freebie post error:', err); alert('Failed to post.'); }
+        finally { setPostingFreebie(false); }
     };
-
-    // Auto-run on mount
-    useEffect(() => {
-        if (!analysis && !loading) runAnalysis();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     return (
         <div className="admin-card">
-            <div className="admin-card-header" style={{ flexWrap: 'wrap', gap: '8px' }}>
+            {/* Engine Tabs */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                {([
+                    { id: 'stats' as const, label: '📊 Statistical Edge', color: '#00e59b', desc: 'ELO • Log5 • Kelly • EV' },
+                    { id: 'pattern' as const, label: '🔥 Pattern Break', color: '#fb923c', desc: 'W/L Alternation System' },
+                ]).map(tab => (
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveEngine(tab.id)}
+                        style={{
+                            flex: 1, padding: '12px 16px', borderRadius: '10px',
+                            border: `1px solid ${activeEngine === tab.id ? `${tab.color}40` : 'rgba(255,255,255,0.06)'}`,
+                            background: activeEngine === tab.id ? `${tab.color}12` : 'rgba(255,255,255,0.02)',
+                            cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s',
+                        }}
+                    >
+                        <div style={{ color: activeEngine === tab.id ? tab.color : '#9ca3af', fontWeight: 700, fontSize: '13px' }}>{tab.label}</div>
+                        <div style={{ color: '#4b5563', fontSize: '10px', marginTop: '2px' }}>{tab.desc}</div>
+                    </button>
+                ))}
+            </div>
+
+            {/* Edge Report Summary Cards (Stats engine only) */}
+            {activeEngine === 'stats' && edgeReport && !isLoading && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '8px', marginBottom: '16px' }}>
+                    {[
+                        { label: 'Home ELO', value: String(edgeReport.homeELO || '—'), color: '#a78bfa' },
+                        { label: 'Away ELO', value: String(edgeReport.awayELO || '—'), color: '#a78bfa' },
+                        { label: 'True Prob', value: `${((edgeReport.homeTrueProb as number || 0) * 100).toFixed(1)}%`, color: '#00e59b' },
+                        { label: 'Edge', value: `${((edgeReport.edgePct as number || 0) * 100).toFixed(1)}%`, color: (edgeReport.edgePct as number || 0) > 0.03 ? '#00e59b' : '#f87171' },
+                        { label: 'EV/unit', value: `$${(edgeReport.evPerUnit as number || 0).toFixed(2)}`, color: (edgeReport.evPerUnit as number || 0) > 0 ? '#00e59b' : '#f87171' },
+                        { label: 'Kelly', value: `${edgeReport.kellyUnits || 0}u`, color: '#fbbf24' },
+                        { label: 'Confidence', value: `${edgeReport.confidence || 0}%`, color: '#a78bfa' },
+                        { label: 'Pick', value: (edgeReport.pickTeam as string || 'PASS'), color: edgeReport.pick === 'pass' ? '#f87171' : '#00e59b' },
+                    ].map(stat => (
+                        <div key={stat.label} className="admin-stat-card" style={{ padding: '8px 10px', textAlign: 'center' }}>
+                            <div style={{ color: '#4b5563', fontSize: '8px', fontWeight: 600, textTransform: 'uppercase' }}>{stat.label}</div>
+                            <div style={{ color: stat.color, fontSize: '16px', fontWeight: 800 }}>{stat.value}</div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="admin-card-header" style={{ flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
                 <div className="admin-card-title">
-                    <Sparkles size={16} style={{ color: '#a78bfa' }} />
-                    💎 TriplePlayz Algorithm
+                    <Sparkles size={16} style={{ color: activeEngine === 'stats' ? '#00e59b' : '#fb923c' }} />
+                    {activeEngine === 'stats' ? '📊 Quant Model' : '🔥 Pattern System'}
                 </div>
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                    <button
-                        onClick={runAnalysis}
-                        disabled={loading}
-                        className="admin-btn admin-btn-secondary"
-                        style={{ fontSize: '11px', padding: '4px 10px' }}
-                    >
-                        {loading ? <Loader2 size={12} style={{ animation: 'spin 1s linear infinite' }} /> : <Sparkles size={12} />}
-                        {loading ? 'Analyzing...' : 'Re-analyze'}
+                    <button onClick={() => runEngine(activeEngine)} disabled={isLoading} className="admin-btn admin-btn-secondary" style={{ fontSize: '11px', padding: '4px 10px' }}>
+                        {isLoading ? <Loader2 size={12} style={{ animation: 'spin 1s linear infinite' }} /> : <Sparkles size={12} />}
+                        {isLoading ? 'Analyzing...' : 'Run Analysis'}
                     </button>
-
-                    {/* Post to Freebie Channel */}
-                    {analysis && !loading && (
-                        <button
-                            onClick={postToFreebie}
-                            disabled={postingFreebie}
-                            className="admin-btn"
-                            style={{
-                                fontSize: '11px',
-                                padding: '4px 12px',
-                                background: freebiePosted
-                                    ? 'rgba(0,229,155,0.15)'
-                                    : 'linear-gradient(135deg, rgba(0,229,155,0.15), rgba(59,130,246,0.1))',
-                                border: `1px solid ${freebiePosted ? 'rgba(0,229,155,0.4)' : 'rgba(0,229,155,0.25)'}`,
-                                color: freebiePosted ? '#00e59b' : '#e5e7eb',
-                                borderRadius: '8px',
-                                cursor: postingFreebie ? 'not-allowed' : 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '5px',
-                                fontWeight: 700,
-                                transition: 'all 0.2s',
-                            }}
-                        >
-                            {postingFreebie ? (
-                                <Loader2 size={12} style={{ animation: 'spin 1s linear infinite' }} />
-                            ) : freebiePosted ? (
-                                '✅'
-                            ) : (
-                                <Send size={12} />
-                            )}
-                            {postingFreebie ? 'Posting...' : freebiePosted ? 'Posted!' : 'Post to Freebie Channel'}
+                    {currentAnalysis && !isLoading && (
+                        <button onClick={postToFreebie} disabled={postingFreebie} className="admin-btn" style={{
+                            fontSize: '11px', padding: '4px 12px',
+                            background: freebiePosted ? 'rgba(0,229,155,0.15)' : 'linear-gradient(135deg, rgba(0,229,155,0.15), rgba(59,130,246,0.1))',
+                            border: `1px solid ${freebiePosted ? 'rgba(0,229,155,0.4)' : 'rgba(0,229,155,0.25)'}`,
+                            color: freebiePosted ? '#00e59b' : '#e5e7eb', borderRadius: '8px',
+                            cursor: postingFreebie ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 700,
+                        }}>
+                            {postingFreebie ? <Loader2 size={12} style={{ animation: 'spin 1s linear infinite' }} /> : freebiePosted ? '✅' : <Send size={12} />}
+                            {postingFreebie ? 'Posting...' : freebiePosted ? 'Posted!' : 'Post to Freebie'}
                         </button>
                     )}
                 </div>
             </div>
 
-            {loading && (
+            {/* Loading */}
+            {isLoading && (
                 <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-                    <div style={{ fontSize: '32px', marginBottom: '12px', animation: 'pulse 2s infinite' }}>🤖</div>
-                    <div style={{ color: '#a78bfa', fontSize: '14px', fontWeight: 600 }}>Running TriplePlayz Algorithm...</div>
+                    <div style={{ fontSize: '32px', marginBottom: '12px', animation: 'pulse 2s infinite' }}>{activeEngine === 'stats' ? '🧮' : '🔥'}</div>
+                    <div style={{ color: activeEngine === 'stats' ? '#00e59b' : '#fb923c', fontSize: '14px', fontWeight: 600 }}>
+                        {activeEngine === 'stats' ? 'Running Statistical Model...' : 'Scanning Alternation Patterns...'}
+                    </div>
                     <div style={{ color: '#4b5563', fontSize: '11px', marginTop: '4px' }}>
-                        Processing odds, alternation patterns, and team stats
+                        {activeEngine === 'stats' ? 'ELO ratings • Log5 probability • Kelly sizing • EV calculation' : 'W/L sequences • Break probability • Pattern depth'}
                     </div>
                 </div>
             )}
 
+            {/* Error */}
             {error && (
                 <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '8px', padding: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <AlertCircle size={14} style={{ color: '#f87171' }} />
@@ -1042,39 +1067,27 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
                 </div>
             )}
 
-            {analysis && !loading && (
+            {/* Result */}
+            {currentAnalysis && !isLoading && (
                 <div style={{
-                    background: 'rgba(167,139,250,0.04)',
-                    border: '1px solid rgba(167,139,250,0.12)',
-                    borderRadius: '10px',
-                    padding: '18px',
-                    fontSize: '13px',
-                    lineHeight: '1.7',
-                    color: '#d1d5db',
-                    whiteSpace: 'pre-wrap',
+                    background: activeEngine === 'stats' ? 'rgba(0,229,155,0.03)' : 'rgba(251,146,60,0.03)',
+                    border: `1px solid ${activeEngine === 'stats' ? 'rgba(0,229,155,0.12)' : 'rgba(251,146,60,0.12)'}`,
+                    borderRadius: '10px', padding: '18px', fontSize: '13px', lineHeight: '1.7', color: '#d1d5db', whiteSpace: 'pre-wrap',
                 }}>
-                    {analysis.split('\n').map((line, i) => {
-                        // Bold headers
+                    {currentAnalysis.split('\n').map((line, i) => {
                         if (line.startsWith('**') && line.includes('**:')) {
                             const [label, ...rest] = line.split(':');
                             return (
                                 <div key={i} style={{ marginBottom: '4px', marginTop: i > 0 ? '12px' : '0' }}>
-                                    <span style={{ color: '#a78bfa', fontWeight: 800, fontSize: '12px', textTransform: 'uppercase' }}>
+                                    <span style={{ color: activeEngine === 'stats' ? '#00e59b' : '#fb923c', fontWeight: 800, fontSize: '12px', textTransform: 'uppercase' }}>
                                         {label.replace(/\*\*/g, '')}
                                     </span>
                                     <span style={{ color: '#e5e7eb' }}>:{rest.join(':')}</span>
                                 </div>
                             );
                         }
-                        // Numbered items
-                        if (/^\d+\./.test(line.trim())) {
-                            return (
-                                <div key={i} style={{ paddingLeft: '12px', color: '#d1d5db', marginBottom: '2px' }}>
-                                    {line}
-                                </div>
-                            );
-                        }
-                        // Empty lines
+                        if (/^\d+\./.test(line.trim())) return <div key={i} style={{ paddingLeft: '12px', marginBottom: '2px' }}>{line}</div>;
+                        if (line.startsWith('- ')) return <div key={i} style={{ paddingLeft: '12px', marginBottom: '2px' }}>{line}</div>;
                         if (!line.trim()) return <div key={i} style={{ height: '8px' }} />;
                         return <div key={i}>{line}</div>;
                     })}

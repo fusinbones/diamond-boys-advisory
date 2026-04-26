@@ -204,7 +204,7 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
                 {/* Pattern dots — oldest→newest (left→right), streak highlighted */}
                 <div className="pattern-dots">
                     {(() => {
-                        const results = team.recentResults.slice(0, 10);
+                        const results = team.recentResults.slice(0, 15);
                         const reversed = [...results].reverse(); // oldest first
                         const streakStart = reversed.length - team.altStreak; // index where streak begins
                         const hasStreak = team.altStreak >= 4;

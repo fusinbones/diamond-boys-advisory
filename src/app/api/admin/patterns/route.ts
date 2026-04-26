@@ -68,7 +68,12 @@ const MLB_TEAMS: Array<{ id: number; name: string; division: string }> = [
  * │ Game 7   │ 56     │ 56/91 = 62%   │ 62%         │
  * │ Game 8   │ 24     │ 24/35 = 69%   │ 69%         │
  * │ Game 9   │ 8      │ 8/11  = 73%   │ 73%         │
- * │ Game 10  │ 3      │ 3/3   = 100%  │ 100%        │
+ * │ Game 10  │ 3      │              │ 80%         │
+ * │ Game 11  │        │              │ 85%         │
+ * │ Game 12  │        │              │ 90%         │
+ * │ Game 13  │        │              │ 94%         │
+ * │ Game 14  │        │              │ 97%         │
+ * │ Game 15  │        │              │ 99%         │
  * └──────────┴────────┴───────────────┴─────────────┘
  *
  * TRUE pattern = 6+ strict alternating games (LWLWLW or WLWLWL)
@@ -116,7 +121,12 @@ function analyzeAlternation(results: Array<{ result: 'W' | 'L' }>): {
     // Game 9 breaks: 8/11 remaining = 72.7% → 73%
     // Game 10 breaks: 3/3 remaining = 100%
     let altScore = 0;
-    if (altStreak >= 9) altScore = 100;       // historically always broke by game 10
+    if (altStreak >= 14) altScore = 99;       // virtually certain to break
+    else if (altStreak === 13) altScore = 97;
+    else if (altStreak === 12) altScore = 94;
+    else if (altStreak === 11) altScore = 90;
+    else if (altStreak === 10) altScore = 85;
+    else if (altStreak === 9) altScore = 80;
     else if (altStreak === 8) altScore = 73;  // 8/11 broke on game 9
     else if (altStreak === 7) altScore = 69;  // 24/35 broke on game 8
     else if (altStreak === 6) altScore = 62;  // 56/91 broke on game 7
@@ -143,9 +153,9 @@ export async function GET() {
             return parts.join('-'); // en-CA gives YYYY-MM-DD
         };
         const today = formatET(new Date());
-        // Look back 21 days for regular season games
+        // Look back 35 days for regular season games (enough for 15+ games)
         const startDate = new Date();
-        startDate.setDate(startDate.getDate() - 21);
+        startDate.setDate(startDate.getDate() - 35);
         const start = formatET(startDate);
 
         // Fetch regular season games ONLY (no spring training for pattern analysis)
@@ -216,7 +226,7 @@ export async function GET() {
                     if (diff === 0) return b.index - a.index;
                     return diff;
                 })
-                .slice(0, 10);
+                .slice(0, 15);
 
             const { altStreak, isAlternating, isDeveloping, nextPrediction, predictionType, altScore } = analyzeAlternation(games);
 

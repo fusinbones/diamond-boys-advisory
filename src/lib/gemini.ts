@@ -1,4 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
+import type { EdgeReport } from '@/lib/stat-engine';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -48,70 +49,140 @@ interface GameContext {
     };
 }
 
-export async function analyzeGame(context: GameContext): Promise<string> {
+export async function analyzeGame(context: GameContext & { engine?: 'stats' | 'pattern'; edgeReport?: EdgeReport }): Promise<string> {
+    if (context.engine === 'stats' && context.edgeReport) {
+        return analyzeGameStats(context, context.edgeReport);
+    }
+    if (context.engine === 'pattern') {
+        return analyzeGamePattern(context);
+    }
+    // Default: run both and combine
+    return analyzeGamePattern(context);
+}
+
+/**
+ * ENGINE 1: Statistical Edge Analysis
+ * Feeds stat-engine mathematical output into Gemini for natural language interpretation.
+ */
+async function analyzeGameStats(context: GameContext, edge: EdgeReport): Promise<string> {
     const ai = getClient();
 
-    const prompt = `You are an elite MLB sports analyst for TriplePlayz - Sports Advisory, a premium sports picks service. Analyze this game and provide actionable insights.
+    const prompt = `You are an elite quantitative sports analyst for TriplePlayz. You have been given the output of a statistical model that uses ELO ratings, Bill James' Log5 formula, Kelly Criterion, and Expected Value calculations. Your job is to interpret these numbers into a clear, actionable analysis.
 
-## Game Data
+## Raw Statistical Model Output
+${edge.summary}
+
+## Model Factors
+${edge.factors.map((f, i) => `${i + 1}. ${f}`).join('\n')}
+
+## Game Context
 - **Matchup**: ${context.awayTeam} @ ${context.homeTeam}
 - **Date**: ${context.gameDate}
-
-${context.odds ? `## Odds
-- Moneyline: Home ${context.odds.moneyline?.home || 'N/A'} / Away ${context.odds.moneyline?.away || 'N/A'}
-- Spread: ${context.odds.spread?.line || 'N/A'}
-- Total: ${context.odds.total?.line || 'N/A'}` : '## Odds\nNot available for this game.'}
-
-## ${context.homeTeam} (Home)
-${context.homeStats ? `- 13-Game Alt%: ${context.homeStats.altPct || 'N/A'}%
-- Overall Alt%: ${context.homeStats.overallAltPct || 'N/A'}%
-- Current Alt Streak: ${context.homeStats.currentAltStreak || 0}
-- Longest Alt Run: ${context.homeStats.longestAltRun || 0}
-- Currently Alternating: ${context.homeStats.isCurrentlyAlternating ? 'YES' : 'NO'}
-- Pattern Predicts Next: ${context.homeStats.predictedNext || 'N/A'}
-- Current Streak: ${context.homeStats.currentStreak || 'N/A'}
-- Recent W/L: ${context.homeStats.recentSequence || 'N/A'}` : 'Stats not available.'}
-
-## ${context.awayTeam} (Away)
-${context.awayStats ? `- 13-Game Alt%: ${context.awayStats.altPct || 'N/A'}%
-- Overall Alt%: ${context.awayStats.overallAltPct || 'N/A'}%
-- Current Alt Streak: ${context.awayStats.currentAltStreak || 0}
-- Longest Alt Run: ${context.awayStats.longestAltRun || 0}
-- Currently Alternating: ${context.awayStats.isCurrentlyAlternating ? 'YES' : 'NO'}
-- Pattern Predicts Next: ${context.awayStats.predictedNext || 'N/A'}
-- Current Streak: ${context.awayStats.currentStreak || 'N/A'}
-- Recent W/L: ${context.awayStats.recentSequence || 'N/A'}` : 'Stats not available.'}
-
-${context.pitchers ? `## Starting Pitchers
-- Home: ${context.pitchers.home?.name || 'TBD'} (ERA: ${context.pitchers.home?.era || 'N/A'}, WHIP: ${context.pitchers.home?.whip || 'N/A'})
-- Away: ${context.pitchers.away?.name || 'TBD'} (ERA: ${context.pitchers.away?.era || 'N/A'}, WHIP: ${context.pitchers.away?.whip || 'N/A'})` : ''}
+${context.odds ? `- Moneyline: Home ${context.odds.moneyline?.home || 'N/A'} / Away ${context.odds.moneyline?.away || 'N/A'}
+- Run Line: ${context.odds.spread?.line || 'N/A'}
+- Total: O/U ${context.odds.total?.line || 'N/A'}` : ''}
+${context.pitchers ? `- Home SP: ${context.pitchers.home?.name || 'TBD'} (ERA: ${context.pitchers.home?.era || 'N/A'})
+- Away SP: ${context.pitchers.away?.name || 'TBD'} (ERA: ${context.pitchers.away?.era || 'N/A'})` : ''}
 
 ## Instructions
-Provide a concise, structured analysis in this exact format:
+Interpret the statistical model output into a clear analysis. Use this EXACT format:
 
-**EDGE RATING**: [1-10, where 10 = strongest edge]
+**MODEL VERDICT**: [STRONG BET / LEAN / PASS]
 
-**RECOMMENDED PICK**: [team name] [pick type: ML/RL/O/U] [if applicable: line]
+**THE EDGE**: [1-2 sentences explaining WHERE the model found value and WHY the book has it wrong]
 
-**KEY FACTORS**:
-1. [Most important factor]
-2. [Second factor]
-3. [Third factor]
+**RECOMMENDED PLAY**: [Team] [ML/RL] at [odds] — [units]u
 
-**ALTERNATION INSIGHT**: [1-2 sentences about how the W/L alternation pattern affects this pick]
+**BY THE NUMBERS**:
+- True Win Probability: [X]%
+- Book Implied: [Y]%  
+- Edge: [Z]%
+- EV per $100: [+$X.XX]
+- Kelly Optimal: [X]u
 
-**RISK ASSESSMENT**: [Low/Medium/High] — [1 sentence why]
+**RISK FACTOR**: [1 sentence on what could go wrong]
 
-**BOTTOM LINE**: [1-2 sentences of the final recommendation in confident, direct language]
+**BOTTOM LINE**: [1 confident sentence. No hedging.]
 
-Be direct and confident. No hedging. TriplePlayz gives SHARP picks, not wishy-washy takes.`;
+Be SHARP and DATA-DRIVEN. Reference specific numbers. This is a quant desk, not a talk show.`;
 
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt,
     });
 
-    return response.text || 'Analysis unavailable.';
+    return response.text || 'Statistical analysis unavailable.';
+}
+
+/**
+ * ENGINE 2: Pattern Break Analysis
+ * Focuses exclusively on W/L alternation patterns and the fire pick break system.
+ */
+async function analyzeGamePattern(context: GameContext): Promise<string> {
+    const ai = getClient();
+
+    const prompt = `You are the pattern analysis specialist for TriplePlayz - Sports Advisory. Your ONLY focus is the W/L alternation pattern system. This is a proprietary system where teams that alternate Win-Loss for 6+ consecutive games are predicted to BREAK the pattern (double up on the same result).
+
+The sweet spot is Game 7 — historically 62% of patterns break at game 7.
+
+## Game Data
+- **Matchup**: ${context.awayTeam} @ ${context.homeTeam}
+- **Date**: ${context.gameDate}
+
+## ${context.homeTeam} (Home) Pattern Data
+${context.homeStats ? `- Recent W/L Sequence: ${context.homeStats.recentSequence || 'N/A'}
+- Current Alt Streak: ${context.homeStats.currentAltStreak || 0} games
+- Currently Alternating: ${context.homeStats.isCurrentlyAlternating ? 'YES ⚡' : 'NO'}
+- Pattern Predicts Next: ${context.homeStats.predictedNext || 'N/A'}
+- Alt Percentage (15-game): ${context.homeStats.altPct || 'N/A'}%
+- Longest Alt Run: ${context.homeStats.longestAltRun || 0}
+- Current Streak: ${context.homeStats.currentStreak || 'N/A'}` : 'No pattern data available.'}
+
+## ${context.awayTeam} (Away) Pattern Data
+${context.awayStats ? `- Recent W/L Sequence: ${context.awayStats.recentSequence || 'N/A'}
+- Current Alt Streak: ${context.awayStats.currentAltStreak || 0} games
+- Currently Alternating: ${context.awayStats.isCurrentlyAlternating ? 'YES ⚡' : 'NO'}
+- Pattern Predicts Next: ${context.awayStats.predictedNext || 'N/A'}
+- Alt Percentage (15-game): ${context.awayStats.altPct || 'N/A'}%
+- Longest Alt Run: ${context.awayStats.longestAltRun || 0}
+- Current Streak: ${context.awayStats.currentStreak || 'N/A'}` : 'No pattern data available.'}
+
+## Historical Break Probability Table
+| Game | Break Prob |
+|------|------------|
+| 7    | 62%        |
+| 8    | 69%        |
+| 9    | 73%        |
+| 10   | 80%        |
+| 11   | 85%        |
+| 12   | 90%        |
+| 13   | 94%        |
+| 14   | 97%        |
+| 15   | 99%        |
+
+## Instructions
+Provide a PATTERN-FOCUSED analysis in this exact format:
+
+**PATTERN STATUS**: [🔥 ACTIVE PATTERN / 👀 DEVELOPING / ⚪ NO PATTERN]
+
+**PATTERN DETAIL**: [Which team has the pattern? What game are they on? What does the history say?]
+
+**BREAK PREDICTION**: [Team] predicted to [WIN/LOSE] next — Game [X] break (Y% historical probability)
+
+**CONFLICT CHECK**: [Do both teams' patterns agree or conflict? If both are alternating, which pattern is stronger?]
+
+**🔥 FIRE PICK VERDICT**: [Is this a Fire Pick candidate? YES/NO and why in 1-2 sentences]
+
+**BOTTOM LINE**: [1 confident sentence on the pattern play]
+
+Focus ONLY on patterns. Do NOT analyze odds, pitching matchups, or traditional stats. This is purely the alternation system.`;
+
+    const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt,
+    });
+
+    return response.text || 'Pattern analysis unavailable.';
 }
 
 // ═══════════════════════════════════════════
