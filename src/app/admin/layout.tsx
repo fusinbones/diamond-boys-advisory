@@ -21,6 +21,7 @@ import {
     Users,
     ShieldAlert,
     Flame,
+    Mic,
 } from 'lucide-react';
 import './admin.css';
 
@@ -30,6 +31,7 @@ const navItems = [
     { href: '/admin/patterns', label: 'Patterns', icon: ArrowUpDown },
     { href: '/admin/picks', label: 'Pick Entry', icon: ClipboardList },
     { href: '/admin/fire-picks', label: 'Fire Picks', icon: Flame },
+    { href: '/admin/podcast', label: 'Podcast', icon: Mic },
     { href: '/admin/logs', label: 'Pick Logs', icon: History },
     { href: '/admin/users', label: 'Users', icon: Users },
     { href: '/admin/moderation', label: 'Moderation', icon: ShieldAlert },
