@@ -100,16 +100,22 @@ function ResendCodeButton({ email }: { email: string }): ReactNode {
             onClick={handleResend}
             disabled={cooldown > 0 || sending}
             style={{
-                background: 'none', border: 'none', padding: '4px 0',
-                color: cooldown > 0 ? '#4b5563' : sent ? '#00e59b' : '#9ca3af',
-                fontSize: '13px', cursor: cooldown > 0 ? 'default' : 'pointer',
-                transition: 'color 0.2s',
+                background: sent ? 'rgba(0,229,155,0.1)' : 'rgba(255,255,255,0.06)',
+                border: `1px solid ${sent ? 'rgba(0,229,155,0.25)' : 'rgba(255,255,255,0.1)'}`,
+                borderRadius: '10px',
+                padding: '10px 20px',
+                color: cooldown > 0 ? '#4b5563' : sent ? '#00e59b' : '#d1d5db',
+                fontSize: '13px', fontWeight: 600,
+                cursor: cooldown > 0 || sending ? 'default' : 'pointer',
+                transition: 'all 0.2s',
+                width: '100%',
+                opacity: cooldown > 0 ? 0.5 : 1,
             }}
         >
-            {sending ? 'Sending...'
-                : sent ? '✓ Code sent! Check your email'
-                : cooldown > 0 ? `Resend code in ${cooldown}s`
-                : "Didn't get a code? Resend"}
+            {sending ? '📧 Sending new code...'
+                : sent ? '✅ New code sent! Check your inbox & spam'
+                : cooldown > 0 ? `Resend available in ${cooldown}s`
+                : "📧 Didn't get a code? Tap to resend"}
         </button>
     );
 }
@@ -381,7 +387,7 @@ function DashboardContent(): ReactNode {
                 });
                 if (error) throw error;
                 setShowOtp(true);
-                setMessage('A confirmation code has been sent to your email.');
+                setMessage('A confirmation code has been sent to your email. Be sure to check your spam/junk folder!');
             } else {
                 const { error } = await supabase.auth.signInWithPassword({
                     email,
@@ -629,8 +635,31 @@ function DashboardContent(): ReactNode {
                                     Verify Email
                                 </h1>
                                 <p style={{ color: '#d1d5db', fontSize: '14px', lineHeight: 1.5 }}>
-                                    Enter the confirmation code sent to<br /><strong style={{ color: 'white' }}>{email}</strong>
+                                    Enter the 8-digit code sent to<br /><strong style={{ color: 'white' }}>{email}</strong>
                                 </p>
+                            </div>
+
+                            {/* Spam/junk folder warning */}
+                            <div style={{
+                                background: 'rgba(251,191,36,0.06)',
+                                border: '1px solid rgba(251,191,36,0.15)',
+                                borderRadius: '10px',
+                                padding: '12px 14px',
+                                marginBottom: '16px',
+                                display: 'flex',
+                                gap: '10px',
+                                alignItems: 'flex-start',
+                            }}>
+                                <span style={{ fontSize: '16px', flexShrink: 0, lineHeight: 1.3 }}>⚠️</span>
+                                <div>
+                                    <p style={{ color: '#fbbf24', fontSize: '12px', fontWeight: 700, marginBottom: '4px' }}>
+                                        Check your Spam / Junk folder!
+                                    </p>
+                                    <p style={{ color: '#9ca3af', fontSize: '11px', lineHeight: 1.5, margin: 0 }}>
+                                        The code email may land in spam, especially on Gmail, Yahoo, or Outlook.
+                                        Search for &ldquo;verification&rdquo; or &ldquo;confirm&rdquo; in your inbox.
+                                    </p>
+                                </div>
                             </div>
 
                             <div className="glass-card" style={{ padding: '24px 20px', marginBottom: '20px' }}>
