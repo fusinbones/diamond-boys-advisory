@@ -5,7 +5,7 @@ import { tiers } from '@/lib/tiers';
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { tierId, name, email } = body;
+        const { tierId, name, email, referralCode } = body;
 
         // Validate inputs
         if (!tierId || !name || !email) {
@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
                 customer_name: name,
                 tier_id: tierId,
                 tier_name: tier.name,
+                ...(referralCode ? { affiliate_code: referralCode } : {}),
             },
             ...(isOneTime
                 ? {}
@@ -45,6 +46,7 @@ export async function POST(request: NextRequest) {
                           metadata: {
                               tier_id: tierId,
                               tier_name: tier.name,
+                              ...(referralCode ? { affiliate_code: referralCode } : {}),
                           },
                           ...(tier.trialDays
                               ? { trial_period_days: tier.trialDays }

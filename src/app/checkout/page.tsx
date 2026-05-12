@@ -6,6 +6,7 @@ import { tiers } from '@/lib/tiers';
 import { CreditCard, User, Mail, Shield, ArrowLeft, Check, Zap } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { getStoredRefCode } from '@/components/RefTracker';
 
 function CheckoutForm() {
     const searchParams = useSearchParams();
@@ -36,6 +37,7 @@ function CheckoutForm() {
                     tierId: selectedTier.id,
                     name,
                     email,
+                    referralCode: getStoredRefCode(),
                 }),
             });
 

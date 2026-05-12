@@ -6,6 +6,7 @@ import Analytics from '@/components/Analytics';
 import IOSInstallPrompt from '@/components/IOSInstallPrompt';
 import PickAlertBanner from '@/components/PickAlertBanner';
 import PickDropToast from '@/components/PickDropToast';
+import RefTracker from '@/components/RefTracker';
 import { AuthProvider } from '@/components/AuthProvider';
 
 export const metadata: Metadata = {
@@ -66,6 +67,7 @@ export default function RootLayout({
           <IOSInstallPrompt />
           <PickAlertBanner />
           <PickDropToast />
+          <RefTracker />
         </AuthProvider>
       </body>
     </html>

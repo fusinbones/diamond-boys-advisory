@@ -82,6 +82,52 @@ export async function POST(request: NextRequest) {
                 }
 
                 console.log(`[webhook] 💳 New subscription: ${customerEmail || 'N/A'} → ${tierName} (${tierId})`);
+
+                // ── Affiliate Referral Attribution ──
+                const affiliateCode = session.metadata?.affiliate_code;
+                if (affiliateCode && customerEmail) {
+                    try {
+                        const supabaseAdmin = getSupabaseAdmin();
+
+                        // Look up the affiliate
+                        const { data: affiliate } = await supabaseAdmin
+                            .from('affiliates')
+                            .select('id, commission_rate, status, total_earned')
+                            .eq('affiliate_code', affiliateCode)
+                            .single();
+
+                        if (affiliate && affiliate.status === 'active') {
+                            // Calculate commission from the session amount
+                            const amountPaid = (session.amount_total || 0) / 100; // cents → dollars
+                            const commission = Math.round(amountPaid * (affiliate.commission_rate / 100) * 100) / 100;
+
+                            // Create referral record
+                            await supabaseAdmin.from('referrals').insert({
+                                affiliate_id: affiliate.id,
+                                referred_email: customerEmail,
+                                stripe_session_id: session.id,
+                                stripe_subscription_id: typeof session.subscription === 'string' ? session.subscription : null,
+                                tier_id: tierId,
+                                tier_price: amountPaid,
+                                commission_amount: commission,
+                                status: 'confirmed',
+                            });
+
+                            // Update affiliate total_earned
+                            await supabaseAdmin
+                                .from('affiliates')
+                                .update({ total_earned: (affiliate.total_earned || 0) + commission, updated_at: new Date().toISOString() })
+                                .eq('id', affiliate.id);
+
+                            console.log(`[webhook] 🤝 Referral attributed: ${affiliateCode} → ${customerEmail} ($${commission} commission)`);
+                        } else {
+                            console.log(`[webhook] Affiliate ${affiliateCode} not found or not active`);
+                        }
+                    } catch (err) {
+                        console.error(`[webhook] Affiliate attribution error:`, err);
+                    }
+                }
+
                 break;
             }
 
