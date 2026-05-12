@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Zap, Home, CreditCard, LayoutDashboard, FileText, TrendingUp, Users, Trophy, LogOut, User, MessageCircle, Shield, Settings, Clock } from 'lucide-react';
+import { Menu, X, Zap, Home, CreditCard, LayoutDashboard, FileText, TrendingUp, Users, Trophy, LogOut, User, MessageCircle, Shield, Settings, Clock, ArrowUpDown } from 'lucide-react';
 import { useAdminAuth } from '@/lib/adminAuth';
 
 const navLinks = [
@@ -12,6 +12,7 @@ const navLinks = [
     { href: '/pricing', label: 'Pricing', icon: CreditCard },
     { href: '/community', label: 'The Lounge', icon: MessageCircle },
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/patterns', label: 'Patterns', icon: ArrowUpDown },
     { href: '/tos', label: 'Terms', icon: FileText },
 ];
 

@@ -1119,6 +1119,38 @@ function DashboardContent(): ReactNode {
                             </div>
                         </div>
 
+                        {/* Pattern System CTA */}
+                        <Link href="/patterns" style={{ textDecoration: 'none' }}>
+                            <div className="dash-sidebar-card" style={{
+                                background: 'linear-gradient(180deg, rgba(167,139,250,0.1) 0%, rgba(20,20,25,0.95) 100%)',
+                                border: '1px solid rgba(167,139,250,0.2)',
+                                cursor: 'pointer',
+                                transition: 'border-color 0.2s, transform 0.2s',
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                                    <div style={{
+                                        width: '28px', height: '28px', borderRadius: '8px',
+                                        background: 'rgba(167,139,250,0.15)', border: '1px solid rgba(167,139,250,0.25)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    }}>
+                                        <ArrowUp size={14} style={{ color: '#a78bfa', transform: 'rotate(45deg)' }} />
+                                    </div>
+                                    <h3 className="dash-sidebar-card__title" style={{ color: '#a78bfa', margin: 0 }}>
+                                        Pattern System
+                                    </h3>
+                                </div>
+                                <p style={{ color: '#9ca3af', fontSize: '11px', lineHeight: 1.5, marginBottom: '10px' }}>
+                                    W/L alternation analysis for all 30 MLB teams. Find break points with 62-99% probability.
+                                </p>
+                                <span style={{
+                                    display: 'inline-flex', alignItems: 'center', gap: '4px',
+                                    color: '#a78bfa', fontSize: '12px', fontWeight: 700,
+                                }}>
+                                    Open Patterns →
+                                </span>
+                            </div>
+                        </Link>
+
                         <TailTracker
                             seasonUnits={tailTracker.seasonUnits}
                             weekUnits={tailTracker.weekUnits}
