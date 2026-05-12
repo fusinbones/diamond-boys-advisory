@@ -10,6 +10,7 @@ import RefTracker from '@/components/RefTracker';
 import { AuthProvider } from '@/components/AuthProvider';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://tripleplayz.com'),
   title: 'TriplePlayz - Sports Advisory | Elite Sports Picks & Community',
   description:
     'Expert sports picks from TriplePlayz - Sports Advisory. Join our exclusive TriplePlayz Lounge community with daily expert analysis, 30+ years of experience, and documented picks across MLB, NBA, NFL & NHL.',
