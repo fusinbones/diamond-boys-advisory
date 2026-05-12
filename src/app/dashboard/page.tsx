@@ -380,12 +380,21 @@ function DashboardContent(): ReactNode {
 
         try {
             if (isSignUp) {
-                const { error } = await supabase.auth.signUp({
+                const { data, error } = await supabase.auth.signUp({
                     email,
                     password,
                     // No emailRedirectTo needed since we use OTP Verification on this page
                 });
                 if (error) throw error;
+
+                // Supabase returns success with empty identities when email already exists (confirmed user)
+                // This is intentional anti-enumeration behavior — we handle it explicitly
+                if (data.user && data.user.identities && data.user.identities.length === 0) {
+                    setError('An account with this email already exists. Try signing in instead.');
+                    setIsSignUp(false);
+                    return;
+                }
+
                 setShowOtp(true);
                 setMessage('A confirmation code has been sent to your email. Be sure to check your spam/junk folder!');
             } else {
