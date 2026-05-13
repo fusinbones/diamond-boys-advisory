@@ -6,14 +6,40 @@ const supabaseAdmin = createClient(
     process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
 
-/** Generate a random 6-char alphanumeric affiliate code */
-function generateCode(): string {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no I/O/0/1 for clarity
+/**
+ * Generate a personal, catchy affiliate code from the user's identity.
+ * Strategy: Take the user's name/nickname → uppercase → 3-5 chars + a digit
+ * Examples: MIKE7, ANDY3, JSMITH, CHRIS
+ * Falls back to a clean 5-char random code if no identity data.
+ */
+function generatePersonalCode(name: string | null, email: string): string {
+    // Clean up the base: nickname > display_name > email prefix
+    let base = '';
+
+    if (name && name.trim().length >= 2) {
+        // Use their name — strip non-alphanumeric, uppercase
+        base = name.trim().replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    } else {
+        // Fall back to email prefix (before @)
+        const emailPrefix = email.split('@')[0] || '';
+        base = emailPrefix.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    }
+
+    // Trim to 5 chars max for the alpha part
+    if (base.length > 5) base = base.slice(0, 5);
+    if (base.length < 2) base = 'PLAY'; // absolute fallback
+
+    return base;
+}
+
+/** Generate a fully random 5-char fallback code */
+function generateRandomCode(): string {
+    const chars = 'ABCDEFGHJKMNPQRSTVWXYZ'; // no I/L/O/U for clarity
     let code = '';
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 5; i++) {
         code += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    return `TP-${code}`;
+    return code;
 }
 
 /** Extract user ID from Supabase JWT */
@@ -97,19 +123,40 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ affiliate: existing, message: 'Already activated' });
         }
 
-        // Generate unique code with retry
-        let code = generateCode();
-        let attempts = 0;
-        while (attempts < 5) {
+        // Fetch user profile for personal code generation
+        const { data: profile } = await supabaseAdmin
+            .from('user_profiles')
+            .select('nickname, display_name')
+            .eq('id', auth.userId)
+            .single();
+
+        const identity = profile?.nickname || profile?.display_name || null;
+        const base = generatePersonalCode(identity, auth.email);
+
+        // Try personal code variants: MIKE, MIKE1, MIKE2, etc.
+        let code = base;
+        let suffix = 0;
+        let found = false;
+
+        for (let attempt = 0; attempt < 20; attempt++) {
+            const candidate = suffix === 0 ? base : `${base}${suffix}`;
             const { data: collision } = await supabaseAdmin
                 .from('affiliates')
                 .select('id')
-                .eq('affiliate_code', code)
+                .eq('affiliate_code', candidate)
                 .single();
 
-            if (!collision) break;
-            code = generateCode();
-            attempts++;
+            if (!collision) {
+                code = candidate;
+                found = true;
+                break;
+            }
+            suffix++;
+        }
+
+        // If all personal variants taken, use random fallback
+        if (!found) {
+            code = generateRandomCode();
         }
 
         // Insert affiliate

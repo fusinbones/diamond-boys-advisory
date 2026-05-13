@@ -17,8 +17,8 @@ function RefTrackerInner() {
         const ref = searchParams.get('ref');
         if (!ref) return;
 
-        // Validate format: TP- followed by 6 alphanumeric chars
-        if (!/^TP-[A-Z0-9]{6}$/i.test(ref)) return;
+        // Validate format: 2-7 alphanumeric chars (MIKE7, ANDY3) or legacy TP-XXXXXX
+        if (!/^[A-Z0-9]{2,7}$/i.test(ref) && !/^TP-[A-Z0-9]{6}$/i.test(ref)) return;
 
         const code = ref.toUpperCase();
 
