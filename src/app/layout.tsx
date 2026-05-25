@@ -1,13 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import Analytics from '@/components/Analytics';
-import IOSInstallPrompt from '@/components/IOSInstallPrompt';
-import PickAlertBanner from '@/components/PickAlertBanner';
-import PickDropToast from '@/components/PickDropToast';
 import RefTracker from '@/components/RefTracker';
 import { AuthProvider } from '@/components/AuthProvider';
+import LayoutShell from '@/components/LayoutShell';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://tripleplayz.com'),
@@ -58,19 +54,12 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col">
         <AuthProvider>
-          <div className="bg-glow" />
           <Analytics />
-          <Navbar />
-          <main className="flex-1 relative z-10" style={{ paddingTop: '96px' }}>
-            {children}
-          </main>
-          <Footer />
-          <IOSInstallPrompt />
-          <PickAlertBanner />
-          <PickDropToast />
+          <LayoutShell>{children}</LayoutShell>
           <RefTracker />
         </AuthProvider>
       </body>
     </html>
   );
 }
+
