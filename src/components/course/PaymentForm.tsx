@@ -23,7 +23,7 @@ interface AcceptResponse {
 interface PaymentFormProps {
     amount: number;
     productName: string;
-    onSuccess: (data: { transactionId: string; email: string }) => void;
+    onSuccess: (data: { transactionId: string; email: string; accessToken?: string }) => void;
 }
 
 export default function PaymentForm({ amount, productName, onSuccess }: PaymentFormProps) {
@@ -131,7 +131,7 @@ export default function PaymentForm({ amount, productName, onSuccess }: PaymentF
                     const data = await res.json();
 
                     if (data.success) {
-                        onSuccess({ transactionId: data.transactionId, email: email.trim() });
+                        onSuccess({ transactionId: data.transactionId, email: email.trim(), accessToken: data.accessToken });
                     } else {
                         setError(data.error || 'Payment failed. Please try again.');
                     }

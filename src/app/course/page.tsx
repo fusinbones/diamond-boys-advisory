@@ -339,7 +339,12 @@ export default function FireCourseLanding() {
                         <PaymentForm
                             amount={COURSE_PRICE}
                             productName="The Fire Course"
-                            onSuccess={() => setPurchased(true)}
+                            onSuccess={(data) => {
+                                if (data.accessToken) {
+                                    localStorage.setItem('fire_course_token', data.accessToken);
+                                }
+                                setPurchased(true);
+                            }}
                         />
 
                         <div className="fire-guarantee">
