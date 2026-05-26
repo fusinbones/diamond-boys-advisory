@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { createClient } from '@supabase/supabase-js';
 
 const API_LOGIN_ID = process.env.AUTHORIZE_NET_API_LOGIN_ID || '';
 const TRANSACTION_KEY = process.env.AUTHORIZE_NET_TRANSACTION_KEY || '';
 const API_URL = 'https://api.authorize.net/xml/v1/request.api';
+
+const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+);
 
 interface PurchaseBody {
     dataDescriptor: string;
@@ -82,20 +88,15 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: errorMsg }, { status: 400 });
         }
 
-        // Generate access token
+        // ── Payment successful — now provision the account ──
         const accessToken = crypto.randomBytes(32).toString('hex');
         const transactionId = transResult.transId;
+        const trimmedEmail = email.trim().toLowerCase();
 
-        // Store purchase in Supabase
+        // 1. Store purchase record
         try {
-            const { createClient } = await import('@supabase/supabase-js');
-            const supabaseAdmin = createClient(
-                process.env.NEXT_PUBLIC_SUPABASE_URL!,
-                process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-            );
-
             await supabaseAdmin.from('course_purchases').insert({
-                user_email: email,
+                user_email: trimmedEmail,
                 user_name: name,
                 transaction_id: transactionId,
                 amount,
@@ -105,15 +106,64 @@ export async function POST(request: NextRequest) {
             });
         } catch (dbErr) {
             console.error('[course/purchase] DB insert error (payment succeeded):', dbErr);
-            // Payment went through — don't fail the user
         }
 
-        console.log(`[course/purchase] ✅ $${amount} charged to ${email} (txn: ${transactionId})`);
+        // 2. Create or find Supabase auth user
+        let userId: string | null = null;
+        try {
+            // Check if user already exists
+            const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
+            const existing = existingUsers?.users?.find(
+                (u: { email?: string }) => u.email?.toLowerCase() === trimmedEmail
+            );
+
+            if (existing) {
+                userId = existing.id;
+            } else {
+                // Create new user with a random password (they'll use magic link to log in)
+                const tempPassword = crypto.randomBytes(24).toString('hex');
+                const { data: newUser, error: createErr } = await supabaseAdmin.auth.admin.createUser({
+                    email: trimmedEmail,
+                    password: tempPassword,
+                    email_confirm: true,
+                    user_metadata: { full_name: name, source: 'fire_course' },
+                });
+                if (createErr) {
+                    console.error('[course/purchase] User creation error:', createErr.message);
+                } else {
+                    userId = newUser?.user?.id || null;
+                }
+            }
+
+            // 3. Set course_purchaser = true on their profile
+            if (userId) {
+                // Upsert profile with course_purchaser flag
+                await supabaseAdmin.from('user_profiles').upsert({
+                    id: userId,
+                    course_purchaser: true,
+                }, { onConflict: 'id' });
+            }
+        } catch (authErr) {
+            console.error('[course/purchase] Auth provisioning error (payment succeeded):', authErr);
+        }
+
+        // 4. Send magic link so they can log in immediately
+        try {
+            await supabaseAdmin.auth.admin.generateLink({
+                type: 'magiclink',
+                email: trimmedEmail,
+            });
+        } catch (linkErr) {
+            console.error('[course/purchase] Magic link error:', linkErr);
+        }
+
+        console.log(`[course/purchase] ✅ $${amount} charged to ${trimmedEmail} (txn: ${transactionId}, user: ${userId})`);
 
         return NextResponse.json({
             success: true,
             transactionId,
             accessToken,
+            userId,
         });
     } catch (error) {
         console.error('[course/purchase] Unexpected error:', error);

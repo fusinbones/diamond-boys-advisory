@@ -1,29 +1,35 @@
--- The Fire Course — Purchase Tracking
+-- Fire Course: Account-Based Access + Announcements
 -- Run this in Supabase SQL Editor
 
-CREATE TABLE IF NOT EXISTS course_purchases (
+-- 1. Add course_purchaser flag to user_profiles
+ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS course_purchaser BOOLEAN DEFAULT false;
+
+-- 2. Create course announcements table
+CREATE TABLE IF NOT EXISTS course_announcements (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_email TEXT NOT NULL,
-    user_name TEXT NOT NULL,
-    transaction_id TEXT NOT NULL,
-    amount NUMERIC(10,2) NOT NULL,
-    auth_code TEXT,
-    status TEXT NOT NULL DEFAULT 'completed',
-    access_token TEXT NOT NULL UNIQUE,
+    title TEXT NOT NULL,
+    body TEXT NOT NULL,
+    type TEXT NOT NULL DEFAULT 'info',  -- 'info', 'update', 'alert', 'promo'
+    active BOOLEAN NOT NULL DEFAULT true,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Indexes for fast lookups
-CREATE INDEX IF NOT EXISTS idx_course_email ON course_purchases(user_email);
-CREATE INDEX IF NOT EXISTS idx_course_token ON course_purchases(access_token);
+ALTER TABLE course_announcements ENABLE ROW LEVEL SECURITY;
 
--- RLS: Allow server-side inserts (via anon key with insert policy)
-ALTER TABLE course_purchases ENABLE ROW LEVEL SECURITY;
+-- Anyone can read active announcements
+CREATE POLICY "Public read announcements" ON course_announcements
+    FOR SELECT USING (active = true);
 
--- Allow inserts from the API (server-side)
-CREATE POLICY "Allow server inserts" ON course_purchases
+-- Only service role can insert/update (admin API)
+CREATE POLICY "Admin insert announcements" ON course_announcements
     FOR INSERT WITH CHECK (true);
 
--- Allow users to read their own purchase by email
-CREATE POLICY "Users can read own purchases" ON course_purchases
-    FOR SELECT USING (true);
+CREATE POLICY "Admin update announcements" ON course_announcements
+    FOR UPDATE USING (true);
+
+-- 3. Seed a welcome announcement
+INSERT INTO course_announcements (title, body, type) VALUES (
+    '🔥 Welcome to The Fire Course!',
+    'Start with Module 1 and work your way through all 7 modules. Use the "Launch Pattern System" button to access the live dashboard. New content and updates coming soon!',
+    'info'
+);

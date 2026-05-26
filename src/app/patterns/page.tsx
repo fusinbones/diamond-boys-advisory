@@ -34,6 +34,7 @@ interface UserProfile {
     subscription_tier: string | null;
     trial_end: string | null;
     trial_bonus_days: number;
+    course_purchaser?: boolean;
 }
 
 export default function MemberPatternsPage(): ReactNode {
@@ -54,7 +55,7 @@ export default function MemberPatternsPage(): ReactNode {
         (async () => {
             const { data } = await supabase
                 .from('user_profiles')
-                .select('subscription_tier, trial_end, trial_bonus_days')
+                .select('subscription_tier, trial_end, trial_bonus_days, course_purchaser')
                 .eq('id', user.id)
                 .single();
             if (data) setProfile(data);
@@ -64,12 +65,13 @@ export default function MemberPatternsPage(): ReactNode {
 
     // Access logic
     const isPaid = profile?.subscription_tier && ['starter', 'pro', 'elite', 'daily', 'weekly', 'monthly', 'season'].includes(profile.subscription_tier);
+    const isCoursePurchaser = !!profile?.course_purchaser;
     const trialEnd = profile?.trial_end ? new Date(profile.trial_end) : (user ? new Date(new Date(user.created_at).getTime() + 7 * 86400000) : new Date());
     const bonusDays = profile?.trial_bonus_days || 0;
     const effectiveTrialEnd = new Date(trialEnd.getTime() + bonusDays * 86400000);
     const daysLeft = Math.max(0, Math.ceil((effectiveTrialEnd.getTime() - Date.now()) / 86400000));
-    const trialActive = !isPaid && daysLeft > 0;
-    const hasAccess = isPaid || trialActive;
+    const trialActive = !isPaid && !isCoursePurchaser && daysLeft > 0;
+    const hasAccess = isPaid || trialActive || isCoursePurchaser;
 
     const fetchPatterns = async () => {
         setLoading(true);
