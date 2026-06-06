@@ -143,23 +143,7 @@ export default function MemberPatternsPage(): ReactNode {
         );
     }
 
-    // Not logged in
-    if (!user) {
-        return (
-            <div className="patterns-page">
-                <div className="patterns-locked">
-                    <Lock size={32} style={{ color: '#6b7280', marginBottom: '12px' }} />
-                    <h2 style={{ color: 'white', fontSize: '20px', fontWeight: 800, marginBottom: '8px' }}>Sign In Required</h2>
-                    <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '20px' }}>Sign in to access the Pattern System</p>
-                    <Link href="/dashboard" className="btn-glow" style={{ padding: '12px 28px', fontSize: '14px' }}>
-                        Sign In
-                    </Link>
-                </div>
-            </div>
-        );
-    }
-
-    // Paywall — no access (high-converting, urgent)
+    // No access — show paywall (logged out OR wrong tier)
     if (!hasAccess) {
         return (
             <div className="patterns-page">
