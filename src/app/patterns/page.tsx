@@ -3,7 +3,7 @@
 import { useState, useEffect, type ReactNode } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
-import { RefreshCw, Zap, TrendingUp, ChevronRight, ArrowUpDown, Lock, Gem, ArrowRight, ArrowLeft, Search } from 'lucide-react';
+import { RefreshCw, Zap, TrendingUp, ChevronRight, ArrowUpDown, Lock, Gem, ArrowRight, ArrowLeft, Search, Bell } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import './patterns.css';
@@ -13,6 +13,21 @@ interface GameResult {
     result: 'W' | 'L';
     opponent: string;
     score: string;
+}
+
+interface PitcherMilestone {
+    pitcherName: string;
+    currentWins: number;
+    targetWin: number;
+}
+
+interface WalkoffRevenge {
+    walkoffTeam: string;
+    losingTeam: string;
+    walkoffPlayer?: string;
+    score: string;
+    date: string;
+    isWalkoffTeam: boolean;
 }
 
 interface TeamPattern {
@@ -28,6 +43,8 @@ interface TeamPattern {
     nextPrediction: 'W' | 'L' | null;
     predictionType: 'continue' | 'break' | null;
     altScore: number;
+    pitcherMilestone?: PitcherMilestone | null;
+    walkoffRevenge?: WalkoffRevenge | null;
 }
 
 interface UserProfile {
@@ -45,7 +62,7 @@ export default function MemberPatternsPage(): ReactNode {
     const [loading, setLoading] = useState(true);
     const [profileLoading, setProfileLoading] = useState(true);
     const [lastUpdated, setLastUpdated] = useState('');
-    const [filter, setFilter] = useState<'all' | 'alternating' | 'developing' | 'today'>('all');
+    const [filter, setFilter] = useState<'all' | 'alternating' | 'developing' | 'today' | 'alerts'>('all');
     const [sortBy, setSortBy] = useState<'altScore' | 'streak' | 'division'>('altScore');
     const [search, setSearch] = useState('');
 
@@ -63,15 +80,11 @@ export default function MemberPatternsPage(): ReactNode {
         })();
     }, [user, authLoading]);
 
-    // Access logic
-    const isPaid = profile?.subscription_tier && ['starter', 'pro', 'elite', 'daily', 'weekly', 'monthly', 'season'].includes(profile.subscription_tier);
+    // Access logic — Pattern System is a standalone product ($49.99/mo)
+    // Other tiers (daily/weekly/monthly/season) only get stats & fire picks
+    const isPatternSubscriber = profile?.subscription_tier === 'pattern';
     const isCoursePurchaser = !!profile?.course_purchaser;
-    const trialEnd = profile?.trial_end ? new Date(profile.trial_end) : (user ? new Date(new Date(user.created_at).getTime() + 7 * 86400000) : new Date());
-    const bonusDays = profile?.trial_bonus_days || 0;
-    const effectiveTrialEnd = new Date(trialEnd.getTime() + bonusDays * 86400000);
-    const daysLeft = Math.max(0, Math.ceil((effectiveTrialEnd.getTime() - Date.now()) / 86400000));
-    const trialActive = !isPaid && !isCoursePurchaser && daysLeft > 0;
-    const hasAccess = isPaid || trialActive || isCoursePurchaser;
+    const hasAccess = isPatternSubscriber || isCoursePurchaser;
 
     const fetchPatterns = async () => {
         setLoading(true);
@@ -105,6 +118,7 @@ export default function MemberPatternsPage(): ReactNode {
     if (filter === 'alternating') displayed = displayed.filter(t => t.isAlternating);
     if (filter === 'developing') displayed = displayed.filter(t => t.isDeveloping || t.isAlternating);
     if (filter === 'today') displayed = displayed.filter(t => todayTeamIds.includes(t.teamId));
+    if (filter === 'alerts') displayed = displayed.filter(t => t.pitcherMilestone || t.walkoffRevenge);
 
     if (sortBy === 'streak') {
         displayed.sort((a, b) => b.altStreak - a.altStreak);
@@ -115,6 +129,7 @@ export default function MemberPatternsPage(): ReactNode {
     const altCount = patterns.filter(t => t.isAlternating).length;
     const devCount = patterns.filter(t => t.isDeveloping).length;
     const todayAltCount = patterns.filter(t => (t.isAlternating || t.isDeveloping) && todayTeamIds.includes(t.teamId)).length;
+    const alertCount = patterns.filter(t => t.pitcherMilestone || t.walkoffRevenge).length;
 
     // Loading state
     if (authLoading || profileLoading) {
@@ -144,81 +159,110 @@ export default function MemberPatternsPage(): ReactNode {
         );
     }
 
-    // Paywall — no access
+    // Paywall — no access (high-converting, urgent)
     if (!hasAccess) {
         return (
             <div className="patterns-page">
                 <div className="patterns-paywall">
-                    {/* Teaser header */}
-                    <div className="patterns-paywall-header">
-                        <ArrowUpDown size={28} style={{ color: '#a78bfa' }} />
-                        <h1 style={{ color: 'white', fontSize: '24px', fontWeight: 800 }}>
-                            Alternating Pattern System
+                    {/* Urgency banner */}
+                    <div className="pw-urgency-banner">
+                        <span className="pw-urgency-dot" />
+                        <span>LIVE — {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })} games are being scanned now</span>
+                    </div>
+
+                    {/* Hero */}
+                    <div className="pw-hero">
+                        <div className="pw-badge">
+                            <Zap size={12} />
+                            THE .500 METHOD
+                        </div>
+                        <h1 className="pw-title">
+                            You&apos;re Missing Today&apos;s<br />
+                            <span className="pw-title-accent">Pattern Breaks</span>
                         </h1>
-                        <p style={{ color: '#9ca3af', fontSize: '14px', lineHeight: 1.6, maxWidth: '480px' }}>
-                            Our proprietary W/L alternation algorithm scans all 30 MLB teams in real-time,
-                            identifying high-probability break points backed by historical data.
+                        <p className="pw-subtitle">
+                            Our algorithm just scanned all 30 MLB teams. High-probability break points
+                            have been identified — but you need access to see them.
                         </p>
                     </div>
 
-                    {/* Blurred preview */}
-                    <div className="patterns-preview-blur">
-                        <div className="patterns-preview-row" />
-                        <div className="patterns-preview-row" />
-                        <div className="patterns-preview-row" />
-                        <div className="patterns-preview-row" />
-                        <div className="patterns-preview-row" />
+                    {/* Live stats */}
+                    <div className="pw-stats">
+                        <div className="pw-stat">
+                            <div className="pw-stat-value" style={{ color: '#a78bfa' }}>30</div>
+                            <div className="pw-stat-label">Teams Scanned</div>
+                        </div>
+                        <div className="pw-stat">
+                            <div className="pw-stat-value" style={{ color: '#00e59b' }}>62-99%</div>
+                            <div className="pw-stat-label">Break Accuracy</div>
+                        </div>
+                        <div className="pw-stat">
+                            <div className="pw-stat-value" style={{ color: '#fbbf24' }}>LIVE</div>
+                            <div className="pw-stat-label">Updated Today</div>
+                        </div>
                     </div>
 
-                    {/* Lock overlay */}
-                    <div className="patterns-paywall-overlay">
-                        <div className="patterns-paywall-card">
-                            <div style={{
-                                width: '56px', height: '56px', borderRadius: '50%',
-                                background: 'rgba(0,229,155,0.1)', border: '2px solid rgba(0,229,155,0.2)',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                margin: '0 auto 16px',
-                            }}>
-                                <Lock size={24} style={{ color: '#00e59b' }} />
-                            </div>
-                            <h3 style={{ color: 'white', fontSize: '20px', fontWeight: 800, marginBottom: '8px' }}>
-                                {daysLeft > 0 ? `${daysLeft} Day${daysLeft !== 1 ? 's' : ''} Left` : 'Unlock Pattern System'}
-                            </h3>
-                            <p style={{ color: '#9ca3af', fontSize: '13px', lineHeight: 1.5, marginBottom: '20px', maxWidth: '320px' }}>
-                                Subscribe to access real-time alternation analysis, break probability scoring,
-                                and next-game predictions for all 30 MLB teams.
-                            </p>
+                    {/* Blurred preview — looks like real data behind glass */}
+                    <div className="pw-preview-section">
+                        <p className="pw-preview-label">
+                            <Lock size={12} />
+                            Today&apos;s Pattern Data (Locked)
+                        </p>
+                        <div className="pw-preview-glass">
+                            {[
+                                { name: 'Yankees', dots: 'WLWLWLW', pct: '73%', badge: '\ud83d\udd25 TRUE' },
+                                { name: 'Dodgers', dots: 'WLWLWL', pct: '62%', badge: '\ud83c\udfaf W#10' },
+                                { name: 'Red Sox', dots: 'WLWLW', pct: '15%', badge: '\ud83d\udca3 REVENGE' },
+                                { name: 'Astros', dots: 'WLWLWL', pct: '62%', badge: '\ud83d\udc40 DEV' },
+                                { name: 'Phillies', dots: 'WLWLWLWL', pct: '88%', badge: '\ud83d\udd25 TRUE' },
+                            ].map((team, i) => (
+                                <div key={i} className="pw-preview-row">
+                                    <span className="pw-preview-name">{team.name}</span>
+                                    <span className="pw-preview-dots">{team.dots}</span>
+                                    <span className="pw-preview-pct">{team.pct}</span>
+                                    <span className="pw-preview-badge">{team.badge}</span>
+                                </div>
+                            ))}
+                            <div className="pw-preview-fade" />
+                        </div>
+                    </div>
 
-                            {/* Feature bullets */}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px', textAlign: 'left' }}>
-                                {[
-                                    '30 MLB teams scanned in real-time',
-                                    'Break probability scoring (62-99%)',
-                                    'True Pattern & Developing alerts',
-                                    'Today\'s games cross-referenced',
-                                ].map((f, i) => (
-                                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <Zap size={12} style={{ color: '#00e59b', flexShrink: 0 }} />
-                                        <span style={{ color: '#d1d5db', fontSize: '12px' }}>{f}</span>
-                                    </div>
-                                ))}
-                            </div>
+                    {/* CTA card */}
+                    <div className="pw-cta-card">
+                        <h3 className="pw-cta-title">Unlock the Pattern System</h3>
+                        <div className="pw-price-row">
+                            <span className="pw-price">$49.99</span>
+                            <span className="pw-price-period">/month</span>
+                        </div>
 
-                            <Link
-                                href="/pricing"
-                                className="btn-glow"
-                                style={{
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    gap: '8px', padding: '14px 28px', fontSize: '15px', fontWeight: 700, width: '100%',
-                                }}
-                            >
-                                <Gem size={16} />
-                                Unlock Full Access
-                                <ArrowRight size={14} />
-                            </Link>
-                            <p style={{ fontSize: '11px', color: '#6b7280', marginTop: '8px' }}>
-                                Plans start at $24.99/day · Cancel anytime
-                            </p>
+                        <div className="pw-features">
+                            {[
+                                'Real-time W/L alternation analysis',
+                                'Break probability scoring (62-99%)',
+                                'Pitcher milestone alerts (Win #10)',
+                                'Walk-off HR revenge detection',
+                                'Smart filters, search & sorting',
+                                'Situational alerts dashboard',
+                            ].map((f, i) => (
+                                <div key={i} className="pw-feature">
+                                    <Zap size={11} style={{ color: '#00e59b', flexShrink: 0 }} />
+                                    <span>{f}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        <Link href="/pattern-system/checkout" className="pw-cta-btn">
+                            <Gem size={18} />
+                            Get Instant Access
+                            <ArrowRight size={16} />
+                        </Link>
+
+                        <div className="pw-trust">
+                            <span>🔒 256-bit SSL</span>
+                            <span>·</span>
+                            <span>Cancel anytime</span>
+                            <span>·</span>
+                            <span>Authorize.net secured</span>
                         </div>
                     </div>
                 </div>
@@ -282,6 +326,38 @@ export default function MemberPatternsPage(): ReactNode {
                 </div>
             </motion.div>
 
+            {/* Situational Alerts */}
+            {alertCount > 0 && (
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.15 }}
+                    className="patterns-alerts"
+                >
+                    <div className="patterns-alerts-header">
+                        <Bell size={14} />
+                        Situational Alerts
+                        <span className="patterns-alerts-count">{alertCount}</span>
+                    </div>
+                    {patterns.filter(t => t.pitcherMilestone).map(t => (
+                        <div key={`milestone-${t.teamId}`} className="patterns-alert-item patterns-alert-milestone">
+                            <span className="patterns-alert-icon">🎯</span>
+                            <span className="patterns-alert-text">
+                                <strong>{t.pitcherMilestone!.pitcherName}</strong> ({t.teamName}) going for <strong>Win #{t.pitcherMilestone!.targetWin}</strong> tonight
+                            </span>
+                        </div>
+                    ))}
+                    {patterns.filter(t => t.walkoffRevenge && !t.walkoffRevenge.isWalkoffTeam).map(t => (
+                        <div key={`walkoff-${t.teamId}`} className="patterns-alert-item patterns-alert-walkoff">
+                            <span className="patterns-alert-icon">💣</span>
+                            <span className="patterns-alert-text">
+                                <strong>{t.walkoffRevenge!.losingTeam}</strong> lost on a walk-off HR last night (<strong>{t.walkoffRevenge!.score}</strong>). Same matchup tonight — <strong>revenge game.</strong>
+                            </span>
+                        </div>
+                    ))}
+                </motion.div>
+            )}
+
             {/* Search */}
             <div style={{ position: 'relative', marginBottom: '12px' }}>
                 <Search size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#4b5563' }} />
@@ -301,6 +377,7 @@ export default function MemberPatternsPage(): ReactNode {
                     { key: 'alternating' as const, label: `🔥 True (${altCount})` },
                     { key: 'developing' as const, label: `👀 Dev (${devCount})` },
                     { key: 'today' as const, label: `⚾ Today` },
+                    { key: 'alerts' as const, label: `🔔 Alerts (${alertCount})` },
                 ].map(f => (
                     <button
                         key={f.key}
@@ -392,6 +469,16 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
                         <div className="pattern-team-name">
                             {team.teamName}
                             {isPlayingToday && <span className="pattern-today-badge">TODAY</span>}
+                            {team.pitcherMilestone && (
+                                <span className="pattern-milestone-badge">
+                                    🎯 W#{team.pitcherMilestone.targetWin}
+                                </span>
+                            )}
+                            {team.walkoffRevenge && (
+                                <span className="pattern-walkoff-badge">
+                                    💣 {team.walkoffRevenge.isWalkoffTeam ? 'WALKED OFF' : 'REVENGE'}
+                                </span>
+                            )}
                         </div>
                         <div className="pattern-team-division">{team.division}</div>
                     </div>
@@ -523,6 +610,26 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
             {/* Expanded Detail */}
             {expanded && (
                 <div className="pattern-expanded">
+                    {team.pitcherMilestone && (
+                        <div className="pattern-alert-detail milestone" style={{ marginTop: '10px' }}>
+                            <span style={{ fontSize: '16px', flexShrink: 0 }}>🎯</span>
+                            <span>
+                                <strong>{team.pitcherMilestone.pitcherName}</strong> is going for <strong>Win #{team.pitcherMilestone.targetWin}</strong> tonight ({team.pitcherMilestone.currentWins} wins on the season)
+                            </span>
+                        </div>
+                    )}
+                    {team.walkoffRevenge && (
+                        <div className="pattern-alert-detail walkoff" style={{ marginTop: team.pitcherMilestone ? '0' : '10px' }}>
+                            <span style={{ fontSize: '16px', flexShrink: 0 }}>💣</span>
+                            <span>
+                                {team.walkoffRevenge.isWalkoffTeam ? (
+                                    <><strong>{team.teamName}</strong> won on a walk-off HR last night (<strong>{team.walkoffRevenge.score}</strong>){team.walkoffRevenge.walkoffPlayer ? ` — ${team.walkoffRevenge.walkoffPlayer} with the blast` : ''}. Same matchup tonight.</>
+                                ) : (
+                                    <><strong>{team.teamName}</strong> lost on a walk-off HR to <strong>{team.walkoffRevenge.walkoffTeam}</strong> last night (<strong>{team.walkoffRevenge.score}</strong>). <strong>Revenge game tonight.</strong></>
+                                )}
+                            </span>
+                        </div>
+                    )}
                     <div className="pattern-games-grid">
                         {[...team.recentResults].reverse().map((g, i) => (
                             <div

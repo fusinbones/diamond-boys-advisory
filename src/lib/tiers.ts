@@ -16,6 +16,7 @@ export interface Tier {
 /** Tier access level — higher number = more access */
 export const TIER_LEVELS: Record<string, number> = {
   free: 0,
+  pattern: 1,
   daily: 1,
   weekly: 2,
   monthly: 3,
@@ -23,6 +24,26 @@ export const TIER_LEVELS: Record<string, number> = {
 };
 
 export const tiers: Tier[] = [
+  {
+    id: 'pattern',
+    name: 'The .500 Method',
+    price: 49.99,
+    interval: 'month',
+    intervalLabel: '/month',
+    description: 'Full access to the .500 Method Pattern System — all 30 MLB teams scanned daily.',
+    features: [
+      'Real-time W/L alternation analysis',
+      'All 30 MLB teams scanned daily',
+      'Break probability scoring (62-99%)',
+      'Pitcher milestone alerts',
+      'Walk-off revenge game detection',
+      'Search, filter & sort tools',
+      'Cancel anytime',
+    ],
+    popular: false,
+    badge: 'Pattern System',
+    priceId: process.env.STRIPE_PRICE_PATTERN || '',
+  },
   {
     id: 'daily',
     name: 'Daily Pass',

@@ -3,6 +3,21 @@ import { NextResponse } from 'next/server';
 const MLB_API = 'https://statsapi.mlb.com/api/v1';
 const MLB_LOGO = (id: number) => `https://www.mlbstatic.com/team-logos/${id}.svg`;
 
+interface PitcherMilestone {
+    pitcherName: string;
+    currentWins: number;
+    targetWin: number;
+}
+
+interface WalkoffRevenge {
+    walkoffTeam: string;
+    losingTeam: string;
+    walkoffPlayer?: string;
+    score: string;
+    date: string;
+    isWalkoffTeam: boolean;
+}
+
 interface TeamPattern {
     teamId: number;
     teamName: string;
@@ -16,6 +31,8 @@ interface TeamPattern {
     predictionType: 'continue' | 'break' | null;
     isDeveloping: boolean;
     altScore: number;
+    pitcherMilestone: PitcherMilestone | null;
+    walkoffRevenge: WalkoffRevenge | null;
 }
 
 // All 30 MLB teams
@@ -182,7 +199,7 @@ export async function GET() {
             }
         }
 
-        const patterns: TeamPattern[] = MLB_TEAMS.map(team => {
+        const patterns = MLB_TEAMS.map(team => {
             const games = (teamResults[team.id] || [])
                 .sort((a, b) => {
                     const diff = new Date(b.date).getTime() - new Date(a.date).getTime();
@@ -217,7 +234,7 @@ export async function GET() {
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const todayRes = await fetch(
-            `${MLB_API}/schedule?sportId=1&date=${today}&hydrate=team`,
+            `${MLB_API}/schedule?sportId=1&date=${today}&hydrate=probablePitcher,team`,
             { next: { revalidate: 1800 } }
         );
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -230,8 +247,124 @@ export async function GET() {
             }
         }
 
+        // --- Pitcher Going for 10th Win detection ---
+        const pitcherMilestones = new Map<number, PitcherMilestone>();
+        for (const date of todayData.dates || []) {
+            for (const game of date.games || []) {
+                const sides: Array<{ teamId: number | undefined; pitcher: { id?: number; fullName?: string } | undefined }> = [
+                    { teamId: game.teams?.home?.team?.id, pitcher: game.teams?.home?.probablePitcher },
+                    { teamId: game.teams?.away?.team?.id, pitcher: game.teams?.away?.probablePitcher },
+                ];
+                for (const side of sides) {
+                    const pitcherId = side.pitcher?.id;
+                    const teamId = side.teamId;
+                    if (!pitcherId || !teamId) continue;
+                    try {
+                        const pitcherRes = await fetch(
+                            `${MLB_API}/people/${pitcherId}?hydrate=stats(group=[pitching],type=[season])`,
+                            { next: { revalidate: 1800 } }
+                        );
+                        if (!pitcherRes.ok) continue;
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        const pitcherData: any = await pitcherRes.json();
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        const person: any = pitcherData.people?.[0];
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        const stat: any = person?.stats?.[0]?.splits?.[0]?.stat;
+                        if (stat && stat.wins === 9) {
+                            pitcherMilestones.set(teamId, {
+                                pitcherName: person.fullName || side.pitcher?.fullName || 'Unknown',
+                                currentWins: 9,
+                                targetWin: 10,
+                            });
+                        }
+                    } catch {
+                        continue;
+                    }
+                }
+            }
+        }
+
+        // --- Walk-off HR Revenge Game detection ---
+        const walkoffRevengeMap = new Map<number, WalkoffRevenge>();
+        const yesterday = formatET(new Date(Date.now() - 86400000));
+        const todayMatchups: Array<{ homeId: number; awayId: number }> = [];
+        for (const date of todayData.dates || []) {
+            for (const game of date.games || []) {
+                const hId = game.teams?.home?.team?.id as number | undefined;
+                const aId = game.teams?.away?.team?.id as number | undefined;
+                if (hId && aId) todayMatchups.push({ homeId: hId, awayId: aId });
+            }
+        }
+        for (const date of scheduleData.dates || []) {
+            if (date.date !== yesterday) continue;
+            for (const game of date.games || []) {
+                const abstractStatus = game.status?.abstractGameState;
+                if (abstractStatus !== 'Final') continue;
+                const homeId = game.teams?.home?.team?.id as number | undefined;
+                const awayId = game.teams?.away?.team?.id as number | undefined;
+                const homeRuns = game.teams?.home?.score ?? game.linescore?.teams?.home?.runs ?? 0;
+                const awayRuns = game.teams?.away?.score ?? game.linescore?.teams?.away?.runs ?? 0;
+                if (!homeId || !awayId || homeRuns <= awayRuns) continue;
+                // Home team won — check if they play each other today
+                const rematch = todayMatchups.find(
+                    m => (m.homeId === homeId && m.awayId === awayId) ||
+                         (m.homeId === awayId && m.awayId === homeId)
+                );
+                if (!rematch) continue;
+                try {
+                    const feedRes = await fetch(
+                        `${MLB_API}/game/${game.gamePk}/feed/live`,
+                        { next: { revalidate: 86400 } }
+                    );
+                    if (!feedRes.ok) continue;
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const feedData: any = await feedRes.json();
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const allPlays: any[] = feedData.liveData?.plays?.allPlays || [];
+                    const scoringPlays: number[] = feedData.liveData?.plays?.scoringPlays || [];
+                    if (scoringPlays.length === 0) continue;
+                    const lastScoringPlay = allPlays[scoringPlays[scoringPlays.length - 1]];
+                    if (!lastScoringPlay) continue;
+                    const event = lastScoringPlay.result?.event;
+                    const halfInning = lastScoringPlay.about?.halfInning;
+                    const inning = lastScoringPlay.about?.inning;
+                    if (event === 'Home Run' && halfInning === 'bottom' && inning >= 9) {
+                        const walkoffPlayerName = lastScoringPlay.matchup?.batter?.fullName;
+                        const homeName = game.teams?.home?.team?.name || 'Unknown';
+                        const awayName = game.teams?.away?.team?.name || 'Unknown';
+                        const score = `${homeRuns}-${awayRuns}`;
+                        walkoffRevengeMap.set(homeId, {
+                            walkoffTeam: homeName,
+                            losingTeam: awayName,
+                            walkoffPlayer: walkoffPlayerName,
+                            score,
+                            date: yesterday,
+                            isWalkoffTeam: true,
+                        });
+                        walkoffRevengeMap.set(awayId, {
+                            walkoffTeam: homeName,
+                            losingTeam: awayName,
+                            walkoffPlayer: walkoffPlayerName,
+                            score,
+                            date: yesterday,
+                            isWalkoffTeam: false,
+                        });
+                    }
+                } catch {
+                    continue;
+                }
+            }
+        }
+
+        const enhancedPatterns = patterns.map(team => ({
+            ...team,
+            pitcherMilestone: pitcherMilestones.get(team.teamId) || null,
+            walkoffRevenge: walkoffRevengeMap.get(team.teamId) || null,
+        }));
+
         return NextResponse.json({
-            patterns,
+            patterns: enhancedPatterns,
             todayTeamIds: Array.from(todayTeamIds),
             generatedAt: new Date().toISOString(),
         });
