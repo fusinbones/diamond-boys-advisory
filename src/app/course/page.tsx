@@ -10,7 +10,7 @@ import {
 import PaymentForm from '@/components/course/PaymentForm';
 import './course.css';
 
-const COURSE_PRICE = 2497;
+const COURSE_PRICE = 497;
 
 const MODULES = [
     { num: 1, title: 'The Hidden Pattern', desc: 'Why MLB teams secretly alternate wins and losses — and how to spot it before anyone else.', tag: 'Foundation', tagColor: '#60a5fa' },
@@ -313,7 +313,7 @@ export default function FireCourseLanding() {
                         </div>
 
                         <div className="fire-price-amount">
-                            <span className="currency">$</span>2,497
+                            <span className="currency">$</span>497
                         </div>
                         <div className="fire-price-label">One-time payment · Lifetime access</div>
 
@@ -449,7 +449,7 @@ export default function FireCourseLanding() {
                         The only question is whether you&apos;re ready to use it.
                     </p>
                     <button onClick={scrollToCheckout} className="fire-cta-primary">
-                        <Flame size={18} /> Get The Fire Course — $2,497 <ArrowRight size={16} />
+                        <Flame size={18} /> Get The Fire Course — $497 <ArrowRight size={16} />
                     </button>
                     <p style={{ color: '#4b5563', fontSize: '12px', marginTop: '12px' }}>
                         One-time payment · Lifetime access · 21+ only

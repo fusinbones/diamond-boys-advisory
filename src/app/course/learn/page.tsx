@@ -232,7 +232,7 @@ function LearnPageInner() {
                             className="fire-paywall-cta"
                         >
                             <Flame size={18} />
-                            Unlock The Fire Course — $2,497
+                            Unlock The Fire Course — $497
                             <ArrowRight size={16} />
                         </button>
 
