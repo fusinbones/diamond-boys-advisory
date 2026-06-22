@@ -45,6 +45,12 @@ interface TeamPattern {
     altScore: number;
     pitcherMilestone?: PitcherMilestone | null;
     walkoffRevenge?: WalkoffRevenge | null;
+    nextGame?: {
+        opponent: string;
+        opponentLogo: string;
+        gameTime: string;
+        isHome: boolean;
+    } | null;
 }
 
 interface UserProfile {
@@ -465,6 +471,11 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
                             )}
                         </div>
                         <div className="pattern-team-division">{team.division}</div>
+                        {team.nextGame && (
+                            <div className="pattern-next-game">
+                                {team.nextGame.isHome ? 'vs' : '@'} {team.nextGame.opponent} · {team.nextGame.gameTime} · {team.nextGame.isHome ? 'Home' : 'Away'}
+                            </div>
+                        )}
                     </div>
                 </div>
 

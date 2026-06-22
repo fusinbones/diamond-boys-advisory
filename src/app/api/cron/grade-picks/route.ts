@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSportScores, US_SPORTS, type ScoreEvent } from '@/lib/odds-api';
 import { createClient } from '@supabase/supabase-js';
+import { sendResultEmail } from '@/lib/email';
+import { sendResultSms } from '@/lib/sms';
 
 function getSupabase() {
     return createClient(
@@ -170,6 +172,67 @@ export async function GET(request: NextRequest) {
                     .eq('id', fp.id);
 
                 if (!error) fireGraded++;
+            }
+        }
+
+        // Send result notifications for graded fire picks
+        if (fireGraded > 0) {
+            try {
+                const { data: subscribers } = await supabase
+                    .from('pick_subscribers')
+                    .select('email, phone')
+                    .eq('active', true);
+
+                // Get updated record
+                const { data: allFire } = await supabase
+                    .from('fire_picks')
+                    .select('status')
+                    .in('status', ['win', 'won', 'loss', 'lost']);
+
+                const wins = allFire?.filter(p => p.status === 'win' || p.status === 'won').length || 0;
+                const losses = allFire?.filter(p => p.status === 'loss' || p.status === 'lost').length || 0;
+
+                if (subscribers && subscribers.length > 0 && pendingFire) {
+                    const emails = subscribers.map((s: { email: string }) => s.email).filter(Boolean);
+                    const phones = subscribers
+                        .map((s: { phone?: string }) => s.phone)
+                        .filter((p): p is string => !!p && p.length > 0);
+
+                    for (const fp of pendingFire) {
+                        const score = scoreMap.get(fp.game_id as string);
+                        if (!score || !score.scores) continue;
+                        const isHome = isTeamMatch(fp.pick_team as string, score.home_team);
+                        const isAway = isTeamMatch(fp.pick_team as string, score.away_team);
+                        if (!isHome && !isAway) continue;
+                        const homeScore = Number(score.scores.find(s => s.name === score.home_team)?.score || 0);
+                        const awayScore = Number(score.scores.find(s => s.name === score.away_team)?.score || 0);
+                        let result: 'win' | 'loss' | 'push' = 'loss';
+                        if (isHome) result = homeScore > awayScore ? 'win' : homeScore === awayScore ? 'push' : 'loss';
+                        else if (isAway) result = awayScore > homeScore ? 'win' : awayScore === homeScore ? 'push' : 'loss';
+
+                        const resultData = {
+                            matchup: `${score.away_team} @ ${score.home_team}`,
+                            pickTeam: fp.pick_team as string,
+                            pickValue: fp.pick_value as string,
+                            result,
+                            record: { wins, losses },
+                        };
+
+                        // Email
+                        if (emails.length > 0) {
+                            sendResultEmail(emails, resultData)
+                                .catch(err => console.error('[Email] Result email failed:', err));
+                        }
+
+                        // SMS
+                        if (phones.length > 0) {
+                            sendResultSms(phones, resultData)
+                                .catch(err => console.error('[SMS] Result SMS failed:', err));
+                        }
+                    }
+                }
+            } catch (notifyErr) {
+                console.error('[Notify] Result notification failed:', notifyErr);
             }
         }
 

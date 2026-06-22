@@ -18,6 +18,13 @@ interface WalkoffRevenge {
     isWalkoffTeam: boolean;
 }
 
+interface NextGame {
+    opponent: string;
+    opponentLogo: string;
+    gameTime: string;
+    isHome: boolean;
+}
+
 interface TeamPattern {
     teamId: number;
     teamName: string;
@@ -33,6 +40,7 @@ interface TeamPattern {
     altScore: number;
     pitcherMilestone: PitcherMilestone | null;
     walkoffRevenge: WalkoffRevenge | null;
+    nextGame: NextGame | null;
 }
 
 // All 30 MLB teams
@@ -240,10 +248,32 @@ export async function GET() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const todayData: any = await todayRes.json();
         const todayTeamIds = new Set<number>();
+        const nextGameMap = new Map<number, NextGame>();
         for (const date of todayData.dates || []) {
             for (const game of date.games || []) {
-                if (game.teams?.home?.team?.id) todayTeamIds.add(game.teams.home.team.id);
-                if (game.teams?.away?.team?.id) todayTeamIds.add(game.teams.away.team.id);
+                const homeId = game.teams?.home?.team?.id as number | undefined;
+                const awayId = game.teams?.away?.team?.id as number | undefined;
+                const homeName = game.teams?.home?.team?.name as string || '';
+                const awayName = game.teams?.away?.team?.name as string || '';
+                const gameTime = game.gameDate as string || '';
+                if (homeId) {
+                    todayTeamIds.add(homeId);
+                    nextGameMap.set(homeId, {
+                        opponent: awayName.split(' ').pop() || awayName,
+                        opponentLogo: awayId ? MLB_LOGO(awayId) : '',
+                        gameTime: gameTime ? new Date(gameTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' }) : '',
+                        isHome: true,
+                    });
+                }
+                if (awayId) {
+                    todayTeamIds.add(awayId);
+                    nextGameMap.set(awayId, {
+                        opponent: homeName.split(' ').pop() || homeName,
+                        opponentLogo: homeId ? MLB_LOGO(homeId) : '',
+                        gameTime: gameTime ? new Date(gameTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' }) : '',
+                        isHome: false,
+                    });
+                }
             }
         }
 
@@ -361,6 +391,7 @@ export async function GET() {
             ...team,
             pitcherMilestone: pitcherMilestones.get(team.teamId) || null,
             walkoffRevenge: walkoffRevengeMap.get(team.teamId) || null,
+            nextGame: nextGameMap.get(team.teamId) || null,
         }));
 
         return NextResponse.json({

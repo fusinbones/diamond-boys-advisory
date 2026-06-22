@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { sendPickAlert } from '@/lib/email';
+import { sendPickAlertSms } from '@/lib/sms';
 
 const supabaseAdmin = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -68,6 +70,44 @@ export async function POST(req: NextRequest) {
             .single();
 
         if (error) throw error;
+
+        // Send notifications to all subscribers (best-effort, non-blocking)
+        try {
+            const { data: subscribers } = await supabaseAdmin
+                .from('pick_subscribers')
+                .select('email, phone')
+                .eq('active', true);
+
+            if (subscribers && subscribers.length > 0) {
+                const pickData = {
+                    matchup: body.matchup,
+                    pickTeam: body.pick_team,
+                    pickValue: body.pick_value,
+                    pickType: body.pick_type,
+                    confidence: body.confidence || 85,
+                    scheduledAt: body.scheduled_at,
+                };
+
+                // Emails
+                const emails = subscribers.map((s: { email: string }) => s.email).filter(Boolean);
+                if (emails.length > 0) {
+                    sendPickAlert(emails, pickData)
+                        .catch(err => console.error('[Email] Pick alert failed:', err));
+                }
+
+                // SMS
+                const phones = subscribers
+                    .map((s: { phone?: string }) => s.phone)
+                    .filter((p): p is string => !!p && p.length > 0);
+                if (phones.length > 0) {
+                    sendPickAlertSms(phones, pickData)
+                        .catch(err => console.error('[SMS] Pick alert failed:', err));
+                }
+            }
+        } catch (notifyErr) {
+            console.error('[Notify] Subscriber fetch failed:', notifyErr);
+        }
+
         return NextResponse.json({ firePick: data });
     } catch (err: unknown) {
         const message = err instanceof Error ? err.message : 'Unknown error';
