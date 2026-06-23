@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense, useCallback, useRef, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, UserPlus, LogIn, Loader2, Shield, Flame, LogOut, ArrowUp, KeyRound, Trash2 } from 'lucide-react';
+import { Mail, Lock, UserPlus, LogIn, Loader2, Shield, Flame, LogOut, ArrowUp, KeyRound, Trash2, Phone } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
@@ -22,6 +22,7 @@ import PickDropBanner from '@/components/dashboard/PickDropBanner';
 import GamesBoard from '@/components/dashboard/GamesBoard';
 import Tooltip from '@/components/dashboard/Tooltip';
 import FirePickCard from '@/components/dashboard/FirePickCard';
+import PhonePopup from '@/components/dashboard/PhonePopup';
 
 interface UserProfile {
     subscription_tier: string | null;
@@ -136,6 +137,7 @@ function DashboardContent(): ReactNode {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showOtp, setShowOtp] = useState(false);
     const [otp, setOtp] = useState('');
+    const [phone, setPhone] = useState('');
 
     // Dashboard state
     const [sportFilter, setSportFilter] = useState('All');
@@ -397,6 +399,14 @@ function DashboardContent(): ReactNode {
 
                 setShowOtp(true);
                 setMessage('A confirmation code has been sent to your email. Be sure to check your spam/junk folder!');
+                // Save phone number to pick_subscribers if provided during signup
+                if (phone.trim()) {
+                    fetch('/api/subscribers/phone', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, phone: phone.trim() }),
+                    }).catch(() => {});
+                }
             } else {
                 const { error } = await supabase.auth.signInWithPassword({
                     email,
@@ -823,6 +833,27 @@ function DashboardContent(): ReactNode {
                                         minLength={6}
                                     />
                                 </div>
+                                {isSignUp && (
+                                    <>
+                                        <label htmlFor="dash-phone" style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#e5e7eb', marginBottom: '8px' }}>
+                                            Phone Number <span style={{ color: '#6b7280', fontWeight: 400 }}>(optional)</span>
+                                        </label>
+                                        <div style={{ position: 'relative', marginBottom: '20px' }}>
+                                            <Phone size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#6b7280' }} />
+                                            <input
+                                                id="dash-phone"
+                                                type="tel"
+                                                value={phone}
+                                                onChange={(e) => setPhone(e.target.value)}
+                                                style={{
+                                                    width: '100%', padding: '12px 12px 12px 40px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+                                                    borderRadius: '10px', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box',
+                                                }}
+                                                placeholder="(555) 123-4567"
+                                            />
+                                        </div>
+                                    </>
+                                )}
                                 {!isSignUp && (
                                     <div style={{ textAlign: 'right', marginTop: '-12px', marginBottom: '16px' }}>
                                         <button
@@ -1352,6 +1383,7 @@ function DashboardContent(): ReactNode {
                     </motion.button>
                 )}
             </AnimatePresence>
+            <PhonePopup />
         </div>
     );
 }
