@@ -1,0 +1,332 @@
+/* ═══════════════════════════════════════
+   Fire Picks History
+   Glass-card dark theme
+   ═══════════════════════════════════════ */
+
+/* ─── Container ─── */
+.fph-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ─── Loading ─── */
+.fph-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 60px 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.fph-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(0, 229, 155, 0.3);
+    border-top-color: #00e59b;
+    border-radius: 50%;
+    animation: fphSpin 1s linear infinite;
+}
+
+@keyframes fphSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* ─── Error ─── */
+.fph-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 40px 20px;
+    color: #6b7280;
+    font-size: 13px;
+    text-align: center;
+}
+
+.fph-retry-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(167, 139, 250, 0.25);
+    background: rgba(167, 139, 250, 0.1);
+    color: #a78bfa;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.fph-retry-btn:hover {
+    background: rgba(167, 139, 250, 0.2);
+}
+
+/* ─── Empty ─── */
+.fph-empty,
+.fph-empty-filter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 20px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+/* ─── Summary Cards ─── */
+.fph-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.fph-stat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 14px 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    transition: border-color 0.2s;
+}
+
+.fph-stat-card:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.fph-stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.fph-stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* ─── Filters ─── */
+.fph-filters {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.fph-filter-btn {
+    padding: 5px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.fph-filter-btn:hover {
+    border-color: rgba(167, 139, 250, 0.3);
+    color: #a78bfa !important;
+}
+
+.fph-refresh-btn {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.04);
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.fph-refresh-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+}
+
+/* ─── Picks List ─── */
+.fph-picks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* ─── Pick Card ─── */
+.fph-pick-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+.fph-pick-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Date column */
+.fph-pick-date-col {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    min-width: 100px;
+}
+
+.fph-pick-sport {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.fph-pick-date {
+    display: flex;
+    flex-direction: column;
+}
+
+.fph-pick-date-main {
+    font-size: 11px;
+    font-weight: 600;
+    color: #9ca3af;
+}
+
+.fph-pick-date-time {
+    font-size: 10px;
+    color: #4b5563;
+}
+
+/* Info column */
+.fph-pick-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.fph-pick-matchup {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e5e7eb;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fph-pick-detail {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.fph-pick-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #a78bfa;
+}
+
+.fph-pick-odds {
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.fph-pick-break {
+    font-size: 10px;
+    font-weight: 600;
+    color: #fb923c;
+    background: rgba(251, 146, 60, 0.1);
+    border: 1px solid rgba(251, 146, 60, 0.2);
+    padding: 1px 6px;
+    border-radius: 4px;
+}
+
+/* Confidence bar */
+.fph-pick-confidence {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+}
+
+.fph-confidence-bar {
+    flex: 1;
+    max-width: 80px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.fph-confidence-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+}
+
+.fph-confidence-text {
+    font-size: 10px;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+/* Result badge */
+.fph-pick-result {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: 1px solid;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.fph-result-text {
+    letter-spacing: 0.04em;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 600px) {
+    .fph-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .fph-pick-card {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .fph-pick-date-col {
+        min-width: auto;
+    }
+
+    .fph-pick-info {
+        flex-basis: 100%;
+        order: 3;
+    }
+
+    .fph-pick-result {
+        margin-left: auto;
+    }
+}
