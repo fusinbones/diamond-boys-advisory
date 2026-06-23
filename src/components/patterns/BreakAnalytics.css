@@ -1,14 +1,15 @@
-/* ===== Break Analytics Dashboard ===== */
+/* ===== Break Analytics Dashboard — Complete Rewrite ===== */
+/* Mobile-first • Dark theme • Glass cards */
 
 .ba-container {
     padding: 4px 0 40px 0;
 }
 
-/* Export Button */
+/* ── Export Row ── */
 .ba-export-row {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 }
 
 .ba-export-btn {
@@ -17,7 +18,7 @@
     color: #9ca3af;
     font-size: 12px;
     font-weight: 500;
-    padding: 6px 14px;
+    padding: 8px 16px;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -34,529 +35,449 @@
     transform: scale(0.97);
 }
 
-/* Hero Insight Cards */
-.ba-hero-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 28px;
-}
-
-/* ═══ Mobile First ═══ */
-
-@media (max-width: 480px) {
-    .ba-hero-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-    }
-
-    .ba-hero-card {
-        padding: 14px 10px;
-        border-radius: 10px;
-    }
-
-    .ba-hero-emoji {
-        font-size: 18px;
-        margin-bottom: 4px;
-    }
-
-    .ba-hero-value {
-        font-size: 24px;
-    }
-
-    .ba-hero-label {
-        font-size: 10px;
-    }
-
-    .ba-hero-sub {
-        font-size: 10px;
-    }
-
-    .ba-bar-row {
-        height: auto;
-        flex-wrap: wrap;
-        padding: 6px 0;
-        gap: 4px;
-    }
-
-    .ba-bar-label {
-        width: 54px;
-        font-size: 11px;
-    }
-
-    .ba-bar-track {
-        flex: 1;
-        min-width: 0;
-        height: 20px;
-    }
-
-    .ba-bar-stats {
-        width: 100%;
-        text-align: left;
-        padding-left: 54px;
-        font-size: 10px;
-    }
-
-    .ba-bar-row.top-game {
-        padding: 6px 8px;
-    }
-
-    .ba-location-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-    }
-
-    .ba-location-card {
-        padding: 16px 12px;
-        border-radius: 10px;
-    }
-
-    .ba-location-rate {
-        font-size: 28px;
-    }
-
-    .ba-location-detail {
-        font-size: 11px;
-    }
-
-    .ba-location-badge {
-        font-size: 9px;
-        padding: 2px 8px;
-    }
-
-    .ba-season-grid {
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        gap: 8px;
-    }
-
-    .ba-season-card {
-        padding: 12px 10px;
-        border-radius: 10px;
-    }
-
-    .ba-season-rate {
-        font-size: 22px;
-    }
-
-    .ba-season-year {
-        font-size: 12px;
-    }
-
-    .ba-season-detail {
-        font-size: 10px;
-    }
-
-    .ba-section-header {
-        font-size: 13px;
-    }
-
-    .ba-container {
-        padding: 0 0 24px 0;
-    }
-
-    .ba-bar-section,
-    .ba-location-section,
-    .ba-season-section,
-    .ba-trend-section {
-        margin-bottom: 20px;
-    }
-
-    .ba-donut-svg {
-        max-width: 180px;
-    }
-
-    .ba-donut-legend {
-        gap: 8px;
-    }
-
-    .ba-donut-legend-item {
-        font-size: 11px;
-    }
-
-    .ba-trend-svg {
-        max-height: 140px;
-    }
-
-    .ba-export-btn {
-        font-size: 11px;
-        padding: 5px 10px;
-    }
-}
-
-@media (min-width: 481px) and (max-width: 700px) {
-    .ba-hero-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .ba-hero-value {
-        font-size: 28px;
-    }
-
-    .ba-location-rate {
-        font-size: 34px;
-    }
-
-    .ba-season-grid {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    }
-
-    .ba-donut-svg {
-        max-width: 200px;
-    }
-}
-
-
-.ba-hero-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 14px;
-    padding: 20px 16px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.ba-hero-card.highlighted {
-    border-color: rgba(167, 139, 250, 0.2);
-    background: rgba(167, 139, 250, 0.04);
-}
-
-.ba-hero-emoji {
-    font-size: 22px;
-    margin-bottom: 8px;
-    display: block;
-}
-
-.ba-hero-label {
-    font-size: 11px;
-    color: #6b7280;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    margin-bottom: 6px;
-    font-weight: 500;
-}
-
-.ba-hero-value {
-    font-size: 32px;
-    font-weight: 700;
-    line-height: 1.1;
-    margin-bottom: 4px;
-}
-
-.ba-hero-sub {
-    font-size: 12px;
-    color: #4b5563;
-}
-
-/* Section Headers */
+/* ── Section Headers ── */
 .ba-section-header {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 14px;
-    font-size: 14px;
+    margin-bottom: 16px;
+    font-size: 15px;
     font-weight: 600;
-    color: #d1d5db;
+    color: #e5e7eb;
 }
 
-.ba-section-header .ba-section-icon {
-    font-size: 16px;
+.ba-section-icon {
+    font-size: 18px;
 }
 
-/* Bar Chart */
-.ba-bar-section {
-    margin-bottom: 32px;
-}
-
-.ba-bar-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.ba-bar-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    height: 34px;
-}
-
-.ba-bar-row.top-game {
-    background: rgba(167, 139, 250, 0.06);
-    border-radius: 8px;
-    padding: 0 8px;
-    margin: 0 -8px;
-}
-
-.ba-bar-label {
-    font-size: 12px;
-    color: #9ca3af;
-    width: 54px;
-    flex-shrink: 0;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-}
-
-.ba-bar-track {
-    flex: 1;
-    height: 22px;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 6px;
-    overflow: hidden;
-    position: relative;
-}
-
-.ba-bar-gridline {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: rgba(255, 255, 255, 0.08);
-    z-index: 1;
-    pointer-events: none;
-}
-
-.ba-bar-fill {
-    height: 100%;
-    border-radius: 6px;
-    transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
-    min-width: 2px;
-    position: relative;
-    z-index: 2;
-}
-
-.ba-bar-stats {
-    font-size: 11px;
-    color: #6b7280;
-    width: 120px;
-    flex-shrink: 0;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-}
-
-.ba-bar-rate {
-    color: #d1d5db;
-    font-weight: 600;
-}
-
-/* Home vs Away */
-.ba-location-section {
-    margin-bottom: 32px;
-}
-
-.ba-location-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.ba-location-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 14px;
-    padding: 24px 20px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s;
-}
-
-.ba-location-card.winner {
-    border-color: rgba(0, 229, 155, 0.2);
-    background: rgba(0, 229, 155, 0.04);
-}
-
-.ba-location-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.8px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    margin-bottom: 12px;
-    text-transform: uppercase;
-}
-
-.ba-location-rate {
-    font-size: 40px;
-    font-weight: 700;
-    line-height: 1.1;
-    margin-bottom: 6px;
-}
-
-.ba-location-detail {
+.ba-section-sub {
     font-size: 12px;
     color: #6b7280;
-    font-variant-numeric: tabular-nums;
+    margin-top: -8px;
+    margin-bottom: 16px;
+    line-height: 1.5;
 }
 
-.ba-location-tag {
-    display: inline-block;
-    margin-top: 10px;
-    font-size: 10px;
-    font-weight: 600;
-    color: #00e59b;
-    background: rgba(0, 229, 155, 0.1);
-    border: 1px solid rgba(0, 229, 155, 0.2);
-    border-radius: 20px;
-    padding: 2px 10px;
-    letter-spacing: 0.5px;
+/* ── Divider ── */
+.ba-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.05);
+    margin: 28px 0;
 }
 
-/* Donut Chart */
-.ba-donut-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    padding: 10px 0;
-}
+/* ══════════════════════════════════════════
+   SECTION 1: Game Breakdown
+   ══════════════════════════════════════════ */
 
-.ba-donut-svg {
-    width: 100%;
-    max-width: 220px;
-    height: auto;
-}
-
-.ba-donut-legend {
-    display: flex;
-    gap: 24px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.ba-donut-legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    color: #9ca3af;
-}
-
-.ba-donut-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-
-.ba-donut-legend-label {
-    font-weight: 600;
-    letter-spacing: 0.3px;
-}
-
-.ba-donut-legend-value {
-    font-weight: 700;
-    font-size: 14px;
-}
-
-.ba-donut-legend-sub {
-    color: #4b5563;
-    font-size: 11px;
-    font-variant-numeric: tabular-nums;
-}
-
-/* Season Breakdown */
-.ba-season-section {
-    margin-bottom: 20px;
-}
-
-.ba-season-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 10px;
-}
-
-.ba-season-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 12px;
-    padding: 16px 14px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.ba-season-card.current {
-    border-color: rgba(167, 139, 250, 0.25);
-    background: rgba(167, 139, 250, 0.06);
-}
-
-.ba-season-year {
-    font-size: 13px;
-    font-weight: 600;
-    color: #9ca3af;
+.ba-game-section {
     margin-bottom: 8px;
 }
 
-.ba-season-card.current .ba-season-year {
-    color: #a78bfa;
+.ba-game-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.ba-season-rate {
+.ba-game-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.ba-game-card:hover {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.ba-game-card.featured {
+    border-color: rgba(167, 139, 250, 0.3);
+    background: rgba(167, 139, 250, 0.06);
+}
+
+.ba-game-card.featured:hover {
+    border-color: rgba(167, 139, 250, 0.4);
+    background: rgba(167, 139, 250, 0.08);
+}
+
+.ba-game-card.minor {
+    opacity: 0.6;
+    padding: 10px 16px;
+}
+
+.ba-game-card.minor:hover {
+    opacity: 0.85;
+}
+
+/* Top row: game label + percentage */
+.ba-game-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.ba-game-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #d1d5db;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.ba-game-crown {
+    font-size: 16px;
+}
+
+.ba-game-rate {
     font-size: 28px;
     font-weight: 700;
-    line-height: 1.1;
-    margin-bottom: 4px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
 }
 
-.ba-season-detail {
+.ba-game-card.minor .ba-game-rate {
+    font-size: 20px;
+}
+
+/* Bar track */
+.ba-game-bar-track {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.ba-game-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+    min-width: 2px;
+}
+
+/* Location split row */
+.ba-game-locations {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.ba-game-loc {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #9ca3af;
+    font-variant-numeric: tabular-nums;
+}
+
+.ba-game-loc-emoji {
+    font-size: 13px;
+}
+
+.ba-game-loc-count {
+    font-weight: 600;
+}
+
+.ba-game-loc-label {
+    color: #6b7280;
+    font-size: 11px;
+}
+
+.ba-game-sample {
     font-size: 11px;
     color: #4b5563;
     font-variant-numeric: tabular-nums;
 }
 
-.ba-season-bar-track {
-    margin-top: 10px;
+/* ══════════════════════════════════════════
+   SECTION 2: Team Leaderboard
+   ══════════════════════════════════════════ */
+
+.ba-team-section {
+    margin-bottom: 8px;
+}
+
+.ba-team-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ba-team-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.ba-team-row:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.ba-team-rank {
+    font-size: 18px;
+    width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.ba-team-rank-num {
+    font-size: 13px;
+    color: #4b5563;
+    font-weight: 600;
+    width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.ba-team-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e5e7eb;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ba-team-breaks {
+    font-size: 18px;
+    font-weight: 700;
+    color: #00e59b;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.ba-team-split {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #6b7280;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.ba-team-bar-track {
+    width: 60px;
     height: 6px;
     background: rgba(255, 255, 255, 0.04);
     border-radius: 3px;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
-.ba-season-bar-fill {
+.ba-team-bar-fill {
     height: 100%;
     border-radius: 3px;
-    transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+    background: linear-gradient(90deg, #00e59b, #34d399);
+    transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.ba-current-tag {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    font-size: 9px;
+/* ══════════════════════════════════════════
+   SECTION 3: Season Game Log
+   ══════════════════════════════════════════ */
+
+.ba-log-section {
+    margin-bottom: 8px;
+}
+
+.ba-log-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.ba-log-count {
+    font-size: 13px;
+    color: #6b7280;
+    font-variant-numeric: tabular-nums;
+}
+
+.ba-log-count strong {
+    color: #d1d5db;
     font-weight: 600;
-    color: #a78bfa;
-    background: rgba(167, 139, 250, 0.12);
-    border-radius: 4px;
-    padding: 2px 6px;
-    letter-spacing: 0.4px;
 }
 
-/* Season Trend Line */
-.ba-trend-section {
-    margin-bottom: 20px;
+/* Filter buttons */
+.ba-log-filters {
+    display: flex;
+    gap: 6px;
 }
 
-.ba-trend-wrapper {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 14px;
-    padding: 16px 12px;
-    overflow: hidden;
+.ba-log-filter-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #9ca3af;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
-.ba-trend-svg {
+.ba-log-filter-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #d1d5db;
+}
+
+.ba-log-filter-btn.active {
+    background: rgba(0, 229, 155, 0.12);
+    border-color: rgba(0, 229, 155, 0.25);
+    color: #00e59b;
+    font-weight: 600;
+}
+
+/* Scrollable table wrapper */
+.ba-log-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.ba-log-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.ba-log-table {
     width: 100%;
-    max-height: 180px;
-    height: auto;
-    display: block;
+    min-width: 520px;
+    border-collapse: separate;
+    border-spacing: 0;
 }
 
-/* Loading */
+.ba-log-table thead th {
+    font-size: 10px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    position: sticky;
+    top: 0;
+    background: inherit;
+    white-space: nowrap;
+}
+
+.ba-log-table tbody tr {
+    transition: background 0.15s ease;
+}
+
+.ba-log-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.ba-log-table tbody td {
+    font-size: 13px;
+    color: #d1d5db;
+    padding: 10px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.ba-log-date {
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.ba-log-team {
+    font-weight: 600;
+}
+
+.ba-log-opponent {
+    color: #6b7280;
+}
+
+.ba-log-loc {
+    font-size: 14px;
+}
+
+.ba-log-broke {
+    font-weight: 600;
+}
+
+.ba-log-broke.yes {
+    color: #00e59b;
+}
+
+.ba-log-broke.no {
+    color: #ef4444;
+}
+
+.ba-log-result {
+    font-weight: 600;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.ba-log-result.win {
+    color: #00e59b;
+    background: rgba(0, 229, 155, 0.1);
+}
+
+.ba-log-result.loss {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* Show More button */
+.ba-log-more-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.ba-log-more-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #9ca3af;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 8px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ba-log-more-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #d1d5db;
+}
+
+/* ══════════════════════════════════════════
+   Loading / Error
+   ══════════════════════════════════════════ */
+
 .ba-loading {
     display: flex;
     flex-direction: column;
@@ -581,7 +502,6 @@
     to { transform: rotate(360deg); }
 }
 
-/* Error */
 .ba-error {
     text-align: center;
     padding: 40px 20px;
@@ -600,9 +520,139 @@
     font-size: 12px;
 }
 
-/* Divider */
-.ba-divider {
-    height: 1px;
-    background: rgba(255, 255, 255, 0.05);
-    margin: 24px 0;
+/* ══════════════════════════════════════════
+   RESPONSIVE — Tablet
+   ══════════════════════════════════════════ */
+
+@media (min-width: 640px) {
+    .ba-game-card {
+        flex-direction: row;
+        align-items: center;
+        gap: 16px;
+        padding: 14px 18px;
+    }
+
+    .ba-game-top {
+        width: 180px;
+        flex-shrink: 0;
+    }
+
+    .ba-game-bar-track {
+        flex: 1;
+        min-width: 80px;
+    }
+
+    .ba-game-locations {
+        flex-shrink: 0;
+        width: 260px;
+        justify-content: flex-end;
+    }
+
+    .ba-game-sample {
+        flex-shrink: 0;
+        width: 80px;
+        text-align: right;
+    }
+
+    .ba-team-bar-track {
+        width: 80px;
+    }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — Desktop
+   ══════════════════════════════════════════ */
+
+@media (min-width: 900px) {
+    .ba-game-top {
+        width: 200px;
+    }
+
+    .ba-game-locations {
+        width: 300px;
+    }
+
+    .ba-team-bar-track {
+        width: 100px;
+    }
+
+    .ba-team-split {
+        font-size: 12px;
+    }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — Small Mobile
+   ══════════════════════════════════════════ */
+
+@media (max-width: 480px) {
+    .ba-container {
+        padding: 0 0 24px 0;
+    }
+
+    .ba-section-header {
+        font-size: 13px;
+    }
+
+    .ba-game-card {
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .ba-game-rate {
+        font-size: 22px;
+    }
+
+    .ba-game-card.minor .ba-game-rate {
+        font-size: 16px;
+    }
+
+    .ba-game-label {
+        font-size: 13px;
+    }
+
+    .ba-game-loc {
+        font-size: 12px;
+    }
+
+    .ba-team-row {
+        padding: 10px 10px;
+        gap: 8px;
+    }
+
+    .ba-team-name {
+        font-size: 13px;
+    }
+
+    .ba-team-breaks {
+        font-size: 16px;
+    }
+
+    .ba-team-split {
+        display: none;
+    }
+
+    .ba-team-bar-track {
+        width: 40px;
+    }
+
+    .ba-log-filter-btn {
+        font-size: 11px;
+        padding: 5px 10px;
+    }
+
+    .ba-export-btn {
+        font-size: 11px;
+        padding: 5px 10px;
+    }
+
+    .ba-game-section,
+    .ba-team-section,
+    .ba-log-section {
+        margin-bottom: 4px;
+    }
+
+    .ba-divider {
+        margin: 20px 0;
+    }
 }
