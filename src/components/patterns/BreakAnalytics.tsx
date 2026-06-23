@@ -49,19 +49,14 @@ function seasonBarColor(rate: number): string {
     return '#a78bfa';
 }
 
-/** Turn "58.2%" into "6 out of 10" */
-function toPlainEnglish(breaks: number, total: number): string {
-    if (total === 0) return 'No data yet';
-    if (total < 10) return `${breaks} out of ${total} times`;
-    // Simplify to "X out of 10"
-    const per10 = Math.round((breaks / total) * 10);
-    return `${per10} out of 10 times`;
-}
-
-/** Short plain english */
-function toSimple(breaks: number, total: number): string {
-    if (total === 0) return '—';
-    return `${breaks} of ${total}`;
+/** Plain english for a rate - "More often than not", "About half the time", etc */
+function rateVibe(rate: number): string {
+    if (rate >= 65) return 'Breaks most of the time';
+    if (rate >= 58) return 'Breaks more often than not';
+    if (rate >= 52) return 'Slightly favors breaking';
+    if (rate >= 48) return 'About a coin flip';
+    if (rate >= 40) return 'Usually holds the pattern';
+    return 'Rarely breaks';
 }
 
 /* ─── Component ─── */
@@ -110,9 +105,6 @@ export default function BreakAnalytics(): ReactNode {
 
     const maxBarRate = Math.max(...data.byGame.map(g => g.rate), 1);
     const topGameData = data.byGame.find(g => g.game === data.topBreakGame);
-    const topGamePlain = topGameData ? toPlainEnglish(topGameData.breaks, topGameData.total) : '';
-    const topLoc = data.byLocation[data.topLocation];
-    const topLocPlain = toPlainEnglish(topLoc.breaks, topLoc.total);
 
     return (
         <motion.div
@@ -131,12 +123,12 @@ export default function BreakAnalytics(): ReactNode {
                     transition={{ delay: 0.1 }}
                 >
                     <span className="ba-hero-emoji">🎯</span>
-                    <div className="ba-hero-label">Patterns break the most at</div>
+                    <div className="ba-hero-label">Breaks the most at</div>
                     <div className="ba-hero-value" style={{ color: '#a78bfa' }}>
                         Game {data.topBreakGame}
                     </div>
                     <div className="ba-hero-sub" style={{ color: '#9ca3af' }}>
-                        Broke {topGamePlain}
+                        {topGameData ? `${Math.round(topGameData.rate)}% — ${topGameData.breaks} of ${topGameData.total} games` : ''}
                     </div>
                 </motion.div>
 
@@ -148,12 +140,12 @@ export default function BreakAnalytics(): ReactNode {
                     transition={{ delay: 0.15 }}
                 >
                     <span className="ba-hero-emoji">{data.topLocation === 'home' ? '🏠' : '✈️'}</span>
-                    <div className="ba-hero-label">Patterns break more when</div>
+                    <div className="ba-hero-label">Breaks more when</div>
                     <div className="ba-hero-value" style={{ color: '#00e59b' }}>
                         {data.topLocation === 'home' ? 'HOME' : 'AWAY'}
                     </div>
                     <div className="ba-hero-sub" style={{ color: '#9ca3af' }}>
-                        Broke {topLocPlain}
+                        {Math.round(data.byLocation[data.topLocation].rate)}% of the time
                     </div>
                 </motion.div>
 
@@ -167,10 +159,10 @@ export default function BreakAnalytics(): ReactNode {
                     <span className="ba-hero-emoji">📊</span>
                     <div className="ba-hero-label">All-time break rate</div>
                     <div className="ba-hero-value" style={{ color: rateColor(data.overallRate) }}>
-                        {Math.round((data.overallRate / 100) * 10)}/10
+                        {Math.round(data.overallRate)}%
                     </div>
                     <div className="ba-hero-sub" style={{ color: '#9ca3af' }}>
-                        Broke {toSimple(Math.round(data.totalEvents * data.overallRate / 100), data.totalEvents)} times
+                        {rateVibe(data.overallRate)}
                     </div>
                 </motion.div>
 
@@ -184,10 +176,10 @@ export default function BreakAnalytics(): ReactNode {
                     <span className="ba-hero-emoji">🔥</span>
                     <div className="ba-hero-label">This season ({data.currentSeason.year})</div>
                     <div className="ba-hero-value" style={{ color: rateColor(data.currentSeason.rate) }}>
-                        {data.currentSeason.breaks}/{data.currentSeason.total}
+                        {Math.round(data.currentSeason.rate)}%
                     </div>
                     <div className="ba-hero-sub" style={{ color: '#9ca3af' }}>
-                        Broke {toPlainEnglish(data.currentSeason.breaks, data.currentSeason.total)}
+                        {data.currentSeason.breaks} broke in {data.currentSeason.total} games
                     </div>
                 </motion.div>
             </div>
@@ -199,7 +191,7 @@ export default function BreakAnalytics(): ReactNode {
                     How often does the pattern break at each game?
                 </div>
                 <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '12px', lineHeight: 1.5 }}>
-                    When a team alternates W-L-W-L, this shows how often that streak breaks at each game number. Higher = more likely to break.
+                    When a team goes W-L-W-L back and forth, this shows how often that streak finally breaks at each game.
                 </div>
                 <div className="ba-bar-list">
                     {data.byGame.map((g, i) => (
@@ -224,7 +216,7 @@ export default function BreakAnalytics(): ReactNode {
                             </div>
                             <span className="ba-bar-stats">
                                 <span className="ba-bar-rate" style={{ color: rateColor(g.rate) }}>
-                                    {Math.round((g.rate / 100) * 10)}/10
+                                    {Math.round(g.rate)}%
                                 </span>
                                 {' '}
                                 <span style={{ color: '#4b5563' }}>
@@ -242,7 +234,7 @@ export default function BreakAnalytics(): ReactNode {
             <div className="ba-location-section">
                 <div className="ba-section-header">
                     <span className="ba-section-icon">🏟️</span>
-                    Does the pattern break more at Home or Away?
+                    Do patterns break more at Home or Away?
                 </div>
                 <div className="ba-location-grid">
                     {(['home', 'away'] as const).map(loc => {
@@ -269,10 +261,10 @@ export default function BreakAnalytics(): ReactNode {
                                     className="ba-location-rate"
                                     style={{ color: isWinner ? '#00e59b' : '#d1d5db' }}
                                 >
-                                    {d.breaks} of {d.total}
+                                    {Math.round(d.rate)}%
                                 </div>
                                 <div className="ba-location-detail">
-                                    Broke {toPlainEnglish(d.breaks, d.total)}
+                                    {d.breaks} broke in {d.total} games
                                 </div>
                                 {isWinner && (
                                     <span className="ba-location-tag">↑ BREAKS MORE HERE</span>
@@ -289,7 +281,7 @@ export default function BreakAnalytics(): ReactNode {
             <div className="ba-season-section">
                 <div className="ba-section-header">
                     <span className="ba-section-icon">📅</span>
-                    How does each season compare?
+                    Season by season
                 </div>
                 <div className="ba-season-grid">
                     {data.bySeason.map((s, i) => {
@@ -308,10 +300,10 @@ export default function BreakAnalytics(): ReactNode {
                                     className="ba-season-rate"
                                     style={{ color: rateColor(s.rate) }}
                                 >
-                                    {s.breaks}/{s.total}
+                                    {Math.round(s.rate)}%
                                 </div>
                                 <div className="ba-season-detail">
-                                    Broke {toPlainEnglish(s.breaks, s.total)}
+                                    {s.breaks} of {s.total} games
                                 </div>
                                 <div className="ba-season-bar-track">
                                     <div
