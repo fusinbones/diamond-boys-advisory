@@ -4,6 +4,36 @@
     padding: 4px 0 40px 0;
 }
 
+/* Export Button */
+.ba-export-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+}
+
+.ba-export-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #9ca3af;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.3px;
+}
+
+.ba-export-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #d1d5db;
+}
+
+.ba-export-btn:active {
+    transform: scale(0.97);
+}
+
 /* Hero Insight Cards */
 .ba-hero-grid {
     display: grid;
@@ -50,7 +80,7 @@
     }
 
     .ba-bar-label {
-        width: 38px;
+        width: 54px;
         font-size: 11px;
     }
 
@@ -63,7 +93,7 @@
     .ba-bar-stats {
         width: 100%;
         text-align: left;
-        padding-left: 42px;
+        padding-left: 54px;
         font-size: 10px;
     }
 
@@ -126,8 +156,30 @@
 
     .ba-bar-section,
     .ba-location-section,
-    .ba-season-section {
+    .ba-season-section,
+    .ba-trend-section {
         margin-bottom: 20px;
+    }
+
+    .ba-donut-svg {
+        max-width: 180px;
+    }
+
+    .ba-donut-legend {
+        gap: 8px;
+    }
+
+    .ba-donut-legend-item {
+        font-size: 11px;
+    }
+
+    .ba-trend-svg {
+        max-height: 140px;
+    }
+
+    .ba-export-btn {
+        font-size: 11px;
+        padding: 5px 10px;
     }
 }
 
@@ -146,6 +198,10 @@
 
     .ba-season-grid {
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+
+    .ba-donut-svg {
+        max-width: 200px;
     }
 }
 
@@ -235,7 +291,7 @@
 .ba-bar-label {
     font-size: 12px;
     color: #9ca3af;
-    width: 42px;
+    width: 54px;
     flex-shrink: 0;
     font-weight: 500;
     font-variant-numeric: tabular-nums;
@@ -250,11 +306,24 @@
     position: relative;
 }
 
+.ba-bar-gridline {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 1;
+    pointer-events: none;
+}
+
 .ba-bar-fill {
     height: 100%;
     border-radius: 6px;
     transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
     min-width: 2px;
+    position: relative;
+    z-index: 2;
 }
 
 .ba-bar-stats {
@@ -337,6 +406,59 @@
     letter-spacing: 0.5px;
 }
 
+/* Donut Chart */
+.ba-donut-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 10px 0;
+}
+
+.ba-donut-svg {
+    width: 100%;
+    max-width: 220px;
+    height: auto;
+}
+
+.ba-donut-legend {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.ba-donut-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+.ba-donut-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.ba-donut-legend-label {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.ba-donut-legend-value {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.ba-donut-legend-sub {
+    color: #4b5563;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+}
+
 /* Season Breakdown */
 .ba-season-section {
     margin-bottom: 20px;
@@ -412,6 +534,26 @@
     border-radius: 4px;
     padding: 2px 6px;
     letter-spacing: 0.4px;
+}
+
+/* Season Trend Line */
+.ba-trend-section {
+    margin-bottom: 20px;
+}
+
+.ba-trend-wrapper {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 16px 12px;
+    overflow: hidden;
+}
+
+.ba-trend-svg {
+    width: 100%;
+    max-height: 180px;
+    height: auto;
+    display: block;
 }
 
 /* Loading */
