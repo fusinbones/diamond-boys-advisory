@@ -70,11 +70,36 @@ function formatTime(dateStr: string): string {
 }
 
 function buildPickLabel(pick: FirePick): string {
-    const parts: string[] = [];
-    if (pick.pick_team) parts.push(pick.pick_team);
-    if (pick.pick_value) parts.push(pick.pick_value);
-    if (parts.length === 0 && pick.pick_type) parts.push(pick.pick_type);
-    return parts.join(' ') || 'Pick';
+    // Avoid showing "Yankees Yankees ML" — just show "Yankees ML"
+    if (pick.pick_team && pick.pick_value) {
+        const val = pick.pick_value.trim();
+        // If pick_value already starts with the team name, just use pick_value
+        if (val.toLowerCase().startsWith(pick.pick_team.toLowerCase())) {
+            return val;
+        }
+        return `${pick.pick_team} ${val}`;
+    }
+    if (pick.pick_team) return pick.pick_team;
+    if (pick.pick_value) return pick.pick_value;
+    if (pick.pick_type) return pick.pick_type;
+    return 'Pick';
+}
+
+function getHomeAway(matchup: string, pickTeam?: string): { label: string; emoji: string; color: string } | null {
+    if (!pickTeam || !matchup) return null;
+    // Matchup format: "Away Team @ Home Team"
+    const parts = matchup.split('@').map(s => s.trim());
+    if (parts.length !== 2) return null;
+    const awayTeam = parts[0].toLowerCase();
+    const homeTeam = parts[1].toLowerCase();
+    const pick = pickTeam.toLowerCase();
+    if (homeTeam.includes(pick) || pick.includes(homeTeam.split(' ').pop() || '')) {
+        return { label: 'HOME', emoji: '🏠', color: '#00e59b' };
+    }
+    if (awayTeam.includes(pick) || pick.includes(awayTeam.split(' ').pop() || '')) {
+        return { label: 'AWAY', emoji: '✈️', color: '#60a5fa' };
+    }
+    return null;
 }
 
 // ── Component ──────────────────────────────────────────
@@ -305,6 +330,20 @@ function PickCard({ pick, index }: { pick: FirePick; index: number }): ReactNode
                 <div className="fph-pick-detail">
                     <span className="fph-pick-label">{pickLabel}</span>
                     {pick.odds && <span className="fph-pick-odds">({pick.odds})</span>}
+                    {(() => {
+                        const ha = getHomeAway(pick.matchup, pick.pick_team);
+                        return ha ? (
+                            <span style={{
+                                fontSize: '10px', fontWeight: 600, padding: '1px 6px',
+                                borderRadius: '4px', letterSpacing: '0.5px',
+                                background: ha.color === '#00e59b' ? 'rgba(0,229,155,0.1)' : 'rgba(96,165,250,0.1)',
+                                color: ha.color,
+                                border: `1px solid ${ha.color === '#00e59b' ? 'rgba(0,229,155,0.2)' : 'rgba(96,165,250,0.2)'}`,
+                            }}>
+                                {ha.emoji} {ha.label}
+                            </span>
+                        ) : null;
+                    })()}
                     {pick.pattern_break_game && (
                         <span className="fph-pick-break" title="Pattern break game #">
                             🔥 G#{pick.pattern_break_game}
