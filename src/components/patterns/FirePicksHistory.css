@@ -310,23 +310,90 @@
 @media (max-width: 600px) {
     .fph-summary {
         grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .fph-stat-card {
+        padding: 10px 6px;
+        border-radius: 10px;
+    }
+
+    .fph-stat-value {
+        font-size: 17px;
+    }
+
+    .fph-stat-label {
+        font-size: 9px;
     }
 
     .fph-pick-card {
-        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: flex-start;
         gap: 8px;
+        padding: 12px;
     }
 
     .fph-pick-date-col {
         min-width: auto;
+        width: 100%;
+        justify-content: space-between;
     }
 
     .fph-pick-info {
         flex-basis: 100%;
-        order: 3;
+        width: 100%;
+    }
+
+    .fph-pick-matchup {
+        font-size: 12px;
+        white-space: normal;
+    }
+
+    .fph-pick-detail {
+        gap: 4px;
+    }
+
+    .fph-pick-label {
+        font-size: 11px;
     }
 
     .fph-pick-result {
-        margin-left: auto;
+        align-self: flex-end;
+        margin-top: -28px;
+    }
+
+    .fph-filters {
+        gap: 4px;
+    }
+
+    .fph-filter-btn {
+        padding: 5px 10px;
+        font-size: 10px;
+    }
+
+    .fph-confidence-bar {
+        max-width: 60px;
+    }
+
+    .fph-pick-break {
+        font-size: 9px;
+        padding: 1px 5px;
     }
 }
+
+@media (max-width: 380px) {
+    .fph-summary {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
+
+    .fph-stat-value {
+        font-size: 15px;
+    }
+
+    .fph-pick-result {
+        margin-top: 0;
+        align-self: flex-start;
+    }
+}
+

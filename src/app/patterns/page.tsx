@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import './patterns.css';
 import FirePicksHistory from '@/components/patterns/FirePicksHistory';
+import BreakAnalytics from '@/components/patterns/BreakAnalytics';
 
 interface GameResult {
     date: string;
@@ -69,7 +70,7 @@ export default function MemberPatternsPage(): ReactNode {
     const [loading, setLoading] = useState(true);
     const [profileLoading, setProfileLoading] = useState(true);
     const [lastUpdated, setLastUpdated] = useState('');
-    const [filter, setFilter] = useState<'all' | 'alternating' | 'developing' | 'today' | 'alerts' | 'history'>('all');
+    const [filter, setFilter] = useState<'all' | 'alternating' | 'developing' | 'today' | 'alerts' | 'history' | 'analytics'>('all');
     const [sortBy, setSortBy] = useState<'altScore' | 'streak' | 'division'>('altScore');
     const [search, setSearch] = useState('');
 
@@ -370,6 +371,7 @@ export default function MemberPatternsPage(): ReactNode {
                     { key: 'today' as const, label: `⚾ Today` },
                     { key: 'alerts' as const, label: `🔔 Alerts (${alertCount})` },
                     { key: 'history' as const, label: '🔥 Fire Log' },
+                    { key: 'analytics' as const, label: '📊 Insights' },
                 ].map(f => (
                     <button
                         key={f.key}
@@ -404,9 +406,11 @@ export default function MemberPatternsPage(): ReactNode {
                 </div>
             </div>
 
-            {/* Team List / Fire Log */}
+            {/* Team List / Fire Log / Analytics */}
             {filter === 'history' ? (
                 <FirePicksHistory />
+            ) : filter === 'analytics' ? (
+                <BreakAnalytics />
             ) : loading ? (
                 <div className="patterns-loading">
                     <div className="patterns-spinner" />
