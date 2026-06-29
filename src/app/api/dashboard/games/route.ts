@@ -197,7 +197,7 @@ export async function GET(request: NextRequest) {
                 totalGames: allGames.length,
                 ...(debug ? { errors, apiKeySet: true } : {}),
             },
-            { headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' } }
+            { headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' } }
         );
     } catch (error) {
         console.error('Dashboard games error:', error);
