@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAdminAuth } from '@/lib/adminAuth';
 import {
     Flame, Save, Loader2, AlertCircle, Check, Clock, ChevronDown,
-    Calendar, Zap, Trophy, Trash2,
+    Calendar, Zap, Trophy, Trash2, Send,
 } from 'lucide-react';
 
 interface OddsGame {
@@ -181,6 +181,17 @@ export default function FirePicksPage() {
         try {
             await fetch(`/api/admin/fire-picks?id=${id}`, {
                 method: 'DELETE',
+            });
+            fetchFirePicks();
+        } catch { /* ignore */ }
+    };
+
+    const releaseNow = async (id: string) => {
+        try {
+            await fetch('/api/admin/fire-picks', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, status: 'revealed', scheduled_at: new Date().toISOString() }),
             });
             fetchFirePicks();
         } catch { /* ignore */ }
@@ -501,7 +512,10 @@ export default function FirePicksPage() {
                                             <span style={{ fontSize: '11px', fontWeight: 600, color: '#fbbf24', background: 'rgba(251,191,36,0.1)', padding: '3px 8px', borderRadius: '6px' }}>
                                                 <Clock size={10} style={{ display: 'inline', marginRight: '3px' }} />Scheduled
                                             </span>
-                                            <button onClick={() => deleteFirePick(fp.id)} className="admin-btn" style={{ padding: '4px', background: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)', marginLeft: '8px' }}>
+                                            <button onClick={() => releaseNow(fp.id)} className="admin-btn" style={{ padding: '4px 10px', fontSize: '11px', background: 'rgba(0,229,155,0.1)', color: '#00e59b', border: '1px solid rgba(0,229,155,0.2)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                <Send size={10} /> Release Now
+                                            </button>
+                                            <button onClick={() => deleteFirePick(fp.id)} className="admin-btn" style={{ padding: '4px', background: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }}>
                                                 <Trash2 size={12} />
                                             </button>
                                         </>
