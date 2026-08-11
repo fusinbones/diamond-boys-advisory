@@ -48,6 +48,14 @@ export default function PrivacyPage() {
                                 <li><strong>Google Analytics / Vercel Web Analytics:</strong> Anonymized usage metrics.</li>
                             </ul>
 
+                            <h3 className="text-white font-semibold text-base pt-2">Mobile Information & SMS</h3>
+                            <p>
+                                <strong>No mobile information will be shared with third parties or affiliates for marketing or promotional purposes.</strong> Information sharing with subcontractors in support services, such as customer service or message delivery, is permitted. All other use case categories exclude text messaging originator opt-in data and consent; this information will not be shared with any third parties.
+                            </p>
+                            <p>
+                                If you opt in to SMS alerts, we collect your mobile phone number and a record of your consent for the sole purpose of delivering pick alerts and account notifications. Message frequency varies. Message and data rates may apply. Reply STOP to opt out at any time, or reply HELP for assistance. Consent to receive text messages is not a condition of any purchase.
+                            </p>
+
                             <h3 className="text-white font-semibold text-base pt-2">Data Security & Compliance</h3>
                             <div className="flex items-start gap-3 bg-[#00e59b]/5 border border-[#00e59b]/15 rounded-xl p-4 my-4">
                                 <ShieldCheck size={20} className="text-[#00e59b] mt-0.5" />

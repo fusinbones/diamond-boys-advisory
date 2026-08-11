@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { sendPickAlert } from '@/lib/email';
-import { sendPickAlertSms } from '@/lib/sms';
 
 const supabaseAdmin = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -93,15 +92,6 @@ export async function POST(req: NextRequest) {
                 if (emails.length > 0) {
                     sendPickAlert(emails, pickData)
                         .catch(err => console.error('[Email] Pick alert failed:', err));
-                }
-
-                // SMS
-                const phones = subscribers
-                    .map((s: { phone?: string }) => s.phone)
-                    .filter((p): p is string => !!p && p.length > 0);
-                if (phones.length > 0) {
-                    sendPickAlertSms(phones, pickData)
-                        .catch(err => console.error('[SMS] Pick alert failed:', err));
                 }
             }
         } catch (notifyErr) {

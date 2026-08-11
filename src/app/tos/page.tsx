@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Shield, AlertTriangle, Scale, Lock, Ban, Mail } from 'lucide-react';
+import { Shield, AlertTriangle, Scale, Lock, Ban, Mail, MessageSquare } from 'lucide-react';
 
 export const metadata: Metadata = {
     title: 'Terms of Service & Policies | TriplePlayz - Sports Advisory',
@@ -80,6 +80,35 @@ export default function TOSPage() {
                         </div>
                     </section>
 
+                    {/* SMS / Text Messaging Terms */}
+                    <section id="sms" className="glass-card p-6 sm:p-8">
+                        <div className="flex items-center gap-3 mb-6">
+                            <MessageSquare size={24} className="text-[#00e59b]" />
+                            <h2 className="text-white font-display font-bold text-2xl">SMS / Text Messaging Terms</h2>
+                        </div>
+                        <div className="text-gray-400 text-sm leading-relaxed space-y-4">
+                            <p>
+                                TriplePlayz - Sports Advisory operates an optional SMS alerts program that delivers pick alerts and account notifications to subscribers who opt in. Participation is not a condition of any purchase.
+                            </p>
+                            <h3 className="text-white font-semibold text-base pt-2">Consent</h3>
+                            <p>
+                                By providing your mobile number and checking the SMS consent box, you agree to receive recurring automated text messages from TriplePlayz - Sports Advisory at the number provided. Consent is collected directly from you at the point of sign up and is never purchased, rented, or shared.
+                            </p>
+                            <h3 className="text-white font-semibold text-base pt-2">Message Frequency &amp; Cost</h3>
+                            <p>
+                                Message frequency varies based on pick activity. Message and data rates may apply according to your mobile carrier plan. TriplePlayz - Sports Advisory does not charge for the messages themselves.
+                            </p>
+                            <h3 className="text-white font-semibold text-base pt-2">Opt Out &amp; Help</h3>
+                            <p>
+                                You can cancel the SMS service at any time by replying <strong>STOP</strong> to any message. After you reply STOP, we will send a confirmation and you will not receive further SMS messages. For help, reply <strong>HELP</strong> or email support@tripleplayz.com.
+                            </p>
+                            <h3 className="text-white font-semibold text-base pt-2">Carriers &amp; Liability</h3>
+                            <p>
+                                Carriers are not liable for delayed or undelivered messages. Message delivery depends on your mobile carrier and is outside our control.
+                            </p>
+                        </div>
+                    </section>
+
                     {/* Ban Policy */}
                     <section id="ban-policy" className="glass-card p-6 sm:p-8 border-red-500/20">
                         <div className="flex items-center gap-3 mb-6">
@@ -148,6 +177,10 @@ export default function TOSPage() {
                                 <strong>We do not sell, rent, or share your personal information</strong> with third parties for marketing
                                 purposes. Data is shared only with essential service providers (Stripe for payments,
                                 Google Analytics for anonymized usage metrics).
+                            </p>
+                            <h3 className="text-white font-semibold text-base pt-2">Mobile Information & SMS</h3>
+                            <p>
+                                <strong>No mobile information will be shared with third parties or affiliates for marketing or promotional purposes.</strong> Text messaging originator opt-in data and consent are never shared with any third parties. See our SMS / Text Messaging Terms below for full details.
                             </p>
                             <h3 className="text-white font-semibold text-base pt-2">Data Retention & Deletion</h3>
                             <p>

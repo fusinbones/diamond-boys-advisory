@@ -4,6 +4,7 @@ import Analytics from '@/components/Analytics';
 import RefTracker from '@/components/RefTracker';
 import { AuthProvider } from '@/components/AuthProvider';
 import LayoutShell from '@/components/LayoutShell';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://tripleplayz.com'),
@@ -58,6 +59,15 @@ export default function RootLayout({
           <LayoutShell>{children}</LayoutShell>
           <RefTracker />
         </AuthProvider>
+        {/* GoHighLevel (LeadConnector) chat widget — sole SMS opt-in / A2P consent collector */}
+        <div data-chat-widget data-widget-id="6a7b90b770d2c2478c52e317" data-location-id="sb8EJdIHmrQp0LEESgjf"></div>
+        <Script
+          src="https://widgets.leadconnectorhq.com/loader.js"
+          data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"
+          data-widget-id="6a7b90b770d2c2478c52e317"
+          data-source="WEB_USER"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

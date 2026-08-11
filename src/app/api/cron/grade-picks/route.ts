@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSportScores, US_SPORTS, type ScoreEvent } from '@/lib/odds-api';
 import { createClient } from '@supabase/supabase-js';
 import { sendResultEmail } from '@/lib/email';
-import { sendResultSms } from '@/lib/sms';
 
 function getSupabase() {
     return createClient(
@@ -194,9 +193,6 @@ export async function GET(request: NextRequest) {
 
                 if (subscribers && subscribers.length > 0 && pendingFire) {
                     const emails = subscribers.map((s: { email: string }) => s.email).filter(Boolean);
-                    const phones = subscribers
-                        .map((s: { phone?: string }) => s.phone)
-                        .filter((p): p is string => !!p && p.length > 0);
 
                     for (const fp of pendingFire) {
                         const score = scoreMap.get(fp.game_id as string);
@@ -222,12 +218,6 @@ export async function GET(request: NextRequest) {
                         if (emails.length > 0) {
                             sendResultEmail(emails, resultData)
                                 .catch(err => console.error('[Email] Result email failed:', err));
-                        }
-
-                        // SMS
-                        if (phones.length > 0) {
-                            sendResultSms(phones, resultData)
-                                .catch(err => console.error('[SMS] Result SMS failed:', err));
                         }
                     }
                 }
