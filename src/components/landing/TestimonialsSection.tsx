@@ -7,7 +7,7 @@ const testimonials = [
     {
         name: 'Mike R.',
         avatar: '🏀',
-        text: "The daily analysis is incredibly detailed — I've never seen breakdowns this thorough. The TriplePlayz Lounge community makes game day even better.",
+        text: "The daily analysis is incredibly detailed, I've never seen breakdowns this thorough. The YourSwami Lounge community makes game day even better.",
         rating: 5,
         tier: 'Monthly Elite',
         since: 'Member since Nov 2025',
@@ -15,7 +15,7 @@ const testimonials = [
     {
         name: 'Jason T.',
         avatar: '💎',
-        text: "Best money I've spent on sports analysis. The weekly deep dives alone are worth it. These guys are the real deal — decades of experience shows.",
+        text: "Best money I've spent on sports analysis. The weekly deep dives alone are worth it. These guys are the real deal, decades of experience shows.",
         rating: 5,
         tier: 'Weekly Package',
         since: 'Member since Oct 2025',
@@ -76,7 +76,7 @@ export default function TestimonialsSection() {
                                 <span style={{ fontSize: '20px' }}>{t.avatar}</span>
                                 <div style={{ textAlign: 'left' }}>
                                     <p style={{ color: 'white', fontSize: '14px', fontWeight: 600, margin: 0 }}>{t.name}</p>
-                                    <p style={{ color: '#00e59b', fontSize: '12px', margin: 0, fontWeight: 500 }}>{t.tier}</p>
+                                    <p style={{ color: '#FFC107', fontSize: '12px', margin: 0, fontWeight: 500 }}>{t.tier}</p>
                                 </div>
                             </div>
                             <p style={{ color: '#6b7280', fontSize: '11px', margin: 0 }}>{t.since}</p>

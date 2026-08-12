@@ -18,8 +18,8 @@ const navLinks = [
 
 const quickStats = [
     { label: 'Experience', value: '30+ Yrs', icon: TrendingUp, color: '#fbbf24' },
-    { label: 'Sportsbooks', value: '11+', icon: Trophy, color: '#00e59b' },
-    { label: 'Analysis', value: 'Proven', icon: Shield, color: '#34d399' },
+    { label: 'Sportsbooks', value: '11+', icon: Trophy, color: '#FFC107' },
+    { label: 'Analysis', value: 'Proven', icon: Shield, color: '#FFC107' },
 ];
 
 export default function Navbar() {
@@ -29,7 +29,7 @@ export default function Navbar() {
     const { user, isAdmin, signOut } = useAdminAuth();
     const [currentTime, setCurrentTime] = useState('');
 
-    // Live clock — updates every second using user's local timezone
+    // Live clock, updates every second using user's local timezone
     useEffect(() => {
         const updateTime = () => {
             setCurrentTime(new Date().toLocaleTimeString('en-US', {
@@ -80,31 +80,32 @@ export default function Navbar() {
             animate={{ y: 0 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-                ? 'bg-[#040810]/90 backdrop-blur-xl border-b border-[#00e59b]/10 shadow-lg shadow-black/20'
+                ? 'bg-[#040810]/90 backdrop-blur-xl border-b border-[#FFC107]/10 shadow-lg shadow-black/20'
                 : 'bg-transparent'
                 }`}
         >
             <div className="container-db">
                 <div className="flex items-center justify-between h-16 sm:h-20">
                     {/* Logo + Brand */}
-                    <Link href="/" className="flex items-center gap-3 sm:gap-4 group flex-shrink-0 relative z-[101]">
+                    <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0 relative z-[101]">
                         <Image
-                            src="/logo.png"
-                            alt="TriplePlayz - Sports Advisory"
-                            width={200}
-                            height={120}
-                            className="h-[56px] sm:h-[72px] w-auto group-hover:scale-105 transition-transform"
-                            style={{ objectFit: 'contain' }}
+                            src="/brand/avatar.png"
+                            alt="YourSwami"
+                            width={216}
+                            height={216}
+                            className="h-[50px] w-[50px] sm:h-[58px] sm:w-[58px] rounded-full object-cover ring-2 ring-[#FFC107]/50 shadow-lg shadow-black/40 group-hover:scale-105 transition-transform"
                             priority
                         />
-                        <div className="hidden sm:block">
-                            <span className="text-white font-display font-bold text-lg lg:text-xl tracking-wide block">
-                                TriplePlayz
-                            </span>
-                            <span className="block text-[10px] lg:text-[11px] tracking-[0.18em] text-[#00e59b] uppercase -mt-1 font-semibold">
-                                Sports Advisory
-                            </span>
-                        </div>
+                        <span className="flex items-center">
+                            <Image
+                                src="/brand/wordmark-clear.png"
+                                alt="I Am Your Swami"
+                                width={446}
+                                height={334}
+                                className="h-[38px] sm:h-[48px] lg:h-[52px] w-auto group-hover:scale-105 transition-transform"
+                                priority
+                            />
+                        </span>
                     </Link>
 
                     {/* Desktop Nav */}
@@ -116,13 +117,13 @@ export default function Navbar() {
                                 className="text-xs lg:text-sm font-medium text-gray-300 hover:text-white transition-colors relative group"
                             >
                                 {link.label}
-                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#00e59b] transition-all group-hover:w-full" />
+                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#FFC107] transition-all group-hover:w-full" />
                             </Link>
                         ))}
                         {user ? (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap' }}>
                                 <Link href="/dashboard" className="text-xs text-gray-300 hover:text-white transition-colors flex items-center gap-1">
-                                    <User size={14} style={{ color: '#00e59b' }} />
+                                    <User size={14} style={{ color: '#FFC107' }} />
                                     <span style={{ maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '11px' }}>{user.email}</span>
                                 </Link>
                                 {isAdmin && (
@@ -152,17 +153,17 @@ export default function Navbar() {
                                 </Link>
                             </div>
                         )}
-                        {/* Live Clock — far right */}
+                        {/* Live Clock, far right */}
                         {currentTime && (
                             <div style={{
                                 display: 'flex', alignItems: 'center', gap: '6px',
                                 padding: '4px 10px', borderRadius: '8px',
-                                background: 'rgba(0,229,155,0.06)',
-                                border: '1px solid rgba(0,229,155,0.12)',
+                                background: 'rgba(106,0,255,0.06)',
+                                border: '1px solid rgba(106,0,255,0.12)',
                                 marginLeft: '4px',
                             }}>
-                                <Clock size={13} style={{ color: '#00e59b' }} />
-                                <span style={{ color: '#00e59b', fontSize: '12px', fontWeight: 700, fontVariantNumeric: 'tabular-nums', letterSpacing: '0.02em' }}>
+                                <Clock size={13} style={{ color: '#FFC107' }} />
+                                <span style={{ color: '#FFC107', fontSize: '12px', fontWeight: 700, fontVariantNumeric: 'tabular-nums', letterSpacing: '0.02em' }}>
                                     {currentTime}
                                 </span>
                             </div>
@@ -175,11 +176,11 @@ export default function Navbar() {
                             <div style={{
                                 display: 'flex', alignItems: 'center', gap: '4px',
                                 padding: '3px 8px', borderRadius: '6px',
-                                background: 'rgba(0,229,155,0.06)',
-                                border: '1px solid rgba(0,229,155,0.1)',
+                                background: 'rgba(106,0,255,0.06)',
+                                border: '1px solid rgba(106,0,255,0.1)',
                             }}>
-                                <Clock size={11} style={{ color: '#00e59b' }} />
-                                <span style={{ color: '#00e59b', fontSize: '11px', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>
+                                <Clock size={11} style={{ color: '#FFC107' }} />
+                                <span style={{ color: '#FFC107', fontSize: '11px', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>
                                     {currentTime}
                                 </span>
                             </div>
@@ -192,7 +193,7 @@ export default function Navbar() {
                                 localStorage.setItem('tp_menu_hint_seen', '1');
                             }
                         }}
-                        className="md:hidden text-white p-1.5 sm:p-2 hover:bg-white/5 rounded-lg transition relative z-[60]"
+                        className="md:hidden text-white p-1.5 sm:p-2 hover:bg-white/5 rounded-lg transition relative z-[110]"
                         aria-label="Toggle navigation menu"
                     >
                         {isOpen ? <X size={22} /> : <Menu size={22} />}
@@ -210,17 +211,17 @@ export default function Navbar() {
                                 animation: 'menuHintBounce 1.2s ease-in-out infinite',
                             }}>
                                 <span style={{
-                                    background: 'linear-gradient(135deg, rgba(0,229,155,0.2), rgba(0,229,155,0.1))',
-                                    border: '1px solid rgba(0,229,155,0.3)',
+                                    background: 'linear-gradient(135deg, rgba(106,0,255,0.2), rgba(106,0,255,0.1))',
+                                    border: '1px solid rgba(106,0,255,0.3)',
                                     borderRadius: '8px',
                                     padding: '5px 10px',
                                     fontSize: '11px',
                                     fontWeight: 700,
-                                    color: '#00e59b',
+                                    color: '#FFC107',
                                     backdropFilter: 'blur(8px)',
-                                    boxShadow: '0 2px 12px rgba(0,229,155,0.2)',
+                                    boxShadow: '0 2px 12px rgba(106,0,255,0.2)',
                                 }}>Dashboard ⚡</span>
-                                <span style={{ color: '#00e59b', fontSize: '16px' }}>→</span>
+                                <span style={{ color: '#FFC107', fontSize: '16px' }}>→</span>
                             </div>
                         )}
                     </button>
@@ -253,29 +254,13 @@ export default function Navbar() {
                                 transform: 'translateX(-50%)',
                                 width: '300px',
                                 height: '300px',
-                                background: 'radial-gradient(circle, rgba(0,229,155,0.08) 0%, transparent 70%)',
+                                background: 'radial-gradient(circle, rgba(106,0,255,0.08) 0%, transparent 70%)',
                                 pointerEvents: 'none',
                             }}
                         />
 
                         <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', height: 'calc(100% - 56px)', position: 'relative' }}>
-                            {/* Logo + Brand */}
-                            <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.3 }}
-                                style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
-                            >
-                                <Image
-                                    src="/logo.png"
-                                    alt="TriplePlayz - Sports Advisory"
-                                    width={180}
-                                    height={56}
-                                    style={{ objectFit: 'contain' }}
-                                />
-                            </motion.div>
-
-                            {/* Nav Links — staggered entrance */}
+                            {/* Nav Links, staggered entrance */}
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '24px' }}>
                                 {navLinks.map((link, i) => (
                                     <motion.div
@@ -304,13 +289,13 @@ export default function Navbar() {
                                                 width: '36px',
                                                 height: '36px',
                                                 borderRadius: '10px',
-                                                background: 'rgba(0,229,155,0.08)',
-                                                border: '1px solid rgba(0,229,155,0.12)',
+                                                background: 'rgba(106,0,255,0.08)',
+                                                border: '1px solid rgba(106,0,255,0.12)',
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
                                             }}>
-                                                <link.icon size={17} style={{ color: '#00e59b' }} />
+                                                <link.icon size={17} style={{ color: '#FFC107' }} />
                                             </div>
                                             {link.label}
                                         </Link>
@@ -327,8 +312,8 @@ export default function Navbar() {
                             >
                                 {user ? (
                                     <>
-                                        <div style={{ background: 'rgba(0,229,155,0.06)', border: '1px solid rgba(0,229,155,0.12)', borderRadius: '12px', padding: '14px 16px', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                            <User size={16} style={{ color: '#00e59b' }} />
+                                        <div style={{ background: 'rgba(106,0,255,0.06)', border: '1px solid rgba(106,0,255,0.12)', borderRadius: '12px', padding: '14px 16px', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <User size={16} style={{ color: '#FFC107' }} />
                                             <div>
                                                 <p style={{ color: '#e5e7eb', fontSize: '14px', fontWeight: 600, margin: 0 }}>{user.email}</p>
                                                 <p style={{ color: '#6b7280', fontSize: '11px', margin: 0 }}>Signed in</p>
@@ -452,7 +437,7 @@ export default function Navbar() {
                                 )}
                             </motion.div>
 
-                            {/* Quick stats — social proof */}
+                            {/* Quick stats, social proof */}
                             <motion.div
                                 initial={{ opacity: 0, y: 15 }}
                                 animate={{ opacity: 1, y: 0 }}

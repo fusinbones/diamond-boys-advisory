@@ -39,7 +39,7 @@ function formatTime(iso: string): string {
     } catch { return ''; }
 }
 
-/** A single sport ticker row — fetches its own data */
+/** A single sport ticker row, fetches its own data */
 function SportTickerRow({ sport, delay }: { sport: SportConfig; delay: number }) {
     const [games, setGames] = useState<GameData[]>([]);
     const [loading, setLoading] = useState(true);
@@ -61,7 +61,7 @@ function SportTickerRow({ sport, delay }: { sport: SportConfig; delay: number })
         return () => clearInterval(interval);
     }, [sport.key]);
 
-    if (loading) return null; // don't show loading spinners — rows appear as data arrives
+    if (loading) return null; // don't show loading spinners, rows appear as data arrives
     if (games.length === 0) return null; // hide sport with no games
 
     return (
@@ -128,8 +128,8 @@ function SportTickerRow({ sport, delay }: { sport: SportConfig; delay: number })
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '5px' }}>
                                     {game.isLive && (
                                         <span style={{
-                                            fontSize: '8px', fontWeight: 800, color: '#00e59b',
-                                            background: 'rgba(0,229,155,0.12)', padding: '1px 5px',
+                                            fontSize: '8px', fontWeight: 800, color: '#FFC107',
+                                            background: 'rgba(106,0,255,0.12)', padding: '1px 5px',
                                             borderRadius: '3px', textTransform: 'uppercase', letterSpacing: '0.5px',
                                         }}>LIVE</span>
                                     )}
@@ -163,7 +163,7 @@ function SportTickerRow({ sport, delay }: { sport: SportConfig; delay: number })
                                 )}
                             </div>
 
-                            {/* Blurred odds — LOCKED teaser */}
+                            {/* Blurred odds, LOCKED teaser */}
                             {!game.isCompleted && (
                                 <div style={{
                                     display: 'flex', alignItems: 'center', gap: '5px',
@@ -198,7 +198,7 @@ export default function MagicTicker() {
 
     return (
         <section style={{
-            background: 'linear-gradient(180deg, rgba(0,229,155,0.03) 0%, rgba(10,10,15,0) 100%)',
+            background: 'linear-gradient(180deg, rgba(106,0,255,0.03) 0%, rgba(10,10,15,0) 100%)',
             borderBottom: '1px solid rgba(255,255,255,0.05)',
             padding: '24px 0 28px',
         }}>
@@ -210,15 +210,15 @@ export default function MagicTicker() {
                 }}>
                     <div style={{
                         width: '8px', height: '8px', borderRadius: '50%',
-                        background: '#00e59b', boxShadow: '0 0 8px #00e59b',
+                        background: '#FFC107', boxShadow: '0 0 8px #FFC107',
                         animation: 'pulse 2s infinite',
                     }} />
                     <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'white', margin: 0, letterSpacing: '-0.3px' }}>
                         Today&apos;s Board
                     </h2>
                     <span style={{
-                        fontSize: '10px', color: '#00e59b',
-                        background: 'rgba(0,229,155,0.1)', padding: '2px 8px',
+                        fontSize: '10px', color: '#FFC107',
+                        background: 'rgba(106,0,255,0.1)', padding: '2px 8px',
                         borderRadius: '20px', fontWeight: 700,
                         textTransform: 'uppercase', letterSpacing: '0.5px',
                     }}>
@@ -226,7 +226,7 @@ export default function MagicTicker() {
                     </span>
                 </div>
 
-                {/* Each sport fetches its own data — hidden if no games */}
+                {/* Each sport fetches its own data, hidden if no games */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     {SPORTS.map((sport, i) => (
                         <SportTickerRow key={sport.key} sport={sport} delay={i * 0.1} />
@@ -242,10 +242,10 @@ export default function MagicTicker() {
                 >
                     <Link href="/pricing" style={{
                         display: 'inline-flex', alignItems: 'center', gap: '8px',
-                        color: '#00e59b', fontSize: '14px', fontWeight: 700,
+                        color: '#FFC107', fontSize: '14px', fontWeight: 700,
                         textDecoration: 'none', padding: '10px 24px',
-                        borderRadius: '10px', border: '1px solid rgba(0,229,155,0.15)',
-                        background: 'rgba(0,229,155,0.04)',
+                        borderRadius: '10px', border: '1px solid rgba(106,0,255,0.15)',
+                        background: 'rgba(106,0,255,0.04)',
                         transition: 'all 0.2s',
                     }}>
                         🔓 Unlock Full Odds, Analysis & Expert Picks

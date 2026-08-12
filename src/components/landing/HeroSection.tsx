@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { Zap, ArrowRight, CheckCircle, Lock, TrendingUp, Shield, Sparkles } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowRight, CheckCircle, Lock, TrendingUp, Shield, Sparkles } from 'lucide-react';
 import { trackEvent } from '@/components/Analytics';
 import LiveGameTicker from './LiveGameTicker';
 
@@ -26,203 +27,198 @@ export default function HeroSection() {
 
     return (
         <section className="relative overflow-hidden" style={{ paddingTop: '20px', paddingBottom: '36px' }}>
-            {/* Background */}
+            {/* Background, royal purple glow + throne character bleed */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
                 <div style={{
                     position: 'absolute', inset: 0,
-                    backgroundImage: 'url(/baseball-hero.png)',
-                    backgroundSize: 'cover', backgroundPosition: 'center 40%',
-                    opacity: 0.06, filter: 'blur(1px)',
+                    background: 'radial-gradient(1000px 600px at 80% 45%, rgba(106,0,255,0.28), transparent 60%), radial-gradient(680px 460px at 8% 10%, rgba(106,0,255,0.14), transparent 60%)',
                 }} />
-                <div className="absolute" style={{
-                    top: '20%', left: '50%', transform: 'translateX(-50%)',
-                    width: '600px', height: '600px',
-                    background: 'radial-gradient(circle, rgba(0,229,155,0.08) 0%, transparent 70%)',
-                }} />
-                {/* Subtle diamond sparkle accents */}
-                <div style={{
-                    position: 'absolute', top: '10%', left: '15%',
-                    width: '3px', height: '3px', borderRadius: '50%',
-                    background: '#00e59b', boxShadow: '0 0 8px rgba(0,229,155,0.5)',
-                    animation: 'pulse 3s ease infinite',
-                }} />
-                <div style={{
-                    position: 'absolute', top: '25%', right: '12%',
-                    width: '2px', height: '2px', borderRadius: '50%',
-                    background: '#fbbf24', boxShadow: '0 0 6px rgba(251,191,36,0.4)',
-                    animation: 'pulse 4s ease infinite 1s',
-                }} />
-                <div style={{
-                    position: 'absolute', bottom: '30%', left: '8%',
-                    width: '2px', height: '2px', borderRadius: '50%',
-                    background: '#818cf8', boxShadow: '0 0 6px rgba(129,140,248,0.4)',
-                    animation: 'pulse 3.5s ease infinite 0.5s',
-                }} />
+                {/* Desktop throne character, bleeds off the right (desktop only) */}
+                <div className="hidden lg:block" style={{ position: 'absolute', top: 0, bottom: 0, right: 0, width: '48%' }}>
+                    <Image src="/brand/hero-swami.webp" alt="Follow the Swami" fill priority sizes="48vw" style={{ objectFit: 'cover', objectPosition: 'left center' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, #0a0512 0%, rgba(10,5,18,0.5) 34%, transparent 62%), linear-gradient(0deg, #0a0512 2%, transparent 20%)' }} />
+                </div>
+                {/* Sparkle accents */}
+                <div style={{ position: 'absolute', top: '12%', left: '14%', width: '3px', height: '3px', borderRadius: '50%', background: '#FFC107', boxShadow: '0 0 8px rgba(255,193,7,0.6)', animation: 'pulse 3s ease infinite' }} />
+                <div style={{ position: 'absolute', top: '25%', left: '42%', width: '2px', height: '2px', borderRadius: '50%', background: '#8B3BFF', boxShadow: '0 0 6px rgba(139,59,255,0.5)', animation: 'pulse 4s ease infinite 1s' }} />
+                <div style={{ position: 'absolute', bottom: '28%', left: '8%', width: '2px', height: '2px', borderRadius: '50%', background: '#FFD54F', boxShadow: '0 0 6px rgba(255,213,79,0.5)', animation: 'pulse 3.5s ease infinite 0.5s' }} />
             </div>
 
-            <div style={{
-                width: '100%', maxWidth: '760px', margin: '0 auto', padding: '0 20px',
-                display: 'flex', flexDirection: 'column' as const,
-                alignItems: 'center', textAlign: 'center' as const,
-                position: 'relative' as const, zIndex: 1,
-            }}>
-                {/* Live games ticker */}
-                <LiveGameTicker />
+            <div className="container-db" style={{ position: 'relative', zIndex: 1 }}>
+                <div className="grid lg:grid-cols-2 items-center" style={{ gap: '32px', minHeight: '84vh', paddingTop: '12px' }}>
+                    {/* Left column, content (unchanged copy, restyled) */}
+                    <div className="flex flex-col items-center text-center lg:items-start lg:text-left" style={{ maxWidth: '620px' }}>
+                        {/* Live games ticker */}
+                        <LiveGameTicker />
 
-                {/* Rotating locked pick teaser */}
-                <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    style={{
-                        width: '100%', maxWidth: '440px', marginBottom: '22px',
-                        position: 'relative', overflow: 'hidden',
-                        borderRadius: '14px',
-                        border: '1px solid rgba(0,229,155,0.15)',
-                        background: 'linear-gradient(135deg, rgba(0,229,155,0.05), rgba(251,191,36,0.03))',
-                        padding: '14px 18px',
-                    }}
-                >
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                        <span style={{ fontSize: '10px', fontWeight: 800, color: '#00e59b', textTransform: 'uppercase', letterSpacing: '0.12em', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ef4444', boxShadow: '0 0 6px #ef4444', animation: 'pulse 1.5s infinite' }} />
-                            🔒 Today&apos;s Premium Pick
-                        </span>
-                        <span style={{
-                            fontSize: '9px', fontWeight: 700,
-                            color: pick.conf === 'LOCK 🔒' ? '#ef4444' : '#fbbf24',
-                            background: pick.conf === 'LOCK 🔒' ? 'rgba(239,68,68,0.12)' : 'rgba(251,191,36,0.12)',
-                            padding: '2px 8px', borderRadius: '4px',
-                        }}>
-                            {pick.conf}
-                        </span>
+                        {/* Rotating locked pick teaser */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 }}
+                            style={{
+                                width: '100%', maxWidth: '440px', marginBottom: '22px',
+                                position: 'relative', overflow: 'hidden',
+                                borderRadius: '14px',
+                                border: '1px solid rgba(106,0,255,0.28)',
+                                background: 'linear-gradient(135deg, rgba(106,0,255,0.12), rgba(255,193,7,0.05))',
+                                padding: '14px 18px',
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                <span style={{ fontSize: '10px', fontWeight: 800, color: '#FFC107', textTransform: 'uppercase', letterSpacing: '0.12em', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ef4444', boxShadow: '0 0 6px #ef4444', animation: 'pulse 1.5s infinite' }} />
+                                    🔒 Today&apos;s Premium Pick
+                                </span>
+                                <span style={{
+                                    fontSize: '9px', fontWeight: 700,
+                                    color: pick.conf === 'LOCK 🔒' ? '#ef4444' : '#fbbf24',
+                                    background: pick.conf === 'LOCK 🔒' ? 'rgba(239,68,68,0.12)' : 'rgba(251,191,36,0.12)',
+                                    padding: '2px 8px', borderRadius: '4px',
+                                }}>
+                                    {pick.conf}
+                                </span>
+                            </div>
+
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={pickIdx}
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -8 }}
+                                    transition={{ duration: 0.3 }}
+                                    style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+                                >
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ color: '#e5e7eb', fontSize: '14px', fontWeight: 700, filter: 'blur(5px)', userSelect: 'none' }}>
+                                            {pick.teams}, {pick.detail}
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            </AnimatePresence>
+
+                            {/* Subscribe overlay */}
+                            <Link href="/pricing" style={{
+                                position: 'absolute', inset: 0,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                background: 'rgba(10,5,18,0.25)', backdropFilter: 'blur(1px)',
+                                color: '#FFC107', fontSize: '13px', fontWeight: 700,
+                                textDecoration: 'none', gap: '6px',
+                                transition: 'background 0.2s',
+                            }}>
+                                <Lock size={14} />
+                                Unlock Premium Picks
+                            </Link>
+                        </motion.div>
+
+                        {/* Trust badge */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            style={{ marginBottom: '18px' }}
+                        >
+                            <span className="badge-emerald" style={{ padding: '7px 18px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                                <Shield size={13} style={{ color: '#FFC107' }} />
+                                Backed by 30+ Years of Sports Analysis
+                            </span>
+                        </motion.div>
+
+                        {/* Headline */}
+                        <motion.h1
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6 }}
+                            className="font-display"
+                            style={{ fontSize: 'clamp(30px, 5vw, 54px)', fontWeight: 900, lineHeight: 1.08, marginBottom: '16px', color: 'white' }}
+                        >
+                            Smarter Picks.{' '}
+                            <span className="gradient-text">Sharper Edge.</span>
+                        </motion.h1>
+
+                        {/* Subheadline */}
+                        <motion.p
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.15, duration: 0.6 }}
+                            style={{ color: '#d1d5db', fontSize: 'clamp(15px, 2vw, 18px)', lineHeight: 1.7, marginBottom: '20px', maxWidth: '540px' }}
+                        >
+                            Proprietary analysis powered by{' '}
+                            <span style={{ color: '#fbbf24', fontWeight: 600 }}>11+ sportsbooks</span>,
+                            built on{' '}
+                            <span style={{ color: '#FFC107', fontWeight: 600 }}>30+ years of experience</span>,
+                            and a premium community that gives you the edge.
+                        </motion.p>
+
+                        {/* Value props */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            style={{ display: 'flex', flexWrap: 'wrap' as const, justifyContent: 'center', gap: '14px', marginBottom: '24px' }}
+                            className="lg:justify-start"
+                        >
+                            {[
+                                { icon: <TrendingUp size={14} style={{ color: '#FFC107' }} />, text: 'Live odds & analysis' },
+                                { icon: <Shield size={14} style={{ color: '#FFC107' }} />, text: 'Every pick documented' },
+                                { icon: <CheckCircle size={14} style={{ color: '#FFC107' }} />, text: 'Exclusive community' },
+                            ].map((prop, i) => (
+                                <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#e5e7eb', fontSize: '14px' }}>
+                                    {prop.icon}
+                                    {prop.text}
+                                </span>
+                            ))}
+                        </motion.div>
+
+                        {/* CTAs */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.45 }}
+                            style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '10px', justifyContent: 'center', width: '100%' }}
+                            className="lg:justify-start"
+                        >
+                            <Link
+                                href="/dashboard?signup=free"
+                                className="btn-glow btn-glow-lg pulse-ring"
+                                style={{ flex: '1 1 200px', maxWidth: '300px', textAlign: 'center' as const, justifyContent: 'center' }}
+                                onClick={() => trackEvent('cta_click', { location: 'hero', label: 'signup_free' })}
+                            >
+                                <Sparkles size={16} />
+                                Sign Up Free
+                            </Link>
+                            <Link
+                                href="/dashboard"
+                                className="btn-outline"
+                                style={{ flex: '1 1 160px', maxWidth: '260px', textAlign: 'center' as const, justifyContent: 'center' }}
+                                onClick={() => trackEvent('cta_click', { location: 'hero', label: 'login' })}
+                            >
+                                <ArrowRight size={14} />
+                                Log In
+                            </Link>
+                        </motion.div>
+
+                        {/* No credit card */}
+                        <p style={{ fontSize: '12px', color: '#FFD54F', marginTop: '10px', fontWeight: 600 }}>
+                            No credit card required
+                        </p>
+
+                        {/* Trust line */}
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.6 }}
+                            style={{ fontSize: '13px', color: '#9ca3af', marginTop: '14px' }}
+                        >
+                            ⚡ Free game analysis • Proprietary data models • Cancel anytime • 21+ only
+                        </motion.p>
                     </div>
 
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={pickIdx}
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -8 }}
-                            transition={{ duration: 0.3 }}
-                            style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
-                        >
-                            <div style={{ flex: 1 }}>
-                                <div style={{ color: '#e5e7eb', fontSize: '14px', fontWeight: 700, filter: 'blur(5px)', userSelect: 'none' }}>
-                                    {pick.teams} — {pick.detail}
-                                </div>
-                            </div>
-                        </motion.div>
-                    </AnimatePresence>
-
-                    {/* Subscribe overlay */}
-                    <Link href="/pricing" style={{
-                        position: 'absolute', inset: 0,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        background: 'rgba(4,8,16,0.25)', backdropFilter: 'blur(1px)',
-                        color: '#00e59b', fontSize: '13px', fontWeight: 700,
-                        textDecoration: 'none', gap: '6px',
-                        transition: 'background 0.2s',
-                    }}>
-                        <Lock size={14} />
-                        Unlock Premium Picks
-                    </Link>
-                </motion.div>
-
-                {/* Trust badge */}
-                <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    style={{ marginBottom: '18px' }}
-                >
-                    <span className="badge-emerald" style={{ padding: '7px 18px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                        <Shield size={13} style={{ color: '#00e59b' }} />
-                        Backed by 30+ Years of Sports Analysis
-                    </span>
-                </motion.div>
-
-                {/* Headline */}
-                <motion.h1
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="font-display"
-                    style={{ fontSize: 'clamp(30px, 5vw, 54px)', fontWeight: 900, lineHeight: 1.08, marginBottom: '16px', color: 'white' }}
-                >
-                    Smarter Picks.{' '}
-                    <span className="gradient-text">Sharper Edge.</span>
-                </motion.h1>
-
-                {/* Subheadline */}
-                <motion.p
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.15, duration: 0.6 }}
-                    style={{ color: '#d1d5db', fontSize: 'clamp(15px, 2vw, 18px)', lineHeight: 1.7, marginBottom: '20px', maxWidth: '540px' }}
-                >
-                    Proprietary analysis powered by{' '}
-                    <span style={{ color: '#fbbf24', fontWeight: 600 }}>11+ sportsbooks</span>,
-                    built on{' '}
-                    <span style={{ color: '#00e59b', fontWeight: 600 }}>30+ years of experience</span>,
-                    and a premium community that gives you the edge.
-                </motion.p>
-
-                {/* Value props */}
-                <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    style={{ display: 'flex', flexWrap: 'wrap' as const, justifyContent: 'center', gap: '14px', marginBottom: '24px' }}
-                >
-                    {[
-                        { icon: <TrendingUp size={14} style={{ color: '#00e59b' }} />, text: 'Live odds & analysis' },
-                        { icon: <Shield size={14} style={{ color: '#00e59b' }} />, text: 'Every pick documented' },
-                        { icon: <CheckCircle size={14} style={{ color: '#00e59b' }} />, text: 'Exclusive community' },
-                    ].map((prop, i) => (
-                        <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#e5e7eb', fontSize: '14px' }}>
-                            {prop.icon}
-                            {prop.text}
-                        </span>
-                    ))}
-                </motion.div>
-
-                {/* CTAs */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.45 }}
-                    style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '10px', justifyContent: 'center', width: '100%' }}
-                >
-                    <Link
-                        href="/dashboard?signup=free"
-                        className="btn-glow btn-glow-lg pulse-ring"
-                        style={{ flex: '1 1 200px', maxWidth: '300px', textAlign: 'center' as const, justifyContent: 'center' }}
-                        onClick={() => trackEvent('cta_click', { location: 'hero', label: 'signup_free' })}
-                    >
-                        <Sparkles size={16} />
-                        Sign Up Free — No Card Required
-                    </Link>
-                    <Link
-                        href="/dashboard"
-                        className="btn-outline"
-                        style={{ flex: '1 1 160px', maxWidth: '260px', textAlign: 'center' as const, justifyContent: 'center' }}
-                        onClick={() => trackEvent('cta_click', { location: 'hero', label: 'login' })}
-                    >
-                        <ArrowRight size={14} />
-                        Log In to Dashboard
-                    </Link>
-                </motion.div>
-
-                {/* Trust line */}
-                <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.6 }}
-                    style={{ fontSize: '13px', color: '#9ca3af', marginTop: '14px' }}
-                >
-                    ⚡ Free game analysis • Proprietary data models • Cancel anytime • 21+ only
-                </motion.p>
+                    {/* Mobile throne character (mobile only) */}
+                    <div className="flex lg:hidden justify-center">
+                        <Image src="/brand/hero-swami.webp" alt="Follow the Swami" width={833} height={793} priority sizes="90vw" style={{ width: '100%', maxWidth: '420px', height: 'auto', borderRadius: '16px', border: '1px solid rgba(106,0,255,0.3)' }} />
+                    </div>
+                </div>
             </div>
         </section>
     );

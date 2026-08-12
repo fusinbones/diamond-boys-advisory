@@ -36,8 +36,8 @@ function AnimatedCounter({ target, suffix = '', prefix = '' }: { target: number;
 
 const stats = [
     { icon: Clock, label: 'Years Experience', value: 30, suffix: '+', prefix: '', color: '#fbbf24', bg: 'rgba(251,191,36,0.1)', detail: 'Combined expertise' },
-    { icon: TrendingUp, label: 'Sportsbooks Tracked', value: 11, suffix: '+', prefix: '', color: '#00e59b', bg: 'rgba(0,229,155,0.1)', detail: 'Real-time odds' },
-    { icon: Target, label: 'Picks Documented', value: 100, suffix: '%', prefix: '', color: '#34d399', bg: 'rgba(52,211,153,0.1)', detail: 'Wins & losses' },
+    { icon: TrendingUp, label: 'Sportsbooks Tracked', value: 11, suffix: '+', prefix: '', color: '#FFC107', bg: 'rgba(106,0,255,0.1)', detail: 'Real-time odds' },
+    { icon: Target, label: 'Picks Documented', value: 100, suffix: '%', prefix: '', color: '#FFC107', bg: 'rgba(106,0,255,0.1)', detail: 'Wins & losses' },
     { icon: Shield, label: 'Proprietary Models', value: 5, suffix: '+', prefix: '', color: '#a78bfa', bg: 'rgba(167,139,250,0.1)', detail: 'Analysis engines' },
 ];
 
@@ -55,7 +55,7 @@ export default function StatsBar() {
                         Built on Experience. <span className="gradient-text">Backed by Data.</span>
                     </h2>
                     <p style={{ color: '#d1d5db', fontSize: '15px', maxWidth: '480px', margin: '0 auto' }}>
-                        Proprietary analysis models refined over three decades. Every single pick documented — wins and losses alike.
+                        Proprietary analysis models refined over three decades. Every single pick documented, wins and losses alike.
                     </p>
                 </motion.div>
 

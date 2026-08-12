@@ -1,26 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap');
-
 @import "tailwindcss";
 
 @theme {
-  /* ——— Brand Colors (matched to TriplePlayz logo) ——— */
-  --color-emerald: #00e59b;
-  --color-emerald-light: #34ffc6;
-  --color-emerald-dark: #00b87a;
-  --color-emerald-glow: #00ffaa;
-  --color-accent: #00d4aa;
-  --color-accent-light: #33ffd4;
+  /* --- Brand Colors (YourSwami: royal purple + gold) --- */
+  --color-emerald: #FFC107;
+  --color-emerald-light: #FFD54F;
+  --color-emerald-dark: #FFA000;
+  --color-emerald-glow: #FFCE3A;
+  --color-accent: #6A00FF;
+  --color-accent-light: #8B3BFF;
   --color-silver: #c0c8d8;
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
-  --color-surface: #0d1525;
-  --color-surface-light: #131d33;
-  --color-surface-lighter: #1a2744;
-  --color-bg: #040810;
-  --color-bg-alt: #060e1c;
-  --font-display: 'Outfit', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --color-surface: #160b26;
+  --color-surface-light: #1d1030;
+  --color-surface-lighter: #271640;
+  --color-bg: #0a0512;
+  --color-bg-alt: #0f0819;
+  --font-display: var(--font-outfit), 'Outfit', sans-serif;
+  --font-body: var(--font-inter), 'Inter', sans-serif;
 }
 
 * {
@@ -70,7 +68,7 @@ body {
   }
 }
 
-/* ——— Site container (consistent padding at all viewport sizes) ——— */
+/* --- Site container (consistent padding at all viewport sizes) --- */
 .container-db {
   width: 100%;
   max-width: 1200px;
@@ -101,7 +99,7 @@ body {
   }
 }
 
-/* ——— Gradient Text (Emerald) ——— */
+/* --- Gradient Text (Emerald) --- */
 .gradient-text {
   background: linear-gradient(135deg, var(--color-emerald-light), var(--color-accent-light), var(--color-emerald));
   -webkit-background-clip: text;
@@ -123,12 +121,12 @@ body {
   background-clip: text;
 }
 
-/* ——— Glassmorphism Card ——— */
+/* --- Glassmorphism Card --- */
 .glass-card {
   background: rgba(13, 21, 37, 0.75);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 229, 155, 0.12);
+  border: 1px solid rgba(106, 0, 255, 0.12);
   border-radius: 1rem;
 }
 
@@ -137,12 +135,12 @@ body {
 }
 
 .glass-card-hover:hover {
-  border-color: rgba(0, 229, 155, 0.35);
-  box-shadow: 0 0 30px rgba(0, 229, 155, 0.08), 0 0 60px rgba(0, 229, 155, 0.04);
+  border-color: rgba(106, 0, 255, 0.35);
+  box-shadow: 0 0 30px rgba(106, 0, 255, 0.08), 0 0 60px rgba(106, 0, 255, 0.04);
   transform: translateY(-4px);
 }
 
-/* ——— Glow Button (Emerald) ——— */
+/* --- Glow Button (Emerald) --- */
 .btn-glow {
   position: relative;
   background: linear-gradient(135deg, var(--color-emerald), var(--color-emerald-dark));
@@ -164,7 +162,7 @@ body {
 
 .btn-glow:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 20px rgba(0, 229, 155, 0.5), 0 0 40px rgba(0, 229, 155, 0.25);
+  box-shadow: 0 0 20px rgba(106, 0, 255, 0.5), 0 0 40px rgba(106, 0, 255, 0.25);
 }
 
 .btn-glow:active {
@@ -176,15 +174,15 @@ body {
   font-size: 1.125rem;
 }
 
-/* ——— Outline Button ——— */
+/* --- Outline Button --- */
 .btn-outline {
   position: relative;
   background: transparent;
-  color: var(--color-emerald-light);
+  color: #ffffff;
   font-weight: 600;
   padding: 0.875rem 2rem;
   border-radius: 0.75rem;
-  border: 2px solid rgba(0, 229, 155, 0.3);
+  border: 2px solid rgba(106, 0, 255, 0.3);
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
@@ -196,11 +194,11 @@ body {
 
 .btn-outline:hover {
   border-color: var(--color-emerald);
-  background: rgba(0, 229, 155, 0.08);
-  box-shadow: 0 0 15px rgba(0, 229, 155, 0.15);
+  background: rgba(106, 0, 255, 0.08);
+  box-shadow: 0 0 15px rgba(106, 0, 255, 0.15);
 }
 
-/* ——— Background Glow ——— */
+/* --- Background Glow --- */
 .bg-glow {
   position: fixed;
   top: 0;
@@ -219,7 +217,7 @@ body {
   left: -10%;
   width: 60%;
   height: 60%;
-  background: radial-gradient(circle, rgba(0, 229, 155, 0.06) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(106, 0, 255, 0.06) 0%, transparent 70%);
   animation: float 12s ease-in-out infinite;
 }
 
@@ -230,7 +228,7 @@ body {
   right: -10%;
   width: 50%;
   height: 50%;
-  background: radial-gradient(circle, rgba(0, 212, 170, 0.04) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(106, 0, 255, 0.04) 0%, transparent 70%);
   animation: float 15s ease-in-out infinite reverse;
 }
 
@@ -250,18 +248,18 @@ body {
   }
 }
 
-/* ——— Pulse ring ——— */
+/* --- Pulse ring --- */
 @keyframes pulse-ring {
   0% {
-    box-shadow: 0 0 0 0 rgba(0, 229, 155, 0.4);
+    box-shadow: 0 0 0 0 rgba(106, 0, 255, 0.4);
   }
 
   70% {
-    box-shadow: 0 0 0 10px rgba(0, 229, 155, 0);
+    box-shadow: 0 0 0 10px rgba(106, 0, 255, 0);
   }
 
   100% {
-    box-shadow: 0 0 0 0 rgba(0, 229, 155, 0);
+    box-shadow: 0 0 0 0 rgba(106, 0, 255, 0);
   }
 }
 
@@ -269,7 +267,7 @@ body {
   animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
 }
 
-/* ——— Shimmer ——— */
+/* --- Shimmer --- */
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
@@ -283,13 +281,13 @@ body {
 .shimmer {
   background: linear-gradient(90deg,
       transparent 33%,
-      rgba(0, 229, 155, 0.08) 50%,
+      rgba(106, 0, 255, 0.08) 50%,
       transparent 67%);
   background-size: 200% 100%;
   animation: shimmer 3s infinite;
 }
 
-/* ——— Count-up animation ——— */
+/* --- Count-up animation --- */
 @keyframes count-pulse {
 
   0%,
@@ -302,7 +300,7 @@ body {
   }
 }
 
-/* ——— Scrollbar ——— */
+/* --- Scrollbar --- */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -320,7 +318,7 @@ body {
   background: var(--color-emerald);
 }
 
-/* ——— Badges ——— */
+/* --- Badges --- */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -334,9 +332,9 @@ body {
 }
 
 .badge-emerald {
-  background: rgba(0, 229, 155, 0.12);
+  background: rgba(106, 0, 255, 0.12);
   color: var(--color-emerald-light);
-  border: 1px solid rgba(0, 229, 155, 0.25);
+  border: 1px solid rgba(106, 0, 255, 0.25);
 }
 
 .badge-gold {
@@ -357,7 +355,7 @@ body {
   border: 1px solid rgba(239, 68, 68, 0.25);
 }
 
-/* ——— Popular card glow ——— */
+/* --- Popular card glow --- */
 .popular-glow {
   position: relative;
 }
@@ -377,15 +375,15 @@ body {
   opacity: 1;
 }
 
-/* ——— Section divider ——— */
+/* --- Section divider --- */
 .section-divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0, 229, 155, 0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(106, 0, 255, 0.2), transparent);
   margin: 0 auto;
   width: 80%;
 }
 
-/* ——— Live indicator ——— */
+/* --- Live indicator --- */
 @keyframes live-pulse {
 
   0%,
@@ -408,14 +406,14 @@ body {
   animation: live-pulse 2s ease-in-out infinite;
 }
 
-/* ——— Spin (loading spinners) ——— */
+/* --- Spin (loading spinners) --- */
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-/* ——— Pulse (LIVE indicators) ——— */
+/* --- Pulse (LIVE indicators) --- */
 @keyframes pulse {
 
   0%,
@@ -430,24 +428,24 @@ body {
   }
 }
 
-/* ——— Menu hint bounce arrow ——— */
+/* --- Menu hint bounce arrow --- */
 @keyframes menuHintBounce {
   0%, 100% { transform: translateY(-50%) translateX(0); }
   50% { transform: translateY(-50%) translateX(-6px); }
 }
 
-/* ——— Pick drop toast ——— */
+/* --- Pick drop toast --- */
 @keyframes pickToastSlide {
   from { transform: translateX(100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
 
 @keyframes pickToastGlow {
-  0%, 100% { box-shadow: 0 4px 20px rgba(0,229,155,0.15); }
-  50% { box-shadow: 0 4px 30px rgba(0,229,155,0.35), 0 0 0 4px rgba(0,229,155,0.1); }
+  0%, 100% { box-shadow: 0 4px 20px rgba(106,0,255,0.15); }
+  50% { box-shadow: 0 4px 30px rgba(106,0,255,0.35), 0 0 0 4px rgba(106,0,255,0.1); }
 }
 
-/* ——— Reaction picker hover ——— */
+/* --- Reaction picker hover --- */
 .lounge-react-trigger:hover .lounge-react-picker {
   display: flex !important;
 }

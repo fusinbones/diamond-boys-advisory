@@ -67,7 +67,7 @@ export default function CountdownTimer() {
                         position: 'absolute', inset: 0,
                         background: isUrgent
                             ? 'linear-gradient(135deg, rgba(239,68,68,0.4), rgba(251,191,36,0.3), rgba(239,68,68,0.4))'
-                            : 'linear-gradient(135deg, rgba(0,229,155,0.3), rgba(99,102,241,0.2), rgba(0,229,155,0.3))',
+                            : 'linear-gradient(135deg, rgba(106,0,255,0.3), rgba(99,102,241,0.2), rgba(106,0,255,0.3))',
                         borderRadius: '16px',
                         animation: 'spin 6s linear infinite',
                         backgroundSize: '200% 200%',
@@ -98,10 +98,10 @@ export default function CountdownTimer() {
                             fontSize: 'clamp(20px, 3vw, 28px)', fontWeight: 800,
                             color: 'white', marginBottom: '6px',
                         }}>
-                            🎯 TriplePlayz Pick Incoming
+                            🎯 YourSwami Pick Incoming
                         </h3>
                         <p style={{ color: '#9ca3af', fontSize: '14px', marginBottom: '22px', lineHeight: 1.5 }}>
-                            Premium members get notified <span style={{ color: '#00e59b', fontWeight: 600 }}>30 minutes before</span> every pick drop
+                            Premium members get notified <span style={{ color: '#FFC107', fontWeight: 600 }}>30 minutes before</span> every pick drop
                         </p>
 
                         {/* Countdown blocks */}
@@ -112,8 +112,8 @@ export default function CountdownTimer() {
                                         width: '64px', height: '64px',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                                         marginBottom: '6px', borderRadius: '12px',
-                                        background: isUrgent ? 'rgba(239,68,68,0.06)' : 'rgba(0,229,155,0.06)',
-                                        border: `1px solid ${isUrgent ? 'rgba(239,68,68,0.15)' : 'rgba(0,229,155,0.12)'}`,
+                                        background: isUrgent ? 'rgba(239,68,68,0.06)' : 'rgba(106,0,255,0.06)',
+                                        border: `1px solid ${isUrgent ? 'rgba(239,68,68,0.15)' : 'rgba(106,0,255,0.12)'}`,
                                     }}>
                                         <span className="font-display" style={{
                                             fontSize: '28px', fontWeight: 900,
@@ -139,7 +139,7 @@ export default function CountdownTimer() {
                                 maxWidth: '240px', display: 'inline-flex', justifyContent: 'center', fontSize: '14px',
                             }}>
                                 <Zap size={14} />
-                                Subscribe & Never Miss a Pick
+                                Get Pick Alerts
                             </Link>
                             <Link href="/pricing" style={{
                                 display: 'inline-flex', alignItems: 'center', gap: '6px',

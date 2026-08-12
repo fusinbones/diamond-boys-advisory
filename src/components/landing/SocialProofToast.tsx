@@ -16,7 +16,7 @@ const LAST_INITIALS = 'ABCDEFGHJKLMNPRSTW'.split('');
 const PLANS = [
     { name: 'Season Pass', emoji: '🏆', color: '#fbbf24' },
     { name: 'Monthly Elite', emoji: '💎', color: '#a78bfa' },
-    { name: 'Weekly Package', emoji: '⚡', color: '#00e59b' },
+    { name: 'Weekly Package', emoji: '⚡', color: '#FFC107' },
     { name: '6-Month Package', emoji: '🔥', color: '#f97316' },
 ];
 
@@ -98,10 +98,10 @@ export default function SocialProofToast() {
                         width: 'calc(100vw - 48px)',
                         background: 'linear-gradient(135deg, rgba(10,16,30,0.95), rgba(15,23,42,0.95))',
                         backdropFilter: 'blur(20px)',
-                        border: '1px solid rgba(0,229,155,0.15)',
+                        border: '1px solid rgba(106,0,255,0.15)',
                         borderRadius: '14px',
                         padding: '14px 16px',
-                        boxShadow: '0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,229,155,0.05)',
+                        boxShadow: '0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(106,0,255,0.05)',
                     }}
                 >
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>

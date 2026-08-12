@@ -6,7 +6,7 @@ import { Sparkles, BarChart3, MessageCircle, Zap, ChevronRight, Gift, Lock, Star
 
 const freePerks = [
     { icon: BarChart3, title: '5 Free Game Analyses / Week', desc: 'Tap any game on the ticker for full odds breakdown, matchup stats, and picks preview.' },
-    { icon: MessageCircle, title: 'Community Chat Access', desc: 'Join the TriplePlayz Lounge free lobby — connect with fellow sports fans in real time.' },
+    { icon: MessageCircle, title: 'Community Chat Access', desc: 'Join the YourSwami Lounge free lobby, connect with fellow sports fans in real time.' },
     { icon: Gift, title: 'Freebie Picks', desc: 'Get curated free picks every day, powered by our data-driven algorithm across multiple sportsbooks.' },
     { icon: Star, title: 'Live MLB Odds Ticker', desc: 'Real-time odds from 5+ sportsbooks, line movement alerts, and game schedules at your fingertips.' },
 ];
@@ -18,7 +18,7 @@ export default function FreeSignupSection() {
             <div style={{
                 position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
                 width: '600px', height: '600px',
-                background: 'radial-gradient(circle, rgba(0,229,155,0.06) 0%, transparent 60%)',
+                background: 'radial-gradient(circle, rgba(106,0,255,0.06) 0%, transparent 60%)',
                 pointerEvents: 'none',
             }} />
 
@@ -36,7 +36,7 @@ export default function FreeSignupSection() {
                         marginBottom: '16px',
                     }}>
                         <Sparkles size={13} />
-                        100% Free — No Credit Card
+                        100% Free, No Credit Card
                     </span>
 
                     <h2 className="font-display" style={{
@@ -52,15 +52,13 @@ export default function FreeSignupSection() {
                         color: '#d1d5db', fontSize: 'clamp(14px, 2vw, 17px)',
                         lineHeight: 1.65, maxWidth: '560px', margin: '0 auto',
                     }}>
-                        Create a free TriplePlayz account and get instant access to game analysis,
+                        Create a free YourSwami account and get instant access to game analysis,
                         community chat, and daily free picks. Upgrade only when you&apos;re ready.
                     </p>
                 </motion.div>
 
                 {/* Free perks grid */}
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                <div className="grid grid-cols-1 sm:grid-cols-2" style={{
                     gap: '14px',
                     marginBottom: '32px',
                 }}>
@@ -76,12 +74,12 @@ export default function FreeSignupSection() {
                         >
                             <div style={{
                                 width: '42px', height: '42px', borderRadius: '12px',
-                                background: 'rgba(0,229,155,0.08)',
-                                border: '1px solid rgba(0,229,155,0.15)',
+                                background: 'rgba(106,0,255,0.08)',
+                                border: '1px solid rgba(106,0,255,0.15)',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 margin: '0 auto 12px',
                             }}>
-                                <perk.icon size={20} style={{ color: '#00e59b' }} />
+                                <perk.icon size={20} style={{ color: '#FFC107' }} />
                             </div>
                             <h3 style={{ color: 'white', fontSize: '14px', fontWeight: 700, marginBottom: '6px' }}>
                                 {perk.title}
@@ -111,7 +109,7 @@ export default function FreeSignupSection() {
                         }}
                     >
                         <Sparkles size={18} />
-                        Create Free Account — Takes 10 Seconds
+                        Create Free Account, Takes 10 Seconds
                     </Link>
 
                     <div style={{
@@ -135,7 +133,7 @@ export default function FreeSignupSection() {
                     </div>
                     <p style={{ fontSize: '13px', color: '#6b7280', marginTop: '12px' }}>
                         Already have an account?{' '}
-                        <a href="/dashboard" style={{ color: '#00e59b', textDecoration: 'none', fontWeight: 600 }}>Log In →</a>
+                        <a href="/dashboard" style={{ color: '#FFC107', textDecoration: 'none', fontWeight: 600 }}>Log In →</a>
                     </p>
                 </motion.div>
             </div>

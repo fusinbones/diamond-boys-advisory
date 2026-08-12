@@ -4,34 +4,44 @@ import Analytics from '@/components/Analytics';
 import RefTracker from '@/components/RefTracker';
 import { AuthProvider } from '@/components/AuthProvider';
 import LayoutShell from '@/components/LayoutShell';
+import { Inter, Outfit } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'], weight: ['300', '400', '500', '600', '700', '800', '900'], variable: '--font-inter', display: 'swap' });
+const outfit = Outfit({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800', '900'], variable: '--font-outfit', display: 'swap' });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://tripleplayz.com'),
-  title: 'TriplePlayz - Sports Advisory | Elite Sports Picks & Community',
+  metadataBase: new URL('https://yourswami.com'),
+  title: 'YourSwami | Real Picks. Real Results. Real Cash.',
   description:
-    'Expert sports picks from TriplePlayz - Sports Advisory. Join our exclusive TriplePlayz Lounge community with daily expert analysis, 30+ years of experience, and documented picks across MLB, NBA, NFL & NHL.',
+    'YourSwami delivers premium sports picks backed by 30+ years of analysis. Real picks, no guesswork. Real results, proven record. Follow the Swami.',
   keywords: [
+    'YourSwami',
     'sports picks',
     'sports advisory',
-    'TriplePlayz',
     'sports betting community',
     'sports picks subscription',
     'expert picks',
     'sports analysis',
-    'sports betting picks',
+    'the swami',
   ],
+  icons: {
+    icon: '/favicon-32.png',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
   openGraph: {
-    title: 'TriplePlayz - Sports Advisory | Expert Sports Picks',
-    description: 'Expert daily sports picks backed by 30+ years of experience and a premium community.',
+    title: 'YourSwami | Real Picks. Real Results. Real Cash.',
+    description: 'Premium sports picks backed by 30+ years of analysis. Follow the Swami.',
     type: 'website',
-    url: 'https://tripleplayz.com',
-    siteName: 'TriplePlayz - Sports Advisory',
-    images: ['/logo.png'],
+    url: 'https://yourswami.com',
+    siteName: 'YourSwami',
+    images: ['/brand/og-image.png'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'TriplePlayz - Sports Advisory',
-    description: 'Premium sports picks + elite TriplePlayz Lounge community.',
+    title: 'YourSwami | Real Picks. Real Results. Real Cash.',
+    description: 'Premium sports picks backed by 30+ years of analysis. Follow the Swami.',
+    images: ['/brand/og-image.png'],
   },
   robots: 'index, follow',
 };
@@ -42,14 +52,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className={`dark ${inter.variable} ${outfit.variable}`}>
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/logo.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="TriplePlayz" />
-        <meta name="theme-color" content="#040810" />
+        <meta name="apple-mobile-web-app-title" content="YourSwami" />
+        <meta name="theme-color" content="#0a0512" />
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className="min-h-screen flex flex-col">

@@ -41,7 +41,7 @@ function shortName(name: string): string {
     return map[name] || name.split(' ').slice(-1)[0];
 }
 
-/** Single sport ticker row — infinitely scrolling */
+/** Single sport ticker row, infinitely scrolling */
 function SportRow({ sport, games }: { sport: SportConfig; games: TickerGame[] }) {
     if (games.length === 0) return null;
 
@@ -77,8 +77,8 @@ function TickerCard({ game, sport }: { game: TickerGame; sport: SportConfig }) {
     return (
         <div style={{
             display: 'flex', alignItems: 'center', gap: '8px',
-            background: isLive ? 'rgba(0,229,155,0.08)' : `${sport.color}08`,
-            border: `1px solid ${isLive ? 'rgba(0,229,155,0.2)' : `${sport.color}12`}`,
+            background: isLive ? 'rgba(106,0,255,0.08)' : `${sport.color}08`,
+            border: `1px solid ${isLive ? 'rgba(106,0,255,0.2)' : `${sport.color}12`}`,
             borderRadius: '8px', padding: '6px 12px',
             whiteSpace: 'nowrap', flexShrink: 0,
             minWidth: '180px',
@@ -122,8 +122,8 @@ function TickerCard({ game, sport }: { game: TickerGame; sport: SportConfig }) {
             {/* Status */}
             {isLive ? (
                 <span style={{
-                    fontSize: '8px', fontWeight: 800, color: '#00e59b',
-                    background: 'rgba(0,229,155,0.2)', padding: '1px 5px',
+                    fontSize: '8px', fontWeight: 800, color: '#FFC107',
+                    background: 'rgba(106,0,255,0.2)', padding: '1px 5px',
                     borderRadius: '3px', letterSpacing: '0.06em',
                     display: 'flex', alignItems: 'center', gap: '2px',
                 }}>
