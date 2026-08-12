@@ -1,11 +1,9 @@
 import HeroSection from '@/components/landing/HeroSection';
-import StatsBar from '@/components/landing/StatsBar';
 import CountdownTimer from '@/components/landing/CountdownTimer';
 import FeaturesSection from '@/components/landing/FeaturesSection';
 import SocialProof from '@/components/landing/SocialProof';
 import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import FreeSignupSection from '@/components/landing/FreeSignupSection';
-import MagicTicker from '@/components/MagicTicker';
 import AuthRedirect from '@/components/AuthRedirect';
 import SocialProofToast from '@/components/landing/SocialProofToast';
 
@@ -14,8 +12,6 @@ export default function HomePage() {
     <>
       <AuthRedirect />
       <HeroSection />
-      <MagicTicker />
-      <StatsBar />
       <CountdownTimer />
       <FeaturesSection />
       <FreeSignupSection />

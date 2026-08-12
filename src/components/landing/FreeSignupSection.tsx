@@ -2,13 +2,13 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Sparkles, BarChart3, MessageCircle, Zap, ChevronRight, Gift, Lock, Star } from 'lucide-react';
+import { Sparkles, BarChart3, MessageCircle, Zap, ChevronRight, Gift, Lock } from 'lucide-react';
 
 const freePerks = [
-    { icon: BarChart3, title: '5 Free Game Analyses / Week', desc: 'Tap any game on the ticker for full odds breakdown, matchup stats, and picks preview.' },
-    { icon: MessageCircle, title: 'Community Chat Access', desc: 'Join the YourSwami Lounge free lobby, connect with fellow sports fans in real time.' },
-    { icon: Gift, title: 'Freebie Picks', desc: 'Get curated free picks every day, powered by our data-driven algorithm across multiple sportsbooks.' },
-    { icon: Star, title: 'Live MLB Odds Ticker', desc: 'Real-time odds from 5+ sportsbooks, line movement alerts, and game schedules at your fingertips.' },
+    { icon: Gift, title: 'Daily Freebie Pick', desc: 'Get a curated free pick every day, so you can see the Swami in action before you commit.' },
+    { icon: MessageCircle, title: 'Community Chat Access', desc: 'Join the YourSwami Lounge free lobby and connect with fellow members in real time.' },
+    { icon: BarChart3, title: 'See the Track Record', desc: 'Every fire pick is documented publicly, wins and losses, so you know exactly what you are getting.' },
+    { icon: Zap, title: 'Pick Drop Alerts', desc: 'Get notified the moment a new fire pick drops so you never miss a play.' },
 ];
 
 export default function FreeSignupSection() {
@@ -52,8 +52,8 @@ export default function FreeSignupSection() {
                         color: '#d1d5db', fontSize: 'clamp(14px, 2vw, 17px)',
                         lineHeight: 1.65, maxWidth: '560px', margin: '0 auto',
                     }}>
-                        Create a free YourSwami account and get instant access to game analysis,
-                        community chat, and daily free picks. Upgrade only when you&apos;re ready.
+                        Create a free YourSwami account and get community chat, a daily free pick,
+                        and the full documented fire pick record. Upgrade only when you&apos;re ready.
                     </p>
                 </motion.div>
 

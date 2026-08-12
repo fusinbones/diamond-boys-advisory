@@ -6,7 +6,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, CheckCircle, Lock, TrendingUp, Shield, Sparkles } from 'lucide-react';
 import { trackEvent } from '@/components/Analytics';
-import LiveGameTicker from './LiveGameTicker';
 
 const ROTATING_PICKS = [
     { teams: 'NY Yankees @ LA Dodgers', detail: 'ML -135 ⬢⬢⬢⬡⬡', conf: 'HIGH' },
@@ -48,9 +47,6 @@ export default function HeroSection() {
                 <div className="grid lg:grid-cols-2 items-center" style={{ gap: '32px', minHeight: '84vh', paddingTop: '12px' }}>
                     {/* Left column, content (unchanged copy, restyled) */}
                     <div className="flex flex-col items-center text-center lg:items-start lg:text-left" style={{ maxWidth: '620px' }}>
-                        {/* Live games ticker */}
-                        <LiveGameTicker />
-
                         {/* Rotating locked pick teaser */}
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
@@ -143,11 +139,9 @@ export default function HeroSection() {
                             transition={{ delay: 0.15, duration: 0.6 }}
                             style={{ color: '#d1d5db', fontSize: 'clamp(15px, 2vw, 18px)', lineHeight: 1.7, marginBottom: '20px', maxWidth: '540px' }}
                         >
-                            Proprietary analysis powered by{' '}
-                            <span style={{ color: '#fbbf24', fontWeight: 600 }}>11+ sportsbooks</span>,
-                            built on{' '}
+                            Documented fire picks built on{' '}
                             <span style={{ color: '#FFC107', fontWeight: 600 }}>30+ years of experience</span>,
-                            and a premium community that gives you the edge.
+                            delivered before every game, with a premium community that gives you the edge.
                         </motion.p>
 
                         {/* Value props */}
@@ -159,7 +153,7 @@ export default function HeroSection() {
                             className="lg:justify-start"
                         >
                             {[
-                                { icon: <TrendingUp size={14} style={{ color: '#FFC107' }} />, text: 'Live odds & analysis' },
+                                { icon: <TrendingUp size={14} style={{ color: '#FFC107' }} />, text: 'Fire picks daily' },
                                 { icon: <Shield size={14} style={{ color: '#FFC107' }} />, text: 'Every pick documented' },
                                 { icon: <CheckCircle size={14} style={{ color: '#FFC107' }} />, text: 'Exclusive community' },
                             ].map((prop, i) => (
@@ -210,7 +204,7 @@ export default function HeroSection() {
                             transition={{ delay: 0.6 }}
                             style={{ fontSize: '13px', color: '#9ca3af', marginTop: '14px' }}
                         >
-                            ⚡ Free game analysis • Proprietary data models • Cancel anytime • 21+ only
+                            ⚡ Documented record • Fire picks daily • Cancel anytime • 21+ only
                         </motion.p>
                     </div>
 
