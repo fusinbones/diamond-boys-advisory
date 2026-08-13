@@ -81,8 +81,8 @@ function CheckoutForm() {
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
                         <Image
-                            src="/logo.png"
-                            alt="TriplePlayz"
+                            src="/brand/logo-primary.png"
+                            alt="YourSwami"
                             width={44}
                             height={44}
                             style={{ borderRadius: '10px', flexShrink: 0 }}

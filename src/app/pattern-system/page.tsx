@@ -269,8 +269,8 @@ export default function PatternSystemPage() {
             {/* ─── Header ─────────────────────────────────────── */}
             <header className="ps-header">
                 <Image
-                    src="/logo.png"
-                    alt="TriplePlayz"
+                    src="/brand/logo-primary.png"
+                    alt="YourSwami"
                     width={36}
                     height={36}
                     className="ps-header-logo"

@@ -1681,7 +1681,7 @@ export default function CommunityPage() {
             <div className="lounge-paywall">
                 <div className="lounge-paywall-card">
                     <div className="lounge-paywall-icon">💎</div>
-                    <Image src="/logo.png" alt="TriplePlayz" width={56} height={56} style={{ margin: '0 auto 16px', borderRadius: '12px' }} />
+                    <Image src="/brand/logo-primary.png" alt="YourSwami" width={56} height={56} style={{ margin: '0 auto 16px', borderRadius: '12px' }} />
                     <h1 className="font-display" style={{ fontSize: '26px', fontWeight: 900, color: 'white', marginBottom: '8px' }}>The TriplePlayz Lounge</h1>
                     <p style={{ color: '#9ca3af', fontSize: '14px', lineHeight: 1.6, marginBottom: '20px' }}>
                         Your exclusive community for MLB picks, expert analysis, and real-time chat with TriplePlayz.

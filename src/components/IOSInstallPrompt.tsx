@@ -90,7 +90,7 @@ export default function IOSInstallPrompt() {
 
                         {/* Header */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                            <Image src="/logo.png" alt="TriplePlayz" width={36} height={36} style={{ borderRadius: '10px' }} />
+                            <Image src="/brand/logo-primary.png" alt="YourSwami" width={36} height={36} style={{ borderRadius: '10px' }} />
                             <div>
                                 <p style={{ color: 'white', fontSize: '15px', fontWeight: 700, margin: 0 }}>
                                     Add TriplePlayz to Home Screen

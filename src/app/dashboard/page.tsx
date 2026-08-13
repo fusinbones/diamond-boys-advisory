@@ -767,7 +767,7 @@ function DashboardContent(): ReactNode {
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                         {/* Header */}
                         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-                            <Image src="/logo.png" alt="TriplePlayz" width={80} height={80} style={{ margin: '0 auto 16px', objectFit: 'contain' }} />
+                            <Image src="/brand/logo-primary.png" alt="YourSwami" width={80} height={80} style={{ margin: '0 auto 16px', objectFit: 'contain' }} />
                             <h1 className="font-display" style={{ fontSize: '28px', fontWeight: 800, color: 'white', marginBottom: '8px' }}>
                                 {isSignUp && isFreeSignup ? 'Start Your Free Week' : isSignUp ? 'Create Account' : 'Welcome Back'}
                             </h1>

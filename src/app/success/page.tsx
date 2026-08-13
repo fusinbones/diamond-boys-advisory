@@ -43,8 +43,8 @@ function SuccessContent() {
                         <CheckCircle size={28} className="sm:w-10 sm:h-10 text-[#00e59b]" />
                     </div>
                     <Image
-                        src="/logo.png"
-                        alt="TriplePlayz"
+                        src="/brand/logo-primary.png"
+                        alt="YourSwami"
                         width={48}
                         height={48}
                         className="sm:w-[60px] sm:h-[60px] mx-auto rounded-xl shadow-xl"
