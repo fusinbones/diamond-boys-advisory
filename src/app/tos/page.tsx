@@ -57,7 +57,7 @@ export default function TOSPage() {
                             <p>
                                 Filing a chargeback or payment dispute will result in <strong>immediate and permanent revocation</strong> of
                                 all access, including community membership. We encourage you to contact us directly at
-                                support@tripleplayz.com to resolve any billing concerns before initiating a dispute with your card issuer.
+                                support@yourswami.com to resolve any billing concerns before initiating a dispute with your card issuer.
                             </p>
                             <h3 className="text-white font-semibold text-base pt-2">6. Intellectual Property</h3>
                             <p>
@@ -152,13 +152,13 @@ export default function TOSPage() {
                             <h3 className="text-white font-semibold text-base pt-2">Data Retention & Deletion</h3>
                             <p>
                                 We retain your data only as long as necessary to provide the Service and fulfill legal obligations.
-                                You may request deletion of your personal data by contacting support@tripleplayz.com.
+                                You may request deletion of your personal data by contacting support@yourswami.com.
                                 Payment records maintained by Stripe are subject to Stripe&apos;s retention policies.
                             </p>
                             <h3 className="text-white font-semibold text-base pt-2">GDPR/CCPA Rights</h3>
                             <p>
                                 If you are an EU/EEA resident or California resident, you have the right to access, correct, delete,
-                                or port your personal data. Contact us at support@tripleplayz.com to exercise these rights.
+                                or port your personal data. Contact us at support@yourswami.com to exercise these rights.
                             </p>
                         </div>
                     </section>
@@ -222,7 +222,7 @@ export default function TOSPage() {
                                 For billing questions, technical support, or general inquiries (non-ban related), contact us at:
                             </p>
                             <div className="glass-card p-4 bg-[#0d1525]/50">
-                                <p className="text-white font-medium">📧 support@tripleplayz.com</p>
+                                <p className="text-white font-medium">📧 support@yourswami.com</p>
                                 <p className="text-gray-500 text-xs mt-1">We typically respond within 24 hours.</p>
                             </div>
                             <p className="text-xs text-gray-600">

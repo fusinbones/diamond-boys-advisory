@@ -84,7 +84,7 @@ export default function PrivacyPage() {
                                 If you have any questions or concerns regarding this Privacy Policy or your data, please contact us at:
                             </p>
                             <div className="glass-card p-4 bg-[#0d1525]/50">
-                                <p className="text-white font-medium">📧 support@tripleplayz.com</p>
+                                <p className="text-white font-medium">📧 support@yourswami.com</p>
                             </div>
                         </div>
                     </section>

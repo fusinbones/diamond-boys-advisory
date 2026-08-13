@@ -110,7 +110,7 @@ function SuccessContent() {
                 </motion.div>
 
                 <p className="text-[10px] sm:text-xs text-gray-600 mt-4 sm:mt-6">
-                    Need help? Contact support@tripleplayz.com
+                    Need help? Contact support@yourswami.com
                 </p>
 
                 <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-gray-600 mt-3">

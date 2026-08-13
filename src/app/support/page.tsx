@@ -27,8 +27,8 @@ export default function SupportPage() {
                             <p className="text-gray-400 text-sm mb-4">
                                 For billing inquiries, account issues, or general support.
                             </p>
-                            <a href="mailto:support@tripleplayz.com" className="text-[#00e59b] font-mono bg-[#00e59b]/10 px-4 py-2 rounded-lg border border-[#00e59b]/20 hover:bg-[#00e59b]/20 transition-colors">
-                                support@tripleplayz.com
+                            <a href="mailto:support@yourswami.com" className="text-[#00e59b] font-mono bg-[#00e59b]/10 px-4 py-2 rounded-lg border border-[#00e59b]/20 hover:bg-[#00e59b]/20 transition-colors">
+                                support@yourswami.com
                             </a>
                         </div>
 
