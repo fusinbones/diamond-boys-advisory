@@ -7,7 +7,7 @@ const testimonials = [
     {
         name: 'Mike R.',
         avatar: '🏀',
-        text: "The daily analysis is incredibly detailed, I've never seen breakdowns this thorough. The YourSwami Lounge community makes game day even better.",
+        text: "The daily analysis is incredibly detailed, I've never seen breakdowns this thorough. The Swami Lounge community makes game day even better.",
         rating: 5,
         tier: 'Monthly Elite',
         since: 'Member since Nov 2025',

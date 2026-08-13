@@ -1,6 +1,6 @@
 const SENDGRID_API = 'https://api.sendgrid.com/v3/mail/send';
 const FROM_EMAIL = 'picks@tripleplayz.com';
-const FROM_NAME = 'TriplePlayz';
+const FROM_NAME = 'YourSwami';
 
 interface PickAlertEmail {
     matchup: string;
@@ -98,7 +98,7 @@ function pickAlertHtml(pick: PickAlertEmail): string {
             </a>
         </div>
         <div style="padding: 16px 28px; border-top: 1px solid rgba(255,255,255,0.06); text-align: center;">
-            <p style="margin: 0; color: #374151; font-size: 11px;">TriplePlayz Sports Advisory · You're receiving this because you subscribed to Fire Pick alerts.</p>
+            <p style="margin: 0; color: #374151; font-size: 11px;">YourSwami Sports Advisory · You're receiving this because you subscribed to Fire Pick alerts.</p>
         </div>
     </div>`;
 }
@@ -130,7 +130,7 @@ function resultHtml(pick: ResultEmail): string {
             </a>
         </div>
         <div style="padding: 16px 28px; border-top: 1px solid rgba(255,255,255,0.06); text-align: center;">
-            <p style="margin: 0; color: #374151; font-size: 11px;">TriplePlayz Sports Advisory · Fire Pick Results</p>
+            <p style="margin: 0; color: #374151; font-size: 11px;">YourSwami Sports Advisory · Fire Pick Results</p>
         </div>
     </div>`;
 }

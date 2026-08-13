@@ -3,8 +3,8 @@ import { Mail, MessageSquare, Clock, ShieldCheck, CreditCard } from 'lucide-reac
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-    title: 'Support & Contact | TriplePlayz - Sports Advisory',
-    description: 'Contact TriplePlayz - Sports Advisory for billing and account support.',
+    title: 'Support & Contact | YourSwami - Sports Advisory',
+    description: 'Contact YourSwami - Sports Advisory for billing and account support.',
 };
 
 export default function SupportPage() {

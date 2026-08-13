@@ -59,7 +59,7 @@ const MLB_TEAMS: Array<{ id: number; name: string; division: string }> = [
 ];
 
 /**
- * TriplePlayz Alternation Break Algorithm
+ * YourSwami Alternation Break Algorithm
  *
  * HISTORICAL DATA (last MLB season):
  * ┌──────────┬────────┬───────────────┬─────────────┐

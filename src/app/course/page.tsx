@@ -464,7 +464,7 @@ export default function FireCourseLanding() {
                 textAlign: 'center',
             }}>
                 <p style={{ color: '#374151', fontSize: '11px', lineHeight: 1.6, maxWidth: '600px', margin: '0 auto' }}>
-                    © {new Date().getFullYear()} TriplePlayz. For entertainment purposes only. Past performance
+                    © {new Date().getFullYear()} YourSwami. For entertainment purposes only. Past performance
                     does not guarantee future results. Sports betting involves risk. Must be 21+ and located in
                     a jurisdiction where sports betting is legal. Please bet responsibly.
                 </p>

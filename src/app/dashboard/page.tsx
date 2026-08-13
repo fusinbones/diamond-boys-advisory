@@ -775,7 +775,7 @@ function DashboardContent(): ReactNode {
                                 {isSignUp && isFreeSignup
                                     ? '7 days of full dashboard access — picks, stats, community. No credit card.'
                                     : isSignUp
-                                        ? 'Join TriplePlayz and get access to today\'s best picks.'
+                                        ? 'Join YourSwami and get access to today\'s best picks.'
                                         : 'Sign in to your picks dashboard.'
                                 }
                             </p>

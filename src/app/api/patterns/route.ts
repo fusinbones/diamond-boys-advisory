@@ -84,7 +84,7 @@ const MLB_TEAMS: Array<{ id: number; name: string; division: string }> = [
 ];
 
 /**
- * TriplePlayz Alternation Break Algorithm
+ * YourSwami Alternation Break Algorithm
  * Same logic as the admin version — no degradation.
  */
 function analyzeAlternation(results: Array<{ result: 'W' | 'L' }>): {

@@ -61,7 +61,7 @@ export default function SocialProof() {
                             <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(88,101,242,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px' }}>
                                 <MessageCircle size={18} style={{ color: '#5865F2' }} />
                             </div>
-                            <h3 style={{ color: 'white', fontWeight: 600, fontSize: '17px', marginBottom: '4px' }}>The YourSwami Lounge</h3>
+                            <h3 style={{ color: 'white', fontWeight: 600, fontSize: '17px', marginBottom: '4px' }}>The Swami Lounge</h3>
                             <p style={{ color: '#c9cdd3', fontSize: '14px' }}>Real-time picks, alerts & expert chat</p>
                         </div>
 

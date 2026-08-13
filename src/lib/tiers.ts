@@ -53,7 +53,7 @@ export const tiers: Tier[] = [
     description: 'One-time payment. Full access for 24 hours — no subscription.',
     features: [
       'All daily sports picks & analysis',
-      'TriplePlayz Lounge access',
+      'Swami Lounge access',
       'Real-time odds & line movement',
       'Game-day alerts',
       'No commitment — pay once',
@@ -72,7 +72,7 @@ export const tiers: Tier[] = [
     description: 'All picks & analysis, billed weekly. Cancel anytime.',
     features: [
       'All daily sports game analysis',
-      'TriplePlayz Lounge community access',
+      'Swami Lounge community access',
       'Game-day alerts & notifications',
       'Real-time odds & line movement',
       'Weekly deep-dive reports',
@@ -91,7 +91,7 @@ export const tiers: Tier[] = [
     features: [
       'Everything in Weekly',
       'Priority pick alerts',
-      'VIP TriplePlayz Lounge channels',
+      'VIP Swami Lounge channels',
       'Direct expert chat access',
       'Exclusive parlay picks',
       'Monthly performance reports',
@@ -112,7 +112,7 @@ export const tiers: Tier[] = [
       'Everything in Monthly',
       'Full half-season coverage',
       'Playoff special picks (World Series, NBA Finals, Stanley Cup)',
-      'Season Pass TriplePlayz badge',
+      'Season Pass YourSwami badge',
       'Early access to new sports & features',
       'Private strategy sessions',
       'Best value — massive savings',

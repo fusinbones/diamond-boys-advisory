@@ -954,7 +954,7 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
         const cleanedAnalysis = filteredLines.join('\n').replace(/\n{3,}/g, '\n\n').trim();
         const matchup = `${game.teams.away.name} @ ${game.teams.home.name}`;
         const gameDate = game.date ? new Date(game.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : 'Today';
-        return [`🎯 FREE PICK DROP 🎯`, `━━━━━━━━━━━━━━━━━━━━━`, ``, `⚾ ${matchup}`, `📅 ${gameDate}`, ``, cleanedAnalysis, ``, `━━━━━━━━━━━━━━━━━━━━━`, `💎 Powered by TriplePlayz Algorithm`, `🔥 Want MORE picks daily? Upgrade at tripleplayz.com/pricing`].join('\n');
+        return [`🎯 FREE PICK DROP 🎯`, `━━━━━━━━━━━━━━━━━━━━━`, ``, `⚾ ${matchup}`, `📅 ${gameDate}`, ``, cleanedAnalysis, ``, `━━━━━━━━━━━━━━━━━━━━━`, `💎 Powered by YourSwami Algorithm`, `🔥 Want MORE picks daily? Upgrade at tripleplayz.com/pricing`].join('\n');
     };
 
     const postToFreebie = async () => {
@@ -967,7 +967,7 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
             const freebieChannel = channels?.[0];
             if (!freebieChannel) { alert('No freebie channel found!'); return; }
             const content = buildFreebieContent(currentAnalysis);
-            const { error: insertErr } = await supabase.from('community_messages').insert({ channel_id: freebieChannel.id, user_id: '00000000-0000-0000-0000-000000000000', content, display_name: '💎 TriplePlayz', avatar_color: '#00e59b', is_bot: true, user_role: 'admin' });
+            const { error: insertErr } = await supabase.from('community_messages').insert({ channel_id: freebieChannel.id, user_id: '00000000-0000-0000-0000-000000000000', content, display_name: '💎 YourSwami', avatar_color: '#00e59b', is_bot: true, user_role: 'admin' });
             if (insertErr) throw insertErr;
             setFreebiePosted(true);
             setTimeout(() => setFreebiePosted(false), 5000);

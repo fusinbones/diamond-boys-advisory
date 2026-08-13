@@ -86,7 +86,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <Image src="/brand/logo-primary.png" alt="YourSwami" width={32} height={32} style={{ borderRadius: '6px' }} />
                         <div>
-                            <div style={{ color: 'white', fontWeight: 700, fontSize: '14px' }}>TriplePlayz</div>
+                            <div style={{ color: 'white', fontWeight: 700, fontSize: '14px' }}>YourSwami</div>
                             <div className="admin-sidebar-badge">🔒 Admin Panel</div>
                         </div>
                     </div>

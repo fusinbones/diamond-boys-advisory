@@ -6,7 +6,7 @@ import { Sparkles, BarChart3, MessageCircle, Zap, ChevronRight, Gift, Lock } fro
 
 const freePerks = [
     { icon: Gift, title: 'Daily Freebie Pick', desc: 'Get a curated free pick every day, so you can see the Swami in action before you commit.' },
-    { icon: MessageCircle, title: 'Community Chat Access', desc: 'Join the YourSwami Lounge free lobby and connect with fellow members in real time.' },
+    { icon: MessageCircle, title: 'Community Chat Access', desc: 'Join the Swami Lounge free lobby and connect with fellow members in real time.' },
     { icon: BarChart3, title: 'See the Track Record', desc: 'Every fire pick is documented publicly, wins and losses, so you know exactly what you are getting.' },
     { icon: Zap, title: 'Pick Drop Alerts', desc: 'Get notified the moment a new fire pick drops so you never miss a play.' },
 ];

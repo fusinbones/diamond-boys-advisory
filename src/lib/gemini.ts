@@ -102,7 +102,7 @@ async function analyzeGameStats(context: GameContext, edge: EdgeReport): Promise
         ? '- Run Line: ' + edge.pickTeam + ' RL EV = $' + edge.runLineEV.toFixed(2) + ' BETTER VALUE'
         : '- Run Line: No additional value over ML';
 
-    const prompt = `You are an elite quantitative sports analyst for TriplePlayz — a premium sports advisory that uses mathematics, not gut feelings. You have been given the complete output of our proprietary statistical model. Your job is to write a DEEP, DATA-RICH analysis.
+    const prompt = `You are an elite quantitative sports analyst for YourSwami — a premium sports advisory that uses mathematics, not gut feelings. You have been given the complete output of our proprietary statistical model. Your job is to write a DEEP, DATA-RICH analysis.
 
 CRITICAL RULE: Do NOT mention alternation patterns, W/L patterns, or pattern breaks. This is PURELY statistical and odds-based analysis. Focus on: team strength, pitcher matchups, odds value, momentum, home/away splits, and expected value.
 
@@ -186,7 +186,7 @@ Be DATA-HEAVY. Every claim must reference a specific number from the model. This
 async function analyzeGamePattern(context: GameContext): Promise<string> {
     const ai = getClient();
 
-    const prompt = `You are the pattern analysis specialist for TriplePlayz - Sports Advisory. Your ONLY focus is the W/L alternation pattern system. This is a proprietary system where teams that alternate Win-Loss for 6+ consecutive games are predicted to BREAK the pattern (double up on the same result).
+    const prompt = `You are the pattern analysis specialist for YourSwami - Sports Advisory. Your ONLY focus is the W/L alternation pattern system. This is a proprietary system where teams that alternate Win-Loss for 6+ consecutive games are predicted to BREAK the pattern (double up on the same result).
 
 The sweet spot is Game 7 — historically 62% of patterns break at game 7.
 
@@ -267,7 +267,7 @@ export async function generatePickReason(pick: {
 }): Promise<string> {
     const ai = getClient();
 
-    const prompt = `You are the lead analyst for TriplePlayz - Sports Advisory. Write a concise, sharp 1-2 sentence reason for this pick.
+    const prompt = `You are the lead analyst for YourSwami - Sports Advisory. Write a concise, sharp 1-2 sentence reason for this pick.
 
 Pick: ${pick.pickTeam} ${pick.pickType}
 Game: ${pick.awayTeam} @ ${pick.homeTeam} (${pick.gameDate})
@@ -313,9 +313,9 @@ export async function chatWithGemini(
     // Build a single prompt with system context + conversation history
     let fullPrompt = systemPrompt + '\n\n## CONVERSATION HISTORY\n';
     for (const msg of conversationHistory) {
-        fullPrompt += msg.role === 'user' ? `User: ${msg.text}\n` : `TriplePlayz: ${msg.text}\n`;
+        fullPrompt += msg.role === 'user' ? `User: ${msg.text}\n` : `YourSwami: ${msg.text}\n`;
     }
-    fullPrompt += `\nUser: ${userMessage}\n\nRespond as TriplePlayz:`;
+    fullPrompt += `\nUser: ${userMessage}\n\nRespond as YourSwami:`;
 
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',

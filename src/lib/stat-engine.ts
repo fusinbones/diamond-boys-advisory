@@ -1,5 +1,5 @@
 /**
- * TriplePlayz Statistical Edge Engine
+ * YourSwami Statistical Edge Engine
  * ════════════════════════════════════
  * MIT-level sports betting mathematics.
  *

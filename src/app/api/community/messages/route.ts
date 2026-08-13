@@ -215,7 +215,7 @@ export async function POST(request: NextRequest) {
         // Update rate limit
         rateLimits.set(user.id, now);
 
-        // TriplePlayzBot @mention trigger
+        // YourSwamiBot @mention trigger
         if (sanitized.toLowerCase().includes('@tripleplayzbot')) {
             triggerBotResponse(channelId, sanitized, user.id).catch(console.error);
         }
@@ -228,7 +228,7 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * TriplePlayzBot AI response (fire-and-forget)
+ * YourSwamiBot AI response (fire-and-forget)
  */
 async function triggerBotResponse(
     channelId: string,
@@ -242,13 +242,13 @@ async function triggerBotResponse(
 
         const response = await ai.models.generateContent({
             model: 'gemini-2.0-flash',
-            contents: `You are TriplePlayzBot 💎, the AI assistant for TriplePlayz - Sports Advisory — a premium MLB picks service.
-You're chatting in the TriplePlayz community. Be helpful, knowledgeable about baseball/sports betting, and keep responses concise (under 500 chars).
+            contents: `You are YourSwamiBot 💎, the AI assistant for YourSwami - Sports Advisory — a premium MLB picks service.
+You're chatting in the YourSwami community. Be helpful, knowledgeable about baseball/sports betting, and keep responses concise (under 500 chars).
 Use sports betting terminology naturally. Be confident but not arrogant. Use emojis sparingly.
 
 User message: ${userMessage.replace(/@tripleplayzbot/gi, '').trim()}
 
-Respond naturally as TriplePlayzBot:`,
+Respond naturally as YourSwamiBot:`,
         });
 
         const botReply = response.text || "Sorry, I'm having trouble right now. Try again! 💎";
@@ -259,11 +259,11 @@ Respond naturally as TriplePlayzBot:`,
                 channel_id: channelId,
                 user_id: userId,
                 content: botReply,
-                display_name: 'TriplePlayzBot 💎',
+                display_name: 'YourSwamiBot 💎',
                 avatar_color: '#00e59b',
                 is_bot: true,
             });
     } catch (error) {
-        console.error('TriplePlayzBot response error:', error);
+        console.error('YourSwamiBot response error:', error);
     }
 }

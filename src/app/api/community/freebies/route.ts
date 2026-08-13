@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSportOdds, type OddsEvent, US_SPORTS } from '@/lib/odds-api';
 
 /*
- * TriplePlayz — Freebie Pick Algorithm
+ * YourSwami — Freebie Pick Algorithm
  *
  * This is a TRANSPARENT, data-driven algorithm that identifies value plays
  * based on consensus odds across multiple sportsbooks. It is NOT a magic
@@ -164,7 +164,7 @@ function formatGameTime(commenceTime: string): string {
 }
 
 /**
- * Format a pick as the TriplePlayz branded text
+ * Format a pick as the YourSwami branded text
  */
 function formatPick(pick: FreebiePickResult, index: number): string {
     const unitMap = { low: 1, medium: 2, high: 3 };
@@ -187,7 +187,7 @@ function formatPick(pick: FreebiePickResult, index: number): string {
         ``,
         `📊 *${pick.reasoning}*`,
         divider,
-        `💎 TriplePlayz Algorithm • For entertainment only`,
+        `💎 YourSwami Algorithm • For entertainment only`,
     ].join('\n');
 }
 
@@ -241,7 +241,7 @@ export async function GET() {
             }),
             ``,
             `━━━━━━━━━━━━━━━━━━━━━━━`,
-            `💎 TriplePlayz - Sports Advisory`,
+            `💎 YourSwami - Sports Advisory`,
         ].join('\n');
 
         return NextResponse.json({

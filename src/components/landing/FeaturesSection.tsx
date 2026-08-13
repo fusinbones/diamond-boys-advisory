@@ -5,7 +5,7 @@ import { BarChart3, MessageSquare, Target, Bell, Lock, Gem } from 'lucide-react'
 
 const features = [
     { icon: Target, title: 'Expert Picks Daily', desc: 'Data-driven MLB picks with detailed analysis and confidence ratings.', color: '#FFC107', bg: 'rgba(106,0,255,0.1)' },
-    { icon: MessageSquare, title: 'The YourSwami Lounge', desc: 'Real-time alerts, live game-day discussions, and direct expert Q&A in our community chat.', color: '#FFC107', bg: 'rgba(106,0,255,0.1)' },
+    { icon: MessageSquare, title: 'The Swami Lounge', desc: 'Real-time alerts, live game-day discussions, and direct expert Q&A in our community chat.', color: '#FFC107', bg: 'rgba(106,0,255,0.1)' },
     { icon: BarChart3, title: 'Transparent Record', desc: 'Every pick tracked publicly, wins and losses. Full accountability, no cherry-picking.', color: '#fbbf24', bg: 'rgba(251,191,36,0.1)' },
     { icon: Bell, title: 'Real-Time Alerts', desc: 'Line movement alerts pushed straight to the app so you never miss value.', color: '#f97316', bg: 'rgba(249,115,22,0.1)' },
     { icon: Lock, title: 'Secure & Private', desc: 'All payments processed via Stripe. PCI-DSS compliant. Your data stays safe.', color: '#FFC107', bg: 'rgba(106,0,255,0.1)' },

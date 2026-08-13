@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { Lock, Mail, ShieldCheck } from 'lucide-react';
 
 export const metadata: Metadata = {
-    title: 'Privacy Policy | TriplePlayz - Sports Advisory',
-    description: 'TriplePlayz - Sports Advisory privacy policy, data collection, and GDPR compliance.',
+    title: 'Privacy Policy | YourSwami - Sports Advisory',
+    description: 'YourSwami - Sports Advisory privacy policy, data collection, and GDPR compliance.',
 };
 
 export default function PrivacyPage() {

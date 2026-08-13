@@ -60,7 +60,7 @@ export async function POST() {
 
         const ai = getAI();
 
-        const prompt = `You are a professional sports podcast writer for "The FirePick Podcast" by TriplePlayz Sports Advisory. Your job is to create a COMPREHENSIVE knowledge base document that a NotebookLM AI podcast host can use to generate an engaging 5-10 minute audio episode.
+        const prompt = `You are a professional sports podcast writer for "The FirePick Podcast" by YourSwami Sports Advisory. Your job is to create a COMPREHENSIVE knowledge base document that a NotebookLM AI podcast host can use to generate an engaging 5-10 minute audio episode.
 
 CRITICAL RULES:
 1. Do NOT mention "alternation patterns," "W/L pattern systems," "pattern breaks," "game 7 sweet spot," or any algorithmic/pattern methodology. This is PROPRIETARY and must stay hidden.
@@ -81,7 +81,7 @@ ${pickSummaries}
 Create a knowledge base document with the following sections. Write it in a way that NotebookLM can turn into natural, conversational podcast content:
 
 ### 1. SHOW OPEN (100-150 words)
-Write an energetic intro for the hosts. Reference the date, how many picks are on the slate, and the season record. Include a hook that makes listeners want to stay. Mention TriplePlayz by name.
+Write an energetic intro for the hosts. Reference the date, how many picks are on the slate, and the season record. Include a hook that makes listeners want to stay. Mention YourSwami by name.
 
 ### 2. SEASON MOMENTUM CHECK (100-150 words)
 Talk about how the ${record} record translates to real results. Frame it as a track record segment. Reference the win percentage. Build credibility without revealing methodology.
@@ -108,7 +108,7 @@ Identify which pick has the highest confidence and explain why it's the "lock" o
 Quick segment on proper bankroll management. Reference the unit sizing for each pick. Remind listeners this is about long-term edge, not gambling. Professional tone.
 
 ### 6. SHOW CLOSE (75-100 words)
-Wrap up with energy. Remind listeners about the picks, where to find TriplePlayz (tripleplayz.com), and tease tomorrow's slate.
+Wrap up with energy. Remind listeners about the picks, where to find YourSwami (tripleplayz.com), and tease tomorrow's slate.
 
 Write the ENTIRE document now. Make it THOROUGH — NotebookLM needs density to create a great podcast. Target 1500-2500 words total.`;
 

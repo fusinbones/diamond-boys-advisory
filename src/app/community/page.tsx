@@ -339,10 +339,10 @@ function GameAnalysisPanel({ game, onClose }: { game: TickerGame; onClose: () =>
                             </div>
                         </div>
 
-                        {/* ── TriplePlayz Edge ── */}
+                        {/* ── YourSwami Edge ── */}
                         {detail.edge.team && (
                             <div className="gp-edge">
-                                <div className="gp-edge-title">💎 TriplePlayz Edge</div>
+                                <div className="gp-edge-title">💎 YourSwami Edge</div>
                                 <div className="gp-edge-team">{detail.edge.team}</div>
                                 <div className="gp-edge-confidence">
                                     <div className="gp-edge-bar-bg">
@@ -1056,7 +1056,7 @@ function PickComposer({
             ``,
             analysis ? `📊 *${analysis}*` : '',
             divider,
-            `💎 TriplePlayz - Sports Advisory`,
+            `💎 YourSwami - Sports Advisory`,
         ].filter(Boolean).join('\n');
     };
 
@@ -1426,7 +1426,7 @@ export default function CommunityPage() {
                 .insert({
                     channel_id: activeChannel.id, user_id: user.id,
                     content: newMessage.trim().slice(0, 2000),
-                    display_name: profile.display_name || user.email?.split('@')[0] || 'TriplePlayz Member',
+                    display_name: profile.display_name || user.email?.split('@')[0] || 'YourSwami Member',
                     avatar_color: profile.avatar_color || '#00e59b', is_bot: false,
                     user_role: profile.role || (profile.is_admin ? 'admin' : 'member'),
                 });
@@ -1573,7 +1573,7 @@ export default function CommunityPage() {
             .from('community_messages')
             .insert({
                 channel_id: channelId, user_id: user.id,
-                content, display_name: profile.display_name || 'TriplePlayz',
+                content, display_name: profile.display_name || 'YourSwami',
                 avatar_color: '#fbbf24', is_bot: false,
             });
         if (err) throw err;
@@ -1630,7 +1630,7 @@ export default function CommunityPage() {
                     await supabase.from('community_messages').insert({
                         channel_id: picksCh.id, user_id: user.id,
                         content: formatted,
-                        display_name: '💎 TriplePlayz Algorithm',
+                        display_name: '💎 YourSwami Algorithm',
                         avatar_color: '#00e59b', is_bot: true,
                     });
                 }
@@ -1653,7 +1653,7 @@ export default function CommunityPage() {
                 await supabase.from('community_messages').insert({
                     channel_id: annCh.id, user_id: user.id,
                     content: data.announcement,
-                    display_name: '💎 TriplePlayz',
+                    display_name: '💎 YourSwami',
                     avatar_color: '#fbbf24', is_bot: true,
                 });
                 alert(`Schedule posted to #${annCh.name}!`);
@@ -1682,9 +1682,9 @@ export default function CommunityPage() {
                 <div className="lounge-paywall-card">
                     <div className="lounge-paywall-icon">💎</div>
                     <Image src="/brand/logo-primary.png" alt="YourSwami" width={56} height={56} style={{ margin: '0 auto 16px', borderRadius: '12px' }} />
-                    <h1 className="font-display" style={{ fontSize: '26px', fontWeight: 900, color: 'white', marginBottom: '8px' }}>The TriplePlayz Lounge</h1>
+                    <h1 className="font-display" style={{ fontSize: '26px', fontWeight: 900, color: 'white', marginBottom: '8px' }}>The Swami Lounge</h1>
                     <p style={{ color: '#9ca3af', fontSize: '14px', lineHeight: 1.6, marginBottom: '20px' }}>
-                        Your exclusive community for MLB picks, expert analysis, and real-time chat with TriplePlayz.
+                        Your exclusive community for MLB picks, expert analysis, and real-time chat with YourSwami.
                     </p>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
                         <Link href="/dashboard?signup=free" className="btn-glow"
@@ -1808,8 +1808,8 @@ export default function CommunityPage() {
                 {/* ═══ Sidebar ═══ */}
                 <aside className={`lounge-sidebar ${sidebarOpen ? 'open' : ''}`}>
                     <div className="lounge-sidebar-header">
-                        <h2>💎 TriplePlayz Lounge</h2>
-                        <p>TriplePlayz - Sports Advisory</p>
+                        <h2>💎 Swami Lounge</h2>
+                        <p>YourSwami - Sports Advisory</p>
                         <div className="lounge-online-badge"><span className="lounge-online-dot" /> Online</div>
                     </div>
 

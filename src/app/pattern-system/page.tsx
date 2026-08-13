@@ -233,7 +233,7 @@ const faqItems = [
     },
     {
         q: 'Do I need an account?',
-        a: "Yes — you'll create a free TriplePlayz account during checkout. This gives you immediate access to the Pattern System dashboard after payment.",
+        a: "Yes — you'll create a free YourSwami account during checkout. This gives you immediate access to the Pattern System dashboard after payment.",
     },
 ];
 
@@ -275,7 +275,7 @@ export default function PatternSystemPage() {
                     height={36}
                     className="ps-header-logo"
                 />
-                <span className="ps-header-name">TriplePlayz</span>
+                <span className="ps-header-name">YourSwami</span>
             </header>
 
             {/* ─── Hero ───────────────────────────────────────── */}
@@ -570,7 +570,7 @@ export default function PatternSystemPage() {
             {/* ─── Footer ─────────────────────────────────────── */}
             <footer className="ps-footer">
                 <p className="ps-footer-text">
-                    © 2025 TriplePlayz. For entertainment purposes only. 21+.
+                    © 2025 YourSwami. For entertainment purposes only. 21+.
                 </p>
                 <div className="ps-footer-links">
                     <Link href="/terms" className="ps-footer-link">

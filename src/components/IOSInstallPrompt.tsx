@@ -93,7 +93,7 @@ export default function IOSInstallPrompt() {
                             <Image src="/brand/logo-primary.png" alt="YourSwami" width={36} height={36} style={{ borderRadius: '10px' }} />
                             <div>
                                 <p style={{ color: 'white', fontSize: '15px', fontWeight: 700, margin: 0 }}>
-                                    Add TriplePlayz to Home Screen
+                                    Add YourSwami to Home Screen
                                 </p>
                                 <p style={{ color: '#9ca3af', fontSize: '12px', margin: 0 }}>
                                     Get the app experience — instant access, anytime
