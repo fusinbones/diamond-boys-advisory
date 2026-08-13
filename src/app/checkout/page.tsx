@@ -73,8 +73,8 @@ function CheckoutForm() {
 
                 {/* Plan summary — compact on mobile */}
                 <div style={{
-                    background: 'linear-gradient(135deg, rgba(0,229,155,0.06), rgba(26,39,68,0.4))',
-                    border: '1px solid rgba(0,229,155,0.12)',
+                    background: 'linear-gradient(135deg, rgba(106,0,255,0.06), rgba(26,39,68,0.4))',
+                    border: '1px solid rgba(106,0,255,0.12)',
                     borderRadius: '16px',
                     padding: '20px',
                     marginBottom: '20px',
@@ -117,11 +117,11 @@ function CheckoutForm() {
                     {selectedTier.trialDays && (
                         <div style={{
                             display: 'inline-flex', alignItems: 'center', gap: '6px',
-                            background: 'rgba(0,229,155,0.1)', border: '1px solid rgba(0,229,155,0.2)',
+                            background: 'rgba(106,0,255,0.1)', border: '1px solid rgba(106,0,255,0.2)',
                             borderRadius: '8px', padding: '6px 12px', marginBottom: '14px',
                         }}>
-                            <Check size={14} style={{ color: '#00e59b' }} />
-                            <span style={{ color: '#00e59b', fontSize: '13px', fontWeight: 600 }}>
+                            <Check size={14} style={{ color: '#FFC107' }} />
+                            <span style={{ color: '#FFC107', fontSize: '13px', fontWeight: 600 }}>
                                 {selectedTier.trialDays}-day free trial included
                             </span>
                         </div>
@@ -131,7 +131,7 @@ function CheckoutForm() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                         {selectedTier.features.slice(0, 3).map((feat, i) => (
                             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <Check size={13} style={{ color: '#00e59b', flexShrink: 0 }} />
+                                <Check size={13} style={{ color: '#FFC107', flexShrink: 0 }} />
                                 <span style={{ color: '#d1d5db', fontSize: '13px' }}>{feat}</span>
                             </div>
                         ))}
@@ -180,7 +180,7 @@ function CheckoutForm() {
                                         transition: 'border-color 0.15s',
                                         boxSizing: 'border-box',
                                     }}
-                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(0,229,155,0.4)'}
+                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(106,0,255,0.4)'}
                                     onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
                                 />
                             </div>
@@ -215,7 +215,7 @@ function CheckoutForm() {
                                         transition: 'border-color 0.15s',
                                         boxSizing: 'border-box',
                                     }}
-                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(0,229,155,0.4)'}
+                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(106,0,255,0.4)'}
                                     onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
                                 />
                             </div>
@@ -240,7 +240,7 @@ function CheckoutForm() {
                             disabled={loading}
                             style={{
                                 width: '100%', padding: '16px',
-                                background: loading ? 'rgba(0,229,155,0.3)' : 'linear-gradient(135deg, #00e59b, #00b377)',
+                                background: loading ? 'rgba(106,0,255,0.3)' : 'linear-gradient(135deg, #FFC107, #00b377)',
                                 border: 'none', borderRadius: '12px',
                                 color: '#0a0f1e', fontSize: '16px', fontWeight: 800,
                                 cursor: loading ? 'not-allowed' : 'pointer',
@@ -275,7 +275,7 @@ function CheckoutForm() {
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         gap: '6px', marginBottom: '8px',
                     }}>
-                        <Shield size={14} style={{ color: 'rgba(0,229,155,0.5)' }} />
+                        <Shield size={14} style={{ color: 'rgba(106,0,255,0.5)' }} />
                         <span style={{ color: '#6b7280', fontSize: '12px' }}>
                             Secure checkout powered by Stripe
                         </span>
@@ -284,7 +284,7 @@ function CheckoutForm() {
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         gap: '6px', marginBottom: '12px',
                     }}>
-                        <CreditCard size={14} style={{ color: 'rgba(0,229,155,0.5)' }} />
+                        <CreditCard size={14} style={{ color: 'rgba(106,0,255,0.5)' }} />
                         <span style={{ color: '#6b7280', fontSize: '12px' }}>
                             Card details collected on next step — we never store them
                         </span>
@@ -294,9 +294,9 @@ function CheckoutForm() {
                         maxWidth: '380px', margin: '0 auto',
                     }}>
                         By subscribing, you agree to our{' '}
-                        <Link href="/tos" style={{ color: '#00e59b', textDecoration: 'none' }}>Terms</Link>,{' '}
-                        <Link href="/tos#privacy" style={{ color: '#00e59b', textDecoration: 'none' }}>Privacy</Link>, and{' '}
-                        <Link href="/tos#ban-policy" style={{ color: '#00e59b', textDecoration: 'none' }}>Access Policy</Link>.
+                        <Link href="/tos" style={{ color: '#FFC107', textDecoration: 'none' }}>Terms</Link>,{' '}
+                        <Link href="/tos#privacy" style={{ color: '#FFC107', textDecoration: 'none' }}>Privacy</Link>, and{' '}
+                        <Link href="/tos#ban-policy" style={{ color: '#FFC107', textDecoration: 'none' }}>Access Policy</Link>.
                         For entertainment purposes only. 21+. Not financial advice.
                     </p>
                 </div>
@@ -311,8 +311,8 @@ export default function CheckoutPage() {
             <div style={{ padding: '80px 0', textAlign: 'center' }}>
                 <div style={{
                     width: '32px', height: '32px',
-                    border: '2px solid rgba(0,229,155,0.3)',
-                    borderTopColor: '#00e59b', borderRadius: '50%',
+                    border: '2px solid rgba(106,0,255,0.3)',
+                    borderTopColor: '#FFC107', borderRadius: '50%',
                     animation: 'spin 0.8s linear infinite',
                     margin: '0 auto',
                 }} />

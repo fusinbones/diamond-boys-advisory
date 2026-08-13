@@ -18,7 +18,7 @@ export default function PrivacyPage() {
                 <div className="space-y-8">
                     <section className="glass-card p-6 sm:p-8">
                         <div className="flex items-center gap-3 mb-6">
-                            <Lock size={24} className="text-[#00e59b]" />
+                            <Lock size={24} className="text-[#FFC107]" />
                             <h2 className="text-white font-display font-bold text-2xl">Data & Privacy</h2>
                         </div>
                         <div className="text-gray-400 text-sm leading-relaxed space-y-4">
@@ -49,9 +49,9 @@ export default function PrivacyPage() {
                             </ul>
 
                             <h3 className="text-white font-semibold text-base pt-2">Data Security & Compliance</h3>
-                            <div className="flex items-start gap-3 bg-[#00e59b]/5 border border-[#00e59b]/15 rounded-xl p-4 my-4">
-                                <ShieldCheck size={20} className="text-[#00e59b] mt-0.5" />
-                                <p className="text-[#00e59b] text-sm font-semibold">
+                            <div className="flex items-start gap-3 bg-[#FFC107]/5 border border-[#FFC107]/15 rounded-xl p-4 my-4">
+                                <ShieldCheck size={20} className="text-[#FFC107] mt-0.5" />
+                                <p className="text-[#FFC107] text-sm font-semibold">
                                     All payment processing is handled by Stripe. We never touch or store sensitive financial data.
                                 </p>
                             </div>
@@ -76,7 +76,7 @@ export default function PrivacyPage() {
 
                     <section className="glass-card p-6 sm:p-8">
                         <div className="flex items-center gap-3 mb-6">
-                            <Mail size={24} className="text-[#00e59b]" />
+                            <Mail size={24} className="text-[#FFC107]" />
                             <h2 className="text-white font-display font-bold text-2xl">Contact Us</h2>
                         </div>
                         <div className="text-gray-400 text-sm leading-relaxed space-y-4">

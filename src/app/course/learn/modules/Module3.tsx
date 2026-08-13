@@ -39,8 +39,8 @@ export default function Module3() {
                         {[
                             { streak: '4 games', status: 'Developing', prob: '8%', action: '❌ Skip', color: '#6b7280' },
                             { streak: '5 games', status: 'Developing', prob: '15%', action: '👀 Watch', color: '#60a5fa' },
-                            { streak: '6 games', status: 'TRUE ✅', prob: '62%', action: '✅ Actionable', color: '#00e59b' },
-                            { streak: '7 games', status: 'TRUE ✅', prob: '69%', action: '✅ Strong', color: '#00e59b' },
+                            { streak: '6 games', status: 'TRUE ✅', prob: '62%', action: '✅ Actionable', color: '#FFC107' },
+                            { streak: '7 games', status: 'TRUE ✅', prob: '69%', action: '✅ Strong', color: '#FFC107' },
                             { streak: '8 games', status: 'TRUE ✅', prob: '73%', action: '🔥 Very Strong', color: '#fbbf24' },
                             { streak: '9 games', status: 'TRUE ✅', prob: '80%', action: '🔥 Excellent', color: '#fbbf24' },
                             { streak: '10 games', status: 'TRUE ✅', prob: '85%', action: '🔥🔥 Elite', color: '#ef4444' },
@@ -112,7 +112,7 @@ export default function Module3() {
             </div>
 
             <div className="learn-callout success">
-                <h4 style={{ color: '#00e59b' }}>✅ The Golden Rule</h4>
+                <h4 style={{ color: '#FFC107' }}>✅ The Golden Rule</h4>
                 <p>
                     <strong>Developing = Watch. True = Act.</strong> This single rule will keep you profitable. 
                     Memorize it. Tattoo it. Never break it.

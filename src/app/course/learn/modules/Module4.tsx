@@ -21,7 +21,7 @@ export default function Module4() {
     };
 
     const score = getScore(streakInput);
-    const scoreColor = score >= 80 ? '#ef4444' : score >= 62 ? '#00e59b' : '#6b7280';
+    const scoreColor = score >= 80 ? '#ef4444' : score >= 62 ? '#FFC107' : '#6b7280';
 
     return (
         <>
@@ -94,7 +94,7 @@ export default function Module4() {
                 </p>
 
                 <div className="learn-widget">
-                    <h4 style={{ color: '#00e59b' }}>📈 The Probability Curve</h4>
+                    <h4 style={{ color: '#FFC107' }}>📈 The Probability Curve</h4>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                         {[
                             { streak: 6, prob: 62 }, { streak: 7, prob: 69 }, { streak: 8, prob: 73 },
@@ -107,10 +107,10 @@ export default function Module4() {
                                     <div style={{
                                         width: `${prob}%`, height: '100%', borderRadius: '4px',
                                         background: prob >= 85 ? 'linear-gradient(90deg, #ef4444, #f59e0b)' :
-                                                   prob >= 62 ? 'linear-gradient(90deg, #00e59b, #60a5fa)' : '#6b7280',
+                                                   prob >= 62 ? 'linear-gradient(90deg, #FFC107, #60a5fa)' : '#6b7280',
                                     }} />
                                 </div>
-                                <span style={{ fontSize: '13px', fontWeight: 800, color: prob >= 85 ? '#ef4444' : '#00e59b', width: '36px' }}>
+                                <span style={{ fontSize: '13px', fontWeight: 800, color: prob >= 85 ? '#ef4444' : '#FFC107', width: '36px' }}>
                                     {prob}%
                                 </span>
                             </div>

@@ -68,8 +68,8 @@ export default function GamesBoard(): ReactNode {
                     <Tooltip text="Live odds from sportsbooks. Green numbers mean underdog (higher payout). Red numbers mean favorite." />
                     {liveCount > 0 && (
                         <span style={{
-                            fontSize: '9px', fontWeight: 700, color: '#00e59b',
-                            background: 'rgba(0,229,155,0.12)', padding: '2px 6px', borderRadius: '4px',
+                            fontSize: '9px', fontWeight: 700, color: '#FFC107',
+                            background: 'rgba(106,0,255,0.12)', padding: '2px 6px', borderRadius: '4px',
                         }}>
                             {liveCount} LIVE
                         </span>
@@ -100,9 +100,9 @@ export default function GamesBoard(): ReactNode {
                             style={{
                                 padding: '3px 10px', borderRadius: '12px',
                                 fontSize: '10px', fontWeight: 600, cursor: 'pointer',
-                                border: active ? '1px solid rgba(0,229,155,0.3)' : '1px solid rgba(255,255,255,0.06)',
-                                background: active ? 'rgba(0,229,155,0.1)' : 'transparent',
-                                color: active ? '#00e59b' : '#6b7280',
+                                border: active ? '1px solid rgba(106,0,255,0.3)' : '1px solid rgba(255,255,255,0.06)',
+                                background: active ? 'rgba(106,0,255,0.1)' : 'transparent',
+                                color: active ? '#FFC107' : '#6b7280',
                             }}
                         >
                             {tab} <span style={{ opacity: 0.5 }}>{count}</span>
@@ -114,7 +114,7 @@ export default function GamesBoard(): ReactNode {
             {/* Loading */}
             {loading ? (
                 <div style={{ padding: '30px 0', textAlign: 'center' }}>
-                    <Loader2 size={16} style={{ color: '#00e59b', animation: 'spin 1s linear infinite', margin: '0 auto 6px' }} />
+                    <Loader2 size={16} style={{ color: '#FFC107', animation: 'spin 1s linear infinite', margin: '0 auto 6px' }} />
                     <p style={{ color: '#6b7280', fontSize: '10px' }}>Loading lines...</p>
                 </div>
             ) : games.length === 0 ? (
@@ -135,8 +135,8 @@ export default function GamesBoard(): ReactNode {
                                 onClick={() => setShowAll(true)}
                                 className="game-tile"
                                 style={{
-                                    background: 'rgba(0,229,155,0.05)',
-                                    border: '1px solid rgba(0,229,155,0.15)',
+                                    background: 'rgba(106,0,255,0.05)',
+                                    border: '1px solid rgba(106,0,255,0.15)',
                                     borderRadius: '10px',
                                     padding: '10px 12px',
                                     minWidth: '100px',
@@ -144,7 +144,7 @@ export default function GamesBoard(): ReactNode {
                                     cursor: 'pointer',
                                     display: 'flex', flexDirection: 'column',
                                     alignItems: 'center', justifyContent: 'center', gap: '4px',
-                                    color: '#00e59b', fontSize: '11px', fontWeight: 600,
+                                    color: '#FFC107', fontSize: '11px', fontWeight: 600,
                                 }}
                             >
                                 <ChevronRight size={16} />

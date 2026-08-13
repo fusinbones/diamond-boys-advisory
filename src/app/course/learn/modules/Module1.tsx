@@ -29,7 +29,7 @@ export default function Module1() {
             </div>
 
             <div className="learn-widget">
-                <h4 style={{ color: '#00e59b' }}>🔬 Live Example — True Alternation</h4>
+                <h4 style={{ color: '#FFC107' }}>🔬 Live Example — True Alternation</h4>
                 <p style={{ color: '#9ca3af', fontSize: '13px', marginBottom: '16px' }}>
                     Watch how a real alternation pattern builds over 8 games:
                 </p>
@@ -102,7 +102,7 @@ export default function Module1() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <span style={{ fontSize: '24px' }}>🔥</span>
                             <div>
-                                <div style={{ fontWeight: 700, fontSize: '14px', color: '#00e59b' }}>True Pattern (6+ games)</div>
+                                <div style={{ fontWeight: 700, fontSize: '14px', color: '#FFC107' }}>True Pattern (6+ games)</div>
                                 <div style={{ fontSize: '12px', color: '#6b7280' }}>Pattern is mature and actionable. Break probability: 62-99%</div>
                             </div>
                         </div>
@@ -118,7 +118,7 @@ export default function Module1() {
             </div>
 
             <div className="learn-callout success">
-                <h4 style={{ color: '#00e59b' }}>✅ What You Need to Remember</h4>
+                <h4 style={{ color: '#FFC107' }}>✅ What You Need to Remember</h4>
                 <p>
                     You&apos;re not predicting who will win or lose. You&apos;re predicting that the <strong>alternation pattern 
                     will break</strong>. That&apos;s a fundamentally different (and more accurate) prediction than trying to 

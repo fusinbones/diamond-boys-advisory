@@ -13,12 +13,12 @@ const tierIcons: Record<string, React.ReactNode> = {
 
 const tierColors: Record<string, { border: string; badge: string; glow: string }> = {
     weekly: {
-        border: 'border-[#00e59b]/20',
-        badge: 'bg-[#00e59b]/10 text-[#00e59b] border-[#00e59b]/20',
+        border: 'border-[#FFC107]/20',
+        badge: 'bg-[#FFC107]/10 text-[#FFC107] border-[#FFC107]/20',
         glow: '',
     },
     monthly: {
-        border: 'border-[#00e59b]/40',
+        border: 'border-[#FFC107]/40',
         badge: 'bg-[#fbbf24]/15 text-[#fbbf24] border-[#fbbf24]/30',
         glow: 'popular-glow',
     },
@@ -65,7 +65,7 @@ export default function PricingCards() {
 
                             {/* Icon + Name */}
                             <div className="flex items-center gap-2.5 sm:gap-3 mb-2 sm:mb-3">
-                                <div className="text-[#00e59b]">
+                                <div className="text-[#FFC107]">
                                     {tierIcons[tier.id]}
                                 </div>
                                 <h3 className="text-white font-display font-bold text-base sm:text-lg">{tier.name}</h3>
@@ -84,7 +84,7 @@ export default function PricingCards() {
                             <ul className="space-y-2 sm:space-y-2.5 mb-6 sm:mb-8 flex-1">
                                 {tier.features.map((feature, j) => (
                                     <li key={j} className="flex items-start gap-2 sm:gap-2.5">
-                                        <Check size={14} className="sm:w-4 sm:h-4 text-[#00e59b] mt-0.5 flex-shrink-0" />
+                                        <Check size={14} className="sm:w-4 sm:h-4 text-[#FFC107] mt-0.5 flex-shrink-0" />
                                         <span className="text-gray-400 text-xs sm:text-sm">{feature}</span>
                                     </li>
                                 ))}
@@ -95,7 +95,7 @@ export default function PricingCards() {
                                 onClick={() => handleSelect(tier.id, tier.name)}
                                 className={`w-full py-2.5 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-300 cursor-pointer ${tier.popular
                                         ? 'btn-glow !rounded-xl'
-                                        : 'bg-white/5 text-white hover:bg-white/10 border border-white/10 hover:border-[#00e59b]/30'
+                                        : 'bg-white/5 text-white hover:bg-white/10 border border-white/10 hover:border-[#FFC107]/30'
                                     }`}
                             >
                                 {tier.trialDays ? `Start ${tier.trialDays}-Day Free Trial` : `Choose ${tier.name}`}

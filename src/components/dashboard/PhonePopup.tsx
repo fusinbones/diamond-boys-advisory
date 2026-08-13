@@ -119,11 +119,11 @@ export default function PhonePopup() {
                             <div style={{ textAlign: 'center', padding: '12px 0' }}>
                                 <div style={{
                                     width: '56px', height: '56px', borderRadius: '50%',
-                                    background: 'rgba(0,229,155,0.1)', border: '1px solid rgba(0,229,155,0.3)',
+                                    background: 'rgba(106,0,255,0.1)', border: '1px solid rgba(106,0,255,0.3)',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     margin: '0 auto 14px',
                                 }}>
-                                    <Phone size={24} style={{ color: '#00e59b' }} />
+                                    <Phone size={24} style={{ color: '#FFC107' }} />
                                 </div>
                                 <p style={{ color: 'white', fontWeight: 700, fontSize: '16px', margin: 0 }}>
                                     You&apos;re all set! 🎉
@@ -138,11 +138,11 @@ export default function PhonePopup() {
                                 <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                                     <div style={{
                                         width: '56px', height: '56px', borderRadius: '14px',
-                                        background: 'rgba(0,229,155,0.1)', border: '1px solid rgba(0,229,155,0.2)',
+                                        background: 'rgba(106,0,255,0.1)', border: '1px solid rgba(106,0,255,0.2)',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                                         margin: '0 auto 14px',
                                     }}>
-                                        <Smartphone size={26} style={{ color: '#00e59b' }} />
+                                        <Smartphone size={26} style={{ color: '#FFC107' }} />
                                     </div>
                                     <h3 style={{ color: 'white', fontWeight: 700, fontSize: '18px', margin: '0 0 4px' }}>
                                         Never Miss a Pick
@@ -189,7 +189,7 @@ export default function PhonePopup() {
                                         width: '100%', padding: '12px',
                                         background: submitting || !phoneValue.trim()
                                             ? 'rgba(255,255,255,0.05)'
-                                            : 'linear-gradient(135deg, #00e59b, #00c9ff)',
+                                            : 'linear-gradient(135deg, #FFC107, #00c9ff)',
                                         color: submitting || !phoneValue.trim() ? '#6b7280' : '#0a0a0f',
                                         border: 'none', borderRadius: '10px',
                                         fontWeight: 700, fontSize: '14px',

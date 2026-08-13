@@ -288,13 +288,13 @@ function PatternCheckoutForm() {
                                     width: '20px',
                                     height: '20px',
                                     borderRadius: '6px',
-                                    background: 'rgba(0,229,155,0.1)',
+                                    background: 'rgba(106,0,255,0.1)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     flexShrink: 0,
                                 }}>
-                                    <Check size={12} style={{ color: '#00e59b' }} />
+                                    <Check size={12} style={{ color: '#FFC107' }} />
                                 </div>
                                 <span style={{ color: '#d1d5db', fontSize: '13px' }}>{feat.text}</span>
                             </div>

@@ -71,7 +71,7 @@
     border-left: 3px solid #ef4444;
 }
 .pick-card--won {
-    border-left: 3px solid #00e59b;
+    border-left: 3px solid #FFC107;
 }
 .pick-card--lost {
     opacity: 0.55;
@@ -99,9 +99,9 @@
     border: 1px solid rgba(59, 130, 246, 0.2);
 }
 .status-pill--won {
-    background: rgba(0, 229, 155, 0.12);
-    color: #00e59b;
-    border: 1px solid rgba(0, 229, 155, 0.2);
+    background: rgba(106, 0, 255, 0.12);
+    color: #FFC107;
+    border: 1px solid rgba(106, 0, 255, 0.2);
 }
 .status-pill--lost {
     background: rgba(161, 161, 170, 0.1);
@@ -168,9 +168,9 @@
     color: #d1d5db;
 }
 .sport-pill--active {
-    background: rgba(0, 229, 155, 0.12);
-    color: #00e59b;
-    border-color: rgba(0, 229, 155, 0.2);
+    background: rgba(106, 0, 255, 0.12);
+    color: #FFC107;
+    border-color: rgba(106, 0, 255, 0.2);
 }
 
 /* Tab Bar */
@@ -196,14 +196,14 @@
     transition: all 0.2s;
 }
 .dash-tab--active {
-    background: rgba(0, 229, 155, 0.1);
-    color: #00e59b;
+    background: rgba(106, 0, 255, 0.1);
+    color: #FFC107;
 }
 
 /* Morning Slate */
 .morning-slate {
-    background: linear-gradient(135deg, rgba(0, 229, 155, 0.08) 0%, rgba(26, 39, 68, 0.3) 100%);
-    border: 1px solid rgba(0, 229, 155, 0.15);
+    background: linear-gradient(135deg, rgba(106, 0, 255, 0.08) 0%, rgba(26, 39, 68, 0.3) 100%);
+    border: 1px solid rgba(106, 0, 255, 0.15);
     border-radius: 16px;
     padding: 20px;
 }
@@ -251,9 +251,9 @@
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: #00e59b;
+    background: #FFC107;
     cursor: pointer;
-    box-shadow: 0 0 8px rgba(0, 229, 155, 0.4);
+    box-shadow: 0 0 8px rgba(106, 0, 255, 0.4);
 }
 
 /* Paywall Overlay */
@@ -380,13 +380,13 @@
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: rgba(0, 229, 155, 0.15);
+    background: rgba(106, 0, 255, 0.15);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 10px;
     flex-shrink: 0;
-    color: #00e59b;
+    color: #FFC107;
     font-weight: 700;
 }
 

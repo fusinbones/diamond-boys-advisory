@@ -42,7 +42,7 @@ function ConfettiCanvas() {
             decay: number;
         }
 
-        const colors = ['#a78bfa', '#c4b5fd', '#00e59b', '#34d399', '#fbbf24', '#f472b6', '#60a5fa'];
+        const colors = ['#a78bfa', '#c4b5fd', '#FFC107', '#FFC107', '#fbbf24', '#f472b6', '#60a5fa'];
         const particles: Particle[] = [];
         const PARTICLE_COUNT = 120;
 
@@ -244,14 +244,14 @@ function PatternSuccessContent() {
                                     width: '28px',
                                     height: '28px',
                                     borderRadius: '8px',
-                                    background: 'rgba(0,229,155,0.1)',
-                                    border: '1px solid rgba(0,229,155,0.15)',
+                                    background: 'rgba(106,0,255,0.1)',
+                                    border: '1px solid rgba(106,0,255,0.15)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     flexShrink: 0,
                                 }}>
-                                    <feat.icon size={14} style={{ color: '#00e59b' }} />
+                                    <feat.icon size={14} style={{ color: '#FFC107' }} />
                                 </div>
                                 <span style={{ color: '#d1d5db', fontSize: '14px' }}>{feat.text}</span>
                             </motion.div>
@@ -275,7 +275,7 @@ function PatternSuccessContent() {
                             gap: '8px',
                             width: '100%',
                             padding: '16px 24px',
-                            background: 'linear-gradient(135deg, #00e59b, #00b377)',
+                            background: 'linear-gradient(135deg, #FFC107, #00b377)',
                             border: 'none',
                             borderRadius: '12px',
                             color: '#0a0f1e',
@@ -283,7 +283,7 @@ function PatternSuccessContent() {
                             fontWeight: 800,
                             textDecoration: 'none',
                             transition: 'transform 0.15s, box-shadow 0.15s',
-                            boxShadow: '0 0 24px rgba(0,229,155,0.2)',
+                            boxShadow: '0 0 24px rgba(106,0,255,0.2)',
                         }}
                     >
                         Open Pattern System

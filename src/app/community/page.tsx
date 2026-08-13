@@ -305,7 +305,7 @@ function GameAnalysisPanel({ game, onClose }: { game: TickerGame; onClose: () =>
                 <div className="game-panel-header">
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span style={{ fontSize: '14px', fontWeight: 800, color: 'white' }}>📊 Game Analysis</span>
-                        <span style={{ fontSize: '10px', color: '#00e59b', background: 'rgba(0,229,155,0.1)', padding: '2px 8px', borderRadius: '10px', fontWeight: 700 }}>PREMIUM</span>
+                        <span style={{ fontSize: '10px', color: '#FFC107', background: 'rgba(106,0,255,0.1)', padding: '2px 8px', borderRadius: '10px', fontWeight: 700 }}>PREMIUM</span>
                     </div>
                     <button className="game-panel-close" onClick={onClose}><X size={16} /></button>
                 </div>
@@ -394,11 +394,11 @@ function GameAnalysisPanel({ game, onClose }: { game: TickerGame; onClose: () =>
                                 <div className="gp-consensus">
                                     <div className="gp-consensus-labels">
                                         <span style={{ color: '#818cf8' }}>{game.away.name.split(' ').pop()} {detail.consensus.away}%</span>
-                                        <span style={{ color: '#00e59b' }}>{game.home.name.split(' ').pop()} {detail.consensus.home}%</span>
+                                        <span style={{ color: '#FFC107' }}>{game.home.name.split(' ').pop()} {detail.consensus.home}%</span>
                                     </div>
                                     <div className="gp-consensus-bar-bg">
                                         <div className="gp-consensus-bar-fill" style={{ width: `${detail.consensus.away}%`, background: '#818cf8' }} />
-                                        <div className="gp-consensus-bar-fill" style={{ width: `${detail.consensus.home}%`, background: '#00e59b' }} />
+                                        <div className="gp-consensus-bar-fill" style={{ width: `${detail.consensus.home}%`, background: '#FFC107' }} />
                                     </div>
                                 </div>
                             </div>
@@ -882,8 +882,8 @@ function AdminPanel({
                                                 onClick={() => setIcon(ic)}
                                                 style={{
                                                     width: '32px', height: '32px', borderRadius: '6px',
-                                                    border: ic === icon ? '2px solid #00e59b' : '1px solid rgba(255,255,255,0.06)',
-                                                    background: ic === icon ? 'rgba(0,229,155,0.08)' : 'none',
+                                                    border: ic === icon ? '2px solid #FFC107' : '1px solid rgba(255,255,255,0.06)',
+                                                    background: ic === icon ? 'rgba(106,0,255,0.08)' : 'none',
                                                     fontSize: '16px', cursor: 'pointer', display: 'flex',
                                                     alignItems: 'center', justifyContent: 'center',
                                                 }}
@@ -1427,7 +1427,7 @@ export default function CommunityPage() {
                     channel_id: activeChannel.id, user_id: user.id,
                     content: newMessage.trim().slice(0, 2000),
                     display_name: profile.display_name || user.email?.split('@')[0] || 'YourSwami Member',
-                    avatar_color: profile.avatar_color || '#00e59b', is_bot: false,
+                    avatar_color: profile.avatar_color || '#FFC107', is_bot: false,
                     user_role: profile.role || (profile.is_admin ? 'admin' : 'member'),
                 });
             if (insertErr) { setError(insertErr.message || 'Failed to send'); return; }
@@ -1631,7 +1631,7 @@ export default function CommunityPage() {
                         channel_id: picksCh.id, user_id: user.id,
                         content: formatted,
                         display_name: '💎 YourSwami Algorithm',
-                        avatar_color: '#00e59b', is_bot: true,
+                        avatar_color: '#FFC107', is_bot: true,
                     });
                 }
                 alert(`Posted ${data.formattedPicks.length} freebie picks to #${picksCh.name}!`);
@@ -1669,7 +1669,7 @@ export default function CommunityPage() {
         return (
             <div className="lounge-paywall">
                 <div style={{ textAlign: 'center' }}>
-                    <Loader2 size={24} style={{ color: '#00e59b', animation: 'spin 1s linear infinite', margin: '0 auto 10px' }} />
+                    <Loader2 size={24} style={{ color: '#FFC107', animation: 'spin 1s linear infinite', margin: '0 auto 10px' }} />
                     <p style={{ color: '#4b5563', fontSize: '13px' }}>Loading The Lounge...</p>
                 </div>
             </div>
@@ -1722,12 +1722,12 @@ export default function CommunityPage() {
             {!isPaid && !isAdmin && (
                 <div className="analysis-counter" style={{
                     position: 'fixed', bottom: '20px', left: '20px', zIndex: 800,
-                    background: analysisCount >= 4 ? 'rgba(239,68,68,0.15)' : analysisCount >= 3 ? 'rgba(251,191,36,0.12)' : 'rgba(0,229,155,0.1)',
-                    border: `1px solid ${analysisCount >= 4 ? 'rgba(239,68,68,0.3)' : analysisCount >= 3 ? 'rgba(251,191,36,0.2)' : 'rgba(0,229,155,0.15)'}`,
+                    background: analysisCount >= 4 ? 'rgba(239,68,68,0.15)' : analysisCount >= 3 ? 'rgba(251,191,36,0.12)' : 'rgba(106,0,255,0.1)',
+                    border: `1px solid ${analysisCount >= 4 ? 'rgba(239,68,68,0.3)' : analysisCount >= 3 ? 'rgba(251,191,36,0.2)' : 'rgba(106,0,255,0.15)'}`,
                     borderRadius: '12px', padding: '8px 14px',
                     display: 'flex', alignItems: 'center', gap: '8px',
                     backdropFilter: 'blur(12px)', fontSize: '12px', fontWeight: 700,
-                    color: analysisCount >= 4 ? '#fca5a5' : analysisCount >= 3 ? '#fbbf24' : '#00e59b',
+                    color: analysisCount >= 4 ? '#fca5a5' : analysisCount >= 3 ? '#fbbf24' : '#FFC107',
                     animation: analysisCount >= 4 ? 'pulse 2s infinite' : 'none',
                 }}>
                     📊 {ANALYSIS_LIMIT - analysisCount}/{ANALYSIS_LIMIT} free analyses
@@ -1942,7 +1942,7 @@ export default function CommunityPage() {
                                 cursor: 'pointer', color: '#6b7280', fontSize: '11px', fontWeight: 600,
                             }}
                         >
-                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#00e59b', display: 'inline-block' }} />
+                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#FFC107', display: 'inline-block' }} />
                             {onlineUsers.length} online
                             <span style={{ fontSize: '10px', transition: 'transform 0.2s', transform: showOnline ? 'rotate(180deg)' : 'none' }}>▼</span>
                         </button>
@@ -1964,7 +1964,7 @@ export default function CommunityPage() {
                                         padding: '2px 8px', borderRadius: '10px',
                                         background: 'rgba(255,255,255,0.03)', fontSize: '11px', color: '#9ca3af',
                                     }}>
-                                        <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: u.role === 'admin' ? '#fbbf24' : u.role === 'staff' ? '#818cf8' : '#00e59b' }} />
+                                        <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: u.role === 'admin' ? '#fbbf24' : u.role === 'staff' ? '#818cf8' : '#FFC107' }} />
                                         {u.display_name}
                                     </div>
                                 ))}
@@ -2049,14 +2049,14 @@ export default function CommunityPage() {
                                                             style={{
                                                                 display: 'flex', alignItems: 'center', gap: '3px',
                                                                 padding: '2px 6px', borderRadius: '10px',
-                                                                background: iReacted ? 'rgba(0,229,155,0.12)' : 'rgba(255,255,255,0.04)',
-                                                                border: `1px solid ${iReacted ? 'rgba(0,229,155,0.3)' : 'rgba(255,255,255,0.08)'}`,
+                                                                background: iReacted ? 'rgba(106,0,255,0.12)' : 'rgba(255,255,255,0.04)',
+                                                                border: `1px solid ${iReacted ? 'rgba(106,0,255,0.3)' : 'rgba(255,255,255,0.08)'}`,
                                                                 cursor: 'pointer', fontSize: '12px', color: '#d1d5db',
                                                                 transition: 'all 0.15s',
                                                             }}
                                                         >
                                                             <span>{emoji}</span>
-                                                            <span style={{ fontSize: '10px', fontWeight: 700, color: iReacted ? '#00e59b' : '#6b7280' }}>{users.length}</span>
+                                                            <span style={{ fontSize: '10px', fontWeight: 700, color: iReacted ? '#FFC107' : '#6b7280' }}>{users.length}</span>
                                                         </button>
                                                     );
                                                 })}
@@ -2121,7 +2121,7 @@ export default function CommunityPage() {
                                     <button className="lounge-pick-btn" onClick={() => setShowPickComposer(true)}>
                                         📋 Post Pick
                                     </button>
-                                    <button className="lounge-pick-btn" onClick={postFreebies} style={{ borderColor: 'rgba(0,229,155,0.15)', background: 'rgba(0,229,155,0.06)', color: '#00e59b' }}>
+                                    <button className="lounge-pick-btn" onClick={postFreebies} style={{ borderColor: 'rgba(106,0,255,0.15)', background: 'rgba(106,0,255,0.06)', color: '#FFC107' }}>
                                         <Zap size={12} /> Freebies
                                     </button>
                                     <button className="lounge-pick-btn" onClick={postSchedule} style={{ borderColor: 'rgba(99,102,241,0.15)', background: 'rgba(99,102,241,0.06)', color: '#818cf8' }}>
@@ -2197,7 +2197,7 @@ export default function CommunityPage() {
                         {reportSent ? (
                             <div style={{ textAlign: 'center', padding: '20px 0' }}>
                                 <div style={{ fontSize: '36px', marginBottom: '12px' }}>✅</div>
-                                <h3 style={{ color: '#00e59b', fontSize: '16px', fontWeight: 700, marginBottom: '4px' }}>Report Submitted</h3>
+                                <h3 style={{ color: '#FFC107', fontSize: '16px', fontWeight: 700, marginBottom: '4px' }}>Report Submitted</h3>
                                 <p style={{ color: '#6b7280', fontSize: '12px' }}>Our team will review this shortly.</p>
                             </div>
                         ) : (

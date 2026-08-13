@@ -70,8 +70,8 @@
 }
 
 .admin-nav-link.active {
-    background: rgba(0, 229, 155, 0.08);
-    color: #00e59b;
+    background: rgba(106, 0, 255, 0.08);
+    color: #FFC107;
 }
 
 .admin-nav-section {
@@ -168,16 +168,16 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(0, 229, 155, 0.04) 0%, transparent 60%);
+    background: linear-gradient(135deg, rgba(106, 0, 255, 0.04) 0%, transparent 60%);
     opacity: 0;
     transition: opacity 0.25s;
 }
 
 .admin-game-card:hover {
-    border-color: rgba(0, 229, 155, 0.3);
+    border-color: rgba(106, 0, 255, 0.3);
     background: rgba(15, 23, 42, 0.75);
     transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 229, 155, 0.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(106, 0, 255, 0.1);
 }
 
 .admin-game-card:hover::before {
@@ -246,8 +246,8 @@
 }
 
 .admin-game-status.live {
-    background: rgba(0, 229, 155, 0.15);
-    color: #00e59b;
+    background: rgba(106, 0, 255, 0.15);
+    color: #FFC107;
 }
 
 .admin-game-status.finished {
@@ -286,9 +286,9 @@
 
 .admin-search-input:focus {
     outline: none;
-    border-color: rgba(0, 229, 155, 0.4);
+    border-color: rgba(106, 0, 255, 0.4);
     background: rgba(15, 23, 42, 0.8);
-    box-shadow: 0 0 0 3px rgba(0, 229, 155, 0.08);
+    box-shadow: 0 0 0 3px rgba(106, 0, 255, 0.08);
 }
 
 .admin-search-icon {
@@ -704,8 +704,8 @@
 }
 
 .admin-tab.active {
-    background: rgba(0, 229, 155, 0.1);
-    color: #00e59b;
+    background: rgba(106, 0, 255, 0.1);
+    color: #FFC107;
 }
 
 /* ── Inputs ─────────────────────────────── */
@@ -724,7 +724,7 @@
 }
 
 .admin-input:focus {
-    border-color: rgba(0, 229, 155, 0.4);
+    border-color: rgba(106, 0, 255, 0.4);
 }
 
 .admin-input::placeholder {
@@ -765,7 +765,7 @@
 }
 
 .admin-textarea:focus {
-    border-color: rgba(0, 229, 155, 0.4);
+    border-color: rgba(106, 0, 255, 0.4);
 }
 
 .admin-label {
@@ -792,7 +792,7 @@
 }
 
 .admin-btn-primary {
-    background: #00e59b;
+    background: #FFC107;
     color: #0a101e;
 }
 
@@ -828,8 +828,8 @@
     border-radius: 6px;
     font-size: 11px;
     font-weight: 700;
-    background: rgba(0, 229, 155, 0.12);
-    color: #00e59b;
+    background: rgba(106, 0, 255, 0.12);
+    color: #FFC107;
 }
 
 .admin-badge-miss {
@@ -893,8 +893,8 @@
 .admin-spinner {
     width: 20px;
     height: 20px;
-    border: 2px solid rgba(0, 229, 155, 0.2);
-    border-top-color: #00e59b;
+    border: 2px solid rgba(106, 0, 255, 0.2);
+    border-top-color: #FFC107;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
@@ -944,9 +944,9 @@
 }
 
 .admin-streak-dot.win {
-    background: rgba(0, 229, 155, 0.15);
-    color: #00e59b;
-    border: 1px solid rgba(0, 229, 155, 0.3);
+    background: rgba(106, 0, 255, 0.15);
+    color: #FFC107;
+    border: 1px solid rgba(106, 0, 255, 0.3);
 }
 
 .admin-streak-dot.loss {
@@ -982,7 +982,7 @@
 /* ── Live Pulse ────────────────────────── */
 
 .admin-game-card.live-card {
-    border-color: rgba(0, 229, 155, 0.25);
+    border-color: rgba(106, 0, 255, 0.25);
     animation: livePulse 2s ease-in-out infinite;
 }
 
@@ -990,11 +990,11 @@
 
     0%,
     100% {
-        border-color: rgba(0, 229, 155, 0.15);
+        border-color: rgba(106, 0, 255, 0.15);
     }
 
     50% {
-        border-color: rgba(0, 229, 155, 0.4);
+        border-color: rgba(106, 0, 255, 0.4);
     }
 }
 
@@ -1002,7 +1002,7 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #00e59b;
+    background: #FFC107;
     animation: liveDotPulse 1.2s ease-in-out infinite;
 }
 
@@ -1069,9 +1069,9 @@
 }
 
 .admin-filter-pill.active {
-    background: rgba(0, 229, 155, 0.1);
-    border-color: rgba(0, 229, 155, 0.3);
-    color: #00e59b;
+    background: rgba(106, 0, 255, 0.1);
+    border-color: rgba(106, 0, 255, 0.3);
+    color: #FFC107;
 }
 
 /* ── Quick Pick Button ─────────────────── */
@@ -1112,13 +1112,13 @@
 }
 
 .admin-game-select-card:hover {
-    border-color: rgba(0, 229, 155, 0.3);
+    border-color: rgba(106, 0, 255, 0.3);
     background: rgba(15, 23, 42, 0.5);
 }
 
 .admin-game-select-card.selected {
-    border-color: rgba(0, 229, 155, 0.4);
-    background: rgba(0, 229, 155, 0.06);
+    border-color: rgba(106, 0, 255, 0.4);
+    background: rgba(106, 0, 255, 0.06);
 }
 
 .admin-game-select-card img {

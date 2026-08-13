@@ -204,7 +204,7 @@ export async function POST(request: NextRequest) {
                 user_id: user.id,
                 content: sanitized,
                 display_name: profile.display_name || user.email?.split('@')[0] || 'Anonymous',
-                avatar_color: profile.avatar_color || '#00e59b',
+                avatar_color: profile.avatar_color || '#FFC107',
                 is_bot: false,
             })
             .select()
@@ -260,7 +260,7 @@ Respond naturally as YourSwamiBot:`,
                 user_id: userId,
                 content: botReply,
                 display_name: 'YourSwamiBot 💎',
-                avatar_color: '#00e59b',
+                avatar_color: '#FFC107',
                 is_bot: true,
             });
     } catch (error) {

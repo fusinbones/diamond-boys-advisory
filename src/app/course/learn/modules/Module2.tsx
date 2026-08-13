@@ -32,7 +32,7 @@ export default function Module2() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                     {[
                         { label: 'Team Card', desc: 'Each team gets a card showing their name, division, and current pattern status.', color: '#d1d5db' },
-                        { label: 'Alt Streak Number', desc: 'Shows how many consecutive games the team has been alternating W-L. Higher = stronger pattern.', color: '#00e59b' },
+                        { label: 'Alt Streak Number', desc: 'Shows how many consecutive games the team has been alternating W-L. Higher = stronger pattern.', color: '#FFC107' },
                         { label: 'Break Score Badge', desc: 'The big percentage (62-99%) — this is your primary signal. Higher score = higher probability the pattern breaks next game.', color: '#fbbf24' },
                         { label: 'True Pattern / Developing Label', desc: '"True Pattern" (green) = 6+ games, actionable. "Developing" (blue) = 4-5 games, watch but don\'t bet yet.', color: '#60a5fa' },
                         { label: 'Next Prediction Arrow', desc: 'Shows whether the algorithm predicts a W or L for the team\'s next game based on the break direction.', color: '#ef4444' },
@@ -95,13 +95,13 @@ export default function Module2() {
                 </p>
 
                 <div className="learn-widget">
-                    <h4 style={{ color: '#00e59b' }}>Perfect Alternation (8 games)</h4>
+                    <h4 style={{ color: '#FFC107' }}>Perfect Alternation (8 games)</h4>
                     <div className="learn-pattern-row" style={{ marginBottom: '8px' }}>
                         {['W','L','W','L','W','L','W','L'].map((r, i) => (
                             <div key={i} className={`learn-dot ${r === 'W' ? 'w' : 'l'}`}>{r}</div>
                         ))}
                     </div>
-                    <p style={{ color: '#00e59b', fontSize: '12px', fontWeight: 600 }}>Break Score: 73% — True Pattern ✅</p>
+                    <p style={{ color: '#FFC107', fontSize: '12px', fontWeight: 600 }}>Break Score: 73% — True Pattern ✅</p>
                 </div>
 
                 <div className="learn-widget" style={{ marginTop: '12px' }}>

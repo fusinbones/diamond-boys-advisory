@@ -9,7 +9,7 @@ export default function CommunityPulse(): ReactNode {
         <div className="dash-sidebar-card">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <MessageCircle size={14} style={{ color: '#00e59b' }} />
+                    <MessageCircle size={14} style={{ color: '#FFC107' }} />
                     <h3 style={{ fontSize: '13px', fontWeight: 600, color: '#e5e7eb' }}>The Lounge</h3>
                 </div>
             </div>

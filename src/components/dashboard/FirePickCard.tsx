@@ -127,8 +127,8 @@ export default function FirePickCard({ firePick, isPaid }: FirePickCardProps): R
                                 {(firePick.odds || !isPaid) && (
                                     <span style={{
                                         fontSize: '13px', fontWeight: 700,
-                                        color: '#00e59b',
-                                        background: 'rgba(0,229,155,0.1)',
+                                        color: '#FFC107',
+                                        background: 'rgba(106,0,255,0.1)',
                                         padding: '2px 8px',
                                         borderRadius: '6px',
                                     }}>

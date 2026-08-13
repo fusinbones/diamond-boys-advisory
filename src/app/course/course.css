@@ -106,7 +106,7 @@
 .fire-stat .value {
     font-size: 28px;
     font-weight: 900;
-    color: #00e59b;
+    color: #FFC107;
     display: block;
 }
 
@@ -206,9 +206,9 @@
 }
 
 .fire-dot.win {
-    background: rgba(0,229,155,0.12);
-    color: #00e59b;
-    border: 1px solid rgba(0,229,155,0.25);
+    background: rgba(106,0,255,0.12);
+    color: #FFC107;
+    border: 1px solid rgba(106,0,255,0.25);
 }
 
 .fire-dot.loss {
@@ -455,7 +455,7 @@
 /* ── Live Proof Section ── */
 .fire-proof {
     padding: 80px 20px;
-    background: linear-gradient(180deg, transparent, rgba(0,229,155,0.02), transparent);
+    background: linear-gradient(180deg, transparent, rgba(106,0,255,0.02), transparent);
 }
 
 .fire-proof-inner {
@@ -469,7 +469,7 @@
     padding: 28px 24px;
     border-radius: 16px;
     background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(0,229,155,0.1);
+    border: 1px solid rgba(106,0,255,0.1);
     position: relative;
     overflow: hidden;
 }
@@ -481,7 +481,7 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, transparent, #00e59b, transparent);
+    background: linear-gradient(90deg, transparent, #FFC107, transparent);
 }
 
 .fire-proof-stats {
@@ -639,8 +639,8 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: rgba(0,229,155,0.12);
-    border: 1px solid rgba(0,229,155,0.25);
+    background: rgba(106,0,255,0.12);
+    border: 1px solid rgba(106,0,255,0.25);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -806,13 +806,13 @@
     max-width: 400px;
     padding: 20px;
     border-radius: 14px;
-    background: rgba(0,229,155,0.04);
-    border: 1px solid rgba(0,229,155,0.1);
+    background: rgba(106,0,255,0.04);
+    border: 1px solid rgba(106,0,255,0.1);
     text-align: center;
 }
 
 .fire-guarantee h4 {
-    color: #00e59b;
+    color: #FFC107;
     font-size: 14px;
     font-weight: 700;
     margin-bottom: 6px;

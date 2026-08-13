@@ -76,10 +76,10 @@ export default function LogsPage() {
             <div className="admin-stats-grid" style={{ marginBottom: '20px' }}>
                 <div className="admin-stat-card">
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-                        <Target size={14} style={{ color: '#00e59b' }} />
+                        <Target size={14} style={{ color: '#FFC107' }} />
                         <span className="admin-stat-label">Hit Rate</span>
                     </div>
-                    <div className="admin-stat-value" style={{ color: hitRate >= 55 ? '#00e59b' : hitRate >= 45 ? '#fbbf24' : '#f87171' }}>
+                    <div className="admin-stat-value" style={{ color: hitRate >= 55 ? '#22c55e' : hitRate >= 45 ? '#fbbf24' : '#f87171' }}>
                         {hitRate}%
                     </div>
                     <div style={{ color: '#4b5563', fontSize: '11px' }}>{hits}W - {misses}L</div>
@@ -170,7 +170,7 @@ export default function LogsPage() {
                                             <div className="admin-confidence-bar">
                                                 <div className="admin-confidence-fill" style={{
                                                     width: `${pick.confidence}%`,
-                                                    background: pick.confidence >= 80 ? '#00e59b' : pick.confidence >= 60 ? '#fbbf24' : '#f87171',
+                                                    background: pick.confidence >= 80 ? '#FFC107' : pick.confidence >= 60 ? '#fbbf24' : '#f87171',
                                                 }} />
                                             </div>
                                             <span style={{ fontSize: '10px', color: '#6b7280' }}>{pick.confidence}%</span>

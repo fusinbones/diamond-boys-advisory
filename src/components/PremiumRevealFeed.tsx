@@ -66,7 +66,7 @@ export default function PremiumRevealFeed({ isPaid = false }: { isPaid?: boolean
     if (loading) {
         return (
             <div style={{ padding: '20px', textAlign: 'center' }}>
-                <div style={{ width: '24px', height: '24px', border: '2px solid rgba(0,229,155,0.2)', borderTopColor: '#00e59b', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto' }} />
+                <div style={{ width: '24px', height: '24px', border: '2px solid rgba(106,0,255,0.2)', borderTopColor: '#FFC107', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto' }} />
             </div>
         );
     }
@@ -74,14 +74,14 @@ export default function PremiumRevealFeed({ isPaid = false }: { isPaid?: boolean
     if (revealed.length === 0 && locked.length === 0) return null;
 
     const confidenceLabel = (c: number) => {
-        if (c >= 4) return { text: 'HIGH', color: '#00e59b', bg: 'rgba(0,229,155,0.1)' };
+        if (c >= 4) return { text: 'HIGH', color: '#FFC107', bg: 'rgba(106,0,255,0.1)' };
         if (c >= 3) return { text: 'MEDIUM', color: '#fbbf24', bg: 'rgba(251,191,36,0.1)' };
         return { text: 'LOW', color: '#f97316', bg: 'rgba(249,115,22,0.1)' };
     };
 
     const resultBadge = (result: string) => {
         switch (result) {
-            case 'hit': return { icon: CheckCircle2, text: 'WIN', color: '#00e59b', bg: 'rgba(0,229,155,0.1)' };
+            case 'hit': return { icon: CheckCircle2, text: 'WIN', color: '#22c55e', bg: 'rgba(106,0,255,0.1)' };
             case 'miss': return { icon: XCircle, text: 'LOSS', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' };
             case 'push': return { icon: Clock, text: 'PUSH', color: '#fbbf24', bg: 'rgba(251,191,36,0.1)' };
             default: return { icon: Clock, text: 'PENDING', color: '#9ca3af', bg: 'rgba(156,163,175,0.1)' };
@@ -120,8 +120,8 @@ export default function PremiumRevealFeed({ isPaid = false }: { isPaid?: boolean
                         onClick={() => setActiveTab(tab.key)}
                         style={{
                             flex: 1, padding: '8px', borderRadius: '8px', border: 'none',
-                            background: activeTab === tab.key ? 'rgba(0,229,155,0.1)' : 'rgba(255,255,255,0.03)',
-                            color: activeTab === tab.key ? '#00e59b' : '#6b7280',
+                            background: activeTab === tab.key ? 'rgba(106,0,255,0.1)' : 'rgba(255,255,255,0.03)',
+                            color: activeTab === tab.key ? '#FFC107' : '#6b7280',
                             fontSize: '12px', fontWeight: 600, cursor: 'pointer',
                             transition: 'all 0.2s',
                         }}
@@ -262,7 +262,7 @@ export default function PremiumRevealFeed({ isPaid = false }: { isPaid?: boolean
                                                 userSelect: 'none',
                                                 pointerEvents: 'none',
                                             }}>
-                                                <div style={{ color: '#00e59b', fontSize: '14px', fontWeight: 700, marginBottom: '4px' }}>
+                                                <div style={{ color: '#FFC107', fontSize: '14px', fontWeight: 700, marginBottom: '4px' }}>
                                                     {pick.pick_type} Pick Available
                                                 </div>
                                                 <div style={{ color: '#9ca3af', fontSize: '11px', lineHeight: 1.5 }}>
@@ -299,7 +299,7 @@ export default function PremiumRevealFeed({ isPaid = false }: { isPaid?: boolean
                                     style={{
                                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
                                         width: '100%', padding: '12px',
-                                        background: 'linear-gradient(135deg, #00e59b, #00c98a)',
+                                        background: 'linear-gradient(135deg, #FFC107, #00c98a)',
                                         borderRadius: '10px', border: 'none',
                                         color: '#080c15', fontSize: '13px', fontWeight: 700,
                                         cursor: 'pointer', textDecoration: 'none',

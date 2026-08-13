@@ -83,8 +83,8 @@
 }
 
 .learn-nav-btn.completed {
-    border-color: rgba(0,229,155,0.2);
-    color: #00e59b;
+    border-color: rgba(106,0,255,0.2);
+    color: #FFC107;
 }
 
 /* ── Module Content Area ── */
@@ -171,9 +171,9 @@
 }
 
 .learn-callout.success {
-    background: rgba(0,229,155,0.06);
-    border: 1px solid rgba(0,229,155,0.15);
-    border-left: 3px solid #00e59b;
+    background: rgba(106,0,255,0.06);
+    border: 1px solid rgba(106,0,255,0.15);
+    border-left: 3px solid #FFC107;
 }
 
 .learn-callout.pro-tip {
@@ -267,9 +267,9 @@
 }
 
 .learn-dot.w {
-    background: rgba(0,229,155,0.12);
-    color: #00e59b;
-    border: 1px solid rgba(0,229,155,0.25);
+    background: rgba(106,0,255,0.12);
+    color: #FFC107;
+    border: 1px solid rgba(106,0,255,0.25);
 }
 
 .learn-dot.l {
@@ -320,15 +320,15 @@
 .calc-result {
     padding: 16px;
     border-radius: 12px;
-    background: rgba(0,229,155,0.06);
-    border: 1px solid rgba(0,229,155,0.15);
+    background: rgba(106,0,255,0.06);
+    border: 1px solid rgba(106,0,255,0.15);
     margin-top: 16px;
 }
 
 .calc-result-value {
     font-size: 24px;
     font-weight: 900;
-    color: #00e59b;
+    color: #FFC107;
 }
 
 .calc-result-label {
@@ -486,7 +486,7 @@
     font-size: 13px;
 }
 
-.sim-round.win { background: rgba(0,229,155,0.06); border: 1px solid rgba(0,229,155,0.12); }
+.sim-round.win { background: rgba(106,0,255,0.06); border: 1px solid rgba(106,0,255,0.12); }
 .sim-round.loss { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.12); }
 
 .sim-badge {
@@ -535,8 +535,8 @@
 }
 
 .learn-check-item.checked .check-box {
-    background: #00e59b;
-    border-color: #00e59b;
+    background: #FFC107;
+    border-color: #FFC107;
 }
 
 /* ── Paywall ── */
@@ -693,8 +693,8 @@
 }
 
 .learn-announcement.update {
-    background: rgba(0,229,155,0.06);
-    border-color: rgba(0,229,155,0.15);
+    background: rgba(106,0,255,0.06);
+    border-color: rgba(106,0,255,0.15);
 }
 
 .learn-announcement.promo {

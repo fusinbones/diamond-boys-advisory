@@ -20,8 +20,8 @@ export default function PickDropBanner({ pickCount, isPaid }: PickDropBannerProp
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 style={{
-                    background: 'linear-gradient(135deg, rgba(0,229,155,0.12) 0%, rgba(59,130,246,0.08) 100%)',
-                    border: '1px solid rgba(0,229,155,0.2)',
+                    background: 'linear-gradient(135deg, rgba(106,0,255,0.12) 0%, rgba(59,130,246,0.08) 100%)',
+                    border: '1px solid rgba(106,0,255,0.2)',
                     borderRadius: '12px',
                     padding: '14px 18px',
                     display: 'flex',
@@ -40,7 +40,7 @@ export default function PickDropBanner({ pickCount, isPaid }: PickDropBannerProp
                         <p style={{ fontSize: '12px', color: '#9ca3af' }}>Scroll down to see the full analysis</p>
                     </div>
                 </div>
-                <Zap size={18} style={{ color: '#00e59b', flexShrink: 0 }} />
+                <Zap size={18} style={{ color: '#FFC107', flexShrink: 0 }} />
             </motion.div>
         );
     }

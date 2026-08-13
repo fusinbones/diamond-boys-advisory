@@ -123,14 +123,14 @@ export default function AdminDashboard() {
                 {/* Inline Stats */}
                 <div style={{ display: 'flex', gap: '8px', flex: '0 0 auto', flexWrap: 'wrap' }}>
                     <div className="admin-stat-card" style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px', minWidth: 'auto' }}>
-                        <Calendar size={14} style={{ color: '#00e59b' }} />
+                        <Calendar size={14} style={{ color: '#FFC107' }} />
                         <span className="admin-stat-label" style={{ margin: 0 }}>Games</span>
                         <span style={{ color: 'white', fontWeight: 800, fontSize: '18px' }}>{loading ? '…' : games.length}</span>
                     </div>
                     <div className="admin-stat-card" style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px', minWidth: 'auto' }}>
                         <Activity size={14} style={{ color: '#fbbf24' }} />
                         <span className="admin-stat-label" style={{ margin: 0 }}>Live</span>
-                        <span style={{ color: liveGames.length > 0 ? '#00e59b' : 'white', fontWeight: 800, fontSize: '18px' }}>{loading ? '…' : liveGames.length}</span>
+                        <span style={{ color: liveGames.length > 0 ? '#22c55e' : 'white', fontWeight: 800, fontSize: '18px' }}>{loading ? '…' : liveGames.length}</span>
                     </div>
                     <div className="admin-stat-card" style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px', minWidth: 'auto' }}>
                         <TrendingUp size={14} style={{ color: '#a78bfa' }} />
@@ -149,7 +149,7 @@ export default function AdminDashboard() {
             {search && (
                 <div style={{ marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{ fontSize: '13px', color: '#6b7280' }}>
-                        Showing {filtered.length} of {games.length} games matching &ldquo;<span style={{ color: '#00e59b' }}>{search}</span>&rdquo;
+                        Showing {filtered.length} of {games.length} games matching &ldquo;<span style={{ color: '#FFC107' }}>{search}</span>&rdquo;
                     </span>
                     <button
                         onClick={() => setSearch('')}
@@ -184,7 +184,7 @@ export default function AdminDashboard() {
                     {/* Live Games */}
                     {liveGames.length > 0 && (
                         <div style={{ marginBottom: '24px' }}>
-                            <h2 style={{ color: '#00e59b', fontSize: '14px', fontWeight: 700, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <h2 style={{ color: '#FFC107', fontSize: '14px', fontWeight: 700, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                                 <div className="live-dot" /> LIVE ({liveGames.length})
                             </h2>
                             <div className="admin-game-grid">
@@ -281,7 +281,7 @@ function GameCard({ game, pitcherMap }: { game: Game; pitcherMap: Record<string,
 
             {/* Analyze CTA */}
             <div style={{ textAlign: 'right', marginTop: '8px' }}>
-                <span style={{ color: '#00e59b', fontSize: '11px', fontWeight: 600 }}>Analyze →</span>
+                <span style={{ color: '#FFC107', fontSize: '11px', fontWeight: 600 }}>Analyze →</span>
             </div>
         </Link>
     );

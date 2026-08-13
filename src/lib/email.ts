@@ -87,8 +87,8 @@ function pickAlertHtml(pick: PickAlertEmail): string {
                         <div style="color: #6b7280; font-size: 11px; margin-top: 2px;">Confidence</div>
                     </td>
                     <td width="4%"></td>
-                    <td width="48%" style="background: rgba(0,229,155,0.08); border: 1px solid rgba(0,229,155,0.15); border-radius: 10px; padding: 14px; text-align: center;">
-                        <div style="font-size: 20px; font-weight: 800; color: #00e59b;">FIRE</div>
+                    <td width="48%" style="background: rgba(106,0,255,0.08); border: 1px solid rgba(106,0,255,0.15); border-radius: 10px; padding: 14px; text-align: center;">
+                        <div style="font-size: 20px; font-weight: 800; color: #FFC107;">FIRE</div>
                         <div style="color: #6b7280; font-size: 11px; margin-top: 2px;">Rating</div>
                     </td>
                 </tr>
@@ -108,7 +108,7 @@ function resultHtml(pick: ResultEmail): string {
     const isPush = pick.result === 'push';
     const emoji = isWin ? '✅' : isPush ? '🔄' : '❌';
     const label = isWin ? 'WIN' : isPush ? 'PUSH' : 'LOSS';
-    const gradientColor = isWin ? '#00e59b' : isPush ? '#fbbf24' : '#ef4444';
+    const gradientColor = isWin ? '#FFC107' : isPush ? '#fbbf24' : '#ef4444';
 
     return `
     <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 480px; margin: 0 auto; background: #0a0a0a; color: #e5e7eb; border-radius: 16px; overflow: hidden;">
@@ -123,7 +123,7 @@ function resultHtml(pick: ResultEmail): string {
             </div>
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px;">
                 <div style="color: #9ca3af; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">SEASON RECORD</div>
-                <div style="font-size: 28px; font-weight: 900; color: #00e59b;">${pick.record.wins}-${pick.record.losses}</div>
+                <div style="font-size: 28px; font-weight: 900; color: #FFC107;">${pick.record.wins}-${pick.record.losses}</div>
             </div>
             <a href="https://tripleplayz.com/dashboard" style="display: block; text-align: center; background: linear-gradient(135deg, ${gradientColor} 0%, ${gradientColor}cc 100%); color: ${isWin ? '#0a0a0a' : 'white'}; padding: 14px 24px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 15px;">
                 View Dashboard →

@@ -17,7 +17,7 @@ const tierIcons: Record<string, React.ReactNode> = {
 
 const tierAccents: Record<string, { color: string; bg: string; border: string }> = {
     daily: { color: '#60a5fa', bg: 'rgba(96,165,250,0.08)', border: 'rgba(96,165,250,0.15)' },
-    weekly: { color: '#00e59b', bg: 'rgba(0,229,155,0.08)', border: 'rgba(0,229,155,0.15)' },
+    weekly: { color: '#FFC107', bg: 'rgba(106,0,255,0.08)', border: 'rgba(106,0,255,0.15)' },
     monthly: { color: '#fbbf24', bg: 'rgba(251,191,36,0.08)', border: 'rgba(251,191,36,0.2)' },
     season: { color: '#a78bfa', bg: 'rgba(167,139,250,0.08)', border: 'rgba(167,139,250,0.15)' },
 };
@@ -90,7 +90,7 @@ export default function PricingPage() {
                                 className="glass-card"
                                 style={{ padding: '20px', textAlign: 'center' }}
                             >
-                                <perk.icon size={20} style={{ color: '#00e59b', margin: '0 auto 10px' }} />
+                                <perk.icon size={20} style={{ color: '#FFC107', margin: '0 auto 10px' }} />
                                 <h3 style={{ color: 'white', fontSize: '15px', fontWeight: 700, marginBottom: '6px' }}>{perk.title}</h3>
                                 <p style={{ color: '#9ca3af', fontSize: '13px', lineHeight: 1.5 }}>{perk.desc}</p>
                             </motion.div>
@@ -186,7 +186,7 @@ function TierCard({ tier }: { tier: Tier }) {
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 20px 0', flex: 1 }}>
                     {tier.features.map((feat, i) => (
                         <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '8px' }}>
-                            <Check size={14} style={{ color: '#00e59b', marginTop: '2px', flexShrink: 0 }} />
+                            <Check size={14} style={{ color: '#FFC107', marginTop: '2px', flexShrink: 0 }} />
                             <span style={{ color: '#d1d5db', fontSize: '13px' }}>{feat}</span>
                         </li>
                     ))}

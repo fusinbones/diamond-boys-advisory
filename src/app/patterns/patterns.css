@@ -27,8 +27,8 @@
 .patterns-spinner {
     width: 20px;
     height: 20px;
-    border: 2px solid rgba(0, 229, 155, 0.3);
-    border-top-color: #00e59b;
+    border: 2px solid rgba(106, 0, 255, 0.3);
+    border-top-color: #FFC107;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -176,7 +176,7 @@
 }
 
 .pw-title-accent {
-    background: linear-gradient(135deg, #a78bfa, #c4b5fd, #00e59b);
+    background: linear-gradient(135deg, #a78bfa, #c4b5fd, #FFC107);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -281,7 +281,7 @@
 .pw-preview-pct {
     font-size: 13px;
     font-weight: 800;
-    color: #00e59b;
+    color: #FFC107;
     min-width: 36px;
     text-align: right;
 }
@@ -308,7 +308,7 @@
 
 /* CTA Card */
 .pw-cta-card {
-    background: linear-gradient(135deg, rgba(167, 139, 250, 0.06), rgba(0, 229, 155, 0.03));
+    background: linear-gradient(135deg, rgba(167, 139, 250, 0.06), rgba(106, 0, 255, 0.03));
     border: 1px solid rgba(167, 139, 250, 0.15);
     border-radius: 16px;
     padding: 28px 24px;
@@ -365,7 +365,7 @@
     gap: 8px;
     width: 100%;
     padding: 16px 24px;
-    background: linear-gradient(135deg, #00e59b, #00b377);
+    background: linear-gradient(135deg, #FFC107, #00b377);
     border: none;
     border-radius: 12px;
     color: #0a0f1e;
@@ -374,7 +374,7 @@
     text-decoration: none;
     cursor: pointer;
     transition: transform 0.15s, box-shadow 0.15s;
-    box-shadow: 0 0 24px rgba(0, 229, 155, 0.2);
+    box-shadow: 0 0 24px rgba(106, 0, 255, 0.2);
     position: relative;
     overflow: hidden;
 }
@@ -398,7 +398,7 @@
 
 .pw-cta-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 0 36px rgba(0, 229, 155, 0.3);
+    box-shadow: 0 0 36px rgba(106, 0, 255, 0.3);
 }
 
 .pw-trust {
@@ -563,8 +563,8 @@
 
 .pattern-today-badge {
     font-size: 9px;
-    background: rgba(0, 229, 155, 0.15);
-    color: #00e59b;
+    background: rgba(106, 0, 255, 0.15);
+    color: #FFC107;
     padding: 1px 6px;
     border-radius: 4px;
     font-weight: 700;
@@ -607,9 +607,9 @@
 
 .pattern-dot.streak.win {
     box-shadow:
-        0 0 6px rgba(0, 229, 155, 0.4),
-        0 0 16px rgba(0, 229, 155, 0.15),
-        inset 0 0 4px rgba(0, 229, 155, 0.1);
+        0 0 6px rgba(106, 0, 255, 0.4),
+        0 0 16px rgba(106, 0, 255, 0.15),
+        inset 0 0 4px rgba(106, 0, 255, 0.1);
     animation: streakPulse 2s ease-in-out infinite;
 }
 

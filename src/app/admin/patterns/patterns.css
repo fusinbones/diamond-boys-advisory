@@ -143,8 +143,8 @@
 
 .pattern-today-badge {
     font-size: 9px;
-    background: rgba(0, 229, 155, 0.15);
-    color: #00e59b;
+    background: rgba(106, 0, 255, 0.15);
+    color: #FFC107;
     padding: 1px 6px;
     border-radius: 4px;
     font-weight: 700;
@@ -192,9 +192,9 @@
 
 .pattern-dot.streak.win {
     box-shadow:
-        0 0 6px rgba(0, 229, 155, 0.4),
-        0 0 16px rgba(0, 229, 155, 0.15),
-        inset 0 0 4px rgba(0, 229, 155, 0.1);
+        0 0 6px rgba(106, 0, 255, 0.4),
+        0 0 16px rgba(106, 0, 255, 0.15),
+        inset 0 0 4px rgba(106, 0, 255, 0.1);
     animation: streakPulse 2s ease-in-out infinite;
 }
 

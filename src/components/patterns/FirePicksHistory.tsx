@@ -41,7 +41,7 @@ function getSportEmoji(sport: string): string {
 function getResultBadge(status: string): { label: string; emoji: string; color: string; bg: string; border: string } {
     switch (status) {
         case 'won':
-            return { label: 'WON', emoji: '✅', color: '#00e59b', bg: 'rgba(0,229,155,0.1)', border: 'rgba(0,229,155,0.25)' };
+            return { label: 'WON', emoji: '✅', color: '#FFC107', bg: 'rgba(106,0,255,0.1)', border: 'rgba(106,0,255,0.25)' };
         case 'lost':
             return { label: 'LOST', emoji: '❌', color: '#ef4444', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.25)' };
         case 'push':
@@ -94,7 +94,7 @@ function getHomeAway(matchup: string, pickTeam?: string): { label: string; emoji
     const homeTeam = parts[1].toLowerCase();
     const pick = pickTeam.toLowerCase();
     if (homeTeam.includes(pick) || pick.includes(homeTeam.split(' ').pop() || '')) {
-        return { label: 'HOME', emoji: '🏠', color: '#00e59b' };
+        return { label: 'HOME', emoji: '🏠', color: '#FFC107' };
     }
     if (awayTeam.includes(pick) || pick.includes(awayTeam.split(' ').pop() || '')) {
         return { label: 'AWAY', emoji: '✈️', color: '#60a5fa' };
@@ -216,16 +216,16 @@ export default function FirePicksHistory(): ReactNode {
                 </div>
 
                 <div className="fph-stat-card">
-                    <TrendingUp size={14} style={{ color: winRate >= 60 ? '#00e59b' : winRate >= 50 ? '#fbbf24' : '#ef4444' }} />
-                    <div className="fph-stat-value" style={{ color: winRate >= 60 ? '#00e59b' : winRate >= 50 ? '#fbbf24' : '#ef4444' }}>
+                    <TrendingUp size={14} style={{ color: winRate >= 60 ? '#22c55e' : winRate >= 50 ? '#fbbf24' : '#ef4444' }} />
+                    <div className="fph-stat-value" style={{ color: winRate >= 60 ? '#22c55e' : winRate >= 50 ? '#fbbf24' : '#ef4444' }}>
                         {decided > 0 ? `${winRate}%` : '—'}
                     </div>
                     <div className="fph-stat-label">Win Rate</div>
                 </div>
 
                 <div className="fph-stat-card">
-                    <Flame size={14} style={{ color: streakType === 'W' ? '#00e59b' : streakType === 'L' ? '#ef4444' : '#6b7280' }} />
-                    <div className="fph-stat-value" style={{ color: streakType === 'W' ? '#00e59b' : streakType === 'L' ? '#ef4444' : '#6b7280' }}>
+                    <Flame size={14} style={{ color: streakType === 'W' ? '#FFC107' : streakType === 'L' ? '#ef4444' : '#6b7280' }} />
+                    <div className="fph-stat-value" style={{ color: streakType === 'W' ? '#FFC107' : streakType === 'L' ? '#ef4444' : '#6b7280' }}>
                         {streakCount > 0 ? `${streakCount}${streakType}` : '—'}
                     </div>
                     <div className="fph-stat-label">Streak</div>
@@ -336,9 +336,9 @@ function PickCard({ pick, index }: { pick: FirePick; index: number }): ReactNode
                             <span style={{
                                 fontSize: '10px', fontWeight: 600, padding: '1px 6px',
                                 borderRadius: '4px', letterSpacing: '0.5px',
-                                background: ha.color === '#00e59b' ? 'rgba(0,229,155,0.1)' : 'rgba(96,165,250,0.1)',
+                                background: ha.color === '#FFC107' ? 'rgba(106,0,255,0.1)' : 'rgba(96,165,250,0.1)',
                                 color: ha.color,
-                                border: `1px solid ${ha.color === '#00e59b' ? 'rgba(0,229,155,0.2)' : 'rgba(96,165,250,0.2)'}`,
+                                border: `1px solid ${ha.color === '#FFC107' ? 'rgba(106,0,255,0.2)' : 'rgba(96,165,250,0.2)'}`,
                             }}>
                                 {ha.emoji} {ha.label}
                             </span>
@@ -357,7 +357,7 @@ function PickCard({ pick, index }: { pick: FirePick; index: number }): ReactNode
                                 className="fph-confidence-fill"
                                 style={{
                                     width: `${pick.confidence}%`,
-                                    background: pick.confidence >= 80 ? '#00e59b' : pick.confidence >= 60 ? '#fbbf24' : '#6b7280',
+                                    background: pick.confidence >= 80 ? '#FFC107' : pick.confidence >= 60 ? '#fbbf24' : '#6b7280',
                                 }}
                             />
                         </div>

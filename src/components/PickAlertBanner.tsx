@@ -98,7 +98,7 @@ export default function PickAlertBanner() {
     };
 
     const confidenceLabel = (c: number) => {
-        if (c >= 4) return { text: 'HIGH', color: '#00e59b' };
+        if (c >= 4) return { text: 'HIGH', color: '#FFC107' };
         if (c >= 3) return { text: 'MEDIUM', color: '#fbbf24' };
         return { text: 'LOW', color: '#f97316' };
     };
@@ -107,7 +107,7 @@ export default function PickAlertBanner() {
 
     const isHit = alert.type === 'hit';
     const conf = confidenceLabel(alert.pick.confidence);
-    const accentColor = isHit ? '#00e59b' : '#a78bfa';
+    const accentColor = isHit ? '#FFC107' : '#a78bfa';
 
     return (
         <AnimatePresence>
@@ -167,7 +167,7 @@ export default function PickAlertBanner() {
                     }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                {isHit && <CheckCircle2 size={14} style={{ color: '#00e59b' }} />}
+                                {isHit && <CheckCircle2 size={14} style={{ color: '#FFC107' }} />}
                                 <span style={{ color: 'white', fontSize: '15px', fontWeight: 700 }}>
                                     {alert.pick.pick_team} {alert.pick.pick_value || ''}
                                 </span>
@@ -187,7 +187,7 @@ export default function PickAlertBanner() {
                         {isHit && (
                             <div style={{
                                 marginTop: '8px', paddingTop: '8px',
-                                borderTop: '1px solid rgba(0,229,155,0.1)',
+                                borderTop: '1px solid rgba(106,0,255,0.1)',
                                 color: '#6b7280', fontSize: '11px',
                             }}>
                                 Premium members locked this in {(() => {
@@ -206,7 +206,7 @@ export default function PickAlertBanner() {
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
                             width: '100%', padding: '10px',
                             background: isHit
-                                ? 'linear-gradient(135deg, #00e59b, #00c98a)'
+                                ? 'linear-gradient(135deg, #FFC107, #00c98a)'
                                 : 'linear-gradient(135deg, #a78bfa, #8b5cf6)',
                             borderRadius: '10px', border: 'none',
                             color: isHit ? '#080c15' : 'white',

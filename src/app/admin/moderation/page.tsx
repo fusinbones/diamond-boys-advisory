@@ -279,9 +279,9 @@ export default function ModerationPage() {
                                 onClick={() => setStatusFilter(st)}
                                 style={{
                                     padding: '5px 12px', borderRadius: '8px',
-                                    background: statusFilter === st ? 'rgba(0,229,155,0.1)' : 'rgba(255,255,255,0.03)',
-                                    border: `1px solid ${statusFilter === st ? 'rgba(0,229,155,0.3)' : 'rgba(255,255,255,0.06)'}`,
-                                    color: statusFilter === st ? '#00e59b' : '#6b7280',
+                                    background: statusFilter === st ? 'rgba(106,0,255,0.1)' : 'rgba(255,255,255,0.03)',
+                                    border: `1px solid ${statusFilter === st ? 'rgba(106,0,255,0.3)' : 'rgba(255,255,255,0.06)'}`,
+                                    color: statusFilter === st ? '#FFC107' : '#6b7280',
                                     fontSize: '12px', fontWeight: 600, cursor: 'pointer',
                                     textTransform: 'capitalize',
                                 }}
@@ -294,7 +294,7 @@ export default function ModerationPage() {
 
                     {reports.length === 0 ? (
                         <div className="admin-card" style={{ textAlign: 'center', padding: '40px' }}>
-                            <CheckCircle2 size={32} style={{ color: '#00e59b', marginBottom: '12px', opacity: 0.5 }} />
+                            <CheckCircle2 size={32} style={{ color: '#FFC107', marginBottom: '12px', opacity: 0.5 }} />
                             <p style={{ color: '#6b7280', fontSize: '14px' }}>No {statusFilter} reports</p>
                         </div>
                     ) : (
@@ -441,7 +441,7 @@ export default function ModerationPage() {
                 <div>
                     {bans.length === 0 ? (
                         <div className="admin-card" style={{ textAlign: 'center', padding: '40px' }}>
-                            <CheckCircle2 size={32} style={{ color: '#00e59b', marginBottom: '12px', opacity: 0.5 }} />
+                            <CheckCircle2 size={32} style={{ color: '#FFC107', marginBottom: '12px', opacity: 0.5 }} />
                             <p style={{ color: '#6b7280', fontSize: '14px' }}>No active bans or mutes</p>
                         </div>
                     ) : (
@@ -473,8 +473,8 @@ export default function ModerationPage() {
                                                 {ban.expires_at && (
                                                     <span style={{
                                                         padding: '2px 8px', borderRadius: '6px',
-                                                        background: isExpired ? 'rgba(0,229,155,0.1)' : 'rgba(251,191,36,0.1)',
-                                                        color: isExpired ? '#00e59b' : '#fbbf24',
+                                                        background: isExpired ? 'rgba(106,0,255,0.1)' : 'rgba(251,191,36,0.1)',
+                                                        color: isExpired ? '#FFC107' : '#fbbf24',
                                                         fontSize: '10px', fontWeight: 600,
                                                     }}>
                                                         {isExpired ? 'Expired' : `Until ${new Date(ban.expires_at).toLocaleString()}`}
@@ -606,9 +606,9 @@ export default function ModerationPage() {
                                             onClick={() => setQuickDuration(opt.val)}
                                             style={{
                                                 padding: '4px 10px', borderRadius: '6px',
-                                                background: quickDuration === opt.val ? 'rgba(0,229,155,0.1)' : 'rgba(255,255,255,0.03)',
-                                                border: `1px solid ${quickDuration === opt.val ? 'rgba(0,229,155,0.3)' : 'rgba(255,255,255,0.06)'}`,
-                                                color: quickDuration === opt.val ? '#00e59b' : '#6b7280',
+                                                background: quickDuration === opt.val ? 'rgba(106,0,255,0.1)' : 'rgba(255,255,255,0.03)',
+                                                border: `1px solid ${quickDuration === opt.val ? 'rgba(106,0,255,0.3)' : 'rgba(255,255,255,0.06)'}`,
+                                                color: quickDuration === opt.val ? '#FFC107' : '#6b7280',
                                                 fontSize: '11px', fontWeight: 600, cursor: 'pointer',
                                             }}
                                         >{opt.label}</button>

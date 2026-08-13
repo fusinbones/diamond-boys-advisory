@@ -51,7 +51,7 @@ interface Stats {
 }
 
 const statusConfig: Record<string, { label: string; bg: string; color: string; border: string }> = {
-    paid: { label: 'Paid', bg: 'rgba(0,229,155,0.1)', color: '#00e59b', border: 'rgba(0,229,155,0.2)' },
+    paid: { label: 'Paid', bg: 'rgba(106,0,255,0.1)', color: '#FFC107', border: 'rgba(106,0,255,0.2)' },
     trial: { label: 'Trial', bg: 'rgba(59,130,246,0.1)', color: '#60a5fa', border: 'rgba(59,130,246,0.2)' },
     expiring: { label: 'Expiring', bg: 'rgba(251,146,60,0.1)', color: '#fb923c', border: 'rgba(251,146,60,0.2)' },
     expired: { label: 'Expired', bg: 'rgba(161,161,170,0.08)', color: '#a1a1aa', border: 'rgba(161,161,170,0.15)' },
@@ -209,7 +209,7 @@ export default function AdminUsersPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '8px', marginBottom: '16px' }}>
                 {[
                     { icon: Users, label: 'Total', value: stats.totalUsers, color: '#60a5fa' },
-                    { icon: Clock, label: 'Trials', value: stats.activeTrials, color: '#00e59b' },
+                    { icon: Clock, label: 'Trials', value: stats.activeTrials, color: '#FFC107' },
                     { icon: AlertTriangle, label: 'Expiring', value: stats.expiringToday, color: '#fb923c' },
                     { icon: XCircle, label: 'Expired', value: stats.expiredTrials, color: '#a1a1aa' },
                     { icon: CreditCard, label: 'Paid', value: stats.paidUsers, color: '#a78bfa' },
@@ -353,7 +353,7 @@ export default function AdminUsersPage() {
                                                 <span style={{ color: '#6b7280' }}>📧 Email: </span>
                                                 <span style={{ color: '#d1d5db' }}>{user.email}</span>
                                                 {user.emailConfirmed ? (
-                                                    <CheckCircle2 size={10} style={{ color: '#00e59b', marginLeft: '4px', verticalAlign: 'middle' }} />
+                                                    <CheckCircle2 size={10} style={{ color: '#FFC107', marginLeft: '4px', verticalAlign: 'middle' }} />
                                                 ) : (
                                                     <XCircle size={10} style={{ color: '#f87171', marginLeft: '4px', verticalAlign: 'middle' }} />
                                                 )}
@@ -395,14 +395,14 @@ export default function AdminUsersPage() {
                                         {/* Actions */}
                                         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
                                             {isActioning && (
-                                                <Loader2 size={14} style={{ color: '#00e59b', animation: 'spin 1s linear infinite' }} />
+                                                <Loader2 size={14} style={{ color: '#FFC107', animation: 'spin 1s linear infinite' }} />
                                             )}
 
                                             {!user.emailConfirmed && (
                                                 <button
                                                     onClick={() => handleAction(user.id, 'confirmEmail', '')}
                                                     className="admin-btn"
-                                                    style={{ fontSize: '11px', padding: '4px 8px', background: 'rgba(0,229,155,0.1)', color: '#00e59b', border: '1px solid rgba(0,229,155,0.2)', display: 'flex', alignItems: 'center', gap: '4px' }}
+                                                    style={{ fontSize: '11px', padding: '4px 8px', background: 'rgba(106,0,255,0.1)', color: '#FFC107', border: '1px solid rgba(106,0,255,0.2)', display: 'flex', alignItems: 'center', gap: '4px' }}
                                                     disabled={isActioning}
                                                 >
                                                     <CheckCircle2 size={12} /> Confirm Email

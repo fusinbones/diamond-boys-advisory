@@ -64,7 +64,7 @@ export default function IOSInstallPrompt() {
                         zIndex: 9999,
                         borderRadius: '20px',
                         overflow: 'hidden',
-                        boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,229,155,0.15)',
+                        boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(106,0,255,0.15)',
                     }}
                 >
                     {/* Glass background */}
@@ -137,8 +137,8 @@ export default function IOSInstallPrompt() {
                             <div style={{ textAlign: 'center', flex: 1 }}>
                                 <div style={{
                                     width: '44px', height: '44px', borderRadius: '12px',
-                                    background: 'rgba(0,229,155,0.1)',
-                                    border: '1px solid rgba(0,229,155,0.2)',
+                                    background: 'rgba(106,0,255,0.1)',
+                                    border: '1px solid rgba(106,0,255,0.2)',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     margin: '0 auto 6px', fontSize: '18px',
                                 }}>

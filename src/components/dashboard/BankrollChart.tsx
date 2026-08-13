@@ -42,7 +42,7 @@ export default function BankrollChart({ data }: BankrollChartProps): ReactNode {
                         }
                     </button>
                     <div style={{ textAlign: 'right' }}>
-                        <p style={{ fontSize: '18px', fontWeight: 800, color: isPositive ? '#00e59b' : '#f87171' }}>
+                        <p style={{ fontSize: '18px', fontWeight: 800, color: isPositive ? '#22c55e' : '#f87171' }}>
                             {visible ? `${isPositive ? '+' : ''}${latestValue}u` : '••••'}
                         </p>
                     </div>
@@ -55,8 +55,8 @@ export default function BankrollChart({ data }: BankrollChartProps): ReactNode {
                         <AreaChart data={data}>
                             <defs>
                                 <linearGradient id="bankroll-grad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor={isPositive ? '#00e59b' : '#f87171'} stopOpacity={0.15} />
-                                    <stop offset="100%" stopColor={isPositive ? '#00e59b' : '#f87171'} stopOpacity={0} />
+                                    <stop offset="0%" stopColor={isPositive ? '#22c55e' : '#f87171'} stopOpacity={0.15} />
+                                    <stop offset="100%" stopColor={isPositive ? '#22c55e' : '#f87171'} stopOpacity={0} />
                                 </linearGradient>
                             </defs>
                             <XAxis
@@ -89,7 +89,7 @@ export default function BankrollChart({ data }: BankrollChartProps): ReactNode {
                             <Area
                                 type="monotone"
                                 dataKey="cumulative"
-                                stroke={isPositive ? '#00e59b' : '#f87171'}
+                                stroke={isPositive ? '#22c55e' : '#f87171'}
                                 strokeWidth={2}
                                 fill="url(#bankroll-grad)"
                                 dot={false}

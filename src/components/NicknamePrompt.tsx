@@ -79,8 +79,8 @@ export default function NicknamePrompt({ userId, userEmail, currentNickname, onS
             <div style={{
                 maxWidth: '360px', width: '100%', padding: '28px',
                 background: 'linear-gradient(135deg, rgba(15,20,35,0.99), rgba(10,14,23,0.99))',
-                border: '1px solid rgba(0,229,155,0.15)', borderRadius: '18px',
-                boxShadow: '0 12px 60px rgba(0,0,0,0.6), 0 0 30px rgba(0,229,155,0.05)',
+                border: '1px solid rgba(106,0,255,0.15)', borderRadius: '18px',
+                boxShadow: '0 12px 60px rgba(0,0,0,0.6), 0 0 30px rgba(106,0,255,0.05)',
             }}>
                 {/* Header */}
                 <div style={{ textAlign: 'center', marginBottom: '20px' }}>
@@ -112,7 +112,7 @@ export default function NicknamePrompt({ userId, userEmail, currentNickname, onS
                             fontSize: '15px', fontWeight: 600, color: 'white',
                             background: 'rgba(255,255,255,0.04)',
                             border: `1px solid ${
-                                availability?.available ? 'rgba(0,229,155,0.4)' :
+                                availability?.available ? 'rgba(106,0,255,0.4)' :
                                 availability && !availability.available ? 'rgba(239,68,68,0.4)' :
                                 'rgba(255,255,255,0.08)'
                             }`,
@@ -130,11 +130,11 @@ export default function NicknamePrompt({ userId, userEmail, currentNickname, onS
                         {checking ? (
                             <div style={{
                                 width: '14px', height: '14px',
-                                border: '2px solid rgba(0,229,155,0.3)', borderTopColor: '#00e59b',
+                                border: '2px solid rgba(106,0,255,0.3)', borderTopColor: '#FFC107',
                                 borderRadius: '50%', animation: 'spin 1s linear infinite',
                             }} />
                         ) : availability?.available ? (
-                            <span style={{ color: '#00e59b' }}>✓</span>
+                            <span style={{ color: '#FFC107' }}>✓</span>
                         ) : availability && !availability.available ? (
                             <span style={{ color: '#f87171' }}>✗</span>
                         ) : null}
@@ -149,7 +149,7 @@ export default function NicknamePrompt({ userId, userEmail, currentNickname, onS
                         </p>
                     )}
                     {availability?.available && (
-                        <p style={{ color: '#00e59b', fontSize: '11px', fontWeight: 600 }}>
+                        <p style={{ color: '#FFC107', fontSize: '11px', fontWeight: 600 }}>
                             ✨ &quot;{nickname.trim()}&quot; is available!
                         </p>
                     )}
@@ -176,7 +176,7 @@ export default function NicknamePrompt({ userId, userEmail, currentNickname, onS
                             { rule: 'Must be unique', met: availability?.available || false },
                         ].map(({ rule, met }) => (
                             <div key={rule} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <span style={{ fontSize: '10px', color: met ? '#00e59b' : '#374151' }}>
+                                <span style={{ fontSize: '10px', color: met ? '#FFC107' : '#374151' }}>
                                     {met ? '●' : '○'}
                                 </span>
                                 <span style={{ fontSize: '11px', color: met ? '#9ca3af' : '#4b5563' }}>
@@ -195,7 +195,7 @@ export default function NicknamePrompt({ userId, userEmail, currentNickname, onS
                         width: '100%', padding: '12px',
                         borderRadius: '10px', border: 'none',
                         background: isValid
-                            ? 'linear-gradient(135deg, #00e59b, #00c9ff)'
+                            ? 'linear-gradient(135deg, #FFC107, #00c9ff)'
                             : 'rgba(255,255,255,0.04)',
                         color: isValid ? '#0a0a0f' : '#4b5563',
                         fontSize: '14px', fontWeight: 800,

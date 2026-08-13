@@ -80,8 +80,8 @@ export default function MorningSlate({ totalGames, upcomingPicks, sports, userEm
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
                 <div style={{ flex: 1, minWidth: '200px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                        <Zap size={16} style={{ color: '#00e59b' }} />
-                        <span style={{ fontSize: '12px', fontWeight: 700, color: '#00e59b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                        <Zap size={16} style={{ color: '#FFC107' }} />
+                        <span style={{ fontSize: '12px', fontWeight: 700, color: '#FFC107', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                             Today&apos;s Slate
                         </span>
                     </div>
@@ -117,9 +117,9 @@ export default function MorningSlate({ totalGames, upcomingPicks, sports, userEm
                             marginTop: '8px',
                             fontSize: '12px',
                             fontWeight: 600,
-                            color: notifyState === 'sent' ? '#00e59b' : '#00e59b',
-                            background: notifyState === 'sent' ? 'rgba(0,229,155,0.15)' : 'rgba(0,229,155,0.1)',
-                            border: `1px solid ${notifyState === 'sent' ? 'rgba(0,229,155,0.3)' : 'rgba(0,229,155,0.2)'}`,
+                            color: notifyState === 'sent' ? '#FFC107' : '#FFC107',
+                            background: notifyState === 'sent' ? 'rgba(106,0,255,0.15)' : 'rgba(106,0,255,0.1)',
+                            border: `1px solid ${notifyState === 'sent' ? 'rgba(106,0,255,0.3)' : 'rgba(106,0,255,0.2)'}`,
                             borderRadius: '8px',
                             padding: '5px 10px',
                             cursor: notifyState === 'idle' ? 'pointer' : 'default',

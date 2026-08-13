@@ -7,7 +7,7 @@ interface ConfidenceMeterProps {
 }
 
 export default function ConfidenceMeter({ value }: ConfidenceMeterProps): ReactNode {
-    const color = value >= 85 ? '#00e59b' : value >= 70 ? '#eab308' : '#f97316';
+    const color = value >= 85 ? '#FFC107' : value >= 70 ? '#eab308' : '#f97316';
 
     return (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

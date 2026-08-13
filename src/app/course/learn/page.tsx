@@ -218,8 +218,8 @@ function LearnPageInner() {
                                 <span><strong style={{ color: '#fbbf24' }}>70%+</strong> documented win rate</span>
                             </div>
                             <div className="pw-stat">
-                                <TrendingUp size={14} style={{ color: '#00e59b' }} />
-                                <span><strong style={{ color: '#00e59b' }}>Pattern System</strong> access included</span>
+                                <TrendingUp size={14} style={{ color: '#FFC107' }} />
+                                <span><strong style={{ color: '#FFC107' }}>Pattern System</strong> access included</span>
                             </div>
                             <div className="pw-stat">
                                 <Shield size={14} style={{ color: '#a78bfa' }} />
@@ -273,7 +273,7 @@ function LearnPageInner() {
                     {visibleAnnouncements.map(a => (
                         <div key={a.id} className={`learn-announcement ${a.type}`}>
                             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-                                <Megaphone size={16} style={{ color: a.type === 'alert' ? '#ef4444' : a.type === 'update' ? '#00e59b' : '#fbbf24', flexShrink: 0, marginTop: '2px' }} />
+                                <Megaphone size={16} style={{ color: a.type === 'alert' ? '#ef4444' : a.type === 'update' ? '#FFC107' : '#fbbf24', flexShrink: 0, marginTop: '2px' }} />
                                 <div style={{ flex: 1 }}>
                                     <div style={{ fontWeight: 700, fontSize: '13px', marginBottom: '4px' }}>{a.title}</div>
                                     <div style={{ fontSize: '12px', color: '#9ca3af', lineHeight: 1.5 }}>{a.body}</div>

@@ -145,7 +145,7 @@
     padding: 12px 16px;
     font-size: 11px;
     font-weight: 800;
-    color: #00e59b;
+    color: #FFC107;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     border-bottom: 1px solid rgba(255,255,255,0.04);
@@ -199,7 +199,7 @@
 }
 
 .gp-odds-best {
-    color: #00e59b !important;
+    color: #FFC107 !important;
     font-weight: 800 !important;
 }
 
@@ -397,7 +397,7 @@
 }
 
 .gp-h2h-winner {
-    color: #00e59b;
+    color: #FFC107;
     font-weight: 700;
     font-size: 11px;
     text-align: right;
@@ -407,8 +407,8 @@
 /* ── YourSwami Edge ── */
 .gp-edge {
     margin: 0 16px 20px;
-    background: linear-gradient(135deg, rgba(0,229,155,0.06), rgba(99,102,241,0.04));
-    border: 1px solid rgba(0,229,155,0.15);
+    background: linear-gradient(135deg, rgba(106,0,255,0.06), rgba(99,102,241,0.04));
+    border: 1px solid rgba(106,0,255,0.15);
     border-radius: 12px;
     padding: 18px 16px;
 }
@@ -419,7 +419,7 @@
     gap: 8px;
     font-size: 12px;
     font-weight: 800;
-    color: #00e59b;
+    color: #FFC107;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     margin-bottom: 10px;
@@ -450,14 +450,14 @@
 .gp-edge-bar-fill {
     height: 100%;
     border-radius: 3px;
-    background: linear-gradient(90deg, #00e59b, #6366f1);
+    background: linear-gradient(90deg, #FFC107, #6366f1);
     transition: width 0.8s ease;
 }
 
 .gp-edge-pct {
     font-size: 14px;
     font-weight: 800;
-    color: #00e59b;
+    color: #FFC107;
     font-family: 'JetBrains Mono', monospace;
 }
 
@@ -478,7 +478,7 @@
 
 .gp-edge-factors li::before {
     content: '✦';
-    color: #00e59b;
+    color: #FFC107;
     font-size: 8px;
 }
 
@@ -496,8 +496,8 @@
 .gp-spinner {
     width: 24px;
     height: 24px;
-    border: 2px solid rgba(0,229,155,0.2);
-    border-top-color: #00e59b;
+    border: 2px solid rgba(106,0,255,0.2);
+    border-top-color: #FFC107;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }

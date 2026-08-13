@@ -106,7 +106,7 @@ export default function Module5() {
                     <div className="sim-round win">
                         <span>✅</span>
                         <span style={{ flex: 1 }}>Bet 2: Double up — break hits!</span>
-                        <span className="sim-badge" style={{ background: 'rgba(0,229,155,0.15)', color: '#00e59b' }}>
+                        <span className="sim-badge" style={{ background: 'rgba(106,0,255,0.15)', color: '#FFC107' }}>
                             +${baseUnit * 2}
                         </span>
                     </div>
@@ -154,8 +154,8 @@ export default function Module5() {
                                     <td style={{ fontWeight: 700 }}>#{row.n}</td>
                                     <td>${row.size * baseUnit}</td>
                                     <td style={{ color: '#f87171' }}>-${row.cumLoss * baseUnit} total</td>
-                                    <td style={{ color: '#00e59b' }}>+${row.winBack * baseUnit}</td>
-                                    <td style={{ fontWeight: 700, color: row.net >= 0 ? '#00e59b' : '#f87171' }}>
+                                    <td style={{ color: '#FFC107' }}>+${row.winBack * baseUnit}</td>
+                                    <td style={{ fontWeight: 700, color: row.net >= 0 ? '#22c55e' : '#f87171' }}>
                                         {row.net >= 0 ? '+' : ''}{row.net === 0 ? 'Even' : `$${row.net * baseUnit}`}
                                     </td>
                                 </tr>
@@ -176,7 +176,7 @@ export default function Module5() {
             </div>
 
             <div className="learn-callout success">
-                <h4 style={{ color: '#00e59b' }}>✅ Why It Works</h4>
+                <h4 style={{ color: '#FFC107' }}>✅ Why It Works</h4>
                 <p>
                     At a 70% win rate on pattern breaks, the probability of missing 3 in a row is 
                     only <strong>0.30 × 0.30 × 0.30 = 2.7%</strong>. That means 97.3% of the time, your 

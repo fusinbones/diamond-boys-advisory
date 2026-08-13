@@ -174,7 +174,7 @@ export default function PodcastPage() {
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                     {pick.odds && (
                                         <span style={{
-                                            background: 'rgba(0,229,155,0.1)', color: '#00e59b',
+                                            background: 'rgba(106,0,255,0.1)', color: '#FFC107',
                                             padding: '2px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 700,
                                         }}>
                                             {pick.odds}
@@ -259,7 +259,7 @@ export default function PodcastPage() {
                             <FileText size={16} style={{ color: '#fb923c' }} />
                             Podcast Knowledge Base
                             <span style={{
-                                background: 'rgba(0,229,155,0.1)', color: '#00e59b',
+                                background: 'rgba(106,0,255,0.1)', color: '#FFC107',
                                 padding: '2px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700,
                                 marginLeft: '8px',
                             }}>
@@ -272,7 +272,7 @@ export default function PodcastPage() {
                                 className="admin-btn admin-btn-secondary"
                                 style={{ fontSize: '11px', padding: '4px 10px' }}
                             >
-                                {copied ? <Check size={12} style={{ color: '#00e59b' }} /> : <Copy size={12} />}
+                                {copied ? <Check size={12} style={{ color: '#FFC107' }} /> : <Copy size={12} />}
                                 {copied ? 'Copied!' : 'Copy All'}
                             </button>
                             <button
@@ -311,7 +311,7 @@ export default function PodcastPage() {
                     }}>
                         <div>
                             <span style={{ color: '#6b7280', fontSize: '10px', textTransform: 'uppercase', fontWeight: 600 }}>Record</span>
-                            <div style={{ color: '#00e59b', fontSize: '14px', fontWeight: 800 }}>{data.record}</div>
+                            <div style={{ color: '#FFC107', fontSize: '14px', fontWeight: 800 }}>{data.record}</div>
                         </div>
                         <div>
                             <span style={{ color: '#6b7280', fontSize: '10px', textTransform: 'uppercase', fontWeight: 600 }}>Win Rate</span>

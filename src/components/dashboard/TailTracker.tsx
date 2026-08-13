@@ -20,7 +20,7 @@ export default function TailTracker({ seasonUnits, weekUnits, totalPicks }: Tail
     return (
         <div className="dash-sidebar-card">
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '14px' }}>
-                <DollarSign size={14} style={{ color: '#00e59b' }} />
+                <DollarSign size={14} style={{ color: '#FFC107' }} />
                 <h3 style={{ fontSize: '13px', fontWeight: 600, color: '#e5e7eb' }}>If You Tailed</h3>
             </div>
 
@@ -37,9 +37,9 @@ export default function TailTracker({ seasonUnits, weekUnits, totalPicks }: Tail
                             fontSize: '11px',
                             fontWeight: 600,
                             border: '1px solid',
-                            borderColor: unitSize === s ? 'rgba(0,229,155,0.3)' : 'rgba(255,255,255,0.06)',
-                            background: unitSize === s ? 'rgba(0,229,155,0.1)' : 'transparent',
-                            color: unitSize === s ? '#00e59b' : '#6b7280',
+                            borderColor: unitSize === s ? 'rgba(106,0,255,0.3)' : 'rgba(255,255,255,0.06)',
+                            background: unitSize === s ? 'rgba(106,0,255,0.1)' : 'transparent',
+                            color: unitSize === s ? '#FFC107' : '#6b7280',
                             cursor: 'pointer',
                             transition: 'all 0.2s',
                         }}
@@ -54,18 +54,18 @@ export default function TailTracker({ seasonUnits, weekUnits, totalPicks }: Tail
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: '12px', color: '#9ca3af' }}>This week</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        {weekUnits > 0 && <ChevronUp size={14} style={{ color: '#00e59b' }} />}
+                        {weekUnits > 0 && <ChevronUp size={14} style={{ color: '#FFC107' }} />}
                         <span style={{
                             fontSize: '15px',
                             fontWeight: 700,
-                            color: weekUnits >= 0 ? '#00e59b' : '#f87171',
+                            color: weekUnits >= 0 ? '#22c55e' : '#f87171',
                         }}>
                             {weekUnits >= 0 ? '+' : ''}{weekUnits}u
                         </span>
                         <span style={{
                             fontSize: '13px',
                             fontWeight: 600,
-                            color: weekDollars >= 0 ? '#00e59b' : '#f87171',
+                            color: weekDollars >= 0 ? '#22c55e' : '#f87171',
                             marginLeft: '4px',
                             opacity: 0.8,
                         }}>
@@ -80,14 +80,14 @@ export default function TailTracker({ seasonUnits, weekUnits, totalPicks }: Tail
                         <span style={{
                             fontSize: '15px',
                             fontWeight: 700,
-                            color: seasonUnits >= 0 ? '#00e59b' : '#f87171',
+                            color: seasonUnits >= 0 ? '#22c55e' : '#f87171',
                         }}>
                             {seasonUnits >= 0 ? '+' : ''}{seasonUnits}u
                         </span>
                         <span style={{
                             fontSize: '13px',
                             fontWeight: 600,
-                            color: seasonDollars >= 0 ? '#00e59b' : '#f87171',
+                            color: seasonDollars >= 0 ? '#22c55e' : '#f87171',
                             marginLeft: '4px',
                             opacity: 0.8,
                         }}>

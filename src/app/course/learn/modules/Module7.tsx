@@ -73,11 +73,11 @@ export default function Module7() {
                 {checked.size === CHECKLIST.length && (
                     <div style={{
                         marginTop: '16px', padding: '16px', borderRadius: '12px',
-                        background: 'rgba(0,229,155,0.08)', border: '1px solid rgba(0,229,155,0.2)',
+                        background: 'rgba(106,0,255,0.08)', border: '1px solid rgba(106,0,255,0.2)',
                         textAlign: 'center',
                     }}>
                         <div style={{ fontSize: '24px', marginBottom: '8px' }}>🔥</div>
-                        <div style={{ fontWeight: 800, color: '#00e59b', marginBottom: '4px' }}>Routine Complete!</div>
+                        <div style={{ fontWeight: 800, color: '#FFC107', marginBottom: '4px' }}>Routine Complete!</div>
                         <div style={{ fontSize: '12px', color: '#6b7280' }}>This is your daily life now. 5 minutes. Every game day.</div>
                     </div>
                 )}
@@ -91,7 +91,7 @@ export default function Module7() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                         {[
                             { time: '11:00 AM ET', task: 'Check the Pattern Dashboard', desc: 'Identify today\'s True Patterns playing today. Note your top 1-3 picks.', color: '#60a5fa' },
-                            { time: '12:00 PM ET', task: 'Place Your Bets', desc: 'Lines are usually up by now. Place your base unit bets on each break direction.', color: '#00e59b' },
+                            { time: '12:00 PM ET', task: 'Place Your Bets', desc: 'Lines are usually up by now. Place your base unit bets on each break direction.', color: '#FFC107' },
                             { time: '10:00 PM ET', task: 'Check Results', desc: 'Most games are finished. Log your wins and losses. Note any double-up targets for tomorrow.', color: '#fbbf24' },
                             { time: 'Sunday', task: 'Weekly Review', desc: 'Recalculate your base unit. Review your W/L record. Withdraw 50% of profits if end of month.', color: '#a78bfa' },
                         ].map((slot, i) => (
@@ -168,8 +168,8 @@ export default function Module7() {
                 </p>
             </div>
 
-            <div className="learn-takeaway" style={{ background: 'linear-gradient(135deg, rgba(0,229,155,0.08), rgba(251,191,36,0.06))' }}>
-                <h4 style={{ color: '#00e59b' }}>🎓 Course Complete — Your System Summary</h4>
+            <div className="learn-takeaway" style={{ background: 'linear-gradient(135deg, rgba(106,0,255,0.08), rgba(251,191,36,0.06))' }}>
+                <h4 style={{ color: '#FFC107' }}>🎓 Course Complete — Your System Summary</h4>
                 <ul>
                     <li>Check the dashboard daily at 11 AM ET — filter True Patterns + Playing Today</li>
                     <li>Pick 1-3 highest Break Score plays (69%+ preferred)</li>

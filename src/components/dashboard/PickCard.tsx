@@ -144,8 +144,8 @@ export default function PickCard({ pick, locked = false }: PickCardProps): React
                                     <span style={{
                                         fontSize: '11px',
                                         fontFamily: 'monospace',
-                                        color: '#00e59b',
-                                        background: 'rgba(0,229,155,0.1)',
+                                        color: '#FFC107',
+                                        background: 'rgba(106,0,255,0.1)',
                                         padding: '2px 6px',
                                         borderRadius: '4px',
                                     }}>

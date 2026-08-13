@@ -172,7 +172,7 @@ export default function AnalysisHubPage() {
                                 )}
 
                                 <div style={{ textAlign: 'right', marginTop: '8px' }}>
-                                    <span style={{ color: '#00e59b', fontSize: '11px', fontWeight: 600 }}>Analyze →</span>
+                                    <span style={{ color: '#FFC107', fontSize: '11px', fontWeight: 600 }}>Analyze →</span>
                                 </div>
                             </Link>
                         );

@@ -185,7 +185,7 @@ export default function MemberPatternsPage(): ReactNode {
                             <div className="pw-stat-label">Teams Scanned</div>
                         </div>
                         <div className="pw-stat">
-                            <div className="pw-stat-value" style={{ color: '#00e59b' }}>62-99%</div>
+                            <div className="pw-stat-value" style={{ color: '#FFC107' }}>62-99%</div>
                             <div className="pw-stat-label">Break Accuracy</div>
                         </div>
                         <div className="pw-stat">
@@ -237,7 +237,7 @@ export default function MemberPatternsPage(): ReactNode {
                                 'Situational alerts dashboard',
                             ].map((f, i) => (
                                 <div key={i} className="pw-feature">
-                                    <Zap size={11} style={{ color: '#00e59b', flexShrink: 0 }} />
+                                    <Zap size={11} style={{ color: '#FFC107', flexShrink: 0 }} />
                                     <span>{f}</span>
                                 </div>
                             ))}
@@ -312,8 +312,8 @@ export default function MemberPatternsPage(): ReactNode {
                     <div className="value" style={{ color: '#fbbf24' }}>{devCount}</div>
                     <div className="label">👀 Developing</div>
                 </div>
-                <div className="patterns-summary-card" style={{ background: 'rgba(0,229,155,0.06)', border: '1px solid rgba(0,229,155,0.15)' }}>
-                    <div className="value" style={{ color: '#00e59b' }}>{todayAltCount}</div>
+                <div className="patterns-summary-card" style={{ background: 'rgba(106,0,255,0.06)', border: '1px solid rgba(106,0,255,0.15)' }}>
+                    <div className="value" style={{ color: '#FFC107' }}>{todayAltCount}</div>
                     <div className="label">⚾ Today</div>
                 </div>
             </motion.div>
@@ -515,16 +515,16 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
                                             {inStreak && !isStreakStart && (
                                                 <div
                                                     className="pattern-streak-connector"
-                                                    style={{ background: g.result === 'W' ? 'rgba(0,229,155,0.4)' : 'rgba(239,68,68,0.4)' }}
+                                                    style={{ background: g.result === 'W' ? 'rgba(106,0,255,0.4)' : 'rgba(239,68,68,0.4)' }}
                                                 />
                                             )}
                                             <div
                                                 className={dotClass}
                                                 title={`${g.result} ${g.score} ${g.opponent} (${g.date})`}
                                                 style={{
-                                                    background: g.result === 'W' ? 'rgba(0,229,155,0.15)' : 'rgba(239,68,68,0.15)',
-                                                    color: g.result === 'W' ? '#00e59b' : '#ef4444',
-                                                    border: `1px solid ${g.result === 'W' ? 'rgba(0,229,155,0.25)' : 'rgba(239,68,68,0.25)'}`,
+                                                    background: g.result === 'W' ? 'rgba(106,0,255,0.15)' : 'rgba(239,68,68,0.15)',
+                                                    color: g.result === 'W' ? '#FFC107' : '#ef4444',
+                                                    border: `1px solid ${g.result === 'W' ? 'rgba(106,0,255,0.25)' : 'rgba(239,68,68,0.25)'}`,
                                                 }}
                                             >
                                                 {g.result}
@@ -543,10 +543,10 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
                                                 className={`pattern-break-dot ${isBreak ? 'break-mode' : ''}`}
                                                 style={{
                                                     background: team.nextPrediction === 'W'
-                                                        ? (isBreak ? 'rgba(0,229,155,0.25)' : 'rgba(0,229,155,0.15)')
+                                                        ? (isBreak ? 'rgba(106,0,255,0.25)' : 'rgba(106,0,255,0.15)')
                                                         : (isBreak ? 'rgba(239,68,68,0.25)' : 'rgba(239,68,68,0.15)'),
-                                                    color: team.nextPrediction === 'W' ? '#00e59b' : '#ef4444',
-                                                    border: `2px dashed ${team.nextPrediction === 'W' ? 'rgba(0,229,155,0.4)' : 'rgba(239,68,68,0.4)'}`,
+                                                    color: team.nextPrediction === 'W' ? '#FFC107' : '#ef4444',
+                                                    border: `2px dashed ${team.nextPrediction === 'W' ? 'rgba(106,0,255,0.4)' : 'rgba(239,68,68,0.4)'}`,
                                                 }}
                                             >
                                                 {team.nextPrediction}?
@@ -586,9 +586,9 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
                     {team.nextPrediction && (
                         <div className="pattern-prediction">
                             <div className="pattern-prediction-box" style={{
-                                background: team.nextPrediction === 'W' ? 'rgba(0,229,155,0.15)' : 'rgba(239,68,68,0.15)',
-                                color: team.nextPrediction === 'W' ? '#00e59b' : '#ef4444',
-                                border: `2px dashed ${team.nextPrediction === 'W' ? 'rgba(0,229,155,0.3)' : 'rgba(239,68,68,0.3)'}`,
+                                background: team.nextPrediction === 'W' ? 'rgba(106,0,255,0.15)' : 'rgba(239,68,68,0.15)',
+                                color: team.nextPrediction === 'W' ? '#FFC107' : '#ef4444',
+                                border: `2px dashed ${team.nextPrediction === 'W' ? 'rgba(106,0,255,0.3)' : 'rgba(239,68,68,0.3)'}`,
                             }}>
                                 {team.nextPrediction}?
                             </div>
@@ -638,11 +638,11 @@ function TeamRow({ team, isPlayingToday }: { team: TeamPattern; isPlayingToday: 
                             <div
                                 key={i}
                                 className="pattern-game-card"
-                                style={{ border: `1px solid ${g.result === 'W' ? 'rgba(0,229,155,0.12)' : 'rgba(239,68,68,0.12)'}` }}
+                                style={{ border: `1px solid ${g.result === 'W' ? 'rgba(106,0,255,0.12)' : 'rgba(239,68,68,0.12)'}` }}
                             >
                                 <div className="pattern-game-header">
                                     <span className="pattern-game-result" style={{
-                                        color: g.result === 'W' ? '#00e59b' : '#ef4444',
+                                        color: g.result === 'W' ? '#FFC107' : '#ef4444',
                                     }}>
                                         {g.result === 'W' ? '✅ WIN' : '❌ LOSS'}
                                     </span>

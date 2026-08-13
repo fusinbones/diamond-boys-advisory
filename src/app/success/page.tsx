@@ -27,7 +27,7 @@ function SuccessContent() {
                     height={windowSize.height}
                     recycle={false}
                     numberOfPieces={150}
-                    colors={['#00e59b', '#00d4aa', '#fbbf24', '#34d399', '#a78bfa', '#ffffff']}
+                    colors={['#FFC107', '#FFC107', '#fbbf24', '#FFC107', '#a78bfa', '#ffffff']}
                 />
             )}
 
@@ -39,8 +39,8 @@ function SuccessContent() {
                     transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
                     className="mb-5 sm:mb-8"
                 >
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#00e59b]/15 flex items-center justify-center mx-auto mb-3 sm:mb-4 border border-[#00e59b]/30">
-                        <CheckCircle size={28} className="sm:w-10 sm:h-10 text-[#00e59b]" />
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#FFC107]/15 flex items-center justify-center mx-auto mb-3 sm:mb-4 border border-[#FFC107]/30">
+                        <CheckCircle size={28} className="sm:w-10 sm:h-10 text-[#FFC107]" />
                     </div>
                     <Image
                         src="/brand/logo-primary.png"
@@ -80,7 +80,7 @@ function SuccessContent() {
                             'Say hello in the chat — the crew is waiting!',
                         ].map((step, i) => (
                             <div key={i} className="flex items-start gap-2.5 sm:gap-3">
-                                <span className="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#00e59b]/15 flex items-center justify-center text-[10px] sm:text-xs text-[#00e59b] font-bold">
+                                <span className="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#FFC107]/15 flex items-center justify-center text-[10px] sm:text-xs text-[#FFC107] font-bold">
                                     {i + 1}
                                 </span>
                                 <p className="text-gray-300 text-xs sm:text-sm pt-0.5 sm:pt-1">{step}</p>
@@ -126,7 +126,7 @@ export default function SuccessPage() {
     return (
         <Suspense fallback={
             <div className="py-20 text-center">
-                <div className="w-8 h-8 border-2 border-[#00e59b]/30 border-t-[#00e59b] rounded-full animate-spin mx-auto" />
+                <div className="w-8 h-8 border-2 border-[#FFC107]/30 border-t-[#FFC107] rounded-full animate-spin mx-auto" />
             </div>
         }>
             <SuccessContent />

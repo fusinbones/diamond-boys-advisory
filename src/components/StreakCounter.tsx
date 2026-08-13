@@ -53,7 +53,7 @@ export default function StreakCounter({ isPaid = false }: { isPaid?: boolean }) 
             animate={{ opacity: 1, y: 0 }}
             style={{
                 background: 'linear-gradient(135deg, rgba(4,8,16,0.95) 0%, rgba(10,22,40,0.95) 100%)',
-                border: `1px solid ${isHotStreak ? 'rgba(0,229,155,0.25)' : 'rgba(255,255,255,0.08)'}`,
+                border: `1px solid ${isHotStreak ? 'rgba(106,0,255,0.25)' : 'rgba(255,255,255,0.08)'}`,
                 borderRadius: '14px',
                 padding: '16px',
                 marginBottom: '12px',
@@ -65,7 +65,7 @@ export default function StreakCounter({ isPaid = false }: { isPaid?: boolean }) 
             {isHotStreak && (
                 <div style={{
                     position: 'absolute', top: 0, left: 0, right: 0, height: '2px',
-                    background: 'linear-gradient(to right, transparent, #00e59b, transparent)',
+                    background: 'linear-gradient(to right, transparent, #FFC107, transparent)',
                 }} />
             )}
 
@@ -83,12 +83,12 @@ export default function StreakCounter({ isPaid = false }: { isPaid?: boolean }) 
                         transition={{ duration: 1.5, repeat: Infinity }}
                         style={{
                             display: 'flex', alignItems: 'center', gap: '4px',
-                            background: 'rgba(0,229,155,0.1)', padding: '3px 10px',
-                            borderRadius: '20px', border: '1px solid rgba(0,229,155,0.2)',
+                            background: 'rgba(106,0,255,0.1)', padding: '3px 10px',
+                            borderRadius: '20px', border: '1px solid rgba(106,0,255,0.2)',
                         }}
                     >
-                        <Flame size={12} style={{ color: '#00e59b' }} />
-                        <span style={{ color: '#00e59b', fontSize: '11px', fontWeight: 700 }}>HOT STREAK</span>
+                        <Flame size={12} style={{ color: '#FFC107' }} />
+                        <span style={{ color: '#FFC107', fontSize: '11px', fontWeight: 700 }}>HOT STREAK</span>
                     </motion.div>
                 )}
             </div>
@@ -113,7 +113,7 @@ export default function StreakCounter({ isPaid = false }: { isPaid?: boolean }) 
                     background: 'rgba(255,255,255,0.03)', borderRadius: '10px', padding: '10px 8px',
                     textAlign: 'center',
                 }}>
-                    <div style={{ color: '#00e59b', fontSize: '18px', fontWeight: 800, lineHeight: 1 }}>
+                    <div style={{ color: '#FFC107', fontSize: '18px', fontWeight: 800, lineHeight: 1 }}>
                         {record.winPct}%
                     </div>
                     <div style={{ color: '#6b7280', fontSize: '10px', marginTop: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -124,13 +124,13 @@ export default function StreakCounter({ isPaid = false }: { isPaid?: boolean }) 
                 {/* Streak */}
                 <div style={{
                     background: record.streakType === 'W'
-                        ? 'rgba(0,229,155,0.06)' : record.streakType === 'L'
+                        ? 'rgba(106,0,255,0.06)' : record.streakType === 'L'
                         ? 'rgba(239,68,68,0.06)' : 'rgba(255,255,255,0.03)',
                     borderRadius: '10px', padding: '10px 8px', textAlign: 'center',
-                    border: isHotStreak ? '1px solid rgba(0,229,155,0.15)' : 'none',
+                    border: isHotStreak ? '1px solid rgba(106,0,255,0.15)' : 'none',
                 }}>
                     <div style={{
-                        color: record.streakType === 'W' ? '#00e59b' : record.streakType === 'L' ? '#ef4444' : '#9ca3af',
+                        color: record.streakType === 'W' ? '#22c55e' : record.streakType === 'L' ? '#ef4444' : '#9ca3af',
                         fontSize: '18px', fontWeight: 800, lineHeight: 1,
                     }}>
                         {record.streak}{record.streakType !== 'none' ? record.streakType : '-'}
@@ -154,10 +154,10 @@ export default function StreakCounter({ isPaid = false }: { isPaid?: boolean }) 
                     style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
                         width: '100%', padding: '10px',
-                        background: 'linear-gradient(135deg, rgba(0,229,155,0.1), rgba(0,229,155,0.05))',
-                        border: '1px solid rgba(0,229,155,0.2)',
+                        background: 'linear-gradient(135deg, rgba(106,0,255,0.1), rgba(106,0,255,0.05))',
+                        border: '1px solid rgba(106,0,255,0.2)',
                         borderRadius: '10px', textDecoration: 'none',
-                        color: '#00e59b', fontSize: '12px', fontWeight: 700,
+                        color: '#FFC107', fontSize: '12px', fontWeight: 700,
                     }}
                 >
                     <TrendingUp size={13} />

@@ -57,13 +57,13 @@ interface AnalyticsData {
 
 /* ─── Helpers ─── */
 function rateColor(rate: number): string {
-    if (rate >= 55) return '#00e59b';
+    if (rate >= 55) return '#FFC107';
     if (rate >= 48) return '#fbbf24';
     return '#ef4444';
 }
 
 function barGradient(rate: number): string {
-    if (rate >= 55) return 'linear-gradient(90deg, #00e59b, #34d399)';
+    if (rate >= 55) return 'linear-gradient(90deg, #FFC107, #FFC107)';
     if (rate >= 48) return 'linear-gradient(90deg, #fbbf24, #f59e0b)';
     return 'linear-gradient(90deg, #ef4444, #f87171)';
 }
@@ -252,7 +252,7 @@ function GameCard({ game: g, isFeatured, maxRate, delay, isMinor }: {
             <div className="ba-game-locations">
                 <span className="ba-game-loc">
                     <span className="ba-game-loc-emoji">🏠</span>
-                    <span className="ba-game-loc-count" style={{ color: '#00e59b' }}>{g.homeBreaks}</span>
+                    <span className="ba-game-loc-count" style={{ color: '#FFC107' }}>{g.homeBreaks}</span>
                     <span className="ba-game-loc-label">home</span>
                 </span>
                 <span className="ba-game-loc">

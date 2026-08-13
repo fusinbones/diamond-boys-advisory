@@ -14,7 +14,7 @@ interface KPICardProps {
 }
 
 const iconMap: Record<string, { Icon: React.ComponentType<{ size: number; className?: string }>; bg: string; color: string }> = {
-    record: { Icon: Trophy, bg: 'rgba(0,229,155,0.1)', color: '#00e59b' },
+    record: { Icon: Trophy, bg: 'rgba(106,0,255,0.1)', color: '#FFC107' },
     roi: { Icon: TrendingUp, bg: 'rgba(59,130,246,0.1)', color: '#60a5fa' },
     streak: { Icon: Flame, bg: 'rgba(251,146,60,0.1)', color: '#fb923c' },
     edge: { Icon: Target, bg: 'rgba(139,92,246,0.1)', color: '#a78bfa' },

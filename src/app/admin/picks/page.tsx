@@ -224,8 +224,8 @@ export default function PicksPage() {
                 </div>
             )}
             {success && (
-                <div style={{ background: 'rgba(0,229,155,0.08)', border: '1px solid rgba(0,229,155,0.2)', borderRadius: '10px', padding: '10px 14px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Check size={14} style={{ color: '#00e59b' }} />
+                <div style={{ background: 'rgba(106,0,255,0.08)', border: '1px solid rgba(106,0,255,0.2)', borderRadius: '10px', padding: '10px 14px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Check size={14} style={{ color: '#FFC107' }} />
                     <span style={{ color: '#6ee7b7', fontSize: '13px' }}>{success}</span>
                 </div>
             )}
@@ -234,8 +234,8 @@ export default function PicksPage() {
                QUICK PICK WIZARD
                ═══════════════════════════════════════ */}
             <div style={{
-                background: 'linear-gradient(135deg, rgba(0,229,155,0.04) 0%, rgba(26,39,68,0.3) 100%)',
-                border: '1px solid rgba(0,229,155,0.12)',
+                background: 'linear-gradient(135deg, rgba(106,0,255,0.04) 0%, rgba(26,39,68,0.3) 100%)',
+                border: '1px solid rgba(106,0,255,0.12)',
                 borderRadius: '16px',
                 padding: '20px',
                 marginBottom: '20px',
@@ -258,7 +258,7 @@ export default function PicksPage() {
                         {['select_game', 'select_pick', 'confirm'].map((s, i) => (
                             <div key={s} style={{
                                 width: '8px', height: '8px', borderRadius: '50%',
-                                background: step === s ? '#00e59b' : i < ['select_game', 'select_pick', 'confirm'].indexOf(step) ? '#00e59b' : 'rgba(255,255,255,0.1)',
+                                background: step === s ? '#FFC107' : i < ['select_game', 'select_pick', 'confirm'].indexOf(step) ? '#FFC107' : 'rgba(255,255,255,0.1)',
                                 transition: 'background 0.2s',
                             }} />
                         ))}
@@ -277,9 +277,9 @@ export default function PicksPage() {
                                     style={{
                                         padding: '4px 12px', borderRadius: '14px', fontSize: '11px', fontWeight: 600,
                                         cursor: 'pointer',
-                                        border: sportFilter === s ? '1px solid rgba(0,229,155,0.3)' : '1px solid rgba(255,255,255,0.06)',
-                                        background: sportFilter === s ? 'rgba(0,229,155,0.1)' : 'transparent',
-                                        color: sportFilter === s ? '#00e59b' : '#6b7280',
+                                        border: sportFilter === s ? '1px solid rgba(106,0,255,0.3)' : '1px solid rgba(255,255,255,0.06)',
+                                        background: sportFilter === s ? 'rgba(106,0,255,0.1)' : 'transparent',
+                                        color: sportFilter === s ? '#FFC107' : '#6b7280',
                                     }}
                                 >
                                     {s}
@@ -316,7 +316,7 @@ export default function PicksPage() {
                                             transition: 'all 0.15s',
                                             position: 'relative',
                                         }}
-                                        onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(0,229,155,0.3)'; e.currentTarget.style.background = 'rgba(0,229,155,0.04)'; }}
+                                        onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(106,0,255,0.3)'; e.currentTarget.style.background = 'rgba(106,0,255,0.04)'; }}
                                         onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
                                     >
                                         {/* Sport + Time */}
@@ -334,13 +334,13 @@ export default function PicksPage() {
                                         {/* Teams + Odds */}
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                                             <span style={{ fontSize: '13px', fontWeight: 700, color: 'white' }}>{game.awayTeam}</span>
-                                            <span style={{ fontSize: '12px', fontWeight: 700, color: game.moneyline?.away && game.moneyline.away > 0 ? '#00e59b' : '#f87171' }}>
+                                            <span style={{ fontSize: '12px', fontWeight: 700, color: game.moneyline?.away && game.moneyline.away > 0 ? '#22c55e' : '#f87171' }}>
                                                 {game.moneyline ? fmtOdds(game.moneyline.away) : ''}
                                             </span>
                                         </div>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                             <span style={{ fontSize: '13px', fontWeight: 700, color: '#b0b8c4' }}>{game.homeTeam}</span>
-                                            <span style={{ fontSize: '12px', fontWeight: 700, color: game.moneyline?.home && game.moneyline.home > 0 ? '#00e59b' : '#f87171' }}>
+                                            <span style={{ fontSize: '12px', fontWeight: 700, color: game.moneyline?.home && game.moneyline.home > 0 ? '#22c55e' : '#f87171' }}>
                                                 {game.moneyline ? fmtOdds(game.moneyline.home) : ''}
                                             </span>
                                         </div>
@@ -389,13 +389,13 @@ export default function PicksPage() {
                                 onClick={() => selectQuickPick(selectedGame, 'ML', selectedGame.awayTeam, fmtOdds(selectedGame.moneyline?.away ?? null))}
                                 style={{
                                     padding: '16px 12px', borderRadius: '12px', cursor: 'pointer',
-                                    background: selectedGame.moneyline?.away && selectedGame.moneyline.away > 0 ? 'rgba(0,229,155,0.08)' : 'rgba(248,113,113,0.06)',
-                                    border: `1px solid ${selectedGame.moneyline?.away && selectedGame.moneyline.away > 0 ? 'rgba(0,229,155,0.2)' : 'rgba(248,113,113,0.15)'}`,
+                                    background: selectedGame.moneyline?.away && selectedGame.moneyline.away > 0 ? 'rgba(106,0,255,0.08)' : 'rgba(248,113,113,0.06)',
+                                    border: `1px solid ${selectedGame.moneyline?.away && selectedGame.moneyline.away > 0 ? 'rgba(106,0,255,0.2)' : 'rgba(248,113,113,0.15)'}`,
                                     textAlign: 'center',
                                 }}
                             >
                                 <div style={{ fontSize: '13px', fontWeight: 700, color: 'white', marginBottom: '4px' }}>{selectedGame.awayTeam}</div>
-                                <div style={{ fontSize: '18px', fontWeight: 800, color: selectedGame.moneyline?.away && selectedGame.moneyline.away > 0 ? '#00e59b' : '#f87171' }}>
+                                <div style={{ fontSize: '18px', fontWeight: 800, color: selectedGame.moneyline?.away && selectedGame.moneyline.away > 0 ? '#22c55e' : '#f87171' }}>
                                     {selectedGame.moneyline ? fmtOdds(selectedGame.moneyline.away) : '—'}
                                 </div>
                                 <div style={{ fontSize: '9px', color: '#6b7280', marginTop: '2px' }}>
@@ -406,13 +406,13 @@ export default function PicksPage() {
                                 onClick={() => selectQuickPick(selectedGame, 'ML', selectedGame.homeTeam, fmtOdds(selectedGame.moneyline?.home ?? null))}
                                 style={{
                                     padding: '16px 12px', borderRadius: '12px', cursor: 'pointer',
-                                    background: selectedGame.moneyline?.home && selectedGame.moneyline.home > 0 ? 'rgba(0,229,155,0.08)' : 'rgba(248,113,113,0.06)',
-                                    border: `1px solid ${selectedGame.moneyline?.home && selectedGame.moneyline.home > 0 ? 'rgba(0,229,155,0.2)' : 'rgba(248,113,113,0.15)'}`,
+                                    background: selectedGame.moneyline?.home && selectedGame.moneyline.home > 0 ? 'rgba(106,0,255,0.08)' : 'rgba(248,113,113,0.06)',
+                                    border: `1px solid ${selectedGame.moneyline?.home && selectedGame.moneyline.home > 0 ? 'rgba(106,0,255,0.2)' : 'rgba(248,113,113,0.15)'}`,
                                     textAlign: 'center',
                                 }}
                             >
                                 <div style={{ fontSize: '13px', fontWeight: 700, color: 'white', marginBottom: '4px' }}>{selectedGame.homeTeam}</div>
-                                <div style={{ fontSize: '18px', fontWeight: 800, color: selectedGame.moneyline?.home && selectedGame.moneyline.home > 0 ? '#00e59b' : '#f87171' }}>
+                                <div style={{ fontSize: '18px', fontWeight: 800, color: selectedGame.moneyline?.home && selectedGame.moneyline.home > 0 ? '#22c55e' : '#f87171' }}>
                                     {selectedGame.moneyline ? fmtOdds(selectedGame.moneyline.home) : '—'}
                                 </div>
                                 <div style={{ fontSize: '9px', color: '#6b7280', marginTop: '2px' }}>
@@ -499,7 +499,7 @@ export default function PicksPage() {
                         {/* Pick summary card */}
                         <div style={{
                             background: 'rgba(0,0,0,0.25)', borderRadius: '12px', padding: '16px',
-                            marginBottom: '16px', border: '1px solid rgba(0,229,155,0.15)',
+                            marginBottom: '16px', border: '1px solid rgba(106,0,255,0.15)',
                         }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                                 <span style={{ fontSize: '10px', color: '#6b7280' }}>{selectedGame.sportEmoji} {selectedGame.sport}</span>
@@ -509,7 +509,7 @@ export default function PicksPage() {
                                 {selectedGame.awayTeam} @ {selectedGame.homeTeam}
                             </p>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-                                <span style={{ fontSize: '18px', fontWeight: 800, color: '#00e59b' }}>{pickTeam}</span>
+                                <span style={{ fontSize: '18px', fontWeight: 800, color: '#FFC107' }}>{pickTeam}</span>
                                 <span style={{
                                     fontSize: '11px', fontWeight: 600, color: '#fbbf24',
                                     background: 'rgba(251,191,36,0.12)', padding: '2px 8px', borderRadius: '4px',
@@ -521,11 +521,11 @@ export default function PicksPage() {
                         {/* Confidence slider */}
                         <div style={{ marginBottom: '14px' }}>
                             <label style={{ fontSize: '11px', fontWeight: 600, color: '#6b7280', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '6px' }}>
-                                Confidence: <span style={{ color: confidence >= 80 ? '#00e59b' : confidence >= 60 ? '#fbbf24' : '#f87171', fontWeight: 700 }}>{confidence}%</span>
+                                Confidence: <span style={{ color: confidence >= 80 ? '#FFC107' : confidence >= 60 ? '#fbbf24' : '#f87171', fontWeight: 700 }}>{confidence}%</span>
                                 <HelpCircle size={10} style={{ color: '#4b5563' }} />
                             </label>
                             <input type="range" min={30} max={98} step={1} value={confidence} onChange={e => setConfidence(Number(e.target.value))}
-                                style={{ width: '100%', accentColor: '#00e59b', height: '4px' }} />
+                                style={{ width: '100%', accentColor: '#FFC107', height: '4px' }} />
                         </div>
 
                         {/* Unit size */}
@@ -588,7 +588,7 @@ export default function PicksPage() {
                                 disabled={saving}
                                 style={{
                                     flex: 1, padding: '12px', borderRadius: '10px', cursor: 'pointer',
-                                    background: 'linear-gradient(135deg, #00e59b, #00b377)',
+                                    background: 'linear-gradient(135deg, #FFC107, #00b377)',
                                     border: 'none', color: '#0a0f1e', fontWeight: 800, fontSize: '14px',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
                                     opacity: saving ? 0.6 : 1,
@@ -628,7 +628,7 @@ export default function PicksPage() {
             {showPicks && (
                 loading ? (
                     <div style={{ textAlign: 'center', padding: '30px', color: '#6b7280', fontSize: '13px' }}>
-                        <Loader2 size={18} style={{ color: '#00e59b', animation: 'spin 1s linear infinite', margin: '0 auto 8px' }} />
+                        <Loader2 size={18} style={{ color: '#FFC107', animation: 'spin 1s linear infinite', margin: '0 auto 8px' }} />
                         Loading picks...
                     </div>
                 ) : picks.length === 0 ? (
@@ -642,7 +642,7 @@ export default function PicksPage() {
                             <div key={pick.id} style={{
                                 background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.06)',
                                 borderRadius: '12px', padding: '14px',
-                                borderLeft: `3px solid ${pick.result === 'hit' ? '#00e59b' : pick.result === 'miss' ? '#f87171' : pick.result === 'push' ? '#fbbf24' : '#3b82f6'}`,
+                                borderLeft: `3px solid ${pick.result === 'hit' ? '#22c55e' : pick.result === 'miss' ? '#f87171' : pick.result === 'push' ? '#fbbf24' : '#3b82f6'}`,
                             }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                     <div style={{ flex: 1 }}>
@@ -668,8 +668,8 @@ export default function PicksPage() {
                                                         style={{
                                                             padding: '4px 8px', borderRadius: '6px', cursor: 'pointer',
                                                             border: 'none', fontSize: '10px', fontWeight: 600,
-                                                            background: r === 'hit' ? 'rgba(0,229,155,0.15)' : r === 'miss' ? 'rgba(248,113,113,0.15)' : 'rgba(251,191,36,0.15)',
-                                                            color: r === 'hit' ? '#00e59b' : r === 'miss' ? '#f87171' : '#fbbf24',
+                                                            background: r === 'hit' ? 'rgba(106,0,255,0.15)' : r === 'miss' ? 'rgba(248,113,113,0.15)' : 'rgba(251,191,36,0.15)',
+                                                            color: r === 'hit' ? '#22c55e' : r === 'miss' ? '#f87171' : '#fbbf24',
                                                         }}
                                                     >{r}</button>
                                                 ))}
@@ -681,8 +681,8 @@ export default function PicksPage() {
                                             <>
                                                 <span style={{
                                                     fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '6px',
-                                                    background: pick.result === 'hit' ? 'rgba(0,229,155,0.12)' : pick.result === 'miss' ? 'rgba(248,113,113,0.12)' : pick.result === 'push' ? 'rgba(251,191,36,0.12)' : 'rgba(59,130,246,0.12)',
-                                                    color: pick.result === 'hit' ? '#00e59b' : pick.result === 'miss' ? '#f87171' : pick.result === 'push' ? '#fbbf24' : '#60a5fa',
+                                                    background: pick.result === 'hit' ? 'rgba(106,0,255,0.12)' : pick.result === 'miss' ? 'rgba(248,113,113,0.12)' : pick.result === 'push' ? 'rgba(251,191,36,0.12)' : 'rgba(59,130,246,0.12)',
+                                                    color: pick.result === 'hit' ? '#22c55e' : pick.result === 'miss' ? '#f87171' : pick.result === 'push' ? '#fbbf24' : '#60a5fa',
                                                 }}>
                                                     {pick.result}
                                                 </span>

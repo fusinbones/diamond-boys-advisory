@@ -24,8 +24,8 @@
 .fph-spinner {
     width: 20px;
     height: 20px;
-    border: 2px solid rgba(0, 229, 155, 0.3);
-    border-top-color: #00e59b;
+    border: 2px solid rgba(106, 0, 255, 0.3);
+    border-top-color: #FFC107;
     border-radius: 50%;
     animation: fphSpin 1s linear infinite;
 }

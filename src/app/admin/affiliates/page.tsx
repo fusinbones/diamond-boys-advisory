@@ -135,7 +135,7 @@ export default function AdminAffiliatesPage() {
     if (loading) {
         return (
             <div className="admin-loader">
-                <Loader2 size={24} style={{ animation: 'spin 1s linear infinite', color: '#00e59b' }} />
+                <Loader2 size={24} style={{ animation: 'spin 1s linear infinite', color: '#FFC107' }} />
                 <span>Loading affiliates...</span>
             </div>
         );
@@ -162,11 +162,11 @@ export default function AdminAffiliatesPage() {
                 }}>
                     {[
                         { label: 'Total Affiliates', value: summary.total_affiliates.toString(), icon: Users, color: '#60a5fa' },
-                        { label: 'Active', value: summary.active_affiliates.toString(), icon: Check, color: '#00e59b' },
+                        { label: 'Active', value: summary.active_affiliates.toString(), icon: Check, color: '#FFC107' },
                         { label: 'Total Referrals', value: summary.total_referrals.toString(), icon: TrendingUp, color: '#a78bfa' },
                         { label: 'Commission Earned', value: `$${summary.total_commission.toFixed(2)}`, icon: DollarSign, color: '#fbbf24' },
-                        { label: 'Total Paid', value: `$${summary.total_paid.toFixed(2)}`, icon: CreditCard, color: '#34d399' },
-                        { label: 'Balance Owed', value: `$${summary.total_owed.toFixed(2)}`, icon: AlertCircle, color: summary.total_owed > 0 ? '#f87171' : '#00e59b' },
+                        { label: 'Total Paid', value: `$${summary.total_paid.toFixed(2)}`, icon: CreditCard, color: '#FFC107' },
+                        { label: 'Balance Owed', value: `$${summary.total_owed.toFixed(2)}`, icon: AlertCircle, color: summary.total_owed > 0 ? '#f87171' : '#FFC107' },
                     ].map(stat => (
                         <div key={stat.label} className="admin-card" style={{ padding: '14px', textAlign: 'center' }}>
                             <stat.icon size={16} style={{ color: stat.color, margin: '0 auto 6px' }} />
@@ -184,9 +184,9 @@ export default function AdminAffiliatesPage() {
             {/* Message banner */}
             {message && (
                 <div style={{
-                    background: 'rgba(0,229,155,0.08)', border: '1px solid rgba(0,229,155,0.2)',
+                    background: 'rgba(106,0,255,0.08)', border: '1px solid rgba(106,0,255,0.2)',
                     borderRadius: '10px', padding: '10px 14px', marginBottom: '16px',
-                    color: '#00e59b', fontSize: '13px', fontWeight: 600,
+                    color: '#FFC107', fontSize: '13px', fontWeight: 600,
                     display: 'flex', alignItems: 'center', gap: '6px',
                 }}>
                     <Check size={14} /> {message}
@@ -228,8 +228,8 @@ export default function AdminAffiliatesPage() {
                                         <span style={{
                                             padding: '2px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700,
                                             textTransform: 'uppercase',
-                                            background: aff.status === 'active' ? 'rgba(0,229,155,0.1)' : aff.status === 'paused' ? 'rgba(251,191,36,0.1)' : 'rgba(239,68,68,0.1)',
-                                            color: aff.status === 'active' ? '#00e59b' : aff.status === 'paused' ? '#fbbf24' : '#f87171',
+                                            background: aff.status === 'active' ? 'rgba(106,0,255,0.1)' : aff.status === 'paused' ? 'rgba(251,191,36,0.1)' : 'rgba(239,68,68,0.1)',
+                                            color: aff.status === 'active' ? '#FFC107' : aff.status === 'paused' ? '#fbbf24' : '#f87171',
                                         }}>
                                             {aff.status}
                                         </span>
@@ -248,11 +248,11 @@ export default function AdminAffiliatesPage() {
                                         <p style={{ color: '#6b7280', fontSize: '9px', margin: 0, textTransform: 'uppercase' }}>Referrals</p>
                                     </div>
                                     <div style={{ textAlign: 'center' }}>
-                                        <p style={{ color: '#00e59b', fontSize: '16px', fontWeight: 800, margin: 0 }}>${aff.total_earned.toFixed(2)}</p>
+                                        <p style={{ color: '#FFC107', fontSize: '16px', fontWeight: 800, margin: 0 }}>${aff.total_earned.toFixed(2)}</p>
                                         <p style={{ color: '#6b7280', fontSize: '9px', margin: 0, textTransform: 'uppercase' }}>Earned</p>
                                     </div>
                                     <div style={{ textAlign: 'center' }}>
-                                        <p style={{ color: '#34d399', fontSize: '16px', fontWeight: 800, margin: 0 }}>${aff.total_paid.toFixed(2)}</p>
+                                        <p style={{ color: '#FFC107', fontSize: '16px', fontWeight: 800, margin: 0 }}>${aff.total_paid.toFixed(2)}</p>
                                         <p style={{ color: '#6b7280', fontSize: '9px', margin: 0, textTransform: 'uppercase' }}>Paid</p>
                                     </div>
                                     <div style={{ textAlign: 'center' }}>

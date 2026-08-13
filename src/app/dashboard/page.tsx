@@ -101,11 +101,11 @@ function ResendCodeButton({ email }: { email: string }): ReactNode {
             onClick={handleResend}
             disabled={cooldown > 0 || sending}
             style={{
-                background: sent ? 'rgba(0,229,155,0.1)' : 'rgba(255,255,255,0.06)',
-                border: `1px solid ${sent ? 'rgba(0,229,155,0.25)' : 'rgba(255,255,255,0.1)'}`,
+                background: sent ? 'rgba(106,0,255,0.1)' : 'rgba(255,255,255,0.06)',
+                border: `1px solid ${sent ? 'rgba(106,0,255,0.25)' : 'rgba(255,255,255,0.1)'}`,
                 borderRadius: '10px',
                 padding: '10px 20px',
-                color: cooldown > 0 ? '#4b5563' : sent ? '#00e59b' : '#d1d5db',
+                color: cooldown > 0 ? '#4b5563' : sent ? '#FFC107' : '#d1d5db',
                 fontSize: '13px', fontWeight: 600,
                 cursor: cooldown > 0 || sending ? 'default' : 'pointer',
                 transition: 'all 0.2s',
@@ -509,7 +509,7 @@ function DashboardContent(): ReactNode {
         return (
             <div style={{ paddingTop: '60px', paddingBottom: '60px', minHeight: 'calc(100vh - 96px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ textAlign: 'center' }}>
-                    <Loader2 size={28} style={{ color: '#00e59b', animation: 'spin 1s linear infinite', margin: '0 auto 12px' }} />
+                    <Loader2 size={28} style={{ color: '#FFC107', animation: 'spin 1s linear infinite', margin: '0 auto 12px' }} />
                     <p style={{ color: '#9ca3af', fontSize: '14px' }}>Loading...</p>
                 </div>
             </div>
@@ -525,8 +525,8 @@ function DashboardContent(): ReactNode {
                     <div className="container-db" style={{ maxWidth: '420px' }}>
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                             <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-                                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(0,229,155,0.1)', border: '1px solid rgba(0,229,155,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                                    <KeyRound size={28} style={{ color: '#00e59b' }} />
+                                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(106,0,255,0.1)', border: '1px solid rgba(106,0,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                                    <KeyRound size={28} style={{ color: '#FFC107' }} />
                                 </div>
                                 <h1 className="font-display" style={{ fontSize: '28px', fontWeight: 800, color: 'white', marginBottom: '8px' }}>
                                     Set New Password
@@ -586,7 +586,7 @@ function DashboardContent(): ReactNode {
                                         )}
                                         {message && (
                                             <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                                                style={{ background: 'rgba(0,229,155,0.1)', border: '1px solid rgba(0,229,155,0.2)', borderRadius: '8px', padding: '10px 14px', marginBottom: '14px', color: '#00e59b', fontSize: '13px' }}
+                                                style={{ background: 'rgba(106,0,255,0.1)', border: '1px solid rgba(106,0,255,0.2)', borderRadius: '8px', padding: '10px 14px', marginBottom: '14px', color: '#FFC107', fontSize: '13px' }}
                                             >{message}</motion.div>
                                         )}
                                     </AnimatePresence>
@@ -647,8 +647,8 @@ function DashboardContent(): ReactNode {
                     <div className="container-db" style={{ maxWidth: '420px', padding: '0 16px' }}>
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                             <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-                                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(0,229,155,0.1)', border: '1px solid rgba(0,229,155,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                                    <KeyRound size={28} style={{ color: '#00e59b' }} />
+                                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(106,0,255,0.1)', border: '1px solid rgba(106,0,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                                    <KeyRound size={28} style={{ color: '#FFC107' }} />
                                 </div>
                                 <h1 className="font-display" style={{ fontSize: '24px', fontWeight: 800, color: 'white', marginBottom: '8px' }}>
                                     Verify Email
@@ -705,12 +705,12 @@ function DashboardContent(): ReactNode {
                                                 maxLength={1}
                                                 style={{
                                                     width: '38px', height: '50px',
-                                                    background: otp[i] ? 'rgba(0,229,155,0.08)' : 'rgba(255,255,255,0.04)',
-                                                    border: `2px solid ${otp[i] ? 'rgba(0,229,155,0.4)' : 'rgba(255,255,255,0.1)'}`,
+                                                    background: otp[i] ? 'rgba(106,0,255,0.08)' : 'rgba(255,255,255,0.04)',
+                                                    border: `2px solid ${otp[i] ? 'rgba(106,0,255,0.4)' : 'rgba(255,255,255,0.1)'}`,
                                                     borderRadius: '12px', color: 'white',
                                                     fontSize: '20px', fontWeight: 800,
                                                     textAlign: 'center', outline: 'none',
-                                                    caretColor: '#00e59b',
+                                                    caretColor: '#FFC107',
                                                     transition: 'border-color 0.2s, background 0.2s',
                                                 }}
                                             />
@@ -728,7 +728,7 @@ function DashboardContent(): ReactNode {
                                         )}
                                         {message && (
                                             <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                                                style={{ background: 'rgba(0,229,155,0.1)', border: '1px solid rgba(0,229,155,0.2)', borderRadius: '8px', padding: '10px 14px', marginBottom: '14px', color: '#00e59b', fontSize: '13px' }}
+                                                style={{ background: 'rgba(106,0,255,0.1)', border: '1px solid rgba(106,0,255,0.2)', borderRadius: '8px', padding: '10px 14px', marginBottom: '14px', color: '#FFC107', fontSize: '13px' }}
                                             >{message}</motion.div>
                                         )}
                                     </AnimatePresence>
@@ -862,7 +862,7 @@ function DashboardContent(): ReactNode {
                                             disabled={loading}
                                             style={{
                                                 background: 'none', border: 'none', cursor: 'pointer',
-                                                color: '#00e59b', fontSize: '13px', fontWeight: 600,
+                                                color: '#FFC107', fontSize: '13px', fontWeight: 600,
                                                 padding: 0, opacity: loading ? 0.5 : 1,
                                             }}
                                         >
@@ -879,7 +879,7 @@ function DashboardContent(): ReactNode {
                                     )}
                                     {message && (
                                         <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                                            style={{ background: 'rgba(0,229,155,0.1)', border: '1px solid rgba(0,229,155,0.2)', borderRadius: '8px', padding: '10px 14px', marginBottom: '14px', color: '#00e59b', fontSize: '13px' }}
+                                            style={{ background: 'rgba(106,0,255,0.1)', border: '1px solid rgba(106,0,255,0.2)', borderRadius: '8px', padding: '10px 14px', marginBottom: '14px', color: '#FFC107', fontSize: '13px' }}
                                         >{message}</motion.div>
                                     )}
                                 </AnimatePresence>
@@ -976,7 +976,7 @@ function DashboardContent(): ReactNode {
                     <main style={{ display: 'flex', flexDirection: 'column', gap: '10px', position: 'relative', minWidth: 0 }}>
                         {dashLoading ? (
                             <div style={{ padding: '40px 0', textAlign: 'center' }}>
-                                <Loader2 size={20} style={{ color: '#00e59b', animation: 'spin 1s linear infinite', margin: '0 auto 6px' }} />
+                                <Loader2 size={20} style={{ color: '#FFC107', animation: 'spin 1s linear infinite', margin: '0 auto 6px' }} />
                                 <p style={{ color: '#6b7280', fontSize: '12px' }}>Loading picks...</p>
                             </div>
                         ) : picks.length > 0 ? (() => {
@@ -1009,8 +1009,8 @@ function DashboardContent(): ReactNode {
                                                     </div>
                                                     <span style={{ 
                                                         fontSize: '12px', fontWeight: 700, padding: '4px 10px', borderRadius: '6px', 
-                                                        color: pick.status === 'won' ? '#00e59b' : pick.status === 'lost' ? '#f87171' : '#fbbf24',
-                                                        background: pick.status === 'won' ? 'rgba(0,229,155,0.1)' : pick.status === 'lost' ? 'rgba(239,68,68,0.1)' : 'rgba(251,191,36,0.1)'
+                                                        color: pick.status === 'won' ? '#22c55e' : pick.status === 'lost' ? '#f87171' : '#fbbf24',
+                                                        background: pick.status === 'won' ? 'rgba(106,0,255,0.1)' : pick.status === 'lost' ? 'rgba(239,68,68,0.1)' : 'rgba(251,191,36,0.1)'
                                                     }}>
                                                         {pick.status.toUpperCase()}
                                                     </span>
@@ -1029,9 +1029,9 @@ function DashboardContent(): ReactNode {
                                             <button key={tab} onClick={() => setSportFilter(tab)} style={{
                                                 padding: '4px 12px', borderRadius: '14px',
                                                 fontSize: '11px', fontWeight: 600, cursor: 'pointer',
-                                                border: active ? '1px solid rgba(0,229,155,0.3)' : '1px solid rgba(255,255,255,0.06)',
-                                                background: active ? 'rgba(0,229,155,0.1)' : 'transparent',
-                                                color: active ? '#00e59b' : '#6b7280',
+                                                border: active ? '1px solid rgba(106,0,255,0.3)' : '1px solid rgba(255,255,255,0.06)',
+                                                background: active ? 'rgba(106,0,255,0.1)' : 'transparent',
+                                                color: active ? '#FFC107' : '#6b7280',
                                                 transition: 'all 0.12s',
                                             }}>
                                                 {tab} <span style={{ opacity: 0.5, marginLeft: '3px' }}>{count}</span>
@@ -1075,14 +1075,14 @@ function DashboardContent(): ReactNode {
                                                     }}>
                                                         <div style={{
                                                             width: '6px', height: '6px', borderRadius: '50%',
-                                                            background: '#00e59b', boxShadow: '0 0 6px #00e59b',
+                                                            background: '#FFC107', boxShadow: '0 0 6px #FFC107',
                                                         }} />
                                                         <span style={{
-                                                            fontSize: '12px', fontWeight: 700, color: '#00e59b',
+                                                            fontSize: '12px', fontWeight: 700, color: '#FFC107',
                                                             textTransform: 'uppercase', letterSpacing: '0.5px',
                                                         }}>Today&apos;s Picks</span>
                                                         <span style={{ fontSize: '11px', color: '#6b7280' }}>{todayPicks.length}</span>
-                                                        <div style={{ flex: 1, height: '1px', background: 'rgba(0,229,155,0.15)' }} />
+                                                        <div style={{ flex: 1, height: '1px', background: 'rgba(106,0,255,0.15)' }} />
                                                     </div>
                                                     {todayPicks.map(renderPick)}
                                                 </>
@@ -1148,7 +1148,7 @@ function DashboardContent(): ReactNode {
                                 ].map((row) => (
                                     <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <span style={{ fontSize: '12px', color: '#9ca3af' }}>{row.label}</span>
-                                        <span style={{ fontSize: '14px', fontWeight: 700, color: 'isPositive' in row ? (row.isPositive ? '#00e59b' : '#f87171') : 'white' }}>
+                                        <span style={{ fontSize: '14px', fontWeight: 700, color: 'isPositive' in row ? (row.isPositive ? '#22c55e' : '#f87171') : 'white' }}>
                                             {row.value}
                                         </span>
                                     </div>
@@ -1181,7 +1181,7 @@ function DashboardContent(): ReactNode {
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <span style={{ fontSize: '12px', color: '#d1d5db', fontWeight: 600 }}>Net Profit</span>
-                                    <span style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'monospace', color: fireStats.units >= 0 ? '#00e59b' : '#f87171' }}>
+                                    <span style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'monospace', color: fireStats.units >= 0 ? '#22c55e' : '#f87171' }}>
                                         {fireStats.units >= 0 ? '+' : ''}{fireStats.units}u
                                     </span>
                                 </div>
@@ -1243,7 +1243,7 @@ function DashboardContent(): ReactNode {
                                                 fontSize: '13px',
                                                 fontWeight: 700,
                                                 fontFamily: 'monospace',
-                                                color: d.units >= 0 ? '#00e59b' : '#f87171',
+                                                color: d.units >= 0 ? '#22c55e' : '#f87171',
                                             }}>
                                                 {d.units >= 0 ? '+' : ''}{d.units}u
                                             </span>
@@ -1270,7 +1270,7 @@ function DashboardContent(): ReactNode {
                                                     <div style={{ flex: 1, height: '4px', borderRadius: '9999px', background: 'rgba(255,255,255,0.06)' }}>
                                                         <div style={{ height: '4px', borderRadius: '9999px', width: s.winPct, opacity: 0.6 }} className={s.color} />
                                                     </div>
-                                                    <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#00e59b', whiteSpace: 'nowrap' }}>{s.units}u</span>
+                                                    <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#FFC107', whiteSpace: 'nowrap' }}>{s.units}u</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -1284,13 +1284,13 @@ function DashboardContent(): ReactNode {
                         {/* Trial CTA */}
                         {trialActive && (
                             <div style={{
-                                background: 'rgba(0,229,155,0.06)',
-                                border: '1px solid rgba(0,229,155,0.15)',
+                                background: 'rgba(106,0,255,0.06)',
+                                border: '1px solid rgba(106,0,255,0.15)',
                                 borderRadius: '12px',
                                 padding: '14px',
                                 textAlign: 'center',
                             }}>
-                                <p style={{ fontSize: '13px', fontWeight: 600, color: '#00e59b', marginBottom: '4px' }}>
+                                <p style={{ fontSize: '13px', fontWeight: 600, color: '#FFC107', marginBottom: '4px' }}>
                                     {daysLeft} day{daysLeft !== 1 ? 's' : ''} left on free trial
                                 </p>
                                 <p style={{ fontSize: '11px', color: '#9ca3af', marginBottom: '6px' }}>
@@ -1371,10 +1371,10 @@ function DashboardContent(): ReactNode {
                         style={{
                             position: 'fixed', bottom: '24px', right: '24px',
                             width: '44px', height: '44px', borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #00e59b, #00c9ff)',
+                            background: 'linear-gradient(135deg, #FFC107, #00c9ff)',
                             border: 'none', cursor: 'pointer',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            boxShadow: '0 4px 20px rgba(0,229,155,0.3)',
+                            boxShadow: '0 4px 20px rgba(106,0,255,0.3)',
                             zIndex: 100,
                         }}
                         title="Back to top"
@@ -1390,7 +1390,7 @@ function DashboardContent(): ReactNode {
 
 export default function DashboardPage(): ReactNode {
     return (
-        <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Loader2 size={28} style={{ color: '#00e59b', animation: 'spin 1s linear infinite' }} /></div>}>
+        <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Loader2 size={28} style={{ color: '#FFC107', animation: 'spin 1s linear infinite' }} /></div>}>
             <DashboardContent />
         </Suspense>
     );

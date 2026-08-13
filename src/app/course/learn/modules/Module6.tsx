@@ -54,9 +54,9 @@ export default function Module6() {
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px', marginTop: '16px' }}>
-                    <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(0,229,155,0.06)', border: '1px solid rgba(0,229,155,0.15)' }}>
+                    <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(106,0,255,0.06)', border: '1px solid rgba(106,0,255,0.15)' }}>
                         <div style={{ fontSize: '10px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Base Unit (2%)</div>
-                        <div style={{ fontSize: '24px', fontWeight: 900, color: '#00e59b' }}>${baseUnit}</div>
+                        <div style={{ fontSize: '24px', fontWeight: 900, color: '#FFC107' }}>${baseUnit}</div>
                     </div>
                     <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(251,191,36,0.06)', border: '1px solid rgba(251,191,36,0.15)' }}>
                         <div style={{ fontSize: '10px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Max Double-Up (Bet 3)</div>

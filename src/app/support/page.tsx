@@ -20,14 +20,14 @@ export default function SupportPage() {
                     {/* Primary Contact Methods */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="glass-card p-6 flex flex-col items-center text-center">
-                            <div className="w-12 h-12 rounded-full bg-[#00e59b]/10 flex items-center justify-center mb-4 border border-[#00e59b]/20">
-                                <Mail className="text-[#00e59b]" size={24} />
+                            <div className="w-12 h-12 rounded-full bg-[#FFC107]/10 flex items-center justify-center mb-4 border border-[#FFC107]/20">
+                                <Mail className="text-[#FFC107]" size={24} />
                             </div>
                             <h3 className="text-white font-bold text-lg mb-2">Email Support</h3>
                             <p className="text-gray-400 text-sm mb-4">
                                 For billing inquiries, account issues, or general support.
                             </p>
-                            <a href="mailto:support@yourswami.com" className="text-[#00e59b] font-mono bg-[#00e59b]/10 px-4 py-2 rounded-lg border border-[#00e59b]/20 hover:bg-[#00e59b]/20 transition-colors">
+                            <a href="mailto:support@yourswami.com" className="text-[#FFC107] font-mono bg-[#FFC107]/10 px-4 py-2 rounded-lg border border-[#FFC107]/20 hover:bg-[#FFC107]/20 transition-colors">
                                 support@yourswami.com
                             </a>
                         </div>
@@ -56,7 +56,7 @@ export default function SupportPage() {
                         <div className="space-y-4">
                             <div className="p-4 rounded-xl bg-[#0d1525]/50 border border-white/5">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <Clock size={16} className="text-[#00e59b]" />
+                                    <Clock size={16} className="text-[#FFC107]" />
                                     <h4 className="text-white font-semibold text-sm">Response Times</h4>
                                 </div>
                                 <p className="text-gray-400 text-sm">
@@ -71,8 +71,8 @@ export default function SupportPage() {
                                     <h4 className="text-white font-semibold text-sm">Billing & Subscriptions</h4>
                                 </div>
                                 <p className="text-gray-400 text-sm leading-relaxed">
-                                    You can manage your subscription, update payment methods, or cancel at any time via your <Link href="/settings" className="text-[#00e59b] hover:underline">Account Settings</Link>.
-                                    As outlined in our <Link href="/tos" className="text-[#00e59b] hover:underline">Terms of Service</Link>, all sales are final and we do not offer refunds for partial subscription periods.
+                                    You can manage your subscription, update payment methods, or cancel at any time via your <Link href="/settings" className="text-[#FFC107] hover:underline">Account Settings</Link>.
+                                    As outlined in our <Link href="/tos" className="text-[#FFC107] hover:underline">Terms of Service</Link>, all sales are final and we do not offer refunds for partial subscription periods.
                                 </p>
                             </div>
 

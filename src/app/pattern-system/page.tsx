@@ -147,9 +147,9 @@ const features = [
         icon: TrendingUp,
         title: 'Break Probability Scoring',
         desc: '62-99% accuracy scoring based on historical data across 91+ tracked patterns',
-        iconBg: 'rgba(0, 229, 155, 0.1)',
-        iconColor: '#00e59b',
-        accent: '#00e59b44',
+        iconBg: 'rgba(106, 0, 255, 0.1)',
+        iconColor: '#FFC107',
+        accent: '#FFC10744',
     },
     {
         icon: Target,
@@ -179,9 +179,9 @@ const features = [
         icon: Bell,
         title: 'Situational Alerts',
         desc: 'High-priority alerts surface the most actionable games each day',
-        iconBg: 'rgba(0, 229, 155, 0.1)',
-        iconColor: '#00e59b',
-        accent: '#00e59b44',
+        iconBg: 'rgba(106, 0, 255, 0.1)',
+        iconColor: '#FFC107',
+        accent: '#FFC10744',
     },
 ];
 

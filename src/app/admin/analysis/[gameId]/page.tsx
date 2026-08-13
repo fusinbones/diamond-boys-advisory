@@ -353,9 +353,9 @@ function TeamAlternation({ data, team, label }: { data: TeamData | null; team: {
                             style={{
                                 padding: '4px 10px',
                                 borderRadius: '6px',
-                                border: `1px solid ${!selectedYear ? 'rgba(0,229,155,0.4)' : 'rgba(255,255,255,0.08)'}`,
-                                background: !selectedYear ? 'rgba(0,229,155,0.12)' : 'rgba(255,255,255,0.03)',
-                                color: !selectedYear ? '#00e59b' : '#6b7280',
+                                border: `1px solid ${!selectedYear ? 'rgba(106,0,255,0.4)' : 'rgba(255,255,255,0.08)'}`,
+                                background: !selectedYear ? 'rgba(106,0,255,0.12)' : 'rgba(255,255,255,0.03)',
+                                color: !selectedYear ? '#FFC107' : '#6b7280',
                                 fontSize: '11px',
                                 fontWeight: 700,
                                 cursor: 'pointer',
@@ -400,7 +400,7 @@ function TeamAlternation({ data, team, label }: { data: TeamData | null; team: {
                                                 width: '8px',
                                                 textAlign: 'center',
                                                 fontSize: '7px',
-                                                color: isAlt ? '#00e59b' : '#ef4444',
+                                                color: isAlt ? '#FFC107' : '#ef4444',
                                                 fontWeight: 800,
                                             }}>
                                                 {isAlt ? '↕' : '='}
@@ -415,9 +415,9 @@ function TeamAlternation({ data, team, label }: { data: TeamData | null; team: {
                                             justifyContent: 'center',
                                             fontSize: '10px',
                                             fontWeight: 800,
-                                            background: r === 'W' ? 'rgba(0,229,155,0.15)' : 'rgba(239,68,68,0.15)',
-                                            color: r === 'W' ? '#00e59b' : '#f87171',
-                                            border: `1px solid ${r === 'W' ? 'rgba(0,229,155,0.3)' : 'rgba(239,68,68,0.3)'}`,
+                                            background: r === 'W' ? 'rgba(106,0,255,0.15)' : 'rgba(239,68,68,0.15)',
+                                            color: r === 'W' ? '#FFC107' : '#f87171',
+                                            border: `1px solid ${r === 'W' ? 'rgba(106,0,255,0.3)' : 'rgba(239,68,68,0.3)'}`,
                                         }}>
                                             {r}
                                         </div>
@@ -435,12 +435,12 @@ function TeamAlternation({ data, team, label }: { data: TeamData | null; team: {
                         marginBottom: '14px',
                     }}>
                         {[
-                            { label: 'Alt%', value: `${fAltPct}%`, color: fAltPct >= 55 ? '#fbbf24' : fAltPct >= 48 ? '#00e59b' : '#e5e7eb' },
+                            { label: 'Alt%', value: `${fAltPct}%`, color: fAltPct >= 55 ? '#fbbf24' : fAltPct >= 48 ? '#FFC107' : '#e5e7eb' },
                             { label: 'Best Run', value: `${fLongestAlt}`, color: '#a78bfa' },
                             { label: 'Record', value: `${fWins}W-${fLosses}L`, color: '#e5e7eb' },
                             { label: 'Games', value: `${filteredGames.length}`, color: '#e5e7eb' },
                             ...(selectedYear === null ? [
-                                { label: 'Streak', value: `${streakInfo.currentStreak}${streakInfo.currentResult}`, color: streakInfo.currentResult === 'W' ? '#00e59b' : '#f87171' },
+                                { label: 'Streak', value: `${streakInfo.currentStreak}${streakInfo.currentResult}`, color: streakInfo.currentResult === 'W' ? '#FFC107' : '#f87171' },
                                 { label: 'All-Time', value: `${streakInfo.overallAltPct}%`, color: '#6b7280' },
                             ] : []),
                         ].map(stat => (
@@ -477,7 +477,7 @@ function TeamAlternation({ data, team, label }: { data: TeamData | null; team: {
                                 {' → '}
                                 <span style={{
                                     fontWeight: 800,
-                                    color: streakInfo.predictedNext === 'W' ? '#00e59b' : '#f87171',
+                                    color: streakInfo.predictedNext === 'W' ? '#FFC107' : '#f87171',
                                 }}>
                                     {streakInfo.predictedNext === 'W' ? 'WIN' : 'LOSS'}
                                 </span>
@@ -518,7 +518,7 @@ function TeamAlternation({ data, team, label }: { data: TeamData | null; team: {
                                         </td>
                                         <td>
                                             {prevGame && (
-                                                <span style={{ fontSize: '10px', fontWeight: 700, color: isAlt ? '#00e59b' : '#ef4444' }}>
+                                                <span style={{ fontSize: '10px', fontWeight: 700, color: isAlt ? '#FFC107' : '#ef4444' }}>
                                                     {isAlt ? '↕' : '='}
                                                 </span>
                                             )}
@@ -587,8 +587,8 @@ function PitchingTab({ homeP, awayP, game }: { homeP: PitcherData | null; awayP:
                 {stats ? (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginBottom: '14px' }}>
                         {[
-                            { label: 'ERA', value: stats.era || '—', color: stats.era && parseFloat(stats.era) < 3.5 ? '#00e59b' : stats.era && parseFloat(stats.era) > 4.5 ? '#f87171' : '#e5e7eb' },
-                            { label: 'WHIP', value: stats.whip || '—', color: stats.whip && parseFloat(stats.whip) < 1.2 ? '#00e59b' : stats.whip && parseFloat(stats.whip) > 1.4 ? '#f87171' : '#e5e7eb' },
+                            { label: 'ERA', value: stats.era || '—', color: stats.era && parseFloat(stats.era) < 3.5 ? '#FFC107' : stats.era && parseFloat(stats.era) > 4.5 ? '#f87171' : '#e5e7eb' },
+                            { label: 'WHIP', value: stats.whip || '—', color: stats.whip && parseFloat(stats.whip) < 1.2 ? '#FFC107' : stats.whip && parseFloat(stats.whip) > 1.4 ? '#f87171' : '#e5e7eb' },
                             { label: 'W-L', value: `${stats.wins || 0}-${stats.losses || 0}`, color: '#e5e7eb' },
                             { label: 'K', value: String(stats.strikeOuts || 0), color: '#a78bfa' },
                         ].map(s => (
@@ -662,9 +662,9 @@ function StatsTab({ homeData, awayData, game }: { homeData: TeamData | null; awa
 
         return (
             <tr>
-                <td style={{ color: awayBetter ? '#00e59b' : '#d1d5db', fontWeight: awayBetter ? 700 : 400, textAlign: 'right' }}>{awayVal}</td>
+                <td style={{ color: awayBetter ? '#FFC107' : '#d1d5db', fontWeight: awayBetter ? 700 : 400, textAlign: 'right' }}>{awayVal}</td>
                 <td style={{ color: '#6b7280', textAlign: 'center', fontSize: '12px', fontWeight: 600 }}>{label}</td>
-                <td style={{ color: homeBetter ? '#00e59b' : '#d1d5db', fontWeight: homeBetter ? 700 : 400 }}>{homeVal}</td>
+                <td style={{ color: homeBetter ? '#FFC107' : '#d1d5db', fontWeight: homeBetter ? 700 : 400 }}>{homeVal}</td>
             </tr>
         );
     };
@@ -783,7 +783,7 @@ function OddsTab({ oddsData }: { oddsData: OddsData | null }) {
                                 <tr key={i}>
                                     <td style={{ fontWeight: 600 }}>{entry.bookmaker}</td>
                                     {entry.values.map((v, j) => (
-                                        <td key={j} style={{ color: parseFloat(v.odd) >= 2 ? '#00e59b' : '#d1d5db', fontWeight: 600 }}>
+                                        <td key={j} style={{ color: parseFloat(v.odd) >= 2 ? '#FFC107' : '#d1d5db', fontWeight: 600 }}>
                                             {v.odd}
                                         </td>
                                     ))}
@@ -967,7 +967,7 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
             const freebieChannel = channels?.[0];
             if (!freebieChannel) { alert('No freebie channel found!'); return; }
             const content = buildFreebieContent(currentAnalysis);
-            const { error: insertErr } = await supabase.from('community_messages').insert({ channel_id: freebieChannel.id, user_id: '00000000-0000-0000-0000-000000000000', content, display_name: '💎 YourSwami', avatar_color: '#00e59b', is_bot: true, user_role: 'admin' });
+            const { error: insertErr } = await supabase.from('community_messages').insert({ channel_id: freebieChannel.id, user_id: '00000000-0000-0000-0000-000000000000', content, display_name: '💎 YourSwami', avatar_color: '#FFC107', is_bot: true, user_role: 'admin' });
             if (insertErr) throw insertErr;
             setFreebiePosted(true);
             setTimeout(() => setFreebiePosted(false), 5000);
@@ -980,7 +980,7 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
             {/* Engine Tabs */}
             <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
                 {([
-                    { id: 'stats' as const, label: '📊 Statistical Edge', color: '#00e59b', desc: 'ELO • Log5 • Kelly • EV' },
+                    { id: 'stats' as const, label: '📊 Statistical Edge', color: '#FFC107', desc: 'ELO • Log5 • Kelly • EV' },
                     { id: 'pattern' as const, label: '🔥 Pattern Break', color: '#fb923c', desc: 'W/L Alternation System' },
                 ]).map(tab => (
                     <button
@@ -1005,12 +1005,12 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
                     {[
                         { label: 'Home ELO', value: String(edgeReport.homeELO || '—'), color: '#a78bfa' },
                         { label: 'Away ELO', value: String(edgeReport.awayELO || '—'), color: '#a78bfa' },
-                        { label: 'True Prob', value: `${((edgeReport.homeTrueProb as number || 0) * 100).toFixed(1)}%`, color: '#00e59b' },
-                        { label: 'Edge', value: `${((edgeReport.edgePct as number || 0) * 100).toFixed(1)}%`, color: (edgeReport.edgePct as number || 0) > 0.03 ? '#00e59b' : '#f87171' },
-                        { label: 'EV/unit', value: `$${(edgeReport.evPerUnit as number || 0).toFixed(2)}`, color: (edgeReport.evPerUnit as number || 0) > 0 ? '#00e59b' : '#f87171' },
+                        { label: 'True Prob', value: `${((edgeReport.homeTrueProb as number || 0) * 100).toFixed(1)}%`, color: '#FFC107' },
+                        { label: 'Edge', value: `${((edgeReport.edgePct as number || 0) * 100).toFixed(1)}%`, color: (edgeReport.edgePct as number || 0) > 0.03 ? '#FFC107' : '#f87171' },
+                        { label: 'EV/unit', value: `$${(edgeReport.evPerUnit as number || 0).toFixed(2)}`, color: (edgeReport.evPerUnit as number || 0) > 0 ? '#22c55e' : '#f87171' },
                         { label: 'Kelly', value: `${edgeReport.kellyUnits || 0}u`, color: '#fbbf24' },
                         { label: 'Confidence', value: `${edgeReport.confidence || 0}%`, color: '#a78bfa' },
-                        { label: 'Pick', value: (edgeReport.pickTeam as string || 'PASS'), color: edgeReport.pick === 'pass' ? '#f87171' : '#00e59b' },
+                        { label: 'Pick', value: (edgeReport.pickTeam as string || 'PASS'), color: edgeReport.pick === 'pass' ? '#f87171' : '#FFC107' },
                     ].map(stat => (
                         <div key={stat.label} className="admin-stat-card" style={{ padding: '8px 10px', textAlign: 'center' }}>
                             <div style={{ color: '#4b5563', fontSize: '8px', fontWeight: 600, textTransform: 'uppercase' }}>{stat.label}</div>
@@ -1023,7 +1023,7 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
             {/* Action Buttons */}
             <div className="admin-card-header" style={{ flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
                 <div className="admin-card-title">
-                    <Sparkles size={16} style={{ color: activeEngine === 'stats' ? '#00e59b' : '#fb923c' }} />
+                    <Sparkles size={16} style={{ color: activeEngine === 'stats' ? '#FFC107' : '#fb923c' }} />
                     {activeEngine === 'stats' ? '📊 Quant Model' : '🔥 Pattern System'}
                 </div>
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
@@ -1034,9 +1034,9 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
                     {currentAnalysis && !isLoading && (
                         <button onClick={postToFreebie} disabled={postingFreebie} className="admin-btn" style={{
                             fontSize: '11px', padding: '4px 12px',
-                            background: freebiePosted ? 'rgba(0,229,155,0.15)' : 'linear-gradient(135deg, rgba(0,229,155,0.15), rgba(59,130,246,0.1))',
-                            border: `1px solid ${freebiePosted ? 'rgba(0,229,155,0.4)' : 'rgba(0,229,155,0.25)'}`,
-                            color: freebiePosted ? '#00e59b' : '#e5e7eb', borderRadius: '8px',
+                            background: freebiePosted ? 'rgba(106,0,255,0.15)' : 'linear-gradient(135deg, rgba(106,0,255,0.15), rgba(59,130,246,0.1))',
+                            border: `1px solid ${freebiePosted ? 'rgba(106,0,255,0.4)' : 'rgba(106,0,255,0.25)'}`,
+                            color: freebiePosted ? '#FFC107' : '#e5e7eb', borderRadius: '8px',
                             cursor: postingFreebie ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 700,
                         }}>
                             {postingFreebie ? <Loader2 size={12} style={{ animation: 'spin 1s linear infinite' }} /> : freebiePosted ? '✅' : <Send size={12} />}
@@ -1050,7 +1050,7 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
             {isLoading && (
                 <div style={{ textAlign: 'center', padding: '40px 20px' }}>
                     <div style={{ fontSize: '32px', marginBottom: '12px', animation: 'pulse 2s infinite' }}>{activeEngine === 'stats' ? '🧮' : '🔥'}</div>
-                    <div style={{ color: activeEngine === 'stats' ? '#00e59b' : '#fb923c', fontSize: '14px', fontWeight: 600 }}>
+                    <div style={{ color: activeEngine === 'stats' ? '#FFC107' : '#fb923c', fontSize: '14px', fontWeight: 600 }}>
                         {activeEngine === 'stats' ? 'Running Statistical Model...' : 'Scanning Alternation Patterns...'}
                     </div>
                     <div style={{ color: '#4b5563', fontSize: '11px', marginTop: '4px' }}>
@@ -1070,8 +1070,8 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
             {/* Result */}
             {currentAnalysis && !isLoading && (
                 <div style={{
-                    background: activeEngine === 'stats' ? 'rgba(0,229,155,0.03)' : 'rgba(251,146,60,0.03)',
-                    border: `1px solid ${activeEngine === 'stats' ? 'rgba(0,229,155,0.12)' : 'rgba(251,146,60,0.12)'}`,
+                    background: activeEngine === 'stats' ? 'rgba(106,0,255,0.03)' : 'rgba(251,146,60,0.03)',
+                    border: `1px solid ${activeEngine === 'stats' ? 'rgba(106,0,255,0.12)' : 'rgba(251,146,60,0.12)'}`,
                     borderRadius: '10px', padding: '18px', fontSize: '13px', lineHeight: '1.7', color: '#d1d5db', whiteSpace: 'pre-wrap',
                 }}>
                     {currentAnalysis.split('\n').map((line, i) => {
@@ -1079,7 +1079,7 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
                             const [label, ...rest] = line.split(':');
                             return (
                                 <div key={i} style={{ marginBottom: '4px', marginTop: i > 0 ? '12px' : '0' }}>
-                                    <span style={{ color: activeEngine === 'stats' ? '#00e59b' : '#fb923c', fontWeight: 800, fontSize: '12px', textTransform: 'uppercase' }}>
+                                    <span style={{ color: activeEngine === 'stats' ? '#FFC107' : '#fb923c', fontWeight: 800, fontSize: '12px', textTransform: 'uppercase' }}>
                                         {label.replace(/\*\*/g, '')}
                                     </span>
                                     <span style={{ color: '#e5e7eb' }}>:{rest.join(':')}</span>

@@ -22,14 +22,14 @@ export default function PaywallOverlay({ daysLeft = 0 }: PaywallOverlayProps): R
                     width: '48px',
                     height: '48px',
                     borderRadius: '50%',
-                    background: 'rgba(0,229,155,0.1)',
-                    border: '2px solid rgba(0,229,155,0.2)',
+                    background: 'rgba(106,0,255,0.1)',
+                    border: '2px solid rgba(106,0,255,0.2)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     margin: '0 auto 12px',
                 }}>
-                    <Lock size={20} style={{ color: '#00e59b' }} />
+                    <Lock size={20} style={{ color: '#FFC107' }} />
                 </div>
                 <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'white', marginBottom: '6px' }}>
                     {daysLeft > 0 ? `${daysLeft} Day${daysLeft !== 1 ? 's' : ''} Left on Free Trial` : 'Your Free Trial Has Ended'}

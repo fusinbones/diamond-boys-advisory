@@ -19,7 +19,7 @@ export default function TOSPage() {
                     {/* Terms of Service */}
                     <section className="glass-card p-6 sm:p-8">
                         <div className="flex items-center gap-3 mb-6">
-                            <Scale size={24} className="text-[#00e59b]" />
+                            <Scale size={24} className="text-[#FFC107]" />
                             <h2 className="text-white font-display font-bold text-2xl">Terms of Service</h2>
                         </div>
                         <div className="text-gray-400 text-sm leading-relaxed space-y-4">
@@ -127,7 +127,7 @@ export default function TOSPage() {
                     {/* Privacy Policy */}
                     <section id="privacy" className="glass-card p-6 sm:p-8">
                         <div className="flex items-center gap-3 mb-6">
-                            <Lock size={24} className="text-[#00e59b]" />
+                            <Lock size={24} className="text-[#FFC107]" />
                             <h2 className="text-white font-display font-bold text-2xl">Privacy Policy</h2>
                         </div>
                         <div className="text-gray-400 text-sm leading-relaxed space-y-4">
@@ -214,7 +214,7 @@ export default function TOSPage() {
                     {/* Contact */}
                     <section className="glass-card p-6 sm:p-8">
                         <div className="flex items-center gap-3 mb-6">
-                            <Mail size={24} className="text-[#00e59b]" />
+                            <Mail size={24} className="text-[#FFC107]" />
                             <h2 className="text-white font-display font-bold text-2xl">Contact Us</h2>
                         </div>
                         <div className="text-gray-400 text-sm leading-relaxed space-y-4">

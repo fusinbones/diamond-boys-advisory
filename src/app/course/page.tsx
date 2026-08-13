@@ -16,17 +16,17 @@ const MODULES = [
     { num: 1, title: 'The Hidden Pattern', desc: 'Why MLB teams secretly alternate wins and losses — and how to spot it before anyone else.', tag: 'Foundation', tagColor: '#60a5fa' },
     { num: 2, title: 'Reading the Board', desc: 'Master the live Pattern System dashboard. Know exactly what every dot, score, and badge means.', tag: 'Software', tagColor: '#a78bfa' },
     { num: 3, title: 'True vs Developing', desc: 'The critical difference between a 4-game developing pattern and a 6+ game true pattern.', tag: 'Strategy', tagColor: '#fbbf24' },
-    { num: 4, title: 'The Break Score', desc: 'How the 62-99% probability scale works, and why 8+ game streaks hit at 73%+.', tag: 'Data', tagColor: '#00e59b' },
+    { num: 4, title: 'The Break Score', desc: 'How the 62-99% probability scale works, and why 8+ game streaks hit at 73%+.', tag: 'Data', tagColor: '#FFC107' },
     { num: 5, title: 'The Double-Up Recovery', desc: 'The exact system to recover from any missed break — double up, win it back, reset.', tag: '🔥 Core', tagColor: '#ef4444' },
     { num: 6, title: 'Bankroll Management', desc: '1-2% base units, 3-break stop-loss rules, and session discipline that protects your money.', tag: 'Protection', tagColor: '#f59e0b' },
-    { num: 7, title: 'Your Daily System', desc: 'Step-by-step: open the dashboard, find today\'s breaks, size your bets, track results.', tag: 'Action', tagColor: '#00e59b' },
+    { num: 7, title: 'Your Daily System', desc: 'Step-by-step: open the dashboard, find today\'s breaks, size your bets, track results.', tag: 'Action', tagColor: '#FFC107' },
 ];
 
 const FEATURES = [
     { icon: BookOpen, title: '7 In-Depth Modules', desc: 'From zero to expert — every concept explained with real examples and live data.', color: '#f59e0b' },
     { icon: BarChart3, title: 'Live Pattern Software', desc: 'Real-time dashboard scanning all 30 MLB teams for alternation patterns.', color: '#a78bfa' },
     { icon: Target, title: 'Break Probability Engine', desc: 'Proprietary scoring from 62-99% — know exactly when to strike.', color: '#ef4444' },
-    { icon: DollarSign, title: 'Double-Up Recovery System', desc: 'Never truly lose — the math-backed strategy to recover and profit.', color: '#00e59b' },
+    { icon: DollarSign, title: 'Double-Up Recovery System', desc: 'Never truly lose — the math-backed strategy to recover and profit.', color: '#FFC107' },
     { icon: Brain, title: 'Bankroll Calculator', desc: 'Interactive tools to size your bets, set stop-losses, and protect capital.', color: '#60a5fa' },
     { icon: Clock, title: 'Lifetime Access', desc: 'Buy once, access forever. Including all future updates and improvements.', color: '#fbbf24' },
 ];
@@ -202,9 +202,9 @@ export default function FireCourseLanding() {
             {/* ═══ DOUBLE-UP RECOVERY ═══ */}
             <section className="fire-doubleup">
                 <div className="fire-doubleup-inner">
-                    <span className="fire-section-label" style={{ color: '#00e59b' }}>The Secret Weapon</span>
+                    <span className="fire-section-label" style={{ color: '#FFC107' }}>The Secret Weapon</span>
                     <h2 className="fire-section-title">
-                        The <span style={{ color: '#00e59b' }}>Double-Up</span> Recovery System
+                        The <span style={{ color: '#FFC107' }}>Double-Up</span> Recovery System
                     </h2>
                     <p style={{ color: '#9ca3af', fontSize: '15px', lineHeight: 1.7, maxWidth: '480px', margin: '0 auto' }}>
                         Even the best system has misses. That&apos;s why we built a mathematical safety net.
@@ -213,10 +213,10 @@ export default function FireCourseLanding() {
 
                     <div className="fire-step-flow">
                         {[
-                            { icon: '🎯', title: 'Bet $50 on Pattern Break', desc: 'System flags a 73% break probability', iconBg: 'rgba(0,229,155,0.12)', color: '#00e59b' },
+                            { icon: '🎯', title: 'Bet $50 on Pattern Break', desc: 'System flags a 73% break probability', iconBg: 'rgba(106,0,255,0.12)', color: '#FFC107' },
                             { icon: '❌', title: 'Break Doesn\'t Hit', desc: 'No problem — it happens 30% of the time', iconBg: 'rgba(239,68,68,0.12)', color: '#f87171' },
                             { icon: '🔥', title: 'Double Up: $100 on Next Break', desc: 'New pattern flagged at 80% probability', iconBg: 'rgba(251,191,36,0.12)', color: '#fbbf24' },
-                            { icon: '✅', title: 'Break Hits — You Win $100', desc: 'Recovered the $50 loss + $50 profit', iconBg: 'rgba(0,229,155,0.12)', color: '#00e59b' },
+                            { icon: '✅', title: 'Break Hits — You Win $100', desc: 'Recovered the $50 loss + $50 profit', iconBg: 'rgba(106,0,255,0.12)', color: '#FFC107' },
                             { icon: '♻️', title: 'Reset to Base: $50', desc: 'Back to your base unit. System continues.', iconBg: 'rgba(167,139,250,0.12)', color: '#a78bfa' },
                         ].map((step, i) => (
                             <div key={i} className="fire-step">
@@ -238,9 +238,9 @@ export default function FireCourseLanding() {
             {/* ═══ PROOF ═══ */}
             <section className="fire-proof">
                 <div className="fire-proof-inner">
-                    <span className="fire-section-label" style={{ color: '#00e59b' }}>The Numbers Don&apos;t Lie</span>
+                    <span className="fire-section-label" style={{ color: '#FFC107' }}>The Numbers Don&apos;t Lie</span>
                     <h2 className="fire-section-title">
-                        Backed by <span style={{ color: '#00e59b' }}>Real Data.</span> Not Hype.
+                        Backed by <span style={{ color: '#FFC107' }}>Real Data.</span> Not Hype.
                     </h2>
                     <p style={{ color: '#9ca3af', fontSize: '15px', lineHeight: 1.7 }}>
                         Every pattern break prediction is documented. Every win rate is calculated from
@@ -248,12 +248,12 @@ export default function FireCourseLanding() {
                     </p>
 
                     <div className="fire-proof-card">
-                        <div style={{ fontSize: '13px', fontWeight: 700, color: '#00e59b', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                        <div style={{ fontSize: '13px', fontWeight: 700, color: '#FFC107', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                             📊 Season Performance
                         </div>
                         <div className="fire-proof-stats">
                             <div className="fire-proof-stat">
-                                <span className="value" style={{ color: '#00e59b' }}>70%+</span>
+                                <span className="value" style={{ color: '#FFC107' }}>70%+</span>
                                 <span className="label">Break Win Rate</span>
                             </div>
                             <div className="fire-proof-stat">
@@ -329,7 +329,7 @@ export default function FireCourseLanding() {
                             ].map((item, i) => (
                                 <div key={i} className="fire-price-item">
                                     <span className="check">
-                                        <CheckCircle size={12} style={{ color: '#00e59b' }} />
+                                        <CheckCircle size={12} style={{ color: '#FFC107' }} />
                                     </span>
                                     {item}
                                 </div>

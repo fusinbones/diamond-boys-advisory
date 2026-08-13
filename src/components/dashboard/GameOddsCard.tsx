@@ -50,9 +50,9 @@ export default function GameOddsCard({ game }: { game: GameData }): ReactNode {
     return (
         <div className="game-tile" style={{
             background: game.isLive
-                ? 'linear-gradient(135deg, rgba(0,229,155,0.06) 0%, rgba(15,20,35,1) 100%)'
+                ? 'linear-gradient(135deg, rgba(106,0,255,0.06) 0%, rgba(15,20,35,1) 100%)'
                 : 'rgba(255,255,255,0.025)',
-            border: `1px solid ${game.isLive ? 'rgba(0,229,155,0.18)' : 'rgba(255,255,255,0.06)'}`,
+            border: `1px solid ${game.isLive ? 'rgba(106,0,255,0.18)' : 'rgba(255,255,255,0.06)'}`,
             borderRadius: '10px',
             padding: '10px 12px',
             minWidth: '150px',
@@ -80,14 +80,14 @@ export default function GameOddsCard({ game }: { game: GameData }): ReactNode {
                 </div>
                 <span style={{
                     fontSize: '9px', fontWeight: game.isLive ? 700 : 500,
-                    color: game.isLive ? '#00e59b' : game.isCompleted ? '#6b7280' : '#9ca3af',
+                    color: game.isLive ? '#FFC107' : game.isCompleted ? '#6b7280' : '#9ca3af',
                     display: 'flex', alignItems: 'center', gap: '3px',
                     flexShrink: 0, whiteSpace: 'nowrap',
                 }}>
                     {game.isLive && (
                         <span style={{
                             width: '4px', height: '4px', borderRadius: '50%',
-                            background: '#00e59b', boxShadow: '0 0 4px #00e59b',
+                            background: '#FFC107', boxShadow: '0 0 4px #FFC107',
                             animation: 'pulse 2s infinite', flexShrink: 0,
                         }} />
                     )}
@@ -108,7 +108,7 @@ export default function GameOddsCard({ game }: { game: GameData }): ReactNode {
                     {!game.isCompleted && game.moneyline && (
                         <span style={{
                             fontSize: '11px', fontWeight: 700,
-                            color: game.moneyline.away !== null && game.moneyline.away > 0 ? '#00e59b' : '#f87171',
+                            color: game.moneyline.away !== null && game.moneyline.away > 0 ? '#22c55e' : '#f87171',
                         }}>
                             {fmtOdds(game.moneyline.away)}
                         </span>
@@ -134,7 +134,7 @@ export default function GameOddsCard({ game }: { game: GameData }): ReactNode {
                     {!game.isCompleted && game.moneyline && (
                         <span style={{
                             fontSize: '11px', fontWeight: 700,
-                            color: game.moneyline.home !== null && game.moneyline.home > 0 ? '#00e59b' : '#f87171',
+                            color: game.moneyline.home !== null && game.moneyline.home > 0 ? '#22c55e' : '#f87171',
                         }}>
                             {fmtOdds(game.moneyline.home)}
                         </span>

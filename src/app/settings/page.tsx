@@ -169,7 +169,7 @@ export default function SettingsPage() {
     if (authLoading || loading) {
         return (
             <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ width: '24px', height: '24px', border: '2px solid rgba(0,229,155,0.3)', borderTopColor: '#00e59b', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                <div style={{ width: '24px', height: '24px', border: '2px solid rgba(106,0,255,0.3)', borderTopColor: '#FFC107', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
             </div>
         );
     }
@@ -179,7 +179,7 @@ export default function SettingsPage() {
             <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px', padding: '20px' }}>
                 <Lock size={32} style={{ color: '#6b7280' }} />
                 <p style={{ color: '#6b7280', fontSize: '14px' }}>Sign in to access settings</p>
-                <Link href="/dashboard" style={{ color: '#00e59b', fontSize: '13px', textDecoration: 'none' }}>Go to Dashboard →</Link>
+                <Link href="/dashboard" style={{ color: '#FFC107', fontSize: '13px', textDecoration: 'none' }}>Go to Dashboard →</Link>
             </div>
         );
     }
@@ -214,7 +214,7 @@ export default function SettingsPage() {
                         fontSize: '24px', fontWeight: 800, letterSpacing: '-0.5px',
                         display: 'flex', alignItems: 'center', gap: '10px',
                     }}>
-                        <Settings size={22} style={{ color: '#00e59b' }} />
+                        <Settings size={22} style={{ color: '#FFC107' }} />
                         Account Settings
                     </h1>
                     <p style={{ color: '#6b7280', fontSize: '13px', marginTop: '4px' }}>
@@ -246,8 +246,8 @@ export default function SettingsPage() {
                             <div style={{ display: 'flex', gap: '6px', marginTop: '6px' }}>
                                 <span style={{
                                     fontSize: '10px', fontWeight: 700, padding: '2px 8px',
-                                    borderRadius: '6px', background: 'rgba(0,229,155,0.1)',
-                                    color: '#00e59b', textTransform: 'uppercase',
+                                    borderRadius: '6px', background: 'rgba(106,0,255,0.1)',
+                                    color: '#FFC107', textTransform: 'uppercase',
                                 }}>
                                     {tierLabels[profile?.subscription_tier || 'free'] || '🆓 Free'}
                                 </span>
@@ -278,7 +278,7 @@ export default function SettingsPage() {
                     borderRadius: '14px', padding: '20px', marginBottom: '20px',
                 }}>
                     <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px', fontWeight: 700, marginBottom: '4px' }}>
-                        <Tag size={16} style={{ color: '#00e59b' }} />
+                        <Tag size={16} style={{ color: '#FFC107' }} />
                         Chat Nickname
                     </h3>
                     <p style={{ color: '#6b7280', fontSize: '11px', marginBottom: '14px' }}>
@@ -299,8 +299,8 @@ export default function SettingsPage() {
                                 fontSize: '14px', fontWeight: 600, color: 'white',
                                 background: 'rgba(255,255,255,0.04)',
                                 border: `1px solid ${
-                                    nickSaved ? 'rgba(0,229,155,0.5)' :
-                                    nickAvailability?.available && isNickChanged ? 'rgba(0,229,155,0.3)' :
+                                    nickSaved ? 'rgba(106,0,255,0.5)' :
+                                    nickAvailability?.available && isNickChanged ? 'rgba(106,0,255,0.3)' :
                                     nickAvailability && !nickAvailability.available && isNickChanged ? 'rgba(239,68,68,0.3)' :
                                     'rgba(255,255,255,0.08)'
                                 }`,
@@ -309,11 +309,11 @@ export default function SettingsPage() {
                         />
                         <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '13px' }}>
                             {nickChecking ? (
-                                <div style={{ width: '12px', height: '12px', border: '2px solid rgba(0,229,155,0.3)', borderTopColor: '#00e59b', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                                <div style={{ width: '12px', height: '12px', border: '2px solid rgba(106,0,255,0.3)', borderTopColor: '#FFC107', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
                             ) : nickSaved ? (
-                                <Check size={14} style={{ color: '#00e59b' }} />
+                                <Check size={14} style={{ color: '#FFC107' }} />
                             ) : nickAvailability?.available && isNickChanged ? (
-                                <span style={{ color: '#00e59b' }}>✓</span>
+                                <span style={{ color: '#FFC107' }}>✓</span>
                             ) : nickAvailability && !nickAvailability.available && isNickChanged ? (
                                 <span style={{ color: '#f87171' }}>✗</span>
                             ) : null}
@@ -322,12 +322,12 @@ export default function SettingsPage() {
 
                     {/* Feedback */}
                     <div style={{ minHeight: '18px', marginBottom: '10px' }}>
-                        {nickSaved && <p style={{ color: '#00e59b', fontSize: '11px', fontWeight: 600 }}>✨ Nickname saved!</p>}
+                        {nickSaved && <p style={{ color: '#FFC107', fontSize: '11px', fontWeight: 600 }}>✨ Nickname saved!</p>}
                         {!nickSaved && nickAvailability?.error && isNickChanged && (
                             <p style={{ color: '#f87171', fontSize: '11px', fontWeight: 600 }}>{nickAvailability.error}</p>
                         )}
                         {!nickSaved && nickAvailability?.available && isNickChanged && (
-                            <p style={{ color: '#00e59b', fontSize: '11px', fontWeight: 600 }}>Available!</p>
+                            <p style={{ color: '#FFC107', fontSize: '11px', fontWeight: 600 }}>Available!</p>
                         )}
                     </div>
 
@@ -342,7 +342,7 @@ export default function SettingsPage() {
                         disabled={!canSaveNick || nickSaving}
                         style={{
                             width: '100%', padding: '10px', borderRadius: '10px', border: 'none',
-                            background: canSaveNick ? 'linear-gradient(135deg, #00e59b, #00c9ff)' : 'rgba(255,255,255,0.04)',
+                            background: canSaveNick ? 'linear-gradient(135deg, #FFC107, #00c9ff)' : 'rgba(255,255,255,0.04)',
                             color: canSaveNick ? '#0a0a0f' : '#4b5563',
                             fontSize: '13px', fontWeight: 700, cursor: canSaveNick ? 'pointer' : 'not-allowed',
                         }}
@@ -408,11 +408,11 @@ export default function SettingsPage() {
                         <div style={{
                             display: 'flex', alignItems: 'center', gap: '6px',
                             padding: '8px 12px', borderRadius: '8px', marginBottom: '12px',
-                            background: passMsg.type === 'success' ? 'rgba(0,229,155,0.08)' : 'rgba(239,68,68,0.08)',
-                            border: `1px solid ${passMsg.type === 'success' ? 'rgba(0,229,155,0.2)' : 'rgba(239,68,68,0.2)'}`,
+                            background: passMsg.type === 'success' ? 'rgba(106,0,255,0.08)' : 'rgba(239,68,68,0.08)',
+                            border: `1px solid ${passMsg.type === 'success' ? 'rgba(106,0,255,0.2)' : 'rgba(239,68,68,0.2)'}`,
                         }}>
-                            {passMsg.type === 'success' ? <Check size={13} style={{ color: '#00e59b' }} /> : <AlertCircle size={13} style={{ color: '#f87171' }} />}
-                            <span style={{ fontSize: '12px', color: passMsg.type === 'success' ? '#00e59b' : '#f87171' }}>{passMsg.text}</span>
+                            {passMsg.type === 'success' ? <Check size={13} style={{ color: '#FFC107' }} /> : <AlertCircle size={13} style={{ color: '#f87171' }} />}
+                            <span style={{ fontSize: '12px', color: passMsg.type === 'success' ? '#22c55e' : '#f87171' }}>{passMsg.text}</span>
                         </div>
                     )}
 
@@ -439,7 +439,7 @@ export default function SettingsPage() {
                     borderRadius: '14px', padding: '20px', marginBottom: '20px',
                 }}>
                     <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px', fontWeight: 700, marginBottom: '4px' }}>
-                        <Crown size={16} style={{ color: '#00e59b' }} />
+                        <Crown size={16} style={{ color: '#FFC107' }} />
                         Subscription
                     </h3>
                     <p style={{ color: '#6b7280', fontSize: '11px', marginBottom: '14px' }}>
@@ -449,10 +449,10 @@ export default function SettingsPage() {
                     <div style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                         padding: '14px 16px', borderRadius: '10px',
-                        background: 'rgba(0,229,155,0.04)', border: '1px solid rgba(0,229,155,0.1)',
+                        background: 'rgba(106,0,255,0.04)', border: '1px solid rgba(106,0,255,0.1)',
                     }}>
                         <div>
-                            <p style={{ fontSize: '16px', fontWeight: 700, color: '#00e59b' }}>
+                            <p style={{ fontSize: '16px', fontWeight: 700, color: '#FFC107' }}>
                                 {tierLabels[profile?.subscription_tier || 'free'] || '🆓 Free'}
                             </p>
                             <p style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>
@@ -463,8 +463,8 @@ export default function SettingsPage() {
                         </div>
                         <Link href="/pricing" style={{
                             padding: '8px 16px', borderRadius: '8px',
-                            background: 'rgba(0,229,155,0.1)', border: '1px solid rgba(0,229,155,0.2)',
-                            color: '#00e59b', fontSize: '12px', fontWeight: 700,
+                            background: 'rgba(106,0,255,0.1)', border: '1px solid rgba(106,0,255,0.2)',
+                            color: '#FFC107', fontSize: '12px', fontWeight: 700,
                             textDecoration: 'none',
                         }}>
                             {profile?.subscription_tier && profile.subscription_tier !== 'free' ? 'Manage' : 'Upgrade'}
@@ -575,11 +575,11 @@ export default function SettingsPage() {
                                             setTimeout(() => setCopied(false), 2000);
                                         }}
                                         style={{
-                                            background: copied ? 'rgba(0,229,155,0.15)' : 'rgba(251,191,36,0.1)',
-                                            border: `1px solid ${copied ? 'rgba(0,229,155,0.3)' : 'rgba(251,191,36,0.2)'}`,
+                                            background: copied ? 'rgba(106,0,255,0.15)' : 'rgba(251,191,36,0.1)',
+                                            border: `1px solid ${copied ? 'rgba(106,0,255,0.3)' : 'rgba(251,191,36,0.2)'}`,
                                             borderRadius: '8px', padding: '6px 10px', cursor: 'pointer',
                                             display: 'flex', alignItems: 'center', gap: '4px',
-                                            color: copied ? '#00e59b' : '#fbbf24', fontSize: '11px', fontWeight: 700,
+                                            color: copied ? '#FFC107' : '#fbbf24', fontSize: '11px', fontWeight: 700,
                                             transition: 'all 0.2s',
                                         }}
                                     >
@@ -595,7 +595,7 @@ export default function SettingsPage() {
                                 }}>
                                     {[
                                         { label: 'Referrals', value: referrals.length.toString(), icon: Users, color: '#60a5fa' },
-                                        { label: 'Earned', value: `$${affiliate.total_earned.toFixed(2)}`, icon: TrendingUp, color: '#00e59b' },
+                                        { label: 'Earned', value: `$${affiliate.total_earned.toFixed(2)}`, icon: TrendingUp, color: '#FFC107' },
                                         { label: 'Balance', value: `$${(affiliate.total_earned - affiliate.total_paid).toFixed(2)}`, icon: DollarSign, color: '#fbbf24' },
                                     ].map(stat => (
                                         <div key={stat.label} style={{
@@ -622,8 +622,8 @@ export default function SettingsPage() {
                                     <span style={{
                                         padding: '2px 8px', borderRadius: '6px', fontWeight: 700, fontSize: '10px',
                                         textTransform: 'uppercase',
-                                        background: affiliate.status === 'active' ? 'rgba(0,229,155,0.1)' : 'rgba(239,68,68,0.1)',
-                                        color: affiliate.status === 'active' ? '#00e59b' : '#f87171',
+                                        background: affiliate.status === 'active' ? 'rgba(106,0,255,0.1)' : 'rgba(239,68,68,0.1)',
+                                        color: affiliate.status === 'active' ? '#FFC107' : '#f87171',
                                     }}>{affiliate.status}</span>
                                 </div>
 
@@ -644,9 +644,9 @@ export default function SettingsPage() {
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                         <div style={{
                                                             width: '28px', height: '28px', borderRadius: '50%',
-                                                            background: 'rgba(0,229,155,0.1)',
+                                                            background: 'rgba(106,0,255,0.1)',
                                                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                            fontSize: '11px', color: '#00e59b', fontWeight: 700,
+                                                            fontSize: '11px', color: '#FFC107', fontWeight: 700,
                                                         }}>{ref.referred_email.charAt(0).toUpperCase()}</div>
                                                         <div>
                                                             <p style={{ color: '#e5e7eb', fontSize: '12px', fontWeight: 600, margin: 0 }}>
@@ -659,12 +659,12 @@ export default function SettingsPage() {
                                                         </div>
                                                     </div>
                                                     <div style={{ textAlign: 'right' }}>
-                                                        <p style={{ color: '#00e59b', fontSize: '12px', fontWeight: 700, margin: 0 }}>
+                                                        <p style={{ color: '#FFC107', fontSize: '12px', fontWeight: 700, margin: 0 }}>
                                                             +${ref.commission_amount.toFixed(2)}
                                                         </p>
                                                         <span style={{
                                                             fontSize: '9px', fontWeight: 700, textTransform: 'uppercase',
-                                                            color: ref.status === 'paid' ? '#00e59b' : ref.status === 'confirmed' ? '#fbbf24' : '#6b7280',
+                                                            color: ref.status === 'paid' ? '#FFC107' : ref.status === 'confirmed' ? '#fbbf24' : '#6b7280',
                                                         }}>{ref.status}</span>
                                                     </div>
                                                 </div>
