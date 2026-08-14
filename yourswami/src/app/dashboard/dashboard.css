@@ -1,0 +1,488 @@
+/* ═══════════════════════════════════════════
+   YourSwami Pro Dashboard Styles
+   ═══════════════════════════════════════════ */
+
+/* KPI Card Grid */
+.dashboard-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+@media (min-width: 1024px) {
+    .dashboard-kpi-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+    }
+}
+
+/* KPI Card */
+.kpi-card {
+    background: rgba(26, 39, 68, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 16px;
+    transition: border-color 0.2s, transform 0.2s;
+}
+.kpi-card:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateY(-1px);
+}
+.kpi-card__icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+.kpi-card__value {
+    font-size: 24px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+.kpi-card__label {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 2px;
+    font-weight: 500;
+}
+.kpi-card__trend {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 8px;
+}
+
+/* Pick Card */
+.pick-card {
+    background: rgba(26, 39, 68, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 16px;
+    transition: border-color 0.2s;
+    cursor: pointer;
+}
+.pick-card:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+}
+.pick-card--live {
+    border-left: 3px solid #ef4444;
+}
+.pick-card--won {
+    border-left: 3px solid #FFC107;
+}
+.pick-card--lost {
+    opacity: 0.55;
+}
+
+/* Status Pill */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+}
+.status-pill--live {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+.status-pill--upcoming {
+    background: rgba(59, 130, 246, 0.12);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+.status-pill--won {
+    background: rgba(106, 0, 255, 0.12);
+    color: #FFC107;
+    border: 1px solid rgba(106, 0, 255, 0.2);
+}
+.status-pill--lost {
+    background: rgba(161, 161, 170, 0.1);
+    color: #a1a1aa;
+    border: 1px solid rgba(161, 161, 170, 0.15);
+}
+.status-pill--push {
+    background: rgba(250, 204, 21, 0.1);
+    color: #fbbf24;
+    border: 1px solid rgba(250, 204, 21, 0.15);
+}
+
+/* Live Pulse Dot */
+.pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #f87171;
+    animation: pulse-dot-anim 1.5s ease-in-out infinite;
+}
+@keyframes pulse-dot-anim {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.4); }
+}
+
+/* Confidence Meter */
+.confidence-bar {
+    width: 64px;
+    height: 6px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+.confidence-bar__fill {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.6s ease;
+}
+
+/* Sport Filter Pills */
+.sport-filters {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.sport-filters::-webkit-scrollbar { display: none; }
+
+.sport-pill {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.sport-pill:hover {
+    color: #d1d5db;
+}
+.sport-pill--active {
+    background: rgba(106, 0, 255, 0.12);
+    color: #FFC107;
+    border-color: rgba(106, 0, 255, 0.2);
+}
+
+/* Tab Bar */
+.dash-tabs {
+    display: flex;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 3px;
+}
+.dash-tab {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.dash-tab--active {
+    background: rgba(106, 0, 255, 0.1);
+    color: #FFC107;
+}
+
+/* Morning Slate */
+.morning-slate {
+    background: linear-gradient(135deg, rgba(106, 0, 255, 0.08) 0%, rgba(26, 39, 68, 0.3) 100%);
+    border: 1px solid rgba(106, 0, 255, 0.15);
+    border-radius: 16px;
+    padding: 20px;
+}
+
+/* Sidebar Cards */
+.dash-sidebar-card {
+    background: rgba(26, 39, 68, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 18px;
+}
+.dash-sidebar-card__title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e5e7eb;
+    margin-bottom: 14px;
+}
+
+/* Streak Badge */
+.streak-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    background: rgba(251, 146, 60, 0.1);
+    border: 1px solid rgba(251, 146, 60, 0.2);
+    color: #fb923c;
+}
+
+/* Tail Tracker Slider */
+.tail-slider {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+}
+.tail-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #FFC107;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(106, 0, 255, 0.4);
+}
+
+/* Paywall Overlay */
+.paywall-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 15, 30, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 14px;
+    z-index: 10;
+    padding: 24px;
+    text-align: center;
+}
+
+/* ═══════════════════════════════════════════
+   3-Panel Dashboard Layout
+   ═══════════════════════════════════════════ */
+
+/* Mobile: games strip visible, sidebar hidden */
+.games-strip-mobile {
+    display: block;
+    margin-bottom: 12px;
+}
+.games-sidebar-desktop {
+    display: none;
+}
+
+/* Mobile: single column layout */
+.dash-3panel {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+
+/* Desktop: 3 columns */
+@media (min-width: 1024px) {
+    .games-strip-mobile {
+        display: none; /* hide mobile strip */
+    }
+    .games-sidebar-desktop {
+        display: block;
+        position: sticky;
+        top: 80px;
+        align-self: start;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255,255,255,0.06) transparent;
+    }
+    .games-sidebar-desktop::-webkit-scrollbar {
+        width: 4px;
+    }
+    .games-sidebar-desktop::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.08);
+        border-radius: 4px;
+    }
+    .dash-3panel {
+        grid-template-columns: 220px 1fr 260px;
+        gap: 16px;
+    }
+}
+
+/* Tablet: 2 columns (games hidden, shown in mobile strip) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .dash-3panel {
+        grid-template-columns: 1fr 260px;
+        gap: 14px;
+    }
+}
+
+/* ═══════════════════════════════════════════
+   Horizontal Game Strip (Mobile)
+   ═══════════════════════════════════════════ */
+.games-scroll-container {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+}
+.games-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Desktop sidebar: stack vertically */
+@media (min-width: 1024px) {
+    .games-scroll-container {
+        flex-direction: column;
+        overflow-x: visible;
+        overflow-y: visible;
+        scroll-snap-type: none;
+    }
+    .game-tile {
+        min-width: unset !important;
+    }
+}
+
+/* Snap each game tile */
+.game-tile {
+    scroll-snap-align: start;
+    transition: border-color 0.15s ease, transform 0.1s ease;
+}
+.game-tile:active {
+    transform: scale(0.98);
+}
+
+/* Community Pulse */
+.community-msg {
+    display: flex;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.community-msg:last-child {
+    border-bottom: none;
+}
+.community-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(106, 0, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+    color: #FFC107;
+    font-weight: 700;
+}
+
+/* Pulse animation for live indicator */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* ═══════════════════════════════════════════
+   🔥 Fire Pick Card
+   ═══════════════════════════════════════════ */
+
+.fire-pick-card {
+    position: relative;
+    background: rgba(30, 20, 10, 0.6);
+    border: 2px solid rgba(251, 146, 60, 0.35);
+    border-radius: 16px;
+    padding: 18px;
+    overflow: hidden;
+    margin-bottom: 14px;
+}
+
+.fire-pick-glow {
+    position: absolute;
+    inset: -2px;
+    border-radius: 18px;
+    background: linear-gradient(
+        135deg,
+        rgba(251, 146, 60, 0.12) 0%,
+        rgba(239, 68, 68, 0.08) 40%,
+        rgba(251, 191, 36, 0.1) 70%,
+        rgba(251, 146, 60, 0.06) 100%
+    );
+    animation: fire-ember 4s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes fire-ember {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+.fire-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(239, 68, 68, 0.15));
+    border: 1px solid rgba(251, 146, 60, 0.35);
+    color: #fb923c;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+.fire-countdown {
+    font-size: 14px;
+    font-weight: 800;
+    font-family: monospace;
+    color: #fbbf24;
+    letter-spacing: 0.03em;
+}
+
+/* Fire card top border flame accent */
+.fire-pick-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 3px;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(251, 146, 60, 0.6),
+        rgba(239, 68, 68, 0.5),
+        rgba(251, 191, 36, 0.6),
+        transparent
+    );
+    border-radius: 0 0 4px 4px;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .fire-pick-card {
+        padding: 14px;
+        border-radius: 12px;
+    }
+    .fire-countdown {
+        font-size: 12px;
+    }
+    .fire-badge {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+}

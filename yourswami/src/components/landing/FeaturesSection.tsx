@@ -1,0 +1,55 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { BarChart3, MessageSquare, Target, Bell, Lock, Gem } from 'lucide-react';
+
+const features = [
+    { icon: Target, title: 'Expert Picks Daily', desc: 'Data-driven MLB picks with detailed analysis and confidence ratings.', color: '#FFC107', bg: 'rgba(106,0,255,0.1)' },
+    { icon: MessageSquare, title: 'The Swami Lounge', desc: 'Real-time alerts, live game-day discussions, and direct expert Q&A in our community chat.', color: '#FFC107', bg: 'rgba(106,0,255,0.1)' },
+    { icon: BarChart3, title: 'Transparent Record', desc: 'Every pick tracked publicly, wins and losses. Full accountability, no cherry-picking.', color: '#fbbf24', bg: 'rgba(251,191,36,0.1)' },
+    { icon: Bell, title: 'Real-Time Alerts', desc: 'Line movement alerts pushed straight to the app so you never miss value.', color: '#f97316', bg: 'rgba(249,115,22,0.1)' },
+    { icon: Lock, title: 'Secure & Private', desc: 'All payments processed via Stripe. PCI-DSS compliant. Your data stays safe.', color: '#FFC107', bg: 'rgba(106,0,255,0.1)' },
+    { icon: Gem, title: 'VIP Tiers', desc: 'Upgrade for expanded picks, exclusive parlay plays, and priority VIP channels.', color: '#a78bfa', bg: 'rgba(167,139,250,0.1)' },
+];
+
+export default function FeaturesSection() {
+    return (
+        <section style={{ paddingTop: '40px', paddingBottom: '40px' }}>
+            <div className="container-db">
+                <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    style={{ textAlign: 'center', marginBottom: '28px' }}
+                >
+                    <h2 className="font-display" style={{ fontSize: 'clamp(22px, 3vw, 34px)', fontWeight: 700, color: 'white', marginBottom: '8px' }}>
+                        Why <span className="gradient-text">YourSwami</span>?
+                    </h2>
+                    <p style={{ color: '#d1d5db', fontSize: '15px', maxWidth: '440px', margin: '0 auto' }}>
+                        Deep analytics, expert insight, and community, all in one subscription.
+                    </p>
+                </motion.div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" style={{ gap: '12px' }}>
+                    {features.map((f, i) => (
+                        <motion.div
+                            key={f.title}
+                            initial={{ opacity: 0, y: 12 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: i * 0.05 }}
+                            className="glass-card glass-card-hover"
+                            style={{ padding: '20px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                        >
+                            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: f.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
+                                <f.icon size={18} style={{ color: f.color }} />
+                            </div>
+                            <h3 style={{ color: 'white', fontWeight: 600, fontSize: '16px', marginBottom: '6px' }}>{f.title}</h3>
+                            <p style={{ color: '#c9cdd3', fontSize: '14px', lineHeight: 1.5, margin: 0 }}>{f.desc}</p>
+                        </motion.div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+}

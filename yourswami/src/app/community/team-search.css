@@ -1,0 +1,369 @@
+/* ══════════════════════════════════════════
+   Team Search — Inline search bar + schedule
+   ══════════════════════════════════════════ */
+
+.team-search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.team-search-trigger {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.03);
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+}
+
+.team-search-trigger:hover {
+    background: rgba(255,255,255,0.08);
+    color: #FFC107;
+    border-color: rgba(106,0,255,0.2);
+}
+
+/* ── Expanded Search Panel ── */
+.team-search-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(480px, 92vw);
+    background: linear-gradient(180deg, #0d1220 0%, #0a0f1a 100%);
+    border-left: 1px solid rgba(255,255,255,0.06);
+    z-index: 901;
+    overflow-y: auto;
+    animation: slideInRight 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: flex;
+    flex-direction: column;
+}
+
+.team-search-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 900;
+    animation: fadeIn 0.2s ease;
+}
+
+/* ── Header with search input ── */
+.ts-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(13,18,32,0.95);
+    backdrop-filter: blur(12px);
+    padding: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.ts-search-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ts-input-wrap {
+    flex: 1;
+    position: relative;
+}
+
+.ts-input {
+    width: 100%;
+    padding: 10px 14px 10px 36px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.04);
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.15s;
+}
+
+.ts-input:focus {
+    border-color: rgba(106,0,255,0.3);
+    background: rgba(255,255,255,0.06);
+    box-shadow: 0 0 0 3px rgba(106,0,255,0.06);
+}
+
+.ts-input::placeholder {
+    color: #4b5563;
+}
+
+.ts-input-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #4b5563;
+    pointer-events: none;
+}
+
+.ts-close {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.04);
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+}
+
+.ts-close:hover {
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+
+/* ── Team list (autocomplete) ── */
+.ts-team-list {
+    flex: 1;
+    padding: 8px;
+    overflow-y: auto;
+}
+
+.ts-team-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.12s;
+    border: 1px solid transparent;
+}
+
+.ts-team-item:hover {
+    background: rgba(106,0,255,0.04);
+    border-color: rgba(106,0,255,0.1);
+}
+
+.ts-team-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    object-fit: contain;
+    background: rgba(255,255,255,0.02);
+    padding: 2px;
+}
+
+.ts-team-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.ts-team-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #f3f4f6;
+}
+
+.ts-team-abbr {
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.ts-team-arrow {
+    color: #374151;
+    transition: color 0.15s;
+}
+
+.ts-team-item:hover .ts-team-arrow {
+    color: #FFC107;
+}
+
+/* ── Schedule View ── */
+.ts-schedule {
+    flex: 1;
+    padding: 0 12px 20px;
+}
+
+.ts-back {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    margin: 12px 12px 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #9ca3af;
+    cursor: pointer;
+    border: none;
+    background: none;
+    transition: color 0.12s;
+}
+
+.ts-back:hover {
+    color: #FFC107;
+}
+
+.ts-section-label {
+    padding: 14px 12px 6px;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #4b5563;
+}
+
+.ts-section-label.upcoming {
+    color: #FFC107;
+}
+
+.ts-game-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    margin: 4px 0;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.02);
+    cursor: pointer;
+    transition: all 0.12s;
+}
+
+.ts-game-card:hover {
+    background: rgba(106,0,255,0.04);
+    border-color: rgba(106,0,255,0.12);
+}
+
+.ts-game-card.result {
+    opacity: 0.7;
+}
+
+.ts-game-card.result:hover {
+    opacity: 1;
+}
+
+.ts-game-date {
+    min-width: 52px;
+    text-align: center;
+}
+
+.ts-game-date-day {
+    font-size: 13px;
+    font-weight: 800;
+    color: #e5e7eb;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.ts-game-date-month {
+    font-size: 9px;
+    font-weight: 700;
+    color: #6b7280;
+    text-transform: uppercase;
+}
+
+.ts-game-matchup {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.ts-game-matchup img {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.ts-game-vs {
+    font-size: 10px;
+    color: #374151;
+    font-weight: 700;
+}
+
+.ts-game-opp {
+    font-size: 12px;
+    font-weight: 700;
+    color: #d1d5db;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ts-game-meta {
+    text-align: right;
+    min-width: 56px;
+    flex-shrink: 0;
+}
+
+.ts-game-time {
+    font-size: 11px;
+    font-weight: 700;
+    color: #fbbf24;
+}
+
+.ts-game-score {
+    font-size: 13px;
+    font-weight: 800;
+    color: #d1d5db;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.ts-game-result {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.ts-game-result.win {
+    color: #FFC107;
+}
+
+.ts-game-result.loss {
+    color: #ef4444;
+}
+
+.ts-game-analyze {
+    background: rgba(106,0,255,0.08);
+    border: 1px solid rgba(106,0,255,0.15);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #FFC107;
+    white-space: nowrap;
+}
+
+/* ── Empty / Loading states ── */
+.ts-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #4b5563;
+    font-size: 13px;
+}
+
+.ts-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    gap: 10px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+@media (max-width: 640px) {
+    .team-search-panel {
+        width: 100vw;
+    }
+}

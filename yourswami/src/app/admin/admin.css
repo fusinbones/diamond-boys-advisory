@@ -1,0 +1,1128 @@
+/* ═══════════════════════════════════════════
+   YourSwami Admin Panel Styles
+   ═══════════════════════════════════════════ */
+
+/* ── Layout ─────────────────────────────── */
+
+.admin-layout {
+    display: flex;
+    min-height: calc(100vh - 96px);
+}
+
+.admin-sidebar {
+    width: 240px;
+    background: rgba(10, 16, 30, 0.95);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 96px;
+    height: calc(100vh - 96px);
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+.admin-sidebar-header {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 8px;
+}
+
+.admin-sidebar-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 8px;
+}
+
+.admin-nav {
+    flex: 1;
+    padding: 8px 12px;
+}
+
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #9ca3af;
+    text-decoration: none;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+}
+
+.admin-nav-link:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: #e5e7eb;
+}
+
+.admin-nav-link.active {
+    background: rgba(106, 0, 255, 0.08);
+    color: #FFC107;
+}
+
+.admin-nav-section {
+    font-size: 10px;
+    font-weight: 700;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 16px 12px 6px;
+}
+
+.admin-sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.admin-content {
+    flex: 1;
+    padding: 28px 32px;
+    max-width: 1400px;
+    min-width: 0;
+}
+
+/* ── Cards ──────────────────────────────── */
+
+.admin-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 20px;
+    backdrop-filter: blur(8px);
+}
+
+.admin-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.admin-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #e5e7eb;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ── Stats Grid ─────────────────────────── */
+
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.admin-stat-card {
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.admin-stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: white;
+    font-family: var(--font-display);
+}
+
+.admin-stat-label {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+/* ── Game Cards ─────────────────────────── */
+
+.admin-game-card {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 18px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-game-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(106, 0, 255, 0.04) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.25s;
+}
+
+.admin-game-card:hover {
+    border-color: rgba(106, 0, 255, 0.3);
+    background: rgba(15, 23, 42, 0.75);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(106, 0, 255, 0.1);
+}
+
+.admin-game-card:hover::before {
+    opacity: 1;
+}
+
+.admin-game-teams {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.admin-game-team {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-game-team img {
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+.admin-game-team-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e5e7eb;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.admin-game-vs {
+    color: #374151;
+    font-size: 10px;
+    font-weight: 800;
+    flex-shrink: 0;
+    letter-spacing: 0.05em;
+}
+
+.admin-game-score {
+    font-size: 22px;
+    font-weight: 800;
+    color: white;
+    font-family: var(--font-display);
+    min-width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.admin-game-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
+    margin-top: 0;
+}
+
+.admin-game-status.live {
+    background: rgba(106, 0, 255, 0.15);
+    color: #FFC107;
+}
+
+.admin-game-status.finished {
+    background: rgba(107, 114, 128, 0.15);
+    color: #9ca3af;
+}
+
+.admin-game-status.upcoming {
+    background: rgba(251, 191, 36, 0.12);
+    color: #fbbf24;
+}
+
+/* ── Admin Search ──────────────────────── */
+
+.admin-search {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+}
+
+.admin-search-input {
+    width: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 10px 14px 10px 40px;
+    font-size: 14px;
+    color: #e5e7eb;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.admin-search-input::placeholder {
+    color: #4b5563;
+}
+
+.admin-search-input:focus {
+    outline: none;
+    border-color: rgba(106, 0, 255, 0.4);
+    background: rgba(15, 23, 42, 0.8);
+    box-shadow: 0 0 0 3px rgba(106, 0, 255, 0.08);
+}
+
+.admin-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #4b5563;
+    pointer-events: none;
+}
+
+/* ── Game Grid ─────────────────────────── */
+
+.admin-game-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 14px;
+}
+
+/* ── Analysis Game Header ─────────────── */
+
+.admin-game-header-flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+}
+
+@media (max-width: 768px) {
+    .admin-game-header-flex {
+        gap: 12px;
+    }
+
+    .admin-game-header-flex img {
+        width: 36px !important;
+        height: 36px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-game-header-flex {
+        gap: 8px;
+    }
+
+    .admin-game-header-flex img {
+        width: 28px !important;
+        height: 28px !important;
+    }
+
+    .admin-game-header-flex div[style*="fontSize"] {
+        font-size: 12px !important;
+    }
+}
+
+/* ── Pattern Row (W/L sequence) ──────── */
+
+.admin-pattern-row {
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .admin-pattern-row {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 6px;
+        scrollbar-width: none;
+    }
+
+    .admin-pattern-row::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+/* ── Mobile Responsive ─────────────────── */
+
+@media (max-width: 768px) {
+
+    /* Layout: sidebar → bottom nav */
+    .admin-layout {
+        flex-direction: column;
+        padding-bottom: 64px;
+    }
+
+    .admin-sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        top: auto;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        padding: 0;
+        border-right: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        z-index: 50;
+        overflow: visible;
+        background: rgba(10, 16, 30, 0.98);
+        backdrop-filter: blur(20px);
+    }
+
+    .admin-sidebar-header {
+        display: none;
+    }
+
+    .admin-sidebar-footer {
+        display: none;
+    }
+
+    .admin-nav {
+        display: flex;
+        flex-direction: row;
+        padding: 6px 8px;
+        width: 100%;
+        justify-content: flex-start;
+        gap: 6px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .admin-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .admin-nav-section {
+        display: none;
+    }
+
+    .admin-nav-link {
+        flex-direction: column;
+        padding: 8px 6px;
+        font-size: 10px;
+        font-weight: 700;
+        gap: 4px;
+        text-align: center;
+        border-radius: 8px;
+        flex: 0 0 auto;
+        min-width: 72px;
+        justify-content: center;
+    }
+
+    .admin-nav-link svg {
+        width: 20px;
+        height: 20px;
+        margin: 0 auto;
+    }
+
+    /* Content area */
+    .admin-content {
+        padding: 16px 12px;
+        padding-bottom: 80px;
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+
+    /* Cards */
+    .admin-card {
+        padding: 14px;
+        border-radius: 10px;
+    }
+
+    .admin-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    /* Stats grid */
+    .admin-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .admin-stat-card {
+        padding: 12px;
+    }
+
+    .admin-stat-value {
+        font-size: 22px;
+    }
+
+    .admin-stat-label {
+        font-size: 10px;
+    }
+
+    /* Game grid */
+    .admin-game-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .admin-game-card {
+        padding: 14px;
+    }
+
+    .admin-game-team img {
+        width: 28px;
+        height: 28px;
+    }
+
+    .admin-game-team-name {
+        font-size: 12px;
+    }
+
+    .admin-game-score {
+        font-size: 18px;
+    }
+
+    /* Tables → horizontal scroll */
+    .admin-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+    }
+
+    .admin-table thead th {
+        padding: 8px 10px;
+        font-size: 10px;
+    }
+
+    .admin-table tbody td {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    /* Tabs → horizontal scroll */
+    .admin-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+        gap: 2px;
+        padding: 3px;
+        margin-bottom: 14px;
+    }
+
+    .admin-tab {
+        padding: 7px 12px;
+        font-size: 11px;
+        white-space: nowrap;
+        flex: 0 0 auto;
+    }
+
+    /* Streak dots compact */
+    .admin-streak {
+        gap: 2px;
+    }
+
+    .admin-streak-dot {
+        width: 20px;
+        height: 20px;
+        font-size: 8px;
+        border-radius: 3px;
+    }
+
+    /* Inputs */
+    .admin-input,
+    .admin-select,
+    .admin-textarea {
+        font-size: 16px;
+        /* Prevents iOS zoom on focus */
+        padding: 12px;
+    }
+
+    /* Buttons */
+    .admin-btn {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+
+    /* Search */
+    .admin-search {
+        max-width: 100%;
+    }
+
+    /* Filter pills */
+    .admin-filter-pills {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+    }
+
+    .admin-filter-pill {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* Confidence bar */
+    .admin-confidence-bar {
+        width: 60px;
+    }
+
+    /* Quick pick */
+    .admin-quick-pick {
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+
+    /* Game selector cards */
+    .admin-game-select-card {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+
+    .admin-game-select-card img {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-stat-value {
+        font-size: 18px;
+    }
+
+    .admin-content {
+        padding: 12px 8px;
+        padding-bottom: 76px;
+    }
+
+    .admin-card {
+        padding: 12px;
+    }
+
+    .admin-tab {
+        font-size: 10px;
+        padding: 6px 10px;
+    }
+
+    .admin-nav-link {
+        font-size: 8px;
+        padding: 6px 2px;
+    }
+}
+
+/* ── Tables ─────────────────────────────── */
+
+.admin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+}
+
+.admin-table thead th {
+    background: rgba(15, 23, 42, 0.6);
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    color: #6b7280;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    position: sticky;
+    top: 0;
+}
+
+.admin-table thead th:first-child {
+    border-radius: 8px 0 0 0;
+}
+
+.admin-table thead th:last-child {
+    border-radius: 0 8px 0 0;
+}
+
+.admin-table tbody td {
+    padding: 10px 14px;
+    color: #d1d5db;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.admin-table tbody tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* ── Tabs ───────────────────────────────── */
+
+.admin-tabs {
+    display: flex;
+    gap: 4px;
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 20px;
+}
+
+.admin-tab {
+    flex: 1;
+    padding: 8px 16px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    transition: all 0.15s;
+    text-align: center;
+}
+
+.admin-tab:hover {
+    color: #d1d5db;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.admin-tab.active {
+    background: rgba(106, 0, 255, 0.1);
+    color: #FFC107;
+}
+
+/* ── Inputs ─────────────────────────────── */
+
+.admin-input {
+    width: 100%;
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: white;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+    box-sizing: border-box;
+}
+
+.admin-input:focus {
+    border-color: rgba(106, 0, 255, 0.4);
+}
+
+.admin-input::placeholder {
+    color: #4b5563;
+}
+
+.admin-select {
+    width: 100%;
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: white;
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.admin-select option {
+    background: #0f172a;
+    color: white;
+}
+
+.admin-textarea {
+    width: 100%;
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: white;
+    font-size: 14px;
+    outline: none;
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.admin-textarea:focus {
+    border-color: rgba(106, 0, 255, 0.4);
+}
+
+.admin-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #d1d5db;
+    margin-bottom: 6px;
+}
+
+/* ── Buttons ────────────────────────────── */
+
+.admin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+}
+
+.admin-btn-primary {
+    background: #FFC107;
+    color: #0a101e;
+}
+
+.admin-btn-primary:hover {
+    background: #00cc8a;
+}
+
+.admin-btn-secondary {
+    background: rgba(255, 255, 255, 0.06);
+    color: #d1d5db;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.admin-btn-danger {
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.admin-btn-danger:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+/* ── Badges / Tags ──────────────────────── */
+
+.admin-badge-hit {
+    display: inline-flex;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(106, 0, 255, 0.12);
+    color: #FFC107;
+}
+
+.admin-badge-miss {
+    display: inline-flex;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+}
+
+.admin-badge-pending {
+    display: inline-flex;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(251, 191, 36, 0.12);
+    color: #fbbf24;
+}
+
+.admin-badge-push {
+    display: inline-flex;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(107, 114, 128, 0.15);
+    color: #9ca3af;
+}
+
+/* ── Confidence Meter ───────────────────── */
+
+.admin-confidence-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
+    overflow: hidden;
+    width: 80px;
+}
+
+.admin-confidence-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s;
+}
+
+/* ── Loader ─────────────────────────────── */
+
+.admin-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: #6b7280;
+    font-size: 14px;
+    gap: 10px;
+}
+
+.admin-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(106, 0, 255, 0.2);
+    border-top-color: #FFC107;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* ── Empty State ────────────────────────── */
+
+.admin-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #4b5563;
+}
+
+.admin-empty-icon {
+    margin-bottom: 12px;
+    opacity: 0.4;
+}
+
+/* ── Chart Container ────────────────────── */
+
+.admin-chart {
+    position: relative;
+    height: 200px;
+    width: 100%;
+}
+
+.admin-chart-lg {
+    height: 300px;
+}
+
+/* ── Streak Display ─────────────────────── */
+
+.admin-streak {
+    display: flex;
+    gap: 3px;
+    flex-wrap: wrap;
+}
+
+.admin-streak-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.admin-streak-dot.win {
+    background: rgba(106, 0, 255, 0.15);
+    color: #FFC107;
+    border: 1px solid rgba(106, 0, 255, 0.3);
+}
+
+.admin-streak-dot.loss {
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* ── League Badge ──────────────────────── */
+
+.admin-league-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.admin-league-badge.mlb {
+    background: rgba(0, 132, 255, 0.12);
+    color: #60a5fa;
+}
+
+.admin-league-badge.spring {
+    background: rgba(251, 191, 36, 0.12);
+    color: #fbbf24;
+}
+
+/* ── Live Pulse ────────────────────────── */
+
+.admin-game-card.live-card {
+    border-color: rgba(106, 0, 255, 0.25);
+    animation: livePulse 2s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+
+    0%,
+    100% {
+        border-color: rgba(106, 0, 255, 0.15);
+    }
+
+    50% {
+        border-color: rgba(106, 0, 255, 0.4);
+    }
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #FFC107;
+    animation: liveDotPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes liveDotPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── Pitcher Preview on Cards ──────────── */
+
+.admin-game-pitchers {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.admin-game-pitchers span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ── Status Filter Pills ──────────────── */
+
+.admin-filter-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.admin-filter-pill {
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: transparent;
+    color: #6b7280;
+    transition: all 0.15s;
+}
+
+.admin-filter-pill:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #d1d5db;
+}
+
+.admin-filter-pill.active {
+    background: rgba(106, 0, 255, 0.1);
+    border-color: rgba(106, 0, 255, 0.3);
+    color: #FFC107;
+}
+
+/* ── Quick Pick Button ─────────────────── */
+
+.admin-quick-pick {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid rgba(167, 139, 250, 0.3);
+    background: rgba(167, 139, 250, 0.1);
+    color: #a78bfa;
+    transition: all 0.15s;
+    text-decoration: none;
+}
+
+.admin-quick-pick:hover {
+    background: rgba(167, 139, 250, 0.2);
+    border-color: rgba(167, 139, 250, 0.5);
+}
+
+/* ── Game Selector ─────────────────────── */
+
+.admin-game-select-card {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(15, 23, 42, 0.3);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-game-select-card:hover {
+    border-color: rgba(106, 0, 255, 0.3);
+    background: rgba(15, 23, 42, 0.5);
+}
+
+.admin-game-select-card.selected {
+    border-color: rgba(106, 0, 255, 0.4);
+    background: rgba(106, 0, 255, 0.06);
+}
+
+.admin-game-select-card img {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+}

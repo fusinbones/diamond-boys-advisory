@@ -1,0 +1,561 @@
+/* ═══════════════════════════════════════
+   Patterns Page — Mobile-First Styles
+   ═══════════════════════════════════════ */
+
+.patterns-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.patterns-title {
+    color: white;
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.patterns-subtitle {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+/* Summary Cards */
+.patterns-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.patterns-summary-card {
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+}
+
+.patterns-summary-card .value {
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.patterns-summary-card .label {
+    color: #6b7280;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Filters + Sort */
+.patterns-controls {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.patterns-filter-btn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: none;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.patterns-sort-group {
+    margin-left: auto;
+    display: flex;
+    gap: 4px;
+}
+
+.patterns-sort-btn {
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: none;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Team rows */
+.patterns-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pattern-row {
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.pattern-row-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 14px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+}
+
+/* Team info (logo + name) */
+.pattern-team-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 130px;
+    flex-shrink: 0;
+}
+
+.pattern-team-logo {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+.pattern-team-name {
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.pattern-team-division {
+    color: #4b5563;
+    font-size: 10px;
+}
+
+.pattern-today-badge {
+    font-size: 9px;
+    background: rgba(106, 0, 255, 0.15);
+    color: #FFC107;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* Pattern dots */
+.pattern-dots {
+    display: flex;
+    gap: 3px;
+    flex: 1;
+    justify-content: center;
+    overflow: hidden;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.pattern-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* ═══ STREAK HIGHLIGHTING ═══ */
+
+/* Non-streak dots — dimmed */
+.pattern-dot.dimmed {
+    opacity: 0.3;
+    transform: scale(0.85);
+}
+
+/* Streak dots — GLOWING */
+.pattern-dot.streak {
+    transform: scale(1.1);
+    z-index: 1;
+}
+
+.pattern-dot.streak.win {
+    box-shadow:
+        0 0 6px rgba(106, 0, 255, 0.4),
+        0 0 16px rgba(106, 0, 255, 0.15),
+        inset 0 0 4px rgba(106, 0, 255, 0.1);
+    animation: streakPulse 2s ease-in-out infinite;
+}
+
+.pattern-dot.streak.loss {
+    box-shadow:
+        0 0 6px rgba(239, 68, 68, 0.4),
+        0 0 16px rgba(239, 68, 68, 0.15),
+        inset 0 0 4px rgba(239, 68, 68, 0.1);
+    animation: streakPulse 2s ease-in-out infinite;
+}
+
+/* Connector between streak dots */
+.pattern-streak-connector {
+    width: 6px;
+    height: 2px;
+    border-radius: 1px;
+    flex-shrink: 0;
+    opacity: 0.6;
+}
+
+/* Separator between streak and non-streak */
+.pattern-streak-divider {
+    width: 2px;
+    height: 18px;
+    border-radius: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+    margin: 0 2px;
+}
+
+/* ═══ BREAK POINT INDICATOR ═══ */
+
+.pattern-break-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 900;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+    animation: breakPulse 1.5s ease-in-out infinite;
+}
+
+.pattern-break-dot.break-mode {
+    animation: breakGlow 1.2s ease-in-out infinite;
+}
+
+/* "NEXT" label above the break dot */
+.pattern-break-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.pattern-break-label {
+    font-size: 7px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+}
+
+/* Arrow pointing to the break dot */
+.pattern-break-arrow {
+    font-size: 10px;
+    flex-shrink: 0;
+    animation: arrowPulse 1.5s ease-in-out infinite;
+}
+
+/* ═══ ANIMATIONS ═══ */
+
+@keyframes streakPulse {
+    0%, 100% { transform: scale(1.1); }
+    50% { transform: scale(1.15); }
+}
+
+@keyframes breakPulse {
+    0%, 100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.12); opacity: 1; }
+}
+
+@keyframes breakGlow {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 8px rgba(251, 146, 60, 0.3), 0 0 20px rgba(251, 146, 60, 0.1);
+    }
+    50% {
+        transform: scale(1.15);
+        box-shadow: 0 0 14px rgba(251, 146, 60, 0.5), 0 0 30px rgba(251, 146, 60, 0.2);
+    }
+}
+
+@keyframes arrowPulse {
+    0%, 100% { opacity: 0.5; transform: translateX(0); }
+    50% { opacity: 1; transform: translateX(2px); }
+}
+
+
+/* Right side (score, streak, prediction) */
+.pattern-metrics {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 100px;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+.pattern-alt-score {
+    text-align: center;
+}
+
+.pattern-alt-score .value {
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.pattern-alt-score .label {
+    font-size: 8px;
+    color: #4b5563;
+    text-transform: uppercase;
+}
+
+.pattern-streak-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.pattern-streak-badge span {
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.pattern-prediction {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.pattern-prediction-box {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.pattern-prediction-label {
+    font-size: 7px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Expanded detail */
+.pattern-expanded {
+    padding: 0 14px 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.pattern-games-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding-top: 10px;
+}
+
+.pattern-game-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    padding: 8px 10px;
+    min-width: 120px;
+    flex: 1;
+}
+
+.pattern-game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.pattern-game-result {
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.pattern-game-date {
+    color: #4b5563;
+    font-size: 10px;
+}
+
+.pattern-game-opponent {
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+.pattern-game-score {
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* ═══════════════════════════════════════
+   MOBILE — 768px
+   ═══════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    .patterns-title {
+        font-size: 18px;
+    }
+
+    .patterns-summary {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+    }
+
+    .patterns-summary-card {
+        padding: 10px 6px;
+    }
+
+    .patterns-summary-card .value {
+        font-size: 22px;
+    }
+
+    .patterns-summary-card .label {
+        font-size: 9px;
+    }
+
+    /* Stack the team row vertically on mobile */
+    .pattern-row-btn {
+        flex-wrap: wrap;
+        padding: 10px 12px;
+        gap: 8px;
+    }
+
+    .pattern-team-info {
+        min-width: unset;
+        flex: 1;
+    }
+
+    /* Pattern dots: show on their own row, full width */
+    .pattern-dots {
+        order: 3;
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 3px;
+    }
+
+    .pattern-dot {
+        width: 22px;
+        height: 22px;
+        font-size: 9px;
+    }
+
+    /* Metrics stay on the right of team name */
+    .pattern-metrics {
+        min-width: unset;
+        gap: 8px;
+    }
+
+    /* Sort group on its own line */
+    .patterns-sort-group {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .patterns-filter-btn {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+
+    /* Game cards in expanded -> 2 columns */
+    .pattern-game-card {
+        min-width: calc(50% - 3px);
+        flex: 0 0 calc(50% - 3px);
+    }
+}
+
+/* ═══════════════════════════════════════
+   MOBILE — 480px (small phones)
+   ═══════════════════════════════════════ */
+
+@media (max-width: 480px) {
+    .patterns-title {
+        font-size: 16px;
+    }
+
+    .patterns-summary-card .value {
+        font-size: 20px;
+    }
+
+    .pattern-dot {
+        width: 20px;
+        height: 20px;
+        font-size: 8px;
+        border-radius: 4px;
+    }
+
+    .pattern-team-logo {
+        width: 24px;
+        height: 24px;
+    }
+
+    .pattern-team-name {
+        font-size: 12px;
+    }
+
+    .pattern-alt-score .value {
+        font-size: 12px;
+    }
+
+    .pattern-streak-badge {
+        padding: 3px 6px;
+    }
+
+    .pattern-streak-badge span {
+        font-size: 10px;
+    }
+
+    .pattern-prediction-box {
+        width: 24px;
+        height: 24px;
+        font-size: 9px;
+    }
+
+    /* Game cards stack to single column on small phones */
+    .pattern-game-card {
+        min-width: 100%;
+        flex: 0 0 100%;
+    }
+
+    .pattern-expanded {
+        padding: 0 10px 10px;
+    }
+
+    .patterns-controls {
+        gap: 4px;
+    }
+
+    .patterns-filter-btn {
+        padding: 5px 8px;
+        font-size: 10px;
+    }
+
+    .patterns-sort-btn {
+        padding: 3px 8px;
+        font-size: 10px;
+    }
+}
