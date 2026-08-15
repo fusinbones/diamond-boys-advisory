@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Shield, Mail, ExternalLink } from 'lucide-react';
+import { Shield, Mail, ExternalLink, Phone } from 'lucide-react';
 
 export default function Footer() {
     return (
@@ -79,13 +79,23 @@ export default function Footer() {
                                 support@yourswami.com
                             </a>
                             <a
+                                href="tel:+19145213681"
+                                className="flex items-center gap-2 text-gray-500 hover:text-[#FFC107] transition text-sm"
+                            >
+                                <Phone size={12} className="sm:w-3.5 sm:h-3.5 flex-shrink-0" />
+                                +1 (914) 521-3681
+                            </a>
+                            <a
                                 href="/community"
                                 className="flex items-center gap-2 text-gray-500 hover:text-[#FFC107] transition text-sm"
                             >
                                 <ExternalLink size={12} className="sm:w-3.5 sm:h-3.5 flex-shrink-0" />
                                 The Swami Lounge
                             </a>
-
+                            <p className="text-gray-600 text-xs leading-relaxed pt-1">
+                                Operated by <strong className="text-gray-500">TRIPLE PLAYZ INC</strong><br />
+                                99 Longfellow Dr, Colonia, NJ 07067
+                            </p>
                         </div>
                     </div>
                 </div>

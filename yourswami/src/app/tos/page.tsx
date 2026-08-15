@@ -255,7 +255,10 @@ export default function TOSPage() {
                                 For billing questions, technical support, or general inquiries (non-ban related), contact us at:
                             </p>
                             <div className="glass-card p-4 bg-[#0d1525]/50">
-                                <p className="text-white font-medium">📧 support@yourswami.com</p>
+                                <p className="text-white font-medium">TRIPLE PLAYZ INC</p>
+                                <p className="text-gray-400 text-sm mt-1">99 Longfellow Dr, Colonia, NJ 07067</p>
+                                <p className="text-white font-medium mt-2">📧 support@yourswami.com</p>
+                                <p className="text-white font-medium mt-1">📞 +1 (914) 521-3681</p>
                                 <p className="text-gray-500 text-xs mt-1">We typically respond within 24 hours.</p>
                             </div>
                             <p className="text-xs text-gray-600">
