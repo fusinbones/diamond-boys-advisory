@@ -70,12 +70,10 @@ export default function RootLayout({
           <RefTracker />
         </AuthProvider>
         {/* GoHighLevel (LeadConnector) chat widget: sole SMS opt-in / A2P consent collector */}
-        <div data-chat-widget data-widget-id="6a7b90b770d2c2478c52e317" data-location-id="sb8EJdIHmrQp0LEESgjf"></div>
         <Script
           src="https://widgets.leadconnectorhq.com/loader.js"
           data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"
-          data-widget-id="6a7b90b770d2c2478c52e317"
-          data-source="WEB_USER"
+          data-widget-id="6a7b8d8193aa928cd2568bef"
           strategy="afterInteractive"
         />
       </body>
