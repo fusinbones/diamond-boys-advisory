@@ -174,6 +174,23 @@ function DashboardContent(): ReactNode {
     const [firePicks, setFirePicks] = useState<FirePickData[]>([]);
     const [fireHistory, setFireHistory] = useState<FirePickData[]>([]);
     const [deletingPickId, setDeletingPickId] = useState<string | null>(null);
+    // Full fire-pick stats (all-time + this season + streak + last-10) and the
+    // in-app "new fire pick" alert.
+    const [fireFull, setFireFull] = useState<{
+        allTime: { record: string; winPct: string; units: number };
+        season: { record: string; winPct: string; units: number };
+        seasonYear: number;
+        streak: string;
+        last10: string;
+        form: string[];
+    } | null>(null);
+    const [newFireCount, setNewFireCount] = useState(0);
+    const [fireAlertDismissed, setFireAlertDismissed] = useState(false);
+    const seenFireIds = useState<Set<string>>(() => {
+        if (typeof window === 'undefined') return new Set<string>();
+        try { return new Set<string>(JSON.parse(localStorage.getItem('yswami_seen_fire') || '[]')); }
+        catch { return new Set<string>(); }
+    })[0];
     const [todayStr, setTodayStr] = useState(() => {
         const formatter = new Intl.DateTimeFormat('en-US', {
             timeZone: 'America/New_York',
@@ -332,8 +349,18 @@ function DashboardContent(): ReactNode {
 
             if (fireRes.ok) {
                 const data = await fireRes.json();
-                setFirePicks(data.firePicks || (data.firePick ? [data.firePick] : []));
+                const incomingFire: FirePickData[] = data.firePicks || (data.firePick ? [data.firePick] : []);
+                setFirePicks(incomingFire);
                 setFireHistory(data.history || []);
+                if (data.stats) setFireFull(data.stats);
+                // In-app alert: count LIVE (revealed) fire picks we haven't shown before.
+                const liveFresh = incomingFire.filter(fp => fp.status === 'revealed' && !seenFireIds.has(fp.id));
+                if (liveFresh.length > 0) {
+                    setNewFireCount(liveFresh.length);
+                    setFireAlertDismissed(false);
+                    liveFresh.forEach(fp => seenFireIds.add(fp.id));
+                    try { localStorage.setItem('yswami_seen_fire', JSON.stringify([...seenFireIds])); } catch {}
+                }
             }
         } catch (err) {
             console.error('Dashboard fetch error:', err);
@@ -910,60 +937,70 @@ function DashboardContent(): ReactNode {
                     </div>
                 </div>
 
-                {/* Morning Slate */}
-                {slate && (
-                    <MorningSlate
-                        totalGames={slate.totalGames}
-                        upcomingPicks={slate.upcomingPicks}
-                        sports={slate.sports}
-                        userEmail={user?.email}
-                    />
-                )}
-
-                {/* KPI Strip — always visible above fold */}
-                {kpis && (
-                    <div className="dashboard-kpi-grid" style={{ margin: '16px 0 12px' }}>
-                        <KPICard icon="record" label="Record" value={kpis.record} sub={`${kpis.winRate} Win Rate`} trend={kpis.isPreseason ? 'Model target' : 'Season to date'} delay={0.05} />
-                        <KPICard icon="roi" label="ROI" value={`${Number(kpis.totalUnits) >= 0 ? '+' : ''}${kpis.totalUnits}u`} sub={`${kpis.roi} ROI`} trend={kpis.isPreseason ? 'Model target' : 'Units profit'} delay={0.1} />
-                        <KPICard icon="streak" label="Streak" value={kpis.streak} sub="Current streak" delay={0.15} />
-                        <KPICard icon="edge" label="Avg Edge" value={kpis.avgEdge} sub="Model confidence" delay={0.2} />
+                {/* New Fire Pick alert */}
+                {newFireCount > 0 && !fireAlertDismissed && (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', background: 'linear-gradient(90deg, rgba(251,191,36,0.15), rgba(106,0,255,0.12))', border: '1px solid rgba(251,191,36,0.35)', borderRadius: '12px', padding: '12px 16px', margin: '8px 0 4px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <Flame size={18} style={{ color: '#fbbf24' }} />
+                            <span style={{ fontSize: '14px', fontWeight: 700, color: 'white' }}>
+                                {newFireCount} new Fire Pick{newFireCount > 1 ? 's' : ''} just dropped
+                            </span>
+                        </div>
+                        <button onClick={() => setFireAlertDismissed(true)} style={{ background: 'transparent', border: 'none', color: '#9ca3af', fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}>Dismiss</button>
                     </div>
                 )}
 
-                {/* ═══ MOBILE: Horizontal Game Strip (above fold) ═══ */}
-                <div className="games-strip-mobile">
-                    <GamesBoard />
-                </div>
+                {/* Fire Pick Stats */}
+                {(() => {
+                    const at = fireFull?.allTime ?? { record: fireStats.record, winPct: fireStats.winPct, units: fireStats.units };
+                    const se = fireFull?.season;
+                    const seasonYear = fireFull?.seasonYear ?? new Date().getFullYear();
+                    const cards: { label: string; value: string; sub: string; positive?: boolean; mono?: boolean }[] = [
+                        { label: 'All-Time Record', value: at.record, sub: `${at.winPct} win rate` },
+                        { label: `${seasonYear} Season`, value: se ? se.record : '0-0', sub: se ? `${se.winPct} win rate` : 'no games yet' },
+                        { label: 'Net Profit', value: `${at.units >= 0 ? '+' : ''}${at.units}u`, sub: 'all-time units', positive: at.units >= 0, mono: true },
+                        { label: 'Current Streak', value: fireFull?.streak ?? '—', sub: `Last 10: ${fireFull?.last10 ?? '—'}` },
+                    ];
+                    return (
+                        <div className="dashboard-kpi-grid" style={{ margin: '8px 0 12px' }}>
+                            {cards.map((c, i) => (
+                                <div key={i} className="glass-card" style={{ padding: '14px 16px', border: '1px solid rgba(251,191,36,0.18)' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                                        <Flame size={13} style={{ color: '#fbbf24' }} />
+                                        <span style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>{c.label}</span>
+                                    </div>
+                                    <div style={{ fontSize: '22px', fontWeight: 800, color: c.positive === undefined ? 'white' : (c.positive ? '#22c55e' : '#f87171'), fontFamily: c.mono ? 'monospace' : 'inherit' }}>{c.value}</div>
+                                    <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>{c.sub}</div>
+                                </div>
+                            ))}
+                        </div>
+                    );
+                })()}
 
-                {/* ═══ 3-PANEL LAYOUT ═══ */}
-                <div className="dash-3panel">
-                    {/* LEFT: Games Sidebar (desktop only) */}
-                    <aside className="games-sidebar-desktop">
-                        <GamesBoard />
-                    </aside>
-
-                    {/* CENTER: Main Content */}
+                {/* ═══ FIRE PICKS ═══ */}
+                <div style={{ maxWidth: '760px', margin: '0 auto', width: '100%' }}>
                     <main style={{ display: 'flex', flexDirection: 'column', gap: '10px', position: 'relative', minWidth: 0 }}>
                         {dashLoading ? (
                             <div style={{ padding: '40px 0', textAlign: 'center' }}>
                                 <Loader2 size={20} style={{ color: '#FFC107', animation: 'spin 1s linear infinite', margin: '0 auto 6px' }} />
-                                <p style={{ color: '#6b7280', fontSize: '12px' }}>Loading picks...</p>
+                                <p style={{ color: '#6b7280', fontSize: '12px' }}>Loading fire picks...</p>
                             </div>
-                        ) : picks.length > 0 ? (() => {
-                            const sportTabs = ['All', ...Array.from(new Set(picks.map(p => p.sport))).filter(Boolean)];
-                            const filteredPicks = sportFilter === 'All' ? picks : picks.filter(p => p.sport === sportFilter);
-                            return (
+                        ) : (
                             <>
-                                <PickDropBanner pickCount={newPickCount} isPaid={!!isPaid} />
+                                {firePicks.length > 0 ? (
+                                    firePicks.map(fp => (
+                                        <FirePickCard key={fp.id} firePick={fp} isPaid={!!isPaid} />
+                                    ))
+                                ) : (
+                                    <div className="glass-card" style={{ padding: '30px 20px', textAlign: 'center' }}>
+                                        <Flame size={22} style={{ color: '#6b7280', margin: '0 auto 8px' }} />
+                                        <p style={{ fontSize: '14px', fontWeight: 600, color: '#d1d5db', marginBottom: '4px' }}>No live Fire Picks right now</p>
+                                        <p style={{ fontSize: '12px', color: '#6b7280' }}>The Swami drops new Fire Picks throughout the day. You&apos;ll be alerted the moment one lands.</p>
+                                    </div>
+                                )}
 
-                                {/* 🔥 Fire Picks — pinned to top */}
-                                {firePicks.map(fp => (
-                                    <FirePickCard key={fp.id} firePick={fp} isPaid={!!isPaid} />
-                                ))}
-
-                                {/* 🔥 Past Fire Picks (Paid Only) */}
                                 {isPaid && fireHistory.length > 0 && (
-                                    <div className="glass-card" style={{ padding: '16px', marginBottom: '20px' }}>
+                                    <div className="glass-card" style={{ padding: '16px', marginTop: '4px' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
                                             <Flame size={16} style={{ color: '#6b7280' }} />
                                             <span style={{ fontSize: '13px', fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Past Fire Picks</span>
@@ -977,8 +1014,8 @@ function DashboardContent(): ReactNode {
                                                             {new Date(pick.scheduled_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • {pick.matchup}
                                                         </p>
                                                     </div>
-                                                    <span style={{ 
-                                                        fontSize: '12px', fontWeight: 700, padding: '4px 10px', borderRadius: '6px', 
+                                                    <span style={{
+                                                        fontSize: '12px', fontWeight: 700, padding: '4px 10px', borderRadius: '6px',
                                                         color: pick.status === 'won' ? '#22c55e' : pick.status === 'lost' ? '#f87171' : '#fbbf24',
                                                         background: pick.status === 'won' ? 'rgba(106,0,255,0.1)' : pick.status === 'lost' ? 'rgba(239,68,68,0.1)' : 'rgba(251,191,36,0.1)'
                                                     }}>
@@ -989,289 +1026,10 @@ function DashboardContent(): ReactNode {
                                         </div>
                                     </div>
                                 )}
-
-                                {/* Sport filter pills */}
-                                <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '4px' }}>
-                                    {sportTabs.map(tab => {
-                                        const count = tab === 'All' ? picks.length : picks.filter(p => p.sport === tab).length;
-                                        const active = sportFilter === tab;
-                                        return (
-                                            <button key={tab} onClick={() => setSportFilter(tab)} style={{
-                                                padding: '4px 12px', borderRadius: '14px',
-                                                fontSize: '11px', fontWeight: 600, cursor: 'pointer',
-                                                border: active ? '1px solid rgba(106,0,255,0.3)' : '1px solid rgba(255,255,255,0.06)',
-                                                background: active ? 'rgba(106,0,255,0.1)' : 'transparent',
-                                                color: active ? '#FFC107' : '#6b7280',
-                                                transition: 'all 0.12s',
-                                            }}>
-                                                {tab} <span style={{ opacity: 0.5, marginLeft: '3px' }}>{count}</span>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-
-                                {(() => {
-                                    const todayPicks = filteredPicks.filter(p => (p.game_date || '').startsWith(todayStr));
-                                    const yesterdayPicks = filteredPicks.filter(p => !(p.game_date || '').startsWith(todayStr));
-
-                                    const renderPick = (pick: PickData) => (
-                                        <div key={pick.id} style={{ position: 'relative' }}>
-                                            <PickCard pick={pick} locked={picksLocked} />
-                                            {profile?.is_admin && (
-                                                <button
-                                                    onClick={() => setDeletingPickId(pick.id)}
-                                                    style={{
-                                                        position: 'absolute', top: '10px', right: '10px',
-                                                        background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)',
-                                                        borderRadius: '6px', padding: '4px 6px', cursor: 'pointer',
-                                                        color: '#f87171', fontSize: '10px', display: 'flex', alignItems: 'center', gap: '3px',
-                                                        zIndex: 5,
-                                                    }}
-                                                >
-                                                    <Trash2 size={11} /> Delete
-                                                </button>
-                                            )}
-                                        </div>
-                                    );
-
-                                    return (
-                                        <>
-                                            {/* Today's Picks */}
-                                            {todayPicks.length > 0 && (
-                                                <>
-                                                    <div style={{
-                                                        display: 'flex', alignItems: 'center', gap: '8px',
-                                                        marginBottom: '6px', marginTop: '2px',
-                                                    }}>
-                                                        <div style={{
-                                                            width: '6px', height: '6px', borderRadius: '50%',
-                                                            background: '#FFC107', boxShadow: '0 0 6px #FFC107',
-                                                        }} />
-                                                        <span style={{
-                                                            fontSize: '12px', fontWeight: 700, color: '#FFC107',
-                                                            textTransform: 'uppercase', letterSpacing: '0.5px',
-                                                        }}>Today&apos;s Picks</span>
-                                                        <span style={{ fontSize: '11px', color: '#6b7280' }}>{todayPicks.length}</span>
-                                                        <div style={{ flex: 1, height: '1px', background: 'rgba(106,0,255,0.15)' }} />
-                                                    </div>
-                                                    {todayPicks.map(renderPick)}
-                                                </>
-                                            )}
-
-                                            {/* Yesterday's Picks */}
-                                            {yesterdayPicks.length > 0 && (
-                                                <>
-                                                    <div style={{
-                                                        display: 'flex', alignItems: 'center', gap: '8px',
-                                                        marginBottom: '6px', marginTop: todayPicks.length > 0 ? '16px' : '2px',
-                                                    }}>
-                                                        <span style={{
-                                                            fontSize: '12px', fontWeight: 700, color: '#6b7280',
-                                                            textTransform: 'uppercase', letterSpacing: '0.5px',
-                                                        }}>Yesterday&apos;s Picks</span>
-                                                        <span style={{ fontSize: '11px', color: '#4b5563' }}>{yesterdayPicks.length}</span>
-                                                        <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.05)' }} />
-                                                    </div>
-                                                    <div style={{ opacity: 0.7 }}>
-                                                        {yesterdayPicks.map(renderPick)}
-                                                    </div>
-                                                </>
-                                            )}
-
-                                            {todayPicks.length === 0 && yesterdayPicks.length === 0 && (
-                                                <div className="glass-card" style={{ padding: '24px 20px', textAlign: 'center' }}>
-                                                    <p style={{ fontSize: '14px', fontWeight: 600, color: '#d1d5db', marginBottom: '4px' }}>No {sportFilter} picks today</p>
-                                                    <p style={{ fontSize: '12px', color: '#6b7280' }}>Check other sports or wait for upcoming picks.</p>
-                                                </div>
-                                            )}
-                                        </>
-                                    );
-                                })()}
                             </>
-                            );
-                        })() : (
-                            <div className="glass-card" style={{ padding: '30px 20px', textAlign: 'center' }}>
-                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#d1d5db', marginBottom: '6px' }}>No picks yet</p>
-                                <p style={{ fontSize: '12px', color: '#6b7280' }}>
-                                    Check back closer to game time for today&apos;s picks.
-                                </p>
-                            </div>
                         )}
-
-                        <BankrollChart data={dailyPnl} />
                         {trialExpired && <PaywallOverlay daysLeft={daysLeft} />}
                     </main>
-
-                    {/* RIGHT: Stats Sidebar */}
-                    <aside style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        {/* Today's Summary */}
-                        <div className="dash-sidebar-card">
-                            <h3 className="dash-sidebar-card__title" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                Today&apos;s Summary
-                                <Tooltip text="Your daily performance: total picks made, win/loss record, and profit in units. 1 unit = your standard bet size." />
-                            </h3>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                {[
-                                    { label: 'Total Picks', value: String(picks.filter(p => p.game_date === new Date().toISOString().split('T')[0]).length) },
-                                    { label: 'Record', value: kpis?.record || 'N/A' },
-                                    { label: 'Units P/L', value: kpis ? `${Number(kpis.totalUnits) >= 0 ? '+' : ''}${kpis.totalUnits}u` : 'N/A', isPositive: Number(kpis?.totalUnits) >= 0 },
-                                ].map((row) => (
-                                    <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <span style={{ fontSize: '12px', color: '#9ca3af' }}>{row.label}</span>
-                                        <span style={{ fontSize: '14px', fontWeight: 700, color: 'isPositive' in row ? (row.isPositive ? '#22c55e' : '#f87171') : 'white' }}>
-                                            {row.value}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Fire Pick Marketing Widget */}
-                        <div className="dash-sidebar-card" style={{ 
-                            background: 'linear-gradient(180deg, rgba(251,191,36,0.1) 0%, rgba(20,20,25,0.95) 100%)',
-                            border: '1px solid rgba(251,191,36,0.2)' 
-                        }}>
-                            <h3 className="dash-sidebar-card__title" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#fbbf24', marginBottom: '10px' }}>
-                                <Flame size={14} style={{ color: '#fbbf24' }} />
-                                Fire Pick Record
-                                <Tooltip text="The official win/loss record for all highest-confidence Fire Picks." />
-                            </h3>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span style={{ fontSize: '12px', color: '#d1d5db', fontWeight: 600 }}>All-Time Record</span>
-                                    <span style={{ fontSize: '15px', fontWeight: 800, color: 'white' }}>
-                                        {fireStats.record}
-                                    </span>
-                                </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span style={{ fontSize: '12px', color: '#d1d5db', fontWeight: 600 }}>Win Rate</span>
-                                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#fbbf24' }}>
-                                        {fireStats.winPct}
-                                    </span>
-                                </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span style={{ fontSize: '12px', color: '#d1d5db', fontWeight: 600 }}>Net Profit</span>
-                                    <span style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'monospace', color: fireStats.units >= 0 ? '#22c55e' : '#f87171' }}>
-                                        {fireStats.units >= 0 ? '+' : ''}{fireStats.units}u
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Pattern System CTA */}
-                        <Link href="/patterns" style={{ textDecoration: 'none' }}>
-                            <div className="dash-sidebar-card" style={{
-                                background: 'linear-gradient(180deg, rgba(167,139,250,0.1) 0%, rgba(20,20,25,0.95) 100%)',
-                                border: '1px solid rgba(167,139,250,0.2)',
-                                cursor: 'pointer',
-                                transition: 'border-color 0.2s, transform 0.2s',
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                                    <div style={{
-                                        width: '28px', height: '28px', borderRadius: '8px',
-                                        background: 'rgba(167,139,250,0.15)', border: '1px solid rgba(167,139,250,0.25)',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    }}>
-                                        <ArrowUp size={14} style={{ color: '#a78bfa', transform: 'rotate(45deg)' }} />
-                                    </div>
-                                    <h3 className="dash-sidebar-card__title" style={{ color: '#a78bfa', margin: 0 }}>
-                                        Pattern System
-                                    </h3>
-                                </div>
-                                <p style={{ color: '#9ca3af', fontSize: '11px', lineHeight: 1.5, marginBottom: '10px' }}>
-                                    W/L alternation analysis for all 30 MLB teams. Find break points with 62-99% probability.
-                                </p>
-                                <span style={{
-                                    display: 'inline-flex', alignItems: 'center', gap: '4px',
-                                    color: '#a78bfa', fontSize: '12px', fontWeight: 700,
-                                }}>
-                                    Open Patterns →
-                                </span>
-                            </div>
-                        </Link>
-
-                        <TailTracker
-                            seasonUnits={tailTracker.seasonUnits}
-                            weekUnits={tailTracker.weekUnits}
-                            totalPicks={tailTracker.totalPicks}
-                        />
-
-                        {/* Recent Days */}
-                        {recentDays.length > 0 && (
-                            <div className="dash-sidebar-card">
-                                <h3 className="dash-sidebar-card__title">Recent Days</h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                                    {recentDays.map((d) => (
-                                        <div key={d.date} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                                            <div>
-                                                <p style={{ fontSize: '11px', color: '#6b7280' }}>
-                                                    {new Date(d.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                                </p>
-                                                <p style={{ fontSize: '13px', fontWeight: 600, color: 'white' }}>{d.record}</p>
-                                            </div>
-                                            <span style={{
-                                                fontSize: '13px',
-                                                fontWeight: 700,
-                                                fontFamily: 'monospace',
-                                                color: d.units >= 0 ? '#22c55e' : '#f87171',
-                                            }}>
-                                                {d.units >= 0 ? '+' : ''}{d.units}u
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* By Sport */}
-                        {bySport.length > 0 && (
-                            <div className="dash-sidebar-card">
-                                <h3 className="dash-sidebar-card__title">By Sport</h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                    {bySport.map((s) => (
-                                        <div key={s.sport} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                            <div style={{ width: '4px', height: '32px', borderRadius: '9999px', opacity: 0.6 }} className={s.color} />
-                                            <div style={{ flex: 1 }}>
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                    <span style={{ fontSize: '12px', fontWeight: 700, color: 'white' }}>{s.sport}</span>
-                                                    <span style={{ fontSize: '11px', color: '#6b7280' }}>{s.record} ({s.winPct})</span>
-                                                </div>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '3px' }}>
-                                                    <div style={{ flex: 1, height: '4px', borderRadius: '9999px', background: 'rgba(255,255,255,0.06)' }}>
-                                                        <div style={{ height: '4px', borderRadius: '9999px', width: s.winPct, opacity: 0.6 }} className={s.color} />
-                                                    </div>
-                                                    <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#FFC107', whiteSpace: 'nowrap' }}>{s.units}u</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        <CommunityPulse />
-
-                        {/* Trial CTA */}
-                        {trialActive && (
-                            <div style={{
-                                background: 'rgba(106,0,255,0.06)',
-                                border: '1px solid rgba(106,0,255,0.15)',
-                                borderRadius: '12px',
-                                padding: '14px',
-                                textAlign: 'center',
-                            }}>
-                                <p style={{ fontSize: '13px', fontWeight: 600, color: '#FFC107', marginBottom: '4px' }}>
-                                    {daysLeft} day{daysLeft !== 1 ? 's' : ''} left on free trial
-                                </p>
-                                <p style={{ fontSize: '11px', color: '#9ca3af', marginBottom: '6px' }}>
-                                    Upgrade to unlock picks &amp; Elite Plays
-                                </p>
-                                <Link href="/pricing" className="btn-glow" style={{ fontSize: '12px', padding: '8px 16px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                                    View Plans →
-                                </Link>
-                            </div>
-                        )}
-                    </aside>
                 </div>
             </div>
 
