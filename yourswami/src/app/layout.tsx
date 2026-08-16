@@ -4,7 +4,6 @@ import Analytics from '@/components/Analytics';
 import RefTracker from '@/components/RefTracker';
 import { AuthProvider } from '@/components/AuthProvider';
 import LayoutShell from '@/components/LayoutShell';
-import Script from 'next/script';
 import { Inter, Outfit } from 'next/font/google';
 
 const inter = Inter({ subsets: ['latin'], weight: ['300', '400', '500', '600', '700', '800', '900'], variable: '--font-inter', display: 'swap' });
@@ -69,14 +68,16 @@ export default function RootLayout({
           <LayoutShell>{children}</LayoutShell>
           <RefTracker />
         </AuthProvider>
-        {/* GoHighLevel (LeadConnector) chat widget: sole SMS opt-in / A2P consent collector */}
-        <Script
+        {/* GoHighLevel (LeadConnector) chat widget: sole SMS opt-in / A2P consent collector.
+            Raw <script> (not next/script) so the tag is present in the server-rendered HTML
+            for the A2P compliance crawler, and still executes for real users. */}
+        <script
           src="https://widgets.leadconnectorhq.com/loader.js"
           data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"
           data-widget-id="6a80ddd7b7fff8e529a1229d"
           data-source="WEB_USER"
-          strategy="afterInteractive"
-        />
+          async
+        ></script>
       </body>
     </html>
   );
