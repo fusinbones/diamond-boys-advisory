@@ -74,10 +74,19 @@ export default function RootLayout({
         <script
           src="https://widgets.leadconnectorhq.com/loader.js"
           data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"
-          data-widget-id="6a80ddd7b7fff8e529a1229d"
+          data-widget-id="6a80d70ce5c16f984988cb55"
           data-source="WEB_USER"
           async
         ></script>
+        {/* The GHL loader appends <chat-widget> inside the fixed .bg-glow layer, which
+            traps the widget's fixed positioning behind page content. Relocate it to <body>
+            so the chat bubble floats above everything and is clickable. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){var n=0,iv=setInterval(function(){var w=document.querySelector('chat-widget');if(w&&w!==document.body.lastElementChild){document.body.appendChild(w);}if(++n>120){clearInterval(iv);}},300);})();",
+          }}
+        />
       </body>
     </html>
   );
