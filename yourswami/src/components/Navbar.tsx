@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Zap, Home, CreditCard, LayoutDashboard, FileText, TrendingUp, Users, Trophy, LogOut, User, MessageCircle, Shield, Settings, Clock, ArrowUpDown } from 'lucide-react';
+import { Menu, X, Zap, Home, CreditCard, LayoutDashboard, FileText, TrendingUp, Users, Trophy, LogOut, User, MessageCircle, Shield, Settings, Clock, ArrowUpDown, ChevronDown } from 'lucide-react';
 import { useAdminAuth } from '@/lib/adminAuth';
 
 const navLinks = [
@@ -12,7 +12,6 @@ const navLinks = [
     { href: '/pricing', label: 'Pricing', icon: CreditCard },
     { href: '/community', label: 'The Lounge', icon: MessageCircle },
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/patterns', label: 'Patterns', icon: ArrowUpDown },
     { href: '/tos', label: 'Terms', icon: FileText },
 ];
 
@@ -28,6 +27,28 @@ export default function Navbar() {
     const [showMenuHint, setShowMenuHint] = useState(false);
     const { user, isAdmin, signOut } = useAdminAuth();
     const [currentTime, setCurrentTime] = useState('');
+
+    // Signed-in account actions live behind one control. Rendered inline they
+    // put eleven items in the desktop bar (six nav links, email, Admin,
+    // Settings, Sign Out, clock), which is what made the header feel cramped.
+    const [userMenuOpen, setUserMenuOpen] = useState(false);
+    const userMenuRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        if (!userMenuOpen) return;
+        const onPointerDown = (e: MouseEvent | TouchEvent) => {
+            if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserMenuOpen(false);
+        };
+        const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setUserMenuOpen(false); };
+        document.addEventListener('mousedown', onPointerDown);
+        document.addEventListener('touchstart', onPointerDown);
+        document.addEventListener('keydown', onKey);
+        return () => {
+            document.removeEventListener('mousedown', onPointerDown);
+            document.removeEventListener('touchstart', onPointerDown);
+            document.removeEventListener('keydown', onKey);
+        };
+    }, [userMenuOpen]);
 
     // Live clock, updates every second using user's local timezone
     useEffect(() => {
@@ -109,7 +130,7 @@ export default function Navbar() {
                     </Link>
 
                     {/* Desktop Nav */}
-                    <div className="hidden md:flex items-center gap-4 lg:gap-6" style={{ whiteSpace: 'nowrap' }}>
+                    <div className="hidden md:flex flex-1 items-center justify-center gap-4 lg:gap-6 xl:gap-8" style={{ whiteSpace: 'nowrap' }}>
                         {navLinks.map((link) => (
                             <Link
                                 key={link.href}
@@ -120,35 +141,78 @@ export default function Navbar() {
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#FFC107] transition-all group-hover:w-full" />
                             </Link>
                         ))}
+                    </div>
+
+                    {/* Account actions, pinned right */}
+                    <div className="hidden md:flex items-center justify-end gap-3 flex-shrink-0" style={{ whiteSpace: 'nowrap' }}>
                         {user ? (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap' }}>
-                                <Link href="/dashboard" className="text-xs text-gray-300 hover:text-white transition-colors flex items-center gap-1">
-                                    <User size={14} style={{ color: '#FFC107' }} />
-                                    <span style={{ maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '11px' }}>{user.email}</span>
-                                </Link>
-                                {isAdmin && (
-                                    <Link href="/admin" className="text-xs text-gray-400 hover:text-amber-400 transition-colors flex items-center gap-1">
-                                        <Shield size={12} /> Admin
-                                    </Link>
-                                )}
-                                <Link href="/settings" className="text-xs text-gray-500 hover:text-gray-300 transition-colors flex items-center gap-1" style={{ textDecoration: 'none' }}>
-                                    <Settings size={12} /> Settings
-                                </Link>
+                            <div ref={userMenuRef} style={{ position: 'relative' }}>
                                 <button
-                                    onClick={signOut}
-                                    className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
-                                    style={{ background: 'none', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                                    onClick={() => setUserMenuOpen(o => !o)}
+                                    aria-haspopup="menu"
+                                    aria-expanded={userMenuOpen}
+                                    aria-label="Account menu"
+                                    style={{
+                                        display: 'flex', alignItems: 'center', gap: '7px',
+                                        padding: '6px 10px', borderRadius: '999px',
+                                        background: userMenuOpen ? 'rgba(106,0,255,0.18)' : 'rgba(255,255,255,0.04)',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        color: '#e5e7eb', fontSize: '12px', cursor: 'pointer', whiteSpace: 'nowrap',
+                                    }}
                                 >
-                                    Sign Out
+                                    <User size={14} style={{ color: '#FFC107', flexShrink: 0 }} />
+                                    <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</span>
+                                    <ChevronDown size={13} style={{ flexShrink: 0, transition: 'transform .15s', transform: userMenuOpen ? 'rotate(180deg)' : 'none' }} />
                                 </button>
+                                {userMenuOpen && (
+                                    <div
+                                        role="menu"
+                                        style={{
+                                            position: 'absolute', right: 0, top: 'calc(100% + 8px)', minWidth: '200px',
+                                            background: '#120a1f', border: '1px solid rgba(255,255,255,0.12)',
+                                            borderRadius: '12px', padding: '6px', zIndex: 120,
+                                            boxShadow: '0 14px 36px rgba(0,0,0,0.55)',
+                                        }}
+                                    >
+                                        <Link href="/dashboard" role="menuitem" onClick={() => setUserMenuOpen(false)}
+                                            style={{ display: 'flex', alignItems: 'center', gap: '9px', width: '100%', padding: '9px 11px', borderRadius: '9px', fontSize: '13px', textDecoration: 'none', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' as const, whiteSpace: 'nowrap' as const, color: '#e5e7eb' }}>
+                                            <LayoutDashboard size={14} style={{ color: '#FFC107' }} /> Dashboard
+                                        </Link>
+                                        <Link href="/settings" role="menuitem" onClick={() => setUserMenuOpen(false)}
+                                            style={{ display: 'flex', alignItems: 'center', gap: '9px', width: '100%', padding: '9px 11px', borderRadius: '9px', fontSize: '13px', textDecoration: 'none', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' as const, whiteSpace: 'nowrap' as const, color: '#e5e7eb' }}>
+                                            <Settings size={14} style={{ color: '#FFC107' }} /> Account Settings
+                                        </Link>
+                                        {isAdmin && (
+                                            <Link href="/admin" role="menuitem" onClick={() => setUserMenuOpen(false)}
+                                                style={{ display: 'flex', alignItems: 'center', gap: '9px', width: '100%', padding: '9px 11px', borderRadius: '9px', fontSize: '13px', textDecoration: 'none', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' as const, whiteSpace: 'nowrap' as const, color: '#fbbf24' }}>
+                                                <Shield size={14} /> Admin
+                                            </Link>
+                                        )}
+                                        <div style={{ height: '1px', background: 'rgba(255,255,255,0.08)', margin: '5px 4px' }} />
+                                        <button role="menuitem" onClick={() => { setUserMenuOpen(false); signOut(); }}
+                                            style={{ display: 'flex', alignItems: 'center', gap: '9px', width: '100%', padding: '9px 11px', borderRadius: '9px', fontSize: '13px', textDecoration: 'none', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' as const, whiteSpace: 'nowrap' as const, color: '#f87171' }}>
+                                            <LogOut size={14} /> Sign Out
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         ) : (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <Link href="/dashboard" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
                                     Log In
                                 </Link>
-                                <Link href="/dashboard?signup=free" className="btn-glow text-xs sm:text-sm !py-2 !px-4 sm:!py-2.5 sm:!px-5">
-                                    <Zap size={14} className="sm:w-4 sm:h-4" />
+                                <Link
+                                    href="/dashboard?signup=free"
+                                    className="btn-glow cta-pulse"
+                                    style={{
+                                        padding: '8px 16px',
+                                        fontSize: '13px',
+                                        borderRadius: '10px',
+                                        gap: '6px',
+                                        letterSpacing: '0.01em',
+                                    }}
+                                >
+                                    <Zap size={13} />
                                     Sign Up Free
                                 </Link>
                             </div>

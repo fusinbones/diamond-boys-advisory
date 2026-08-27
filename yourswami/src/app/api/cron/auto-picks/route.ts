@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { denyUnlessCron } from '@/lib/cronAuth';
 import { getSportOdds, US_SPORTS } from '@/lib/odds-api';
 import { analyzeAllGames } from '@/lib/pick-engine';
 import { createClient } from '@supabase/supabase-js';
@@ -47,15 +48,11 @@ export async function GET(request: NextRequest) {
     try {
         const { searchParams } = request.nextUrl;
         const dryRun = searchParams.get('dry_run') === '1';
-        const cronSecret = searchParams.get('secret');
 
-        // Optional secret check for cron security
-        if (process.env.CRON_SECRET && cronSecret !== process.env.CRON_SECRET) {
-            // Allow if no CRON_SECRET is set (dev mode)
-            if (cronSecret) {
-                return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-            }
-        }
+        // Fails closed. This route INSERTS into `picks` on a database shared
+        // with tripleplayz.com, so it must never be callable anonymously.
+        const denied = denyUnlessCron(request);
+        if (denied) return denied;
 
         // Fetch odds for all active sports
         const activeSports = US_SPORTS.filter(s => !s.key.includes('football'));

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { denyUnlessCron } from '@/lib/cronAuth';
 import { refreshSportOdds, refreshSportScores, US_SPORTS } from '@/lib/odds-api';
 
 /**
@@ -16,10 +17,9 @@ import { refreshSportOdds, refreshSportScores, US_SPORTS } from '@/lib/odds-api'
 export async function GET(request: NextRequest) {
     try {
         // Auth check
-        const cronSecret = request.nextUrl.searchParams.get('secret');
-        if (process.env.CRON_SECRET && cronSecret !== process.env.CRON_SECRET) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
+        // Fails closed. Burns paid Odds API quota on every call.
+        const denied = denyUnlessCron(request);
+        if (denied) return denied;
 
         const results: { sport: string; odds: number; scores: number; error?: string }[] = [];
 

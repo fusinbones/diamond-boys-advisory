@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { denyUnlessCron } from '@/lib/cronAuth';
 import { getSportScores, US_SPORTS, type ScoreEvent } from '@/lib/odds-api';
 import { createClient } from '@supabase/supabase-js';
 import { sendResultEmail } from '@/lib/email';
@@ -32,12 +33,9 @@ interface PendingPick {
  */
 export async function GET(request: NextRequest) {
     try {
-        const cronSecret = request.nextUrl.searchParams.get('secret');
-        if (process.env.CRON_SECRET && cronSecret !== process.env.CRON_SECRET) {
-            if (cronSecret) {
-                return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-            }
-        }
+        // Fails closed. This route grades picks and emails subscribers.
+        const denied = denyUnlessCron(request);
+        if (denied) return denied;
 
         const supabase = getSupabase();
 

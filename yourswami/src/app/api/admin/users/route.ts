@@ -3,17 +3,34 @@ import { NextRequest, NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 // Inline admin check — can't import from '@/lib/adminAuth' because it's 'use client'
-const ADMIN_EMAILS = [
-    'support@tripleplayz.com',
-    'diamondboysadvisory@gmail.com',
-];
+//
+// Reads ADMIN_EMAILS and ADMIN_EMAILS_EXTRA the same way src/middleware.ts
+// does. Without this the route disagreed with the gate that had already let
+// the request through: the middleware authorized the caller on a real Supabase
+// token, then this ran a second check against a two-name hardcoded list and
+// returned 401, so a legitimate admin saw "No users found" instead of a list.
+function adminEmails(): string[] {
+    return [
+        'support@tripleplayz.com',
+        'diamondboysadvisory@gmail.com',
+        'admin@tripleplayz.com',
+        ...[process.env.ADMIN_EMAILS, process.env.ADMIN_EMAILS_EXTRA]
+            .filter(Boolean)
+            .join(',')
+            .split(',')
+            .map((e) => e.trim().toLowerCase())
+            .filter(Boolean),
+    ];
+}
+
+const ADMIN_EMAILS = adminEmails();
 
 function isAdminEmail(email: string): boolean {
-    return ADMIN_EMAILS.includes(email.toLowerCase());
+    return adminEmails().includes(email.toLowerCase());
 }
 
 function isSuperAdmin(email: string): boolean {
-    return ADMIN_EMAILS.includes(email.toLowerCase());
+    return adminEmails().includes(email.toLowerCase());
 }
 
 async function getSupabase() {
@@ -25,7 +42,7 @@ async function getSupabase() {
 }
 
 async function verifyAdmin(supabase: any, email: string): Promise<boolean> {
-    if (ADMIN_EMAILS.includes(email.toLowerCase())) return true;
+    if (adminEmails().includes(email.toLowerCase())) return true;
     const { data } = await supabase.from('user_profiles').select('is_admin, role').eq('email', email.toLowerCase()).single();
     if (data && (data.is_admin || data.role === 'admin' || data.role === 'staff')) return true;
     return false;
@@ -120,6 +137,17 @@ export async function GET(request: NextRequest) {
                 notes: p.notes,
                 createdAt: p.created_at,
                 avatarColor: p.avatar_color || `hsl(${Math.abs(p.id.charCodeAt(0) * 37) % 360}, 60%, 45%)`,
+                // Phone and SMS consent live in auth user_metadata, written by the
+                // signup form. Surfaced here so an admin can see who can actually
+                // be texted: a number alone is not permission, consent needs the
+                // ticked box plus the 21+ confirmation the A2P campaign requires.
+                phone: (authUser?.user_metadata?.phone as string) || null,
+                smsConsent: !!(
+                    authUser?.user_metadata?.sms_consent &&
+                    authUser?.user_metadata?.phone &&
+                    authUser?.user_metadata?.sms_age_confirmed
+                ),
+                smsConsentAt: (authUser?.user_metadata?.sms_consent_at as string) || null,
             };
         });
 
@@ -145,6 +173,13 @@ export async function GET(request: NextRequest) {
                         notes: null,
                         createdAt: u.created_at,
                         avatarColor: `hsl(${Math.abs(u.id.charCodeAt(0) * 37) % 360}, 60%, 45%)`,
+                        phone: (u.user_metadata?.phone as string) || null,
+                        smsConsent: !!(
+                            u.user_metadata?.sms_consent &&
+                            u.user_metadata?.phone &&
+                            u.user_metadata?.sms_age_confirmed
+                        ),
+                        smsConsentAt: (u.user_metadata?.sms_consent_at as string) || null,
                     });
                 }
             });

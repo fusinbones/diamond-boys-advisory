@@ -24,7 +24,10 @@ function svc() {
 }
 
 function isAdminEmail(email: string): boolean {
-    const env = (process.env.ADMIN_EMAILS || '')
+    // ADMIN_EMAILS_EXTRA is additive, see the note in src/middleware.ts.
+    const env = [process.env.ADMIN_EMAILS, process.env.ADMIN_EMAILS_EXTRA]
+        .filter(Boolean)
+        .join(',')
         .split(',')
         .map((e) => e.trim().toLowerCase())
         .filter(Boolean);

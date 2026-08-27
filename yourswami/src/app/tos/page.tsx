@@ -44,7 +44,7 @@ export default function TOSPage() {
                             <p>
                                 Subscriptions are billed through Stripe, our third-party payment processor. Recurring subscriptions
                                 auto-renew at the end of each billing period unless cancelled prior to renewal. One-time purchases
-                                (e.g., Season Pass) do not auto-renew. All prices are in US dollars. Stripe&apos;s terms of service also
+                                (e.g., Daily Pass) do not auto-renew. All prices are in US dollars. Stripe&apos;s terms of service also
                                 apply to your payment.
                             </p>
                             <h3 className="text-white font-semibold text-base pt-2">4. Refund Policy</h3>
@@ -94,6 +94,19 @@ export default function TOSPage() {
                             <p>
                                 By providing your mobile number and checking the SMS consent box, you agree to receive recurring automated text messages from YourSwami at the number provided. Consent is collected directly from you at the point of sign up and is never purchased, rented, or shared.
                             </p>
+                            <h3 className="text-white font-semibold text-base pt-2">Age Restriction</h3>
+                            <p>
+                                <strong>You must be 21 years of age or older to use this SMS service.</strong>
+                            </p>
+                            <p>
+                                This program delivers sports wagering analysis, which is age-gated content under carrier
+                                and CTA guidelines, and TRIPLE PLAYZ INC requires all SMS subscribers to be at least
+                                <strong> 21 years of age</strong>. When you tick the SMS consent box you must also
+                                confirm that you are 21 or older, and by opting in you represent and warrant that you
+                                meet that requirement. We do not knowingly send messages to anyone under 21, and any
+                                subscriber found to be underage will be removed from the program immediately.
+                            </p>
+
                             <h3 className="text-white font-semibold text-base pt-2">Message Frequency &amp; Cost</h3>
                             <p>
                                 Message frequency varies based on pick activity. Message and data rates may apply according to your mobile carrier plan. YourSwami does not charge for the messages themselves.

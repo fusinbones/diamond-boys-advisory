@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { upsertOptInContact } from '@/lib/ghlSms';
+import { addLifecycleTags, removeLifecycleTags, setTierTag, LIFECYCLE_TAGS } from '@/lib/ghlLifecycle';
 
 function getSupabaseAdmin() {
     return createClient(
@@ -128,6 +130,51 @@ export async function POST(request: NextRequest) {
                     }
                 }
 
+                // ── SMS opt-in handoff ──
+                // Consent is captured by the checkbox at signup; the contact is only
+                // pushed into GHL once payment clears, so the Fire Pick blast reaches
+                // paying subscribers only. This acts on stored consent, never assumes it.
+                if (customerEmail) {
+                    try {
+                        const supabaseAdmin = getSupabaseAdmin();
+                        const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
+                        const authUser = authUsers?.users?.find(
+                            (u) => u.email?.toLowerCase() === customerEmail.toLowerCase()
+                        );
+                        const meta = authUser?.user_metadata as
+                            { sms_consent?: boolean; phone?: string; sms_consent_at?: string; sms_age_confirmed?: boolean } | undefined;
+
+                        // Age confirmation is part of consent (age-gated A2P campaign).
+                        if (meta?.sms_consent && meta.phone && meta.sms_age_confirmed) {
+                            await upsertOptInContact({
+                                email: customerEmail,
+                                phone: meta.phone,
+                                consentAt: meta.sms_consent_at || 'unknown',
+                            });
+                        } else {
+                            console.log(`[webhook] No SMS consent on file for ${customerEmail}, skipping GHL push`);
+                        }
+                    } catch (smsErr) {
+                        console.error('[webhook] SMS opt-in push error:', smsErr);
+                    }
+
+                    // ── Lifecycle signal ──
+                    // Starts the GHL onboarding sequence and clears any state this
+                    // payment resolves. Clearing matters: GHL triggers on a tag being
+                    // ADDED, so a tag left behind from last time means the next real
+                    // event is silently swallowed.
+                    await addLifecycleTags(customerEmail, [LIFECYCLE_TAGS.customerActive]);
+                    await removeLifecycleTags(customerEmail, [
+                        LIFECYCLE_TAGS.checkoutAbandoned,
+                        LIFECYCLE_TAGS.paymentFailed,
+                        LIFECYCLE_TAGS.churned,
+                    ]);
+                    // Which package, so GHL can segment on it. setTierTag strips
+                    // any previous tier tag, so an upgrade does not leave the
+                    // contact sitting in two plans at once.
+                    if (tierId) await setTierTag(customerEmail, tierId);
+                }
+
                 break;
             }
 
@@ -149,6 +196,17 @@ export async function POST(request: NextRequest) {
                     }
 
                     console.log(`[webhook] ✅ Payment succeeded: ${customerEmail} → ${tierId}`);
+
+                    // A renewal that clears is also a recovered card. W04 gates each
+                    // dunning step on this tag still being present, so dropping it
+                    // here is what stops the sequence mid-flight.
+                    if (customerEmail) {
+                        await removeLifecycleTags(customerEmail, [LIFECYCLE_TAGS.paymentFailed]);
+                        // Renewals are also where a plan change lands, so
+                        // re-assert the tier rather than trusting the tag set at
+                        // first purchase.
+                        if (tierId) await setTierTag(customerEmail, tierId);
+                    }
                 }
                 break;
             }
@@ -162,6 +220,7 @@ export async function POST(request: NextRequest) {
                 if (customerEmail) {
                     await updateUserTier(customerEmail, null);
                     console.log(`[webhook] 🚫 Payment FAILED: ${customerEmail} — access revoked`);
+                    await addLifecycleTags(customerEmail, [LIFECYCLE_TAGS.paymentFailed]);
                 }
                 break;
             }
@@ -178,6 +237,10 @@ export async function POST(request: NextRequest) {
                         if (customer.email) {
                             await updateUserTier(customer.email, null);
                             console.log(`[webhook] ❌ Subscription cancelled: ${customer.email} — access revoked`);
+                            await addLifecycleTags(customer.email, [LIFECYCLE_TAGS.churned]);
+                            // Clear the tier so win-back segments do not still
+                            // read them as an active Annual subscriber.
+                            await setTierTag(customer.email, null);
                         }
                     } catch (err) {
                         console.error(`[webhook] Could not retrieve customer ${customerId}:`, err);
@@ -197,10 +260,30 @@ export async function POST(request: NextRequest) {
                         if (customer.email) {
                             await updateUserTier(customer.email, null);
                             console.log(`[webhook] 💸 Refund/chargeback: ${customer.email} — access revoked`);
+                            // Deliberately NOT tagged churned: the win-back sequence
+                            // must not chase somebody who just asked for their money
+                            // back. Tagged for segmentation only.
+                            await addLifecycleTags(customer.email, ['refunded']);
+                            await removeLifecycleTags(customer.email, [LIFECYCLE_TAGS.customerActive]);
+                            await setTierTag(customer.email, null);
                         }
                     } catch (err) {
                         console.error(`[webhook] Could not retrieve customer ${customerId}:`, err);
                     }
+                }
+                break;
+            }
+
+            case 'checkout.session.expired': {
+                // Stripe expires an unfinished Checkout Session ~24h after creation.
+                // That is the only server-side signal we get that somebody started
+                // paying and did not finish, so it is what drives recovery.
+                const session = event.data.object as Stripe.Checkout.Session;
+                const customerEmail = session.customer_email || session.customer_details?.email;
+
+                if (customerEmail) {
+                    console.log(`[webhook] 🛒 Checkout abandoned: ${customerEmail}`);
+                    await addLifecycleTags(customerEmail, [LIFECYCLE_TAGS.checkoutAbandoned]);
                 }
                 break;
             }

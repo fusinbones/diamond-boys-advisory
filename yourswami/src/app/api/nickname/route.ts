@@ -33,14 +33,36 @@ function validateNickname(nick: string, isAdmin = false): string | null {
     return null;
 }
 
-// GET — check if nickname is available
+
+/** Resolve the caller from a Supabase Bearer token, or null. */
+async function callerFromToken(request: NextRequest): Promise<{ id: string; email: string } | null> {
+    const header = request.headers.get('authorization') || '';
+    const token = header.startsWith('Bearer ') ? header.slice(7).trim() : '';
+    if (!token) return null;
+    try {
+        const { data, error } = await getSupabase().auth.getUser(token);
+        if (error || !data.user?.email) return null;
+        return { id: data.user.id, email: data.user.email };
+    } catch {
+        return null;
+    }
+}
+
+async function isAdminFromToken(request: NextRequest): Promise<boolean> {
+    const caller = await callerFromToken(request);
+    return !!caller && ADMIN_EMAILS.includes(caller.email.toLowerCase());
+}
+
+// GET - check if nickname is available
 export async function GET(request: NextRequest) {
     try {
         const nick = request.nextUrl.searchParams.get('nickname');
         if (!nick) return NextResponse.json({ error: 'nickname param required' }, { status: 400 });
 
-        const adminEmail = request.nextUrl.searchParams.get('email') || '';
-        const isAdmin = ADMIN_EMAILS.includes(adminEmail.toLowerCase());
+        // The admin claim used to come from a ?email= query parameter, so
+        // appending a known admin address bypassed reserved-name validation.
+        // Only a verified token counts now.
+        const isAdmin = await isAdminFromToken(request);
 
         const validationError = validateNickname(nick, isAdmin);
         if (validationError) return NextResponse.json({ available: false, error: validationError });
@@ -65,13 +87,20 @@ export async function GET(request: NextRequest) {
 // POST — set nickname for a user
 export async function POST(request: NextRequest) {
     try {
-        const { userId, nickname, email } = await request.json() as { userId: string; nickname: string; email?: string };
+        const { nickname } = await request.json() as { nickname: string };
 
-        if (!userId || !nickname) {
-            return NextResponse.json({ error: 'userId and nickname required' }, { status: 400 });
+        if (!nickname) {
+            return NextResponse.json({ error: 'nickname required' }, { status: 400 });
         }
 
-        const isAdmin = email ? ADMIN_EMAILS.includes(email.toLowerCase()) : false;
+        // userId used to come from the body with no auth at all, so anyone
+        // could rename any user. It now comes from the verified token.
+        const caller = await callerFromToken(request);
+        if (!caller) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+        const userId = caller.id;
+        const isAdmin = ADMIN_EMAILS.includes(caller.email.toLowerCase());
         const validationError = validateNickname(nickname, isAdmin);
         if (validationError) return NextResponse.json({ error: validationError }, { status: 400 });
 

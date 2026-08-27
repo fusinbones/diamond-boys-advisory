@@ -16,6 +16,20 @@ function isSuperAdmin(email: string): boolean {
     return ADMIN_EMAILS.includes(email.toLowerCase());
 }
 
+/** The acting admin's email, taken from the verified Supabase token. */
+async function moderatorFromToken(req: NextRequest): Promise<string | null> {
+    const header = req.headers.get('authorization') || '';
+    const token = header.startsWith('Bearer ') ? header.slice(7).trim() : '';
+    if (!token) return null;
+    try {
+        const { data, error } = await supabaseAdmin.auth.getUser(token);
+        if (error || !data.user?.email) return null;
+        return data.user.email.toLowerCase();
+    } catch {
+        return null;
+    }
+}
+
 // GET — list bans, reports, or presence
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
@@ -72,7 +86,14 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { action, moderatorEmail } = body;
+        const { action } = body;
+
+        // The moderator identity used to come from the request body, so one
+        // admin could act as, and be audit-logged as, another. The blanket
+        // /api/admin/* gate in middleware.ts already proved the caller is an
+        // admin; this reads WHICH admin from the same verified token.
+        const moderatorEmail = await moderatorFromToken(req) || body.moderatorEmail;
+        body.moderatorEmail = moderatorEmail;
 
         if (!moderatorEmail || !isSuperAdmin(moderatorEmail)) {
             // Check if staff

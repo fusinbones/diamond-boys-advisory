@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { after } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { sendPickAlert } from '@/lib/email';
+import { sendFirePickSms } from '@/lib/ghlSms';
 import { getAdminUser } from '@/lib/adminApiAuth';
+
+// Give the post-response notification fan-out (email + SMS) headroom to finish.
+export const maxDuration = 60;
 
 // Statuses whose pick details are already public (revealed / graded).
 const DECIDED = new Set(['won', 'lost', 'push', 'win', 'loss', 'revealed']);
@@ -95,33 +100,52 @@ export async function POST(req: NextRequest) {
 
         if (error) throw error;
 
-        // Send notifications to all subscribers (best-effort, non-blocking)
-        try {
-            const { data: subscribers } = await supabaseAdmin
-                .from('pick_subscribers')
-                .select('email, phone')
-                .eq('active', true);
+        const pickData = {
+            matchup: body.matchup,
+            pickTeam: body.pick_team,
+            pickValue: body.pick_value,
+            pickType: body.pick_type,
+            confidence: body.confidence || 85,
+            scheduledAt: body.scheduled_at,
+        };
 
-            if (subscribers && subscribers.length > 0) {
-                const pickData = {
-                    matchup: body.matchup,
-                    pickTeam: body.pick_team,
-                    pickValue: body.pick_value,
-                    pickType: body.pick_type,
-                    confidence: body.confidence || 85,
-                    scheduledAt: body.scheduled_at,
-                };
-
-                // Emails
-                const emails = subscribers.map((s: { email: string }) => s.email).filter(Boolean);
+        // Fan out notifications AFTER the response is sent. `after()` keeps the
+        // serverless function alive until these settle (a plain fire-and-forget
+        // promise can be killed once the response returns on Vercel).
+        after(async () => {
+            // Email: opted-in emails live in our Supabase pick_subscribers table.
+            try {
+                const { data: subscribers } = await supabaseAdmin
+                    .from('pick_subscribers')
+                    .select('email')
+                    .eq('active', true);
+                const emails = (subscribers || []).map((s: { email: string }) => s.email).filter(Boolean);
                 if (emails.length > 0) {
-                    sendPickAlert(emails, pickData)
-                        .catch(err => console.error('[Email] Pick alert failed:', err));
+                    await sendPickAlert(emails, pickData);
                 }
+            } catch (emailErr) {
+                console.error('[Email] Pick alert failed:', emailErr);
             }
-        } catch (notifyErr) {
-            console.error('[Notify] Subscriber fetch failed:', notifyErr);
-        }
+
+            // SMS: opted-in phones live in GoHighLevel (chat widget is sole
+            // opt-in collector); sendFirePickSms fetches the tagged contacts.
+            try {
+                // The result used to be discarded, so a blast where every message
+                // was rejected by the carrier looked identical to one that landed.
+                const r = await sendFirePickSms(pickData);
+                if (r.failed > 0) {
+                    console.error(
+                        `[SMS] Pick alert: ${r.sent}/${r.total} delivered, ${r.failed} FAILED. Check the blast summary above for carrier errors.`,
+                    );
+                } else if (r.total === 0) {
+                    console.warn('[SMS] Pick alert: no entitled opted-in subscribers to text.');
+                } else {
+                    console.log(`[SMS] Pick alert delivered to ${r.sent}/${r.total} subscribers.`);
+                }
+            } catch (smsErr) {
+                console.error('[SMS] Pick alert failed:', smsErr);
+            }
+        });
 
         return NextResponse.json({ firePick: data });
     } catch (err: unknown) {

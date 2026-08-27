@@ -1025,7 +1025,7 @@ function AITab({ game, homeData, awayData, homeP, awayP, oddsData }: {
             <div className="admin-card-header" style={{ flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
                 <div className="admin-card-title">
                     <Sparkles size={16} style={{ color: activeEngine === 'stats' ? '#FFC107' : '#fb923c' }} />
-                    {activeEngine === 'stats' ? '📊 Quant Model' : '🔥 Pattern System'}
+                    {activeEngine === 'stats' ? '📊 Quant Model' : '🔥 Alternation Model'}
                 </div>
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                     <button onClick={() => runEngine(activeEngine)} disabled={isLoading} className="admin-btn admin-btn-secondary" style={{ fontSize: '11px', padding: '4px 10px' }}>

@@ -22,7 +22,8 @@ interface FirePick {
 
 interface FirePickCardProps {
     firePick: FirePick;
-    isPaid: boolean;
+    /** True when this viewer may see the pick: paid OR inside an active trial. */
+    unlocked: boolean;
 }
 
 const sportEmoji: Record<string, string> = {
@@ -49,7 +50,7 @@ function useCountdown(targetDate: string): string {
     return timeLeft;
 }
 
-export default function FirePickCard({ firePick, isPaid }: FirePickCardProps): ReactNode {
+export default function FirePickCard({ firePick, unlocked }: FirePickCardProps): ReactNode {
     const isScheduled = firePick.status === 'scheduled';
     const countdown = useCountdown(firePick.scheduled_at);
     const isDropped = countdown === 'DROPPED';
@@ -116,15 +117,15 @@ export default function FirePickCard({ firePick, isPaid }: FirePickCardProps): R
                             borderRadius: '10px',
                             padding: '14px',
                             marginBottom: '10px',
-                            filter: isPaid ? 'none' : 'blur(6px)',
-                            opacity: isPaid ? 1 : 0.6,
-                            userSelect: isPaid ? 'auto' : 'none',
+                            filter: unlocked ? 'none' : 'blur(6px)',
+                            opacity: unlocked ? 1 : 0.6,
+                            userSelect: unlocked ? 'auto' : 'none',
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
                                 <span style={{ fontSize: '18px', fontWeight: 800, color: '#fbbf24' }}>
-                                    {isPaid ? (firePick.pick_value || 'Pick loading...') : '███████████'}
+                                    {unlocked ? (firePick.pick_value || 'Pick loading...') : '███████████'}
                                 </span>
-                                {(firePick.odds || !isPaid) && (
+                                {(firePick.odds || !unlocked) && (
                                     <span style={{
                                         fontSize: '13px', fontWeight: 700,
                                         color: '#FFC107',
@@ -132,7 +133,7 @@ export default function FirePickCard({ firePick, isPaid }: FirePickCardProps): R
                                         padding: '2px 8px',
                                         borderRadius: '6px',
                                     }}>
-                                        {isPaid ? firePick.odds : '-███'}
+                                        {unlocked ? firePick.odds : '-███'}
                                     </span>
                                 )}
                             </div>
@@ -140,7 +141,7 @@ export default function FirePickCard({ firePick, isPaid }: FirePickCardProps): R
                                 <span>🎯 {firePick.confidence || 85}% confidence</span>
                                 <span>📊 {firePick.units || 3}u</span>
                             </div>
-                            {isPaid && firePick.reasoning && (
+                            {unlocked && firePick.reasoning && (
                                 <div style={{ 
                                     marginTop: '10px', paddingTop: '10px', 
                                     borderTop: '1px solid rgba(251,191,36,0.15)', 
@@ -152,7 +153,7 @@ export default function FirePickCard({ firePick, isPaid }: FirePickCardProps): R
                         </div>
 
                         {/* Paywall Overlay for free/trial users */}
-                        {!isPaid && (
+                        {!unlocked && (
                             <div style={{
                                 position: 'absolute',
                                 top: 0, left: 0, right: 0, bottom: 0,

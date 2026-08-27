@@ -28,7 +28,13 @@ const SUPER_ADMINS = [
 ];
 
 function envAdmins(): string[] {
-    return (process.env.ADMIN_EMAILS || '')
+    // ADMIN_EMAILS_EXTRA is additive. Vercel stores ADMIN_EMAILS as a sensitive
+    // variable, which is write-only: it cannot be read back to append to, so
+    // updating it would mean overwriting it blind and risking locking out
+    // whoever is already listed. The extra var avoids touching it at all.
+    return [process.env.ADMIN_EMAILS, process.env.ADMIN_EMAILS_EXTRA]
+        .filter(Boolean)
+        .join(',')
         .split(',')
         .map((e) => e.trim().toLowerCase())
         .filter(Boolean);

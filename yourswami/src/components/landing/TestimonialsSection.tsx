@@ -25,7 +25,7 @@ const testimonials = [
         avatar: '🔥',
         text: "Started with the free tier and the transparency sold me instantly. Every single pick tracked, win or loss. That's integrity you can trust.",
         rating: 5,
-        tier: 'Season Pass',
+        tier: 'Annual',
         since: 'Member since Sep 2025',
     },
 ];

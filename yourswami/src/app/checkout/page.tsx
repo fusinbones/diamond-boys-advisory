@@ -295,7 +295,7 @@ function CheckoutForm() {
                     }}>
                         By subscribing, you agree to our{' '}
                         <Link href="/tos" style={{ color: '#FFC107', textDecoration: 'none' }}>Terms</Link>,{' '}
-                        <Link href="/tos#privacy" style={{ color: '#FFC107', textDecoration: 'none' }}>Privacy</Link>, and{' '}
+                        <Link href="/privacy" style={{ color: '#FFC107', textDecoration: 'none' }}>Privacy</Link>, and{' '}
                         <Link href="/tos#ban-policy" style={{ color: '#FFC107', textDecoration: 'none' }}>Access Policy</Link>.
                         For entertainment purposes only. 21+. Not financial advice.
                     </p>

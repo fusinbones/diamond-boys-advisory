@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, type ReactNode } from 'react';
+import { supabase } from '@/lib/supabase';
 import { motion } from 'framer-motion';
 import { Clock, Bell, Zap, Check } from 'lucide-react';
 
@@ -59,10 +60,15 @@ export default function MorningSlate({ totalGames, upcomingPicks, sports, userEm
         if (notifyState !== 'idle' || !userEmail) return;
         setNotifyState('sending');
         try {
+            // The route derives the email from this token now.
+            const { data: sess } = await supabase.auth.getSession();
             await fetch('/api/notify-pick', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: userEmail, sports: sportsText, pickCount: upcomingPicks }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${sess.session?.access_token || ''}`,
+                },
+                body: JSON.stringify({ sports: sportsText, pickCount: upcomingPicks }),
             });
             setNotifyState('sent');
         } catch {

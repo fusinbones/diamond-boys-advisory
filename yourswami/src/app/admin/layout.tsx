@@ -28,7 +28,6 @@ import './admin.css';
 const navItems = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/admin/analysis', label: 'Analysis Hub', icon: Search },
-    { href: '/admin/patterns', label: 'Patterns', icon: ArrowUpDown },
     { href: '/admin/picks', label: 'Pick Entry', icon: ClipboardList },
     { href: '/admin/fire-picks', label: 'Fire Picks', icon: Flame },
     { href: '/admin/podcast', label: 'Podcast', icon: Mic },

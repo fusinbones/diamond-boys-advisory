@@ -48,6 +48,23 @@ export default function PrivacyPage() {
                                 <li><strong>Google Analytics / Vercel Web Analytics:</strong> Anonymized usage metrics.</li>
                             </ul>
 
+                            <h3 className="text-white font-semibold text-base pt-2">Cookies &amp; Tracking Technologies</h3>
+                            <p>
+                                We use cookies and similar tracking technologies to keep you signed in, remember your
+                                preferences, and understand how the site is used. These fall into three categories:
+                            </p>
+                            <ul className="list-disc list-inside space-y-1.5 ml-2">
+                                <li><strong>Strictly necessary:</strong> Authentication and session cookies set by Supabase that keep you logged in and secure your account. The site cannot function without these.</li>
+                                <li><strong>Analytics:</strong> Google Analytics and Vercel Web Analytics, which record anonymized page views and session data so we can see which pages are useful. These do not identify you personally.</li>
+                                <li><strong>Payment:</strong> Cookies set by Stripe during checkout to process your subscription securely and detect fraud.</li>
+                            </ul>
+                            <p>
+                                We do not use cookies for third-party advertising, and we do not sell tracking data.
+                                Most browsers let you block or delete cookies through their settings; blocking strictly
+                                necessary cookies will prevent you from signing in. Your mobile number and SMS consent
+                                are never collected through cookies or tracking technologies.
+                            </p>
+
                             <h3 className="text-white font-semibold text-base pt-2">Mobile Information & SMS</h3>
                             <p>
                                 <strong>No mobile information will be shared with third parties or affiliates for marketing or promotional purposes.</strong> Information sharing with subcontractors in support services, such as customer service or message delivery, is permitted. All other use case categories exclude text messaging originator opt-in data and consent; this information will not be shared with any third parties.

@@ -13,14 +13,24 @@ function getSupabaseAdmin() {
 
 export async function POST(request: NextRequest) {
     try {
-        const body = await request.json();
-        const { email } = body;
-
-        if (!email) {
-            return NextResponse.json({ error: 'Email required' }, { status: 400 });
+        // Identity comes from the caller's verified Supabase token, never from
+        // the body. Taking it from the body made this an unauthenticated
+        // enumeration oracle: anyone could POST any address and learn from the
+        // response whether it had an account, and create a profile row for it,
+        // all through the RLS-bypassing service key.
+        const authHeader = request.headers.get('authorization') || '';
+        const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+        if (!token) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         const supabase = getSupabaseAdmin();
+
+        const { data: authData, error: authError } = await supabase.auth.getUser(token);
+        const email = authData?.user?.email;
+        if (authError || !email) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
 
         // Check if the user is in user_profiles
         const { data: profile } = await supabase

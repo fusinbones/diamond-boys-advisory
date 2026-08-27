@@ -14,7 +14,7 @@ const FIRST_NAMES = [
 const LAST_INITIALS = 'ABCDEFGHJKLMNPRSTW'.split('');
 
 const PLANS = [
-    { name: 'Season Pass', emoji: '🏆', color: '#fbbf24' },
+    { name: 'Annual', emoji: '🏆', color: '#fbbf24' },
     { name: 'Monthly Elite', emoji: '💎', color: '#a78bfa' },
     { name: 'Weekly Package', emoji: '⚡', color: '#FFC107' },
     { name: '6-Month Package', emoji: '🔥', color: '#f97316' },

@@ -2,7 +2,7 @@ export interface Tier {
   id: string;
   name: string;
   price: number;
-  interval: 'day' | 'week' | 'month' | 'season';
+  interval: 'day' | 'week' | 'month' | 'season' | 'year';
   intervalLabel: string;
   description: string;
   features: string[];
@@ -16,6 +16,10 @@ export interface Tier {
 /** Tier access level — higher number = more access */
 export const TIER_LEVELS: Record<string, number> = {
   free: 0,
+  // 'pattern' is retained ONLY as a legacy mapping. The .500 Method product and
+  // the whole Pattern System are gone, but any Supabase row still reading
+  // subscription_tier='pattern' would otherwise resolve to an undefined access
+  // level. Safe to drop once no such rows remain.
   pattern: 1,
   daily: 1,
   weekly: 2,
@@ -24,26 +28,6 @@ export const TIER_LEVELS: Record<string, number> = {
 };
 
 export const tiers: Tier[] = [
-  {
-    id: 'pattern',
-    name: 'The .500 Method',
-    price: 49.99,
-    interval: 'month',
-    intervalLabel: '/month',
-    description: 'Full access to the .500 Method Pattern System — all 30 MLB teams scanned daily.',
-    features: [
-      'Real-time W/L alternation analysis',
-      'All 30 MLB teams scanned daily',
-      'Break probability scoring (62-99%)',
-      'Pitcher milestone alerts',
-      'Walk-off revenge game detection',
-      'Search, filter & sort tools',
-      'Cancel anytime',
-    ],
-    popular: false,
-    badge: 'Pattern System',
-    priceId: process.env.STRIPE_PRICE_PATTERN || '',
-  },
   {
     id: 'daily',
     name: 'Daily Pass',
@@ -102,20 +86,23 @@ export const tiers: Tier[] = [
     priceId: process.env.STRIPE_PRICE_MONTHLY || '',
   },
   {
+    // The id stays 'season'. It is written into Supabase subscription_tier and
+    // into Stripe subscription metadata, so renaming it would orphan every
+    // existing subscriber. Only the customer-facing wording changes.
     id: 'season',
-    name: 'Season Pass',
-    price: 699,
-    interval: 'season',
-    intervalLabel: '/6 months',
-    description: 'Lock in for the half season. Best value by far.',
+    name: 'Annual',
+    price: 997,
+    interval: 'year',
+    intervalLabel: '/year',
+    description: 'Lock in for a full year. Best value by far.',
     features: [
       'Everything in Monthly',
-      'Full half-season coverage',
+      'Full year of coverage',
       'Playoff special picks (World Series, NBA Finals, Stanley Cup)',
-      'Season Pass YourSwami badge',
+      'Annual YourSwami badge',
       'Early access to new sports & features',
       'Private strategy sessions',
-      'Best value — massive savings',
+      'Best value, massive savings',
     ],
     popular: false,
     badge: 'Best Value',

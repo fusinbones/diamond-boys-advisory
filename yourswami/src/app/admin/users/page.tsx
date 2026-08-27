@@ -19,6 +19,8 @@ import {
     Mail,
     Calendar,
     Eye,
+    Phone,
+    LogIn,
 } from 'lucide-react';
 import { adminFetch } from '@/lib/adminFetch';
 
@@ -38,6 +40,9 @@ interface UserData {
     lastSeen: string | null;
     lastSignIn: string | null;
     notes: string | null;
+    phone?: string | null;
+    smsConsent?: boolean;
+    smsConsentAt?: string | null;
     createdAt: string;
     avatarColor: string;
 }
@@ -69,7 +74,7 @@ const tierLabels: Record<string, string> = {
     daily: 'Daily Pass',
     weekly: 'Weekly',
     monthly: 'Monthly',
-    season: 'Season Pass',
+    season: 'Annual',
 };
 
 export default function AdminUsersPage() {
@@ -77,6 +82,31 @@ export default function AdminUsersPage() {
     const [stats, setStats] = useState<Stats>({ totalUsers: 0, activeTrials: 0, expiredTrials: 0, paidUsers: 0, expiringToday: 0, staffCount: 0 });
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+    const [backfilling, setBackfilling] = useState(false);
+    const [backfillResult, setBackfillResult] = useState('');
+
+    // Pushes existing accounts into GoHighLevel. Contacts already there are left
+    // untouched. Tags them 'imported', NOT 'website-signup', because the trial
+    // nurture workflow triggers on that tag and would email every existing user
+    // as though their free week had just begun.
+    const runBackfill = async (dryRun: boolean) => {
+        if (!dryRun && !confirm('Create GHL contacts for every account that is missing one. Continue?')) return;
+        setBackfilling(true);
+        setBackfillResult('');
+        try {
+            const res = await adminFetch('/api/admin/ghl-backfill', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ dryRun }),
+            });
+            const json = await res.json();
+            setBackfillResult(JSON.stringify(json, null, 2));
+        } catch (e) {
+            setBackfillResult('Failed: ' + (e instanceof Error ? e.message : String(e)));
+        } finally {
+            setBackfilling(false);
+        }
+    };
     const [filterStatus, setFilterStatus] = useState('all');
     const [actionLoading, setActionLoading] = useState<string | null>(null);
     const [expandedUser, setExpandedUser] = useState<string | null>(null);
@@ -197,14 +227,51 @@ export default function AdminUsersPage() {
     return (
         <div>
             {/* Header */}
-            <div style={{ marginBottom: '20px' }}>
-                <h1 style={{ color: 'white', fontSize: 'clamp(20px, 4vw, 24px)', fontWeight: 800, marginBottom: '4px' }}>
-                    👥 User Management & CRM
-                </h1>
-                <p style={{ color: '#6b7280', fontSize: '13px' }}>
-                    Manage accounts, roles, subscriptions, and customer notes
-                </p>
+            <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', flexWrap: 'wrap' }}>
+                <div>
+                    <h1 style={{ color: 'white', fontSize: 'clamp(20px, 4vw, 24px)', fontWeight: 800, marginBottom: '4px' }}>
+                        👥 User Management & CRM
+                    </h1>
+                    <p style={{ color: '#6b7280', fontSize: '13px' }}>
+                        Manage accounts, roles, subscriptions, and customer notes
+                    </p>
+                </div>
+                <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+                    <button
+                        onClick={() => runBackfill(true)}
+                        disabled={backfilling}
+                        style={{
+                            fontSize: '13px', fontWeight: 700, padding: '9px 14px', borderRadius: '9px',
+                            background: 'rgba(255,255,255,0.06)', color: '#e5e7eb',
+                            border: '1px solid rgba(255,255,255,0.15)', cursor: backfilling ? 'wait' : 'pointer',
+                        }}
+                    >
+                        {backfilling ? 'Working...' : 'Preview CRM sync'}
+                    </button>
+                    <button
+                        onClick={() => runBackfill(false)}
+                        disabled={backfilling}
+                        style={{
+                            fontSize: '13px', fontWeight: 700, padding: '9px 14px', borderRadius: '9px',
+                            background: '#FFC107', color: '#0a0512', border: 'none',
+                            cursor: backfilling ? 'wait' : 'pointer',
+                        }}
+                    >
+                        Sync users to CRM
+                    </button>
+                </div>
             </div>
+
+            {backfillResult && (
+                <pre style={{
+                    marginBottom: '16px', padding: '12px 14px', borderRadius: '10px',
+                    background: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.1)',
+                    color: '#d1d5db', fontSize: '12px', lineHeight: 1.6,
+                    maxHeight: '320px', overflow: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+                }}>
+                    {backfillResult}
+                </pre>
+            )}
 
             {/* Stats Row */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '8px', marginBottom: '16px' }}>
@@ -276,6 +343,15 @@ export default function AdminUsersPage() {
                 </div>
             ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {/* Column headings. Hidden under 1024px, where rows become cards. */}
+                    <div className="admin-user-head">
+                        <span />
+                        <span>User</span>
+                        <span>Tier</span>
+                        <span>Last seen</span>
+                        <span>Trial</span>
+                        <span />
+                    </div>
                     {filteredUsers.map((user) => {
                         const sc = statusConfig[user.status] || statusConfig.expired;
                         const rc = roleConfig[user.role] || roleConfig.member;
@@ -286,23 +362,17 @@ export default function AdminUsersPage() {
                             <div key={user.id} className="admin-card" style={{ padding: '12px 14px' }}>
                                 {/* Main row */}
                                 <div
-                                    style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
+                                    className="admin-user-row"
                                     onClick={() => setExpandedUser(isExpanded ? null : user.id)}
                                 >
                                     {/* Avatar */}
-                                    <div style={{
-                                        width: '34px', height: '34px', borderRadius: '50%',
-                                        background: user.avatarColor,
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        fontSize: '13px', fontWeight: 700, color: 'white', flexShrink: 0,
-                                    }}>
+                                    <div className="admin-user-avatar" style={{ background: user.avatarColor }}>
                                         {user.displayName.charAt(0).toUpperCase()}
                                     </div>
 
                                     {/* Info */}
-                                    <div style={{ flex: 1, minWidth: 0 }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '2px' }}>
-                                            <span style={{ fontSize: '13px', fontWeight: 700, color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '200px' }}>
+                                    <div className="admin-user-ident">
+                                            <span className="admin-user-email" title={user.email}>
                                                 {user.email}
                                             </span>
                                             {/* Role badge */}
@@ -322,63 +392,88 @@ export default function AdminUsersPage() {
                                             }}>
                                                 {sc.label}
                                             </span>
-                                        </div>
-                                        <div style={{ fontSize: '10px', color: '#6b7280', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                                            <span>{tierLabels[user.tier] || user.tier}</span>
-                                            <span>Seen {timeAgo(user.lastSeen)}</span>
-                                            {!user.isPaid && user.trialDaysLeft > 0 && (
-                                                <span style={{ color: user.trialDaysLeft <= 2 ? '#fb923c' : '#60a5fa' }}>
-                                                    {user.trialDaysLeft}d left
-                                                </span>
-                                            )}
-                                        </div>
+                                    </div>
+
+                                    {/* Meta columns. At 1024px and up this wrapper uses
+                                        display:contents so the three spans become cells of
+                                        the row grid and line up with the header. Below
+                                        that it becomes a flex line under the email. */}
+                                    <div className="admin-user-stats">
+                                        <span className="admin-user-stat">{tierLabels[user.tier] || user.tier}</span>
+                                        <span className="admin-user-stat">Seen {timeAgo(user.lastSeen)}</span>
+                                        <span
+                                            className="admin-user-stat"
+                                            style={{ color: user.trialDaysLeft <= 2 ? '#fb923c' : '#60a5fa' }}
+                                        >
+                                            {!user.isPaid && user.trialDaysLeft > 0 ? `${user.trialDaysLeft}d left` : ''}
+                                        </span>
                                     </div>
 
                                     {/* Expand arrow */}
                                     <ChevronDown
                                         size={14}
-                                        style={{
-                                            color: '#6b7280', flexShrink: 0,
-                                            transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                                            transition: 'transform 0.2s',
-                                        }}
+                                        className="admin-user-chevron"
+                                        style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
                                     />
                                 </div>
 
                                 {/* Expanded details */}
                                 {isExpanded && (
-                                    <div style={{ marginTop: '12px', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '12px' }}>
+                                    <div className="admin-user-detail">
                                         {/* Detail grid */}
-                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '8px', marginBottom: '12px' }}>
-                                            <div style={{ fontSize: '11px' }}>
-                                                <span style={{ color: '#6b7280' }}>📧 Email: </span>
-                                                <span style={{ color: '#d1d5db' }}>{user.email}</span>
-                                                {user.emailConfirmed ? (
-                                                    <CheckCircle2 size={10} style={{ color: '#FFC107', marginLeft: '4px', verticalAlign: 'middle' }} />
-                                                ) : (
-                                                    <XCircle size={10} style={{ color: '#f87171', marginLeft: '4px', verticalAlign: 'middle' }} />
+                                        <div className="admin-user-detail-grid">
+                                            <div className="admin-user-detail-field">
+                                                <Mail size={11} />
+                                                <span className="admin-user-detail-label">Email</span>
+                                                <span className="admin-user-detail-value" title={user.email}>{user.email}</span>
+                                                {user.emailConfirmed
+                                                    ? <CheckCircle2 size={11} style={{ color: '#22c55e', flexShrink: 0 }} />
+                                                    : <XCircle size={11} style={{ color: '#f87171', flexShrink: 0 }} />}
+                                            </div>
+
+                                            <div className="admin-user-detail-field">
+                                                <Phone size={11} />
+                                                <span className="admin-user-detail-label">Phone</span>
+                                                <span className="admin-user-detail-value" style={{ color: user.phone ? '#d1d5db' : '#6b7280' }}>
+                                                    {user.phone || 'none'}
+                                                </span>
+                                                {/* A number is not permission. Only a ticked consent box plus
+                                                    the 21+ confirmation makes someone textable. */}
+                                                {user.phone && (
+                                                    <span style={{
+                                                        flexShrink: 0, fontSize: '9px', fontWeight: 700,
+                                                        padding: '1px 5px', borderRadius: '4px',
+                                                        color: user.smsConsent ? '#22c55e' : '#f87171',
+                                                        background: user.smsConsent ? 'rgba(34,197,94,0.12)' : 'rgba(239,68,68,0.12)',
+                                                    }}>
+                                                        {user.smsConsent ? 'SMS OK' : 'NO CONSENT'}
+                                                    </span>
                                                 )}
                                             </div>
-                                            <div style={{ fontSize: '11px' }}>
-                                                <Calendar size={10} style={{ color: '#6b7280', verticalAlign: 'middle', marginRight: '4px' }} />
-                                                <span style={{ color: '#6b7280' }}>Joined: </span>
-                                                <span style={{ color: '#d1d5db' }}>{formatDate(user.createdAt)}</span>
+
+                                            <div className="admin-user-detail-field">
+                                                <Calendar size={11} />
+                                                <span className="admin-user-detail-label">Joined</span>
+                                                <span className="admin-user-detail-value">{formatDate(user.createdAt)}</span>
                                             </div>
-                                            <div style={{ fontSize: '11px' }}>
-                                                <Eye size={10} style={{ color: '#6b7280', verticalAlign: 'middle', marginRight: '4px' }} />
-                                                <span style={{ color: '#6b7280' }}>Last seen: </span>
-                                                <span style={{ color: '#d1d5db' }}>{timeAgo(user.lastSeen)}</span>
+
+                                            <div className="admin-user-detail-field">
+                                                <Eye size={11} />
+                                                <span className="admin-user-detail-label">Last seen</span>
+                                                <span className="admin-user-detail-value">{timeAgo(user.lastSeen)}</span>
                                             </div>
-                                            <div style={{ fontSize: '11px' }}>
-                                                <Mail size={10} style={{ color: '#6b7280', verticalAlign: 'middle', marginRight: '4px' }} />
-                                                <span style={{ color: '#6b7280' }}>Last sign-in: </span>
-                                                <span style={{ color: '#d1d5db' }}>{timeAgo(user.lastSignIn)}</span>
+
+                                            <div className="admin-user-detail-field">
+                                                <LogIn size={11} />
+                                                <span className="admin-user-detail-label">Last sign-in</span>
+                                                <span className="admin-user-detail-value">{timeAgo(user.lastSignIn)}</span>
                                             </div>
+
                                             {!user.isPaid && (
-                                                <div style={{ fontSize: '11px' }}>
-                                                    <Clock size={10} style={{ color: '#6b7280', verticalAlign: 'middle', marginRight: '4px' }} />
-                                                    <span style={{ color: '#6b7280' }}>Trial: </span>
-                                                    <span style={{ color: user.trialDaysLeft > 2 ? '#60a5fa' : user.trialDaysLeft > 0 ? '#fb923c' : '#a1a1aa' }}>
+                                                <div className="admin-user-detail-field">
+                                                    <Clock size={11} />
+                                                    <span className="admin-user-detail-label">Trial</span>
+                                                    <span className="admin-user-detail-value" style={{ color: user.trialDaysLeft > 2 ? '#60a5fa' : user.trialDaysLeft > 0 ? '#fb923c' : '#a1a1aa' }}>
                                                         {user.trialDaysLeft > 0 ? `${user.trialDaysLeft}d left` : 'Expired'}
                                                         {user.trialBonusDays > 0 && ` (+${user.trialBonusDays} bonus)`}
                                                     </span>

@@ -16,27 +16,42 @@ export default function Footer() {
                     style={{ width: '100%', height: 'auto', display: 'block' }}
                 />
             </div>
-            <div className="container-db py-12 sm:py-16">
+            {/* The banner is a busy full-bleed image. A hairline of brand gold
+                separates it from the text below so the two do not read as one
+                crowded block. */}
+            <div
+                aria-hidden="true"
+                style={{
+                    height: '1px',
+                    background: 'linear-gradient(90deg, transparent, rgba(255,193,7,0.28), transparent)',
+                }}
+            />
+            <div
+                className="container-db"
+                style={{
+                    paddingTop: 'clamp(36px, 5vw, 60px)',
+                    paddingBottom: 'clamp(28px, 4vw, 44px)',
+                }}
+            >
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12">
                     {/* Brand */}
                     <div className="col-span-2 md:col-span-1">
                         <span className="text-white font-display font-bold text-base sm:text-xl tracking-wide">
                             YOURSWAMI
                         </span>
-                        <p className="text-gray-500 text-sm mt-2 sm:mt-3 leading-relaxed">
+                        <p className="text-gray-500 text-sm leading-relaxed" style={{ marginTop: '12px' }}>
                             Real picks. Real results. Real cash. Follow the Swami.
                         </p>
                     </div>
 
                     {/* Quick Links */}
                     <div>
-                        <h4 className="text-white font-semibold text-sm uppercase tracking-wider mb-3 sm:mb-4">Quick Links</h4>
-                        <ul className="space-y-2.5">
+                        <h4 className="text-white font-semibold text-sm uppercase tracking-wider" style={{ marginBottom: '14px' }}>Quick Links</h4>
+                        <ul style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                             {[
                                 { href: '/', label: 'Home' },
                                 { href: '/pricing', label: 'Pricing' },
                                 { href: '/community', label: 'The Lounge' },
-                                { href: '/patterns', label: 'Patterns' },
                                 { href: '/dashboard', label: 'Dashboard' },
                             ].map((link) => (
                                 <li key={link.href}>
@@ -50,11 +65,11 @@ export default function Footer() {
 
                     {/* Legal */}
                     <div>
-                        <h4 className="text-white font-semibold text-sm uppercase tracking-wider mb-3 sm:mb-4">Legal</h4>
-                        <ul className="space-y-2.5">
+                        <h4 className="text-white font-semibold text-sm uppercase tracking-wider" style={{ marginBottom: '14px' }}>Legal</h4>
+                        <ul style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                             {[
                                 { href: '/tos', label: 'Terms of Service' },
-                                { href: '/tos#privacy', label: 'Privacy Policy' },
+                                { href: '/privacy', label: 'Privacy Policy' },
                                 { href: '/tos#ban-policy', label: 'Ban Policy' },
                                 { href: '/tos#disclaimer', label: 'Disclaimer' },
                             ].map((link) => (
@@ -69,8 +84,8 @@ export default function Footer() {
 
                     {/* Contact */}
                     <div className="col-span-2 md:col-span-1">
-                        <h4 className="text-white font-semibold text-sm uppercase tracking-wider mb-3 sm:mb-4">Contact</h4>
-                        <div className="space-y-2 sm:space-y-3">
+                        <h4 className="text-white font-semibold text-sm uppercase tracking-wider" style={{ marginBottom: '14px' }}>Contact</h4>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                             <a
                                 href="mailto:support@yourswami.com"
                                 className="flex items-center gap-2 text-gray-500 hover:text-[#FFC107] transition text-sm break-all"
@@ -101,11 +116,17 @@ export default function Footer() {
                 </div>
 
                 {/* Disclaimer Bar */}
-                <div className="mt-6 sm:mt-10 pt-6 sm:pt-8 border-t border-white/5">
-                    <div className="glass-card p-4 sm:p-5 mb-4 sm:mb-6 bg-[#0d1525]/50">
+                <div className="border-t border-white/5" style={{ marginTop: '32px', paddingTop: '28px' }}>
+                    <div
+                        className="glass-card bg-[#0d1525]/50"
+                        style={{ padding: 'clamp(16px, 2vw, 22px)', marginBottom: '22px' }}
+                    >
                         <div className="flex items-start gap-2 sm:gap-3">
                             <Shield size={14} className="sm:w-[18px] sm:h-[18px] text-[#FFC107] mt-0.5 flex-shrink-0" />
-                            <div className="text-xs sm:text-sm text-gray-400 leading-relaxed space-y-2">
+                            <div
+                                className="text-xs sm:text-sm text-gray-400 leading-relaxed"
+                                style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}
+                            >
                                 <p>
                                     <strong className="text-gray-400">Disclaimer:</strong> YourSwami provides sports analysis
                                     for <strong>entertainment purposes only</strong>. Not a licensed sportsbook, financial advisor, or gambling operator.

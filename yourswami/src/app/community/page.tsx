@@ -174,7 +174,7 @@ const TIER_OPTIONS = [
     { value: 'daily', label: 'Daily Pass ($24.99)' },
     { value: 'weekly', label: 'Weekly ($74.99/wk)' },
     { value: 'monthly', label: 'Monthly ($229.99/mo)' },
-    { value: 'season', label: 'Season Pass ($699/6mo)' },
+    { value: 'season', label: 'Annual ($699/yr)' },
 ];
 
 const CATEGORY_OPTIONS = ['GENERAL', 'PICKS', 'BOT', 'VIP', 'CUSTOM'];

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense, useCallback, useRef, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, UserPlus, LogIn, Loader2, Shield, Flame, LogOut, ArrowUp, KeyRound, Trash2 } from 'lucide-react';
+import { Mail, Lock, UserPlus, LogIn, Loader2, Shield, Flame, LogOut, ArrowUp, KeyRound, Trash2, Phone } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
@@ -19,6 +19,7 @@ import BankrollChart from '@/components/dashboard/BankrollChart';
 import TailTracker from '@/components/dashboard/TailTracker';
 import CommunityPulse from '@/components/dashboard/CommunityPulse';
 import PaywallOverlay from '@/components/dashboard/PaywallOverlay';
+import { PAID_TIERS, DEFAULT_TRIAL_DAYS } from '@/lib/entitlement';
 import PickDropBanner from '@/components/dashboard/PickDropBanner';
 import GamesBoard from '@/components/dashboard/GamesBoard';
 import Tooltip from '@/components/dashboard/Tooltip';
@@ -129,6 +130,9 @@ function DashboardContent(): ReactNode {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isSignUp, setIsSignUp] = useState(false);
+    const [phone, setPhone] = useState('');
+    const [smsConsent, setSmsConsent] = useState(false);
+    const [ageConfirmed, setAgeConfirmed] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
@@ -301,7 +305,40 @@ function DashboardContent(): ReactNode {
             await supabase.from('user_profiles').update({ last_seen_at: new Date().toISOString() }).eq('id', user.id);
             // Autowire fix: Heal broken Stripe subs that fired before the user registered
             if (user.email) {
-                fetch('/api/user/sync-tier', { method: 'POST', body: JSON.stringify({ email: user.email }) }).catch(console.error);
+                // Send the session token; the route derives the email from it
+                // rather than trusting the body.
+                supabase.auth.getSession().then(({ data: sess }) => {
+                    const tok = sess.session?.access_token;
+                    if (!tok) return;
+                    fetch('/api/user/sync-tier', {
+                        method: 'POST',
+                        headers: { Authorization: `Bearer ${tok}` },
+                    }).catch(console.error);
+                }).catch(console.error);
+            }
+
+            // Make sure this account exists in the CRM. The signup path already
+            // calls this once at OTP verification, but that call is fire and
+            // forget: anyone whose call failed, or who signed up before it
+            // existed, was invisible to every email sequence. The route is
+            // idempotent and does nothing when the contact is already there, so
+            // running it here backfills those accounts on their next visit.
+            // Guarded per session so it is one call, not one per render.
+            try {
+                if (!sessionStorage.getItem('ghl_synced')) {
+                    const { data: sess } = await supabase.auth.getSession();
+                    const token = sess.session?.access_token;
+                    if (token) {
+                        fetch('/api/ghl/sync-contact', {
+                            method: 'POST',
+                            headers: { Authorization: `Bearer ${token}` },
+                        })
+                            .then(() => sessionStorage.setItem('ghl_synced', '1'))
+                            .catch((e) => console.error('GHL contact sync failed:', e));
+                    }
+                }
+            } catch {
+                // sessionStorage can throw in private mode. Never block the page.
             }
         };
         fetchProfile();
@@ -390,9 +427,12 @@ function DashboardContent(): ReactNode {
         }
     };
 
-    // Access logic: paid vs trial vs expired
-    const isPaid = profile?.subscription_tier && ['starter', 'pro', 'elite', 'daily', 'weekly', 'monthly', 'season'].includes(profile.subscription_tier);
-    const trialEnd = profile?.trial_end ? new Date(profile.trial_end) : (user ? new Date(new Date(user.created_at).getTime() + 7 * 86400000) : new Date());
+    // Access logic: paid vs trial vs expired.
+    // PAID_TIERS and DEFAULT_TRIAL_DAYS come from lib/entitlement so this page
+    // and the Fire Pick SMS blast decide access from the same definition. They
+    // used to disagree, which is how expired trials kept receiving picks by text.
+    const isPaid = profile?.subscription_tier && PAID_TIERS.includes(profile.subscription_tier);
+    const trialEnd = profile?.trial_end ? new Date(profile.trial_end) : (user ? new Date(new Date(user.created_at).getTime() + DEFAULT_TRIAL_DAYS * 86400000) : new Date());
     const bonusDays = profile?.trial_bonus_days || 0;
     const effectiveTrialEnd = new Date(trialEnd.getTime() + bonusDays * 86400000);
     const daysLeft = Math.max(0, Math.ceil((effectiveTrialEnd.getTime() - Date.now()) / 86400000));
@@ -408,9 +448,35 @@ function DashboardContent(): ReactNode {
 
         try {
             if (isSignUp) {
+                // Consent must be explicit and carry a usable number. Bail before
+                // creating the account rather than storing a half-captured opt-in.
+                if (smsConsent && phone.replace(/D/g, '').length < 10) {
+                    setError('Enter a valid mobile number to get text alerts, or uncheck the box.');
+                    return;
+                }
+
+                // Pick alerts are age-gated content under the A2P campaign, so consent
+                // without an age confirmation is not a consent we are allowed to act on.
+                if (smsConsent && !ageConfirmed) {
+                    setError('Please confirm you are 21 or older to receive pick alerts by text.');
+                    return;
+                }
+
+                // Phone and consent ride along in user_metadata. The Stripe webhook
+                // reads them back once payment clears and pushes the contact to GHL.
+                // sms_consent_at is the timestamped proof of consent for TCPA.
                 const { data, error } = await supabase.auth.signUp({
                     email,
                     password,
+                    options: {
+                        data: {
+                            phone: smsConsent ? phone.trim() : '',
+                            sms_consent: smsConsent,
+                            sms_consent_at: smsConsent ? new Date().toISOString() : '',
+                            sms_consent_source: 'signup form',
+                            sms_age_confirmed: smsConsent ? ageConfirmed : false,
+                        },
+                    },
                     // No emailRedirectTo needed since we use OTP Verification on this page
                 });
                 if (error) throw error;
@@ -479,8 +545,21 @@ function DashboardContent(): ReactNode {
         setMessage('');
 
         try {
-            const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: 'signup' });
+            const { data, error } = await supabase.auth.verifyOtp({ email, token: otp, type: 'signup' });
             if (error) throw error;
+
+            // Mirror the confirmed signup into GHL. Fire and forget: a CRM hiccup
+            // must never keep someone out of the product they just signed up for.
+            // The route re-derives identity from this token, so nothing is trusted
+            // from the client beyond proof of who they are.
+            const accessToken = data.session?.access_token;
+            if (accessToken) {
+                fetch('/api/ghl/sync-contact', {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${accessToken}` },
+                }).catch((syncErr) => console.error('GHL contact sync failed:', syncErr));
+            }
+
             router.push('/dashboard');
         } catch (err: unknown) {
             const raw = err instanceof Error ? err.message : String(err);
@@ -540,7 +619,7 @@ function DashboardContent(): ReactNode {
         if (recoveryMode) {
             return (
                 <div style={{ paddingTop: '40px', paddingBottom: '60px', minHeight: 'calc(100vh - 96px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div className="container-db" style={{ maxWidth: '420px' }}>
+                    <div style={{ width: '100%', maxWidth: '480px', marginLeft: 'auto', marginRight: 'auto', paddingLeft: '20px', paddingRight: '20px', boxSizing: 'border-box' }}>
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                             <div style={{ textAlign: 'center', marginBottom: '28px' }}>
                                 <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(106,0,255,0.1)', border: '1px solid rgba(106,0,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
@@ -554,7 +633,7 @@ function DashboardContent(): ReactNode {
                                 </p>
                             </div>
 
-                            <div className="glass-card" style={{ padding: '28px 24px', marginBottom: '20px' }}>
+                            <div className="glass-card" style={{ padding: 'clamp(24px, 3.5vw, 34px)', marginBottom: '20px' }}>
                                 <form onSubmit={handleSetNewPassword}>
                                     <label htmlFor="new-password" style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#e5e7eb', marginBottom: '8px' }}>
                                         New Password
@@ -569,7 +648,7 @@ function DashboardContent(): ReactNode {
                                             onChange={(e) => setNewPassword(e.target.value)}
                                             style={{
                                                 width: '100%', padding: '12px 12px 12px 40px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
-                                                borderRadius: '10px', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box',
+                                                borderRadius: '10px', color: 'white', fontSize: '16px', outline: 'none', boxSizing: 'border-box',
                                             }}
                                             placeholder="New password (min 6 chars)"
                                             minLength={6}
@@ -589,7 +668,7 @@ function DashboardContent(): ReactNode {
                                             onChange={(e) => setConfirmPassword(e.target.value)}
                                             style={{
                                                 width: '100%', padding: '12px 12px 12px 40px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
-                                                borderRadius: '10px', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box',
+                                                borderRadius: '10px', color: 'white', fontSize: '16px', outline: 'none', boxSizing: 'border-box',
                                             }}
                                             placeholder="Confirm new password"
                                             minLength={6}
@@ -781,7 +860,17 @@ function DashboardContent(): ReactNode {
 
         return (
             <div style={{ paddingTop: '40px', paddingBottom: '60px', minHeight: 'calc(100vh - 96px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div className="container-db" style={{ maxWidth: '420px' }}>
+                {/* The GHL chat widget's greeting prompt (.lc_text-widget) is
+                    position:fixed at z-index 99999999 inside a shadow root. On narrow
+                    screens it lands squarely on top of the SMS consent disclosure and
+                    the 21+ checkbox, so neither can be tapped: elementFromPoint over
+                    the checkbox returns CHAT-WIDGET, not the input. A consent box that
+                    cannot be ticked is worse than none, so suppress the widget while
+                    this form is open. Desktop is unaffected (the prompt sits clear of
+                    the card there) and the widget still runs on every other page, so
+                    the chat opt-in path stays intact. */}
+                <style>{`@media (max-width: 640px) { chat-widget { display: none !important; } }`}</style>
+                <div style={{ width: '100%', maxWidth: '480px', marginLeft: 'auto', marginRight: 'auto', paddingLeft: '20px', paddingRight: '20px', boxSizing: 'border-box' }}>
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                         {/* Header */}
                         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
@@ -812,7 +901,7 @@ function DashboardContent(): ReactNode {
                         </div>
 
                         {/* Form */}
-                        <div className="glass-card" style={{ padding: '28px 24px', marginBottom: '20px' }}>
+                        <div className="glass-card" style={{ padding: 'clamp(24px, 3.5vw, 34px)', marginBottom: '20px' }}>
                             <form onSubmit={handleAuth}>
                                 <label htmlFor="dash-email" style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#e5e7eb', marginBottom: '8px' }}>
                                     Email Address
@@ -827,7 +916,7 @@ function DashboardContent(): ReactNode {
                                         onChange={(e) => setEmail(e.target.value)}
                                         style={{
                                             width: '100%', padding: '12px 12px 12px 40px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
-                                            borderRadius: '10px', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box',
+                                            borderRadius: '10px', color: 'white', fontSize: '16px', outline: 'none', boxSizing: 'border-box',
                                         }}
                                         placeholder="you@email.com"
                                     />
@@ -845,12 +934,62 @@ function DashboardContent(): ReactNode {
                                         onChange={(e) => setPassword(e.target.value)}
                                         style={{
                                             width: '100%', padding: '12px 12px 12px 40px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
-                                            borderRadius: '10px', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box',
+                                            borderRadius: '10px', color: 'white', fontSize: '16px', outline: 'none', boxSizing: 'border-box',
                                         }}
-                                        placeholder={isSignUp ? 'Create a password (min 6 chars)' : 'Your password'}
+                                        placeholder={isSignUp ? 'Create a password' : 'Your password'}
                                         minLength={6}
                                     />
                                 </div>
+                                {isSignUp && (
+                                    <div style={{ marginBottom: '20px' }}>
+                                        <label htmlFor="dash-phone" style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#e5e7eb', marginBottom: '8px' }}>
+                                            Mobile Number <span style={{ color: '#6b7280', fontWeight: 400 }}>(optional)</span>
+                                        </label>
+                                        <div style={{ position: 'relative', marginBottom: '12px' }}>
+                                            <Phone size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#6b7280' }} />
+                                            <input
+                                                id="dash-phone"
+                                                type="tel"
+                                                autoComplete="tel"
+                                                value={phone}
+                                                onChange={(e) => setPhone(e.target.value)}
+                                                style={{
+                                                    width: '100%', padding: '12px 12px 12px 40px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+                                                    borderRadius: '10px', color: 'white', fontSize: '16px', outline: 'none', boxSizing: 'border-box',
+                                                }}
+                                                placeholder="(555) 123-4567"
+                                            />
+                                        </div>
+                                        <label htmlFor="sms-consent" style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer' }}>
+                                            <input
+                                                id="sms-consent"
+                                                type="checkbox"
+                                                checked={smsConsent}
+                                                onChange={(e) => { setSmsConsent(e.target.checked); if (!e.target.checked) setAgeConfirmed(false); }}
+                                                style={{ marginTop: '2px', width: '20px', height: '20px', accentColor: '#6A00FF', flexShrink: 0, cursor: 'pointer' }}
+                                            />
+                                            <span style={{ fontSize: '13px', lineHeight: 1.6, color: '#9ca3af' }}>
+                                                Text me recurring automated marketing messages (fire pick alerts, promotions, and updates) from TRIPLE PLAYZ INC (YourSwami) at this number. Msg &amp; data rates may apply, msg frequency varies. Reply STOP to opt out, HELP for help. Consent is not a condition of purchase. See our{' '}
+                                                <a href="/tos" style={{ color: '#FFC107', textDecoration: 'underline' }}>Terms</a> and{' '}
+                                                <a href="/privacy" style={{ color: '#FFC107', textDecoration: 'underline' }}>Privacy Policy</a>.
+                                            </span>
+                                        </label>
+                                        {smsConsent && (
+                                            <label htmlFor="sms-age" style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer', marginTop: '12px' }}>
+                                                <input
+                                                    id="sms-age"
+                                                    type="checkbox"
+                                                    checked={ageConfirmed}
+                                                    onChange={(e) => setAgeConfirmed(e.target.checked)}
+                                                    style={{ marginTop: '2px', width: '20px', height: '20px', accentColor: '#6A00FF', flexShrink: 0, cursor: 'pointer' }}
+                                                />
+                                                <span style={{ fontSize: '13px', lineHeight: 1.6, color: '#9ca3af' }}>
+                                                    I confirm I am <strong style={{ color: '#e5e7eb' }}>21 years of age or older</strong>. Pick alerts are age-gated content.
+                                                </span>
+                                            </label>
+                                        )}
+                                    </div>
+                                )}
                                 {!isSignUp && (
                                     <div style={{ textAlign: 'right', marginTop: '-12px', marginBottom: '16px' }}>
                                         <button
@@ -980,6 +1119,43 @@ function DashboardContent(): ReactNode {
                 {/* ═══ FIRE PICKS ═══ */}
                 <div style={{ maxWidth: '760px', margin: '0 auto', width: '100%' }}>
                     <main style={{ display: 'flex', flexDirection: 'column', gap: '10px', position: 'relative', minWidth: 0 }}>
+                        {/* Trial status. trialActive was computed and never rendered, so
+                            somebody on a free trial saw nothing telling them they were on
+                            one, or that it was about to run out. */}
+                        {trialActive && (
+                            <div style={{
+                                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                gap: '12px', flexWrap: 'wrap',
+                                padding: '12px 16px', borderRadius: '12px',
+                                background: daysLeft <= 2 ? 'rgba(251,146,60,0.10)' : 'rgba(106,0,255,0.10)',
+                                border: `1px solid ${daysLeft <= 2 ? 'rgba(251,146,60,0.35)' : 'rgba(106,0,255,0.35)'}`,
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                                    <Flame size={18} style={{ color: daysLeft <= 2 ? '#fb923c' : '#FFC107', flexShrink: 0 }} />
+                                    <div style={{ minWidth: 0 }}>
+                                        <p style={{ fontSize: '14px', fontWeight: 700, color: 'white', margin: 0 }}>
+                                            {daysLeft === 1
+                                                ? 'Last day of your free trial'
+                                                : `${daysLeft} days left in your free trial`}
+                                        </p>
+                                        <p style={{ fontSize: '12px', color: '#9ca3af', margin: '2px 0 0' }}>
+                                            Full Fire Pick access until then. After that the picks lock and the alerts stop.
+                                        </p>
+                                    </div>
+                                </div>
+                                <a
+                                    href="/pricing"
+                                    style={{
+                                        flexShrink: 0, fontSize: '13px', fontWeight: 700,
+                                        padding: '9px 16px', borderRadius: '9px',
+                                        background: '#FFC107', color: '#0a0512',
+                                        textDecoration: 'none', whiteSpace: 'nowrap',
+                                    }}
+                                >
+                                    Keep my access
+                                </a>
+                            </div>
+                        )}
                         {dashLoading ? (
                             <div style={{ padding: '40px 0', textAlign: 'center' }}>
                                 <Loader2 size={20} style={{ color: '#FFC107', animation: 'spin 1s linear infinite', margin: '0 auto 6px' }} />
@@ -989,7 +1165,11 @@ function DashboardContent(): ReactNode {
                             <>
                                 {firePicks.length > 0 ? (
                                     firePicks.map(fp => (
-                                        <FirePickCard key={fp.id} firePick={fp} isPaid={!!isPaid} />
+                                        // picksLocked, not isPaid. The trial grants pick access
+                                        // for 7 days, so gating on a paid tier alone showed
+                                        // "Members Only" to trial users the same page was
+                                        // telling "3 days left in your free trial".
+                                        <FirePickCard key={fp.id} firePick={fp} unlocked={!picksLocked} />
                                     ))
                                 ) : (
                                     <div className="glass-card" style={{ padding: '30px 20px', textAlign: 'center' }}>

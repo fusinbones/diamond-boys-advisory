@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
-import { Settings, User, Lock, Tag, Crown, ArrowLeft, Check, AlertCircle, Eye, EyeOff, Copy, Users, DollarSign, Gift, Link2, Loader2, TrendingUp } from 'lucide-react';
+import { Settings, User, Lock, Tag, Crown, ArrowLeft, Check, AlertCircle, Eye, EyeOff, Copy, Users, DollarSign, Gift, Link2, Loader2, TrendingUp, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 
 interface UserProfile {
@@ -28,6 +28,17 @@ export default function SettingsPage() {
     const [nickAvailability, setNickAvailability] = useState<{ available: boolean; error: string | null } | null>(null);
     const [nickSaving, setNickSaving] = useState(false);
     const [nickSaved, setNickSaved] = useState(false);
+
+    // SMS alert state. Subscribers must be able to turn texts off from their
+    // account, not only by replying STOP; carriers check for this during A2P review.
+    const [smsLoading, setSmsLoading] = useState(true);
+    const [smsOptedIn, setSmsOptedIn] = useState(false);
+    const [smsLast4, setSmsLast4] = useState<string | null>(null);
+    const [smsBusy, setSmsBusy] = useState(false);
+    const [smsMsg, setSmsMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+    const [smsPhone, setSmsPhone] = useState('');
+    const [smsConsent, setSmsConsent] = useState(false);
+    const [smsAge, setSmsAge] = useState(false);
 
     // Password state
     const [currentPassword, setCurrentPassword] = useState('');
@@ -123,10 +134,16 @@ export default function SettingsPage() {
         if (!user || !nickAvailability?.available) return;
         setNickSaving(true);
         try {
+            // The route derives the user from this token; it no longer accepts
+            // a userId or an admin email from the body.
+            const { data: sess } = await supabase.auth.getSession();
             const res = await fetch('/api/nickname', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: user.id, nickname: nickname.trim(), email: userEmail }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${sess.session?.access_token || ''}`,
+                },
+                body: JSON.stringify({ nickname: nickname.trim() }),
             });
             const data = await res.json();
             if (data.success) {
@@ -136,6 +153,75 @@ export default function SettingsPage() {
             }
         } catch { /* ignore */ }
         finally { setNickSaving(false); }
+    };
+
+    const authedFetch = useCallback(async (url: string, init?: RequestInit) => {
+        const { data } = await supabase.auth.getSession();
+        const token = data.session?.access_token;
+        if (!token) throw new Error('Not signed in');
+        return fetch(url, {
+            ...init,
+            headers: { ...(init?.headers || {}), Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        });
+    }, []);
+
+    useEffect(() => {
+        if (!user) return;
+        let cancelled = false;
+        (async () => {
+            try {
+                const res = await authedFetch('/api/ghl/sms-preference');
+                const j = await res.json();
+                if (!cancelled && res.ok) { setSmsOptedIn(!!j.optedIn); setSmsLast4(j.phoneLast4 ?? null); }
+            } catch {
+                /* leave it showing "off"; the user can still opt in */
+            } finally {
+                if (!cancelled) setSmsLoading(false);
+            }
+        })();
+        return () => { cancelled = true; };
+    }, [user, authedFetch]);
+
+    const disableSms = async () => {
+        setSmsBusy(true); setSmsMsg(null);
+        try {
+            const res = await authedFetch('/api/ghl/sms-preference', {
+                method: 'POST', body: JSON.stringify({ optIn: false }),
+            });
+            if (!res.ok) throw new Error();
+            setSmsOptedIn(false); setSmsLast4(null);
+            setSmsMsg({ type: 'success', text: 'Text alerts turned off. You will not receive any more pick alerts.' });
+        } catch {
+            setSmsMsg({ type: 'error', text: 'Could not turn off text alerts. Reply STOP to any message and it will take effect immediately.' });
+        } finally {
+            setSmsBusy(false);
+        }
+    };
+
+    const enableSms = async () => {
+        setSmsMsg(null);
+        if (smsPhone.replace(/D/g, '').length < 10) {
+            setSmsMsg({ type: 'error', text: 'Enter a valid mobile number.' }); return;
+        }
+        if (!smsConsent) { setSmsMsg({ type: 'error', text: 'Please agree to receive text alerts.' }); return; }
+        if (!smsAge) { setSmsMsg({ type: 'error', text: 'Please confirm you are 21 or older.' }); return; }
+        setSmsBusy(true);
+        try {
+            const res = await authedFetch('/api/ghl/sms-preference', {
+                method: 'POST',
+                body: JSON.stringify({ optIn: true, phone: smsPhone.trim(), ageConfirmed: true }),
+            });
+            const j = await res.json();
+            if (!res.ok) throw new Error(j.error || '');
+            setSmsOptedIn(true);
+            setSmsLast4(smsPhone.replace(/D/g, '').slice(-4));
+            setSmsConsent(false); setSmsAge(false); setSmsPhone('');
+            setSmsMsg({ type: 'success', text: 'Text alerts are on. You will get a text when a new fire pick drops.' });
+        } catch (e) {
+            setSmsMsg({ type: 'error', text: e instanceof Error && e.message ? e.message : 'Could not enable text alerts.' });
+        } finally {
+            setSmsBusy(false);
+        }
     };
 
     const changePassword = async () => {
@@ -189,7 +275,7 @@ export default function SettingsPage() {
         daily: '📅 Daily',
         weekly: '📆 Weekly',
         monthly: '📅 Monthly',
-        season: '🏆 Season Pass',
+        season: '🏆 Annual',
     };
 
     const isNickChanged = nickname.trim() !== (profile?.nickname || '');
@@ -349,6 +435,102 @@ export default function SettingsPage() {
                     >
                         {nickSaving ? 'Saving...' : 'Save Nickname'}
                     </button>
+                </div>
+
+                {/* ── Text Alerts Section ── */}
+                {/* Replying STOP works and GHL honors it automatically, but an
+                    account-level off switch is what carriers look for during A2P
+                    review, and someone who cannot find it reports spam instead. */}
+                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px', padding: '20px', marginBottom: '20px' }}>
+                    <h3 style={{ display:'flex', alignItems: 'center', gap: '8px', fontSize: '15px', fontWeight: 700, marginBottom: '4px' }}>
+                        <MessageSquare size={16} style={{ color: '#fbbf24' }} />
+                        Text Alerts
+                    </h3>
+                    <p style={{ color: '#6b7280', fontSize: '11px', marginBottom: '14px' }}>
+                        Fire pick alerts sent to your phone
+                    </p>
+
+                    {smsLoading ? (
+                        <p style={{ color: '#6b7280', fontSize: '13px' }}>Checking your preference...</p>
+                    ) : smsOptedIn ? (
+                        <>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 12px', background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: '10px', marginBottom: '12px' }}>
+                                <Check size={15} style={{ color: '#22c55e', flexShrink: 0 }} />
+                                <span style={{ fontSize: '13px', color: '#e5e7eb' }}>
+                                    On{smsLast4 ? <> for the number ending in <strong>{smsLast4}</strong></> : null}
+                                </span>
+                            </div>
+                            <button
+                                onClick={disableSms}
+                                disabled={smsBusy}
+                                style={{
+                                    width: '100%', padding: '11px', borderRadius: '10px', cursor: smsBusy ? 'default' : 'pointer',
+                                    background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)',
+                                    color: '#f87171', fontSize: '14px', fontWeight: 600, opacity: smsBusy ? 0.6 : 1,
+                                }}
+                            >
+                                {smsBusy ? 'Turning off...' : 'Turn off text alerts'}
+                            </button>
+                            <p style={{ fontSize: '12px', lineHeight: 1.6, color: '#9ca3af', marginTop: '10px' }}>
+                                You can also reply <strong>STOP</strong> to any message to opt out immediately, or <strong>HELP</strong> for help.
+                            </p>
+                        </>
+                    ) : (
+                        <>
+                            <p style={{ fontSize: '13px', lineHeight: 1.6, color: '#9ca3af', marginBottom: '12px' }}>
+                                Text alerts are <strong style={{ color: '#e5e7eb' }}>off</strong>. Turn them on to get a text the moment a new fire pick drops.
+                            </p>
+                            <input
+                                type="tel"
+                                autoComplete="tel"
+                                value={smsPhone}
+                                onChange={e => setSmsPhone(e.target.value)}
+                                placeholder="(555) 123-4567"
+                                style={{ width: '100%', padding: '11px 12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '16px', outline: 'none', boxSizing: 'border-box' as const, marginBottom: '12px' }}
+                            />
+                            <label htmlFor="set-sms-consent" style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer', marginBottom: '10px' }}>
+                                <input id="set-sms-consent" type="checkbox" checked={smsConsent}
+                                    onChange={e => { setSmsConsent(e.target.checked); if (!e.target.checked) setSmsAge(false); }}
+                                    style={{ marginTop: '2px', width: '20px', height: '20px', accentColor: '#6A00FF', flexShrink: 0, cursor: 'pointer' }} />
+                                <span style={{ fontSize: '13px', lineHeight: 1.6, color: '#9ca3af' }}>
+                                    Text me recurring automated marketing messages (fire pick alerts, promotions, and updates) from TRIPLE PLAYZ INC (YourSwami) at this number. Msg &amp; data rates may apply, msg frequency varies. Reply STOP to opt out, HELP for help. Consent is not a condition of purchase. See our{' '}
+                                    <Link href="/tos" style={{ color: '#FFC107', textDecoration: 'underline' }}>Terms</Link> and{' '}
+                                    <Link href="/privacy" style={{ color: '#FFC107', textDecoration: 'underline' }}>Privacy Policy</Link>.
+                                </span>
+                            </label>
+                            {smsConsent && (
+                                <label htmlFor="set-sms-age" style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer', marginBottom: '12px' }}>
+                                    <input id="set-sms-age" type="checkbox" checked={smsAge}
+                                        onChange={e => setSmsAge(e.target.checked)} style={{ marginTop: '2px', width: '20px', height: '20px', accentColor: '#6A00FF', flexShrink: 0, cursor: 'pointer' }} />
+                                    <span style={{ fontSize: '13px', lineHeight: 1.6, color: '#9ca3af' }}>
+                                        I confirm I am <strong style={{ color: '#e5e7eb' }}>21 years of age or older</strong>. Pick alerts are age-gated content.
+                                    </span>
+                                </label>
+                            )}
+                            <button
+                                onClick={enableSms}
+                                disabled={smsBusy}
+                                style={{
+                                    width: '100%', padding: '11px', borderRadius: '10px', cursor: smsBusy ? 'default' : 'pointer',
+                                    background: 'rgba(106,0,255,0.15)', border: '1px solid rgba(106,0,255,0.4)',
+                                    color: '#FFC107', fontSize: '14px', fontWeight: 700, opacity: smsBusy ? 0.6 : 1,
+                                }}
+                            >
+                                {smsBusy ? 'Turning on...' : 'Turn on text alerts'}
+                            </button>
+                        </>
+                    )}
+
+                    {smsMsg && (
+                        <div style={{
+                            marginTop: '12px', padding: '10px 12px', borderRadius: '10px', fontSize: '13px',
+                            background: smsMsg.type === 'success' ? 'rgba(34,197,94,0.08)' : 'rgba(239,68,68,0.1)',
+                            border: smsMsg.type === 'success' ? '1px solid rgba(34,197,94,0.2)' : '1px solid rgba(239,68,68,0.25)',
+                            color: smsMsg.type === 'success' ? '#22c55e' : '#f87171',
+                        }}>
+                            {smsMsg.text}
+                        </div>
+                    )}
                 </div>
 
                 {/* ── Password Section ── */}

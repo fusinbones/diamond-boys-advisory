@@ -21,10 +21,17 @@
   --font-body: var(--font-inter), 'Inter', sans-serif;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* This reset MUST stay inside @layer base. Tailwind v4 puts its utilities in
+   @layer utilities, and unlayered CSS beats layered CSS regardless of
+   specificity, so an unlayered "* { margin:0; padding:0 }" silently kills every
+   p-*, m-*, mt-*, space-y-* utility across the whole site. Symptom: a plain
+   <div class="p-4"> computes to 0px padding. Do not unwrap this. */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 }
 
 html {
@@ -455,4 +462,27 @@ body {
   .lounge-react-trigger:focus-within .lounge-react-picker {
     display: flex !important;
   }
+}
+/* ── Nav signup CTA ─────────────────────────────────────────────────────────
+   Attention pulse for the primary signup button in the header. Deliberately
+   restrained: a nav button that throbs hard reads as an ad and people learn to
+   ignore it. Two seconds between beats, a soft gold halo, and it stops on hover
+   so it never fights the pointer. Sizing is set inline on the element because
+   .btn-glow below sets font-size and padding and would otherwise win. */
+@keyframes swami-cta-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.40), 0 0 10px rgba(255, 193, 7, 0.20); }
+  50%      { box-shadow: 0 0 0 7px rgba(255, 193, 7, 0), 0 0 20px rgba(255, 193, 7, 0.45); }
+}
+
+.cta-pulse {
+  animation: swami-cta-pulse 2.8s ease-in-out infinite;
+}
+
+.cta-pulse:hover,
+.cta-pulse:focus-visible {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-pulse { animation: none; }
 }

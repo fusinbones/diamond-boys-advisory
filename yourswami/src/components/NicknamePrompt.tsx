@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/lib/supabase';
 
 interface NicknamePromptProps {
     userId: string;
@@ -50,10 +51,15 @@ export default function NicknamePrompt({ userId, userEmail, currentNickname, onS
         setSaving(true);
         setSaveError(null);
         try {
+            // Identity comes from the token now, not from userId in the body.
+            const { data: sess } = await supabase.auth.getSession();
             const res = await fetch('/api/nickname', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, nickname: nickname.trim(), email: userEmail }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${sess.session?.access_token || ''}`,
+                },
+                body: JSON.stringify({ nickname: nickname.trim() }),
             });
             const data = await res.json();
             if (data.success) {
